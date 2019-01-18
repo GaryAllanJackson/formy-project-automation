@@ -17,6 +17,7 @@ public class PageHelper {
     private String testFileName = "C:\\Users\\gjackson\\Downloads\\Ex_Files_Selenium_EssT\\Ex_Files_Selenium_EssT\\Exercise Files\\Gary_01\\TestFiles\\TestSettingsFile.txt";
 
     /* ****************************************************************
+     *  DESCRIPTION:
      *  Navigates to the web address passed in
      **************************************************************** */
     public void NavigateToPage(WebDriver driver, String webAddress) throws InterruptedException{
@@ -24,10 +25,7 @@ public class PageHelper {
         Thread.sleep(10000);
     }
 
-    public void NavigateFFToPage(FirefoxDriver driver, String webAddress) throws InterruptedException{
-        driver.get(webAddress);
-        Thread.sleep(10000);
-    }
+
 
     /* ****************************************************************
      *  Saves a screenshot to the
@@ -68,6 +66,7 @@ public class PageHelper {
 
 
     /* ****************************************************************
+     *   DESCRIPTION:
      *   This method gets the dimensions of the content area so that
      *   the screen dimensions can be reset before a screen capture to ensure
      *   that all content is in the captured image.
@@ -81,6 +80,37 @@ public class PageHelper {
         return new Dimension(contentWidth, contentHeight);
     }
 
+
+    /* *******************************************************************************************
+        Description: This method reads in the test file, parsing each line and creating a new <TestSettings>
+        object, placing the xPath string into the xPath Property, placing the Expected value string into the
+        Expected value Property and adding that to the List<TestSettings> ArrayList
+     ******************************************************************************************* */
+    public List<TestSettings> ReadTestSettingsFile(List<TestSettings> testSettings) throws Exception {
+        TestSettings test;
+        try (BufferedReader br = new BufferedReader(new FileReader(testFileName))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                test = new TestSettings();
+                test.set_xPath(line.substring(0, line.indexOf(":")).trim());
+                int start = line.indexOf(":") + 1;
+                int end = line.length();
+                test.set_expectedValue(line.substring(start, end).trim());
+                testSettings.add(test);
+                // Show input to user
+                System.out.println("Reading Test File values(xPath = " + test.get_xPath() + ") - (Expected Value = " + test.get_expectedValue() + ")");
+            }
+            return testSettings;
+        }
+    }
+
+    /*
+    // the below methods were written exclusively for the Firefox driver but are no longer needed
+    // as all browsers are using WebDriver.
+     public void NavigateFFToPage(FirefoxDriver driver, String webAddress) throws InterruptedException{
+        driver.get(webAddress);
+        Thread.sleep(10000);
+    }
 
     public void captureScreenShotFF(FirefoxDriver driver, String screenShotName, String screenShotFolder) {
         try {
@@ -115,6 +145,8 @@ public class PageHelper {
         }
     }
 
+
+
     private Dimension GetFFWindowContentDimensions(FirefoxDriver driver)
     {
         JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -122,25 +154,5 @@ public class PageHelper {
         int contentWidth = ((Number) js.executeScript("return document.documentElement.scrollWidth")).intValue();
 
         return new Dimension(contentWidth, contentHeight);
-    }
-
-    public List<TestSettings> ReadTestSettingsFile(List<TestSettings> testSettings) throws Exception {
-        TestSettings test;
-        try (BufferedReader br = new BufferedReader(new FileReader(testFileName))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                test = new TestSettings();
-                //test.set_xPath(line.substring(0, line.indexOf(":")).replace("\"","").trim());
-                test.set_xPath(line.substring(0, line.indexOf(":")).trim());
-                int start = line.indexOf(":") + 1;
-                int end = line.length();
-                //test.set_expectedValue(line.substring(start, end).replace("\"","").trim());
-                test.set_expectedValue(line.substring(start, end).trim());
-                testSettings.add(test);
-                // process the line.
-                System.out.println("(" + test.get_xPath() + ") - (" + test.get_expectedValue() + ")");
-            }
-            return testSettings;
-        }
-    }
+    }*/
 }
