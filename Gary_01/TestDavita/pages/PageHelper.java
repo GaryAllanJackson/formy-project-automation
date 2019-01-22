@@ -1,3 +1,4 @@
+import com.sun.xml.internal.fastinfoset.util.StringArray;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -86,16 +87,26 @@ public class PageHelper {
         object, placing the xPath string into the xPath Property, placing the Expected value string into the
         Expected value Property and adding that to the List<TestSettings> ArrayList
      ******************************************************************************************* */
-    public List<TestSettings> ReadTestSettingsFile(List<TestSettings> testSettings) throws Exception {
+    public List<TestSettings> ReadTestSettingsFile(List<TestSettings> testSettings, String testFileName) throws Exception {
         TestSettings test;
+        /*if (testFileName == null || testFileName.isEmpty())
+        {
+            testFileName = this.testFileName;
+        }*/
         try (BufferedReader br = new BufferedReader(new FileReader(testFileName))) {
             String line;
+            String [] lineValues;
             while ((line = br.readLine()) != null) {
                 test = new TestSettings();
-                test.set_xPath(line.substring(0, line.indexOf(":")).trim());
-                int start = line.indexOf(":") + 1;
-                int end = line.length();
-                test.set_expectedValue(line.substring(start, end).trim());
+                lineValues = line.split(":");
+                //test.set_xPath(line.substring(0, line.indexOf(":")).trim());
+                test.set_xPath(lineValues[0].trim());
+                test.set_expectedValue(lineValues[1].trim());
+                test.set_searchType(lineValues[2].trim());
+                test.setPerformWrite(Boolean.parseBoolean(lineValues[3].trim()));
+//                int start = line.indexOf(":") + 1;
+//                int end = line.length();
+//                test.set_expectedValue(line.substring(start, end).trim());
                 testSettings.add(test);
                 // Show input to user
                 System.out.println("Reading Test File values(xPath = " + test.get_xPath() + ") - (Expected Value = " + test.get_expectedValue() + ")");
@@ -103,6 +114,61 @@ public class PageHelper {
             return testSettings;
         }
     }
+
+
+
+    /* ******************************************************************
+     * Description: This method reads the test configuration file
+     * and populates the ConfigSettings variable with these settings
+     * which in turn direct the test to use the selected browser and
+     * to test the configured site.
+     ****************************************************************** */
+    public ConfigSettings ReadConfigurationSettings(String configurationFile) {
+        ConfigSettings configSettings = new ConfigSettings();
+        String configValue;
+        System.out.println("Reading testSetup.config file");
+        try (BufferedReader br = new BufferedReader(new FileReader(configurationFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                //if (line.substring(0,2) != "//") {
+                if (line.substring(0,2).indexOf("//") < 0) {
+                    configValue = line.substring(line.indexOf("=") + 1);
+                    System.out.println("configValue = " + configValue);
+                    if (line.toLowerCase().indexOf("browsertype") >= 0) {
+                        configSettings.set_browserType(configValue);
+                        System.out.println("browserType = " + configSettings.get_browserType().toString());
+                    }
+                    else if (line.toLowerCase().indexOf("testpageroot") >= 0) {
+                        configSettings.set_testPageRoot(configValue);
+                        System.out.println("testPageRoot = " + configSettings.get_testPageRoot());
+                    }
+                    else if (line.toLowerCase().indexOf("runheadless") >= 0) {
+                        configSettings.set_runHeadless(Boolean.parseBoolean(configValue));
+                        System.out.println("runHeadless = " + configSettings.get_runHeadless().toString());
+                    }
+                    else if (line.toLowerCase().indexOf("screenshotsavefolder") >= 0) {
+                        configSettings .set_screenShotSaveFolder(configValue);
+                        System.out.println("screenShotSaveFolder = " + configSettings.get_screenShotSaveFolder());
+                    }
+                    else if (line.toLowerCase().indexOf("testallbrowsers") >= 0) {
+                        configSettings.set_testAllBrowsers(Boolean.parseBoolean(configValue));
+                        System.out.println("testAllBrowsers = " + configSettings.get_testAllBrowsers().toString());
+                    }
+                    else if (line.toLowerCase().indexOf("testfilename") >= 0) {
+                        configSettings.set_testSettingsFile(configValue);
+                        System.out.println("testfilename = " + configSettings.get_testSettingsFile());
+                    }
+                }
+            }
+        }
+        catch (Exception e) {
+            //configSettings = null;
+        }
+        System.out.println("testSetup.config file read.");
+        return configSettings;
+    }
+
+
 
     /*
     // the below methods were written exclusively for the Firefox driver but are no longer needed

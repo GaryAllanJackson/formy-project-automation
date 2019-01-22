@@ -1,0 +1,4 @@
+//*[@id="acsMainInvite"]/div/a[1] : click : xPath : true
+//*[@id="ACB617D7-F64F-4C20-BD0A-208E7ED5D9A3"]/div/div[1]/h2 : Symptoms, Treatment and Prevention : xPath : false
+//*[@id="ACB617D7-F64F-4C20-BD0A-208E7ED5D9A3"]/div/div[2]/div[1]/div/h3[1] : Symptoms  : xPath : false
+//*[@id="ACB617D7-F64F-4C20-BD0A-208E7ED5D9A3"]/div/div[2]/div[1]/div/h3[2] : How to treat the flu  : xPath : false
