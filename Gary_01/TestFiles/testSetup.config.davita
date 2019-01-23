@@ -7,8 +7,8 @@
 //testAllBrowsers - can be true or false.  If false, BrowserType must be set.  If true, BrowserType is ignored.
 //testFileName - name of the file containing the test settings file which is a colon separated file with the following structure:
 // [xPath] : [Expected Value]
-BrowserType=Chrome
-//TestPageRoot=https://www.davita.com/
+BrowserType=PhantomJS
+TestPageRoot=https://www.davita.com/
 RunHeadless=false
 ScreenShotSaveFolder=C:\Gary\ScreenShots\Davita\
 testAllBrowsers=false

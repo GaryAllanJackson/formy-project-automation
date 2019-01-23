@@ -25,25 +25,31 @@ enum BrowserType {
 
 public class HomePage {
 
-    /*
-        NOTES:
-        Headless firefox https://developer.mozilla.org/en-US/Firefox/Headless_mode
-     */
+    //region { NOTES }
+    /* *********************************************************************
+     *  NOTES:
+     *   Headless firefox https://developer.mozilla.org/en-US/Firefox/Headless_mode
+     *   Moved to file:
+     *       //private static String homePageRoot = "https://www.davita.com/";
+     *
+     *   Completely removed:
+     *      //private boolean usePhantomJsDriver = true;
+     *      //private FirefoxDriver ffDriver;
+     *      //private String testFileName = "C:\\Users\\gjackson\\Downloads\\Ex_Files_Selenium_EssT\\Ex_Files_Selenium_EssT\\Exercise Files\\Gary_01\\TestFiles\\TestSettingsFile.txt";
+     ********************************************************************* */
+    //endregion
 
-
-    private WebDriver driver; // = new ChromeDriver();
-    private FirefoxDriver ffDriver;
-    //private static String homePageRoot = "https://www.davita.com/";
+    private String configurationFile = "C:\\Users\\gjackson\\Downloads\\Ex_Files_Selenium_EssT\\Ex_Files_Selenium_EssT\\Exercise Files\\Gary_01\\TestFiles\\testSetup.config";
+    private WebDriver driver;
     private static String testPage = "https://www.davita.com/";
     private PageHelper pageHelper = new PageHelper();
     private boolean runHeadless = true;
-    //private boolean usePhantomJsDriver = true;
     private String screenShotSaveFolder = "C:\\Gary\\ScreenShots\\";
     private BrowserType _selectedBrowserType; // = BrowserType.Firefox;    //BrowserType.Chrome;  //BrowserType.PhantomJS;
     private int maxBrowsers = 3;
     private boolean testAllBrowsers = false;  //true;
     List<TestSettings> testSettings = new ArrayList<TestSettings>();
-    private String testFileName = "C:\\Users\\gjackson\\Downloads\\Ex_Files_Selenium_EssT\\Ex_Files_Selenium_EssT\\Exercise Files\\Gary_01\\TestFiles\\TestSettingsFile.txt";
+    private String testFileName;
 
     public BrowserType get_selectedBrowserType() {
         return _selectedBrowserType;
@@ -61,14 +67,18 @@ public class HomePage {
         }
     }
 
-
+    /* ****************************************************************
+     * Description: Default Constructor.  Reads the configuration file
+     * and the associated test file and when a site is not being tested
+     * using all browsers, it sets the browser that will be used for the
+     * test.
+     **************************************************************** */
     public HomePage() throws Exception
     {
-        System.out.println("In HomePage() constructor");
-        //System.out.println("selectedBrowserType = " + selectedBrowserType.name());
         ConfigureTestEnvironment();
-        System.out.println("HomePage() selectedBrowserType = " + get_selectedBrowserType());
         testSettings = pageHelper.ReadTestSettingsFile(testSettings, testFileName);
+        System.out.println("---------[ Beginning Configuration ]-----------------");
+        System.out.println("Configured Browser Selection = " + get_selectedBrowserType());
 
         if (!testAllBrowsers) {
             if (get_selectedBrowserType() == BrowserType.PhantomJS) {
@@ -78,24 +88,48 @@ public class HomePage {
             } else if (get_selectedBrowserType() == BrowserType.Firefox) {
                 SetFireFoxDriver();
             }
+            System.out.println("---------[ Ending Configuration ]-----------------");
         }
     }
 
+    @Test   //xpath lookup in this method does not work with headless phantomJS
+    public void TestHomePage() throws Exception {
+        //System.out.println("Testing " + testPage);
+        if (testAllBrowsers) {
+            for (int b = 0; b < maxBrowsers; b++) {
+                switch (b) {
+                    case 0:
+                        SetChromeDriver();
+                        break;
+                    case 1:
+                        SetFireFoxDriver();
+                        break;
+                    case 2:
+                        SetPhantomJsDriver();
+                        break;
+                    default:
+                        SetPhantomJsDriver();
+                        break;
+                }
+                TestPageElements();
+            }
+        } else {
+            TestPageElements();
+        }
+    }
+
+
+
     private void ConfigureTestEnvironment() {
-        String configurationFile = "C:\\Users\\gjackson\\Downloads\\Ex_Files_Selenium_EssT\\Ex_Files_Selenium_EssT\\Exercise Files\\Gary_01\\TestFiles\\testSetup.config";
         String tmpBrowserType;
-
-
         ConfigSettings configSettings = pageHelper.ReadConfigurationSettings(configurationFile);
+
         if (configSettings != null) {
-            System.out.println("setting config values");
+            //System.out.println("setting config values");
             tmpBrowserType = configSettings.get_browserType().toLowerCase();
             System.out.println("tmpBrowserType = " + tmpBrowserType);
-            //selectedBrowserType = tmpBrowserType == "chrome" ? BrowserType.Chrome  : tmpBrowserType == "firefox" ? BrowserType.Firefox : BrowserType.PhantomJS;
-            //SetChromeDriver();
-            //selectedBrowserType = tmpBrowserType == "chrome" ? SetChromeDriver()  : tmpBrowserType == "firefox" ? SetFireFoxDriver() : SetPhantomJsDriver();
+
             if (tmpBrowserType.indexOf("chrome") >= 0) {
-                //this.selectedBrowserType = BrowserType.Chrome;
                 set_selectedBrowserType(BrowserType.Chrome);
                 SetChromeDriver();
                 System.out.println("selectedBrowserType = " + get_selectedBrowserType().toString());
@@ -168,37 +202,14 @@ public class HomePage {
         }
     }
 
-    @Test   //xpath lookup in this method does not work with headless phantomJS
-    public void TestHomePage() throws Exception {
-        System.out.println("Testing HomePage");
-        if (testAllBrowsers) {
-            for (int b = 0; b < maxBrowsers; b++) {
-                switch (b) {
-                    case 0:
-                        SetChromeDriver();
-                        break;
-                    case 1:
-                        SetFireFoxDriver();
-                        break;
-                    case 2:
-                        SetPhantomJsDriver();
-                        break;
-                    default:
-                        SetPhantomJsDriver();
-                        break;
-                }
-                TestPageElements();
-            }
-        } else {
-            TestPageElements();
-        }
-    }
+
 
     public void TestPageElements() throws Exception {
+
         //first check the url
-        String expectedUrl = testPage;
-        String actualUrl = CheckPageUrl();
-        assertEquals(expectedUrl, actualUrl);
+//        String expectedUrl = testPage;
+//        String actualUrl = CheckPageUrl();
+//        assertEquals(expectedUrl, actualUrl);
 
         int startIndex = 0;  //used for instances when you do not want to start at the first element to test
 
@@ -226,10 +237,38 @@ public class HomePage {
                 if (ts.get_searchType().toLowerCase().indexOf("xpath") >= 0) {
                     System.out.println("Performing XPath non-read action");
                     status = PerformXPathAction(ts.get_xPath(), ts.get_expectedValue());
+                    if (ts.get_expectedValue().toLowerCase().indexOf("-") >= 0) {
+                        //url has changed, check url against expected value
+                        String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf("-") + 1).trim();
+                        String actualUrl = GetCurrentPageUrl();
+                        assertEquals(expectedUrl, actualUrl);
+                        if (expectedUrl.equals(actualUrl)) {
+                            System.out.println("Successful Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")");
+                        }
+                        else if (!expectedUrl.equals(actualUrl)) {
+                            System.out.println("Failed Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")");
+                        }
+                    }
                 }
                 else if (ts.get_searchType().toLowerCase().indexOf("cssselector") >= 0) {
                     System.out.println("Performing CssSelector non-read action");
                     status = PerformCssSelectorAction(ts.get_xPath(), ts.get_expectedValue());
+                }
+                else if (ts.get_searchType().toLowerCase().indexOf("n/a") >=0) {
+                    if (ts.get_expectedValue().toLowerCase().indexOf("navigate") >= 0) {
+                        String navigateUrl = ts.get_xPath();
+                        String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf("-") + 1).trim();
+                        this.testPage = navigateUrl;
+                        String actualUrl = CheckPageUrl();
+                        assertEquals(expectedUrl, actualUrl);
+                        System.out.println("----[ Start Excplcit Navigation Event ]------------------");
+                        if (expectedUrl.trim().equals(actualUrl.trim())) {
+                            System.out.println("Navigation and URL Check successful!");
+                        } else {
+                            System.out.println("Navigation and URL Check unsuccessful! Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")");
+                        }
+                        System.out.println("----[ Excplcit Navigation Event ]------------------");
+                    }
                 }
             }
         }
@@ -247,6 +286,10 @@ public class HomePage {
         System.out.println("In CheckPageUrl method.  Driver = " + this.driver.toString());
         pageHelper.NavigateToPage(this.driver, testPage);
 
+        return this.driver.getCurrentUrl();
+    }
+
+    public String GetCurrentPageUrl() {
         return this.driver.getCurrentUrl();
     }
 
@@ -270,12 +313,21 @@ public class HomePage {
         if (this.driver.getCurrentUrl() != testPage) {
             pageHelper.NavigateToPage(this.driver, testPage);
         }
-        heading = this.driver.findElement(By.xpath(headingXPath)).getText();
+        try {
+            heading = this.driver.findElement(By.xpath(headingXPath)).getText();
 
-        //System.out.println("heading = " + heading);
-        //System.out.println("Checking heading: \"" + heading + "\"");
-        System.out.println("Checking " + ElementTypeLookup(headingXPath) + " with XPath: \"" + heading + "\"");
-        return heading;
+            //System.out.println("heading = " + heading);
+            //System.out.println("Checking heading: \"" + heading + "\"");
+            System.out.println("Checking " + ElementTypeLookup(headingXPath) + " with XPath: \"" + heading + "\"");
+            return heading;
+        } catch (Exception e) {
+            //pageHelper.captureScreenShot();
+            String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
+
+            pageHelper.captureScreenShot(driver, browserUsed + "xPath_Element_Not_Found", screenShotSaveFolder);
+            return null;
+        }
+
     }
 
     public Boolean PerformXPathAction(String elementXPath, String value) {

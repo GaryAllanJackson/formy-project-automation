@@ -96,21 +96,24 @@ public class PageHelper {
         try (BufferedReader br = new BufferedReader(new FileReader(testFileName))) {
             String line;
             String [] lineValues;
+            System.out.println("----------[ Start of Reading Test Settings file File ]--------------");
+            System.out.println("Reading " + testFileName +  " file");
             while ((line = br.readLine()) != null) {
-                test = new TestSettings();
-                lineValues = line.split(":");
-                //test.set_xPath(line.substring(0, line.indexOf(":")).trim());
-                test.set_xPath(lineValues[0].trim());
-                test.set_expectedValue(lineValues[1].trim());
-                test.set_searchType(lineValues[2].trim());
-                test.setPerformWrite(Boolean.parseBoolean(lineValues[3].trim()));
-//                int start = line.indexOf(":") + 1;
-//                int end = line.length();
-//                test.set_expectedValue(line.substring(start, end).trim());
-                testSettings.add(test);
-                // Show input to user
-                System.out.println("Reading Test File values(xPath = " + test.get_xPath() + ") - (Expected Value = " + test.get_expectedValue() + ")");
+                //line comments in this file are indicated with ###
+                if (line.indexOf("###") < 0) {
+                    test = new TestSettings();
+                    lineValues = line.split(";");
+                    //test.set_xPath(line.substring(0, line.indexOf(":")).trim());
+                    test.set_xPath(lineValues[0].trim());
+                    test.set_expectedValue(lineValues[1].trim());
+                    test.set_searchType(lineValues[2].trim());
+                    test.setPerformWrite(Boolean.parseBoolean(lineValues[3].trim()));
+                    testSettings.add(test);
+                    // Show input to user
+                    System.out.println("Reading Test File values(xPath = " + test.get_xPath() + ") - (Expected Value = " + test.get_expectedValue() + ")");
+                }
             }
+            System.out.println("----------[ End of Reading Test Settings file File ]--------------");
             return testSettings;
         }
     }
@@ -126,14 +129,16 @@ public class PageHelper {
     public ConfigSettings ReadConfigurationSettings(String configurationFile) {
         ConfigSettings configSettings = new ConfigSettings();
         String configValue;
-        System.out.println("Reading testSetup.config file");
+        //System.out.println("Reading " + configurationFile +  " file");
         try (BufferedReader br = new BufferedReader(new FileReader(configurationFile))) {
             String line;
+            System.out.println("----------[ Start of Reading Configuration File ]--------------");
+            System.out.println("Reading " + configurationFile +  " file");
             while ((line = br.readLine()) != null) {
                 //if (line.substring(0,2) != "//") {
                 if (line.substring(0,2).indexOf("//") < 0) {
                     configValue = line.substring(line.indexOf("=") + 1);
-                    System.out.println("configValue = " + configValue);
+                    //System.out.println("configValue = " + configValue);
                     if (line.toLowerCase().indexOf("browsertype") >= 0) {
                         configSettings.set_browserType(configValue);
                         System.out.println("browserType = " + configSettings.get_browserType().toString());
@@ -156,15 +161,17 @@ public class PageHelper {
                     }
                     else if (line.toLowerCase().indexOf("testfilename") >= 0) {
                         configSettings.set_testSettingsFile(configValue);
-                        System.out.println("testfilename = " + configSettings.get_testSettingsFile());
+                        System.out.println("testFileName = " + configSettings.get_testSettingsFile());
                     }
                 }
             }
         }
         catch (Exception e) {
             //configSettings = null;
+            System.out.println("The following error occurred while attempting to read the configuration file:" + configurationFile + "\\r\\n" + e.getMessage());
         }
-        System.out.println("testSetup.config file read.");
+        //System.out.println("testSetup.config file read.");
+        System.out.println("----------[ End of Reading Configuration File ]--------------");
         return configSettings;
     }
 
