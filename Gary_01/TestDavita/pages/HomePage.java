@@ -206,25 +206,31 @@ public class HomePage {
 
     public void TestPageElements() throws Exception {
 
-        //first check the url
-//        String expectedUrl = testPage;
-//        String actualUrl = CheckPageUrl();
-//        assertEquals(expectedUrl, actualUrl);
-
         int startIndex = 0;  //used for instances when you do not want to start at the first element to test
 
         for (int x = startIndex; x < testSettings.size(); x++) {
             TestSettings ts = testSettings.get(x);
             String expected = ts.get_expectedValue();
-            String xPath = ts.get_xPath();
+            String accessor = ts.get_xPath();
 
             //get value and check against expected
             if (!ts.getPerformWrite()) {
-                System.out.println("Element type being checked is <" + xPath.substring(xPath.lastIndexOf("/") + 1).trim());
+                System.out.println("Element type being checked is <" + accessor.substring(accessor.lastIndexOf("/") + 1).trim());
 
-                String actual;
+                String actual = "";
 
-                actual = CheckElementWithXPath(xPath);
+                if (ts.get_searchType().toLowerCase().equals("xpath")) {
+                    actual = CheckElementWithXPath(accessor);
+                }
+                else if (ts.get_searchType().toLowerCase().equals("cssselector")) {
+                    actual = CheckElementWithCssSelector(accessor);
+                }
+                else if (ts.get_searchType().toLowerCase().equals("tagname")) {
+                    actual = CheckElementWithTagName(accessor);
+                }
+                else if (ts.get_searchType().toLowerCase().equals("classname")) {
+                    actual = CheckElementWithClass(accessor);
+                }
 
                 assertEquals(expected, actual);
                 String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
@@ -253,6 +259,50 @@ public class HomePage {
                 else if (ts.get_searchType().toLowerCase().indexOf("cssselector") >= 0) {
                     System.out.println("Performing CssSelector non-read action");
                     status = PerformCssSelectorAction(ts.get_xPath(), ts.get_expectedValue());
+                    if (ts.get_expectedValue().toLowerCase().indexOf("-") >= 0) {
+                        //url has changed, check url against expected value
+                        String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf("-") + 1).trim();
+                        String actualUrl = GetCurrentPageUrl();
+                        assertEquals(expectedUrl, actualUrl);
+                        if (expectedUrl.equals(actualUrl)) {
+                            System.out.println("Successful Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")");
+                        }
+                        else if (!expectedUrl.equals(actualUrl)) {
+                            System.out.println("Failed Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")");
+                        }
+                    }
+                }
+                else if (ts.get_searchType().toLowerCase().indexOf("tagname") >= 0) {
+                    System.out.println("Performing TagName non-read action");
+                    status = PerformTagNameAction(ts.get_xPath(), ts.get_expectedValue());
+                    if (ts.get_expectedValue().toLowerCase().indexOf("-") >= 0) {
+                        //url has changed, check url against expected value
+                        String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf("-") + 1).trim();
+                        String actualUrl = GetCurrentPageUrl();
+                        assertEquals(expectedUrl, actualUrl);
+                        if (expectedUrl.equals(actualUrl)) {
+                            System.out.println("Successful Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")");
+                        }
+                        else if (!expectedUrl.equals(actualUrl)) {
+                            System.out.println("Failed Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")");
+                        }
+                    }
+                }
+                else if (ts.get_searchType().toLowerCase().indexOf("classname") >= 0) {
+                    System.out.println("Performing ClassName non-read action");
+                    status = PerformTagNameAction(ts.get_xPath(), ts.get_expectedValue());
+                    if (ts.get_expectedValue().toLowerCase().indexOf("-") >= 0) {
+                        //url has changed, check url against expected value
+                        String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf("-") + 1).trim();
+                        String actualUrl = GetCurrentPageUrl();
+                        assertEquals(expectedUrl, actualUrl);
+                        if (expectedUrl.equals(actualUrl)) {
+                            System.out.println("Successful Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")");
+                        }
+                        else if (!expectedUrl.equals(actualUrl)) {
+                            System.out.println("Failed Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")");
+                        }
+                    }
                 }
                 else if (ts.get_searchType().toLowerCase().indexOf("n/a") >=0) {
                     if (ts.get_expectedValue().toLowerCase().indexOf("navigate") >= 0) {
@@ -281,6 +331,8 @@ public class HomePage {
     }
 
 
+
+
     //@Test  //this works with headless phantomJS
     public String CheckPageUrl() throws Exception{
         System.out.println("In CheckPageUrl method.  Driver = " + this.driver.toString());
@@ -294,40 +346,25 @@ public class HomePage {
     }
 
 
-    //@Test
-    public String CheckHeading()  throws Exception {
-        if (this.driver.getCurrentUrl() != testPage) {
-            pageHelper.NavigateToPage(this.driver, testPage);
-        }
-        String expected = "Empower Yourself with Kidney Knowledge";
-        String heading = this.driver.findElement(By.xpath("//*[@id=\"content\"]/div[1]/div/ul/li/div/div/h1")).getText();
-        System.out.println("Checking heading: \"" + heading + "\"");
-
-        return heading;
-    }
 
 
-    public String CheckElementWithXPath(String headingXPath)  throws Exception {
-        String heading = "";
+
+    public String CheckElementWithXPath(String accessor)  throws Exception {
+        String actualValue = "";
 
         if (this.driver.getCurrentUrl() != testPage) {
             pageHelper.NavigateToPage(this.driver, testPage);
         }
         try {
-            heading = this.driver.findElement(By.xpath(headingXPath)).getText();
-
-            //System.out.println("heading = " + heading);
-            //System.out.println("Checking heading: \"" + heading + "\"");
-            System.out.println("Checking " + ElementTypeLookup(headingXPath) + " with XPath: \"" + heading + "\"");
-            return heading;
+            actualValue = this.driver.findElement(By.xpath(accessor)).getText();
+            System.out.println("Checking " + ElementTypeLookup(accessor) + " with XPath: \"" + actualValue + "\"");
+            return actualValue;
         } catch (Exception e) {
-            //pageHelper.captureScreenShot();
             String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
 
             pageHelper.captureScreenShot(driver, browserUsed + "xPath_Element_Not_Found", screenShotSaveFolder);
             return null;
         }
-
     }
 
     public Boolean PerformXPathAction(String elementXPath, String value) {
@@ -355,6 +392,21 @@ public class HomePage {
         }
     }
 
+    public String CheckElementWithCssSelector(String headingCssSelector) throws Exception {
+        //dv-band-hero__content__main__title
+        String heading = "";
+
+        if (this.driver.getCurrentUrl() != testPage) {
+            pageHelper.NavigateToPage(this.driver, testPage);
+        }
+        heading = this.driver.findElement(By.cssSelector(headingCssSelector)).getText();
+
+        Thread.sleep(2000);
+        //System.out.println("heading = " + heading);
+        System.out.println("Checking heading with CssSelector: \"" + heading + "\"");
+        return heading;
+    }
+
     public Boolean PerformCssSelectorAction(String elementCssSelector, String value) {
         Boolean status = false;
         //if this is a click event, click it
@@ -380,36 +432,91 @@ public class HomePage {
         }
     }
 
-    public String CheckElementWithCssSelector(String headingCssSelector) throws Exception {
-        //dv-band-hero__content__main__title
-        String heading = "";
+    public String CheckElementWithTagName(String accessor) throws Exception {
+        String actualValue = "";
 
         if (this.driver.getCurrentUrl() != testPage) {
             pageHelper.NavigateToPage(this.driver, testPage);
         }
-        heading = this.driver.findElement(By.cssSelector(headingCssSelector)).getText();
-
-        Thread.sleep(2000);
-        //System.out.println("heading = " + heading);
-        System.out.println("Checking heading with CssSelector: \"" + heading + "\"");
-        return heading;
+        try {
+            actualValue = this.driver.findElement(By.className(accessor)).getText();
+            System.out.println("Checking " + ElementTypeLookup(accessor) + " with ClassName: \"" + actualValue + "\"");
+            return actualValue;
+        } catch (Exception e) {
+            String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
+            pageHelper.captureScreenShot(driver, browserUsed + "xPath_Element_Not_Found", screenShotSaveFolder);
+            return null;
+        }
     }
 
-    public String CheckElementWithTagName(String headingTagName) throws Exception {
-        //dv-band-hero__content__main__title
-        String heading = "";
+    public Boolean PerformTagNameAction(String accessor, String value) {
+        Boolean status = false;
+        //if this is a click event, click it
+        if (value.toLowerCase().indexOf("click") >= 0) {
+            try {
+                this.driver.findElement(By.tagName(accessor)).click();
+                status = true;
+            }
+            catch(Exception e) {
+                status = false;
+            }
+            return status;
+        }
+        else {  //if it is not a click, send keys
+            try {
+                this.driver.findElement(By.tagName(accessor)).sendKeys(value);
+                status = true;
+            }
+            catch(Exception e) {
+                status = false;
+            }
+            return status;
+        }
+    }
+
+    private String CheckElementWithClass(String accessor) throws Exception {
+        String actualValue = "";
 
         if (this.driver.getCurrentUrl() != testPage) {
             pageHelper.NavigateToPage(this.driver, testPage);
         }
-        heading = this.driver.findElement(By.tagName(headingTagName)).getText();
-
-        Thread.sleep(2000);
-        //System.out.println("heading = " + heading);
-        System.out.println("Checking " + ElementTypeLookup(headingTagName) + " with TagName: \"" + heading + "\"");
-
-        return heading;
+        try {
+            actualValue = this.driver.findElement(By.className(accessor)).getText();
+            System.out.println("Checking " + ElementTypeLookup(accessor) + " with ClassName: \"" + actualValue + "\"");
+            return actualValue;
+        } catch (Exception e) {
+            String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
+            pageHelper.captureScreenShot(driver, browserUsed + "xPath_Element_Not_Found", screenShotSaveFolder);
+            return null;
+        }
     }
+
+    public Boolean PerformClassAction(String accessor, String value) {
+        Boolean status = false;
+        //if this is a click event, click it
+        if (value.toLowerCase().indexOf("click") >= 0) {
+            try {
+                this.driver.findElement(By.className(accessor)).click();
+                status = true;
+            }
+            catch(Exception e) {
+                status = false;
+            }
+            return status;
+        }
+        else {  //if it is not a click, send keys
+            try {
+                this.driver.findElement(By.className(accessor)).sendKeys(value);
+                status = true;
+            }
+            catch(Exception e) {
+                status = false;
+            }
+            return status;
+        }
+    }
+
+
 
     private String ElementTypeLookup(String xPath) {
 
@@ -572,6 +679,18 @@ public class HomePage {
             if (this.driver.toString().indexOf("Chrome") >= 0) {
             ShutDownChromeDriver();
         }
+    }
+
+     //@Test
+    public String CheckHeading()  throws Exception {
+        if (this.driver.getCurrentUrl() != testPage) {
+            pageHelper.NavigateToPage(this.driver, testPage);
+        }
+        String expected = "Empower Yourself with Kidney Knowledge";
+        String heading = this.driver.findElement(By.xpath("//*[@id=\"content\"]/div[1]/div/ul/li/div/div/h1")).getText();
+        System.out.println("Checking heading: \"" + heading + "\"");
+
+        return heading;
     }
     */
     //endregion
