@@ -5,9 +5,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Paths;
@@ -175,6 +173,20 @@ public class PageHelper {
         return configSettings;
     }
 
+    public void WriteToFile(String fileName, String fileContents) throws Exception {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
+            writer.write(fileContents);
+            writer.close();
+        }
+        catch(Exception ex) {
+            System.out.println("The following error occurred when attempting to write to the test log file:" + ex.getMessage());
+        }
+    }
+
+//    private void UpdateTestResults(String testMessage) {
+//        testResults.add(testMessage);
+//        System.out.println(testMessage);
+//    }
 
 
     /*

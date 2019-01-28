@@ -50,6 +50,7 @@ public class HomePage {
     private boolean testAllBrowsers = false;  //true;
     List<TestSettings> testSettings = new ArrayList<TestSettings>();
     private String testFileName;
+    List<String> testResults = new ArrayList<>();
 
     public BrowserType get_selectedBrowserType() {
         return _selectedBrowserType;
@@ -77,8 +78,8 @@ public class HomePage {
     {
         ConfigureTestEnvironment();
         testSettings = pageHelper.ReadTestSettingsFile(testSettings, testFileName);
-        System.out.println("---------[ Beginning Configuration ]-----------------");
-        System.out.println("Configured Browser Selection = " + get_selectedBrowserType());
+        UpdateTestResults("---------[ Beginning Configuration ]-----------------");
+        UpdateTestResults("Configured Browser Selection = " + get_selectedBrowserType());
 
         if (!testAllBrowsers) {
             if (get_selectedBrowserType() == BrowserType.PhantomJS) {
@@ -88,13 +89,17 @@ public class HomePage {
             } else if (get_selectedBrowserType() == BrowserType.Firefox) {
                 SetFireFoxDriver();
             }
-            System.out.println("---------[ Ending Configuration ]-----------------");
+            UpdateTestResults("---------[ Ending Configuration ]-----------------");
         }
+    }
+
+    private void UpdateTestResults(String testMessage) {
+        testResults.add(testMessage);
+        System.out.println(testMessage);
     }
 
     @Test   //xpath lookup in this method does not work with headless phantomJS
     public void TestHomePage() throws Exception {
-        //System.out.println("Testing " + testPage);
         if (testAllBrowsers) {
             for (int b = 0; b < maxBrowsers; b++) {
                 switch (b) {
@@ -125,26 +130,25 @@ public class HomePage {
         ConfigSettings configSettings = pageHelper.ReadConfigurationSettings(configurationFile);
 
         if (configSettings != null) {
-            //System.out.println("setting config values");
             tmpBrowserType = configSettings.get_browserType().toLowerCase();
-            System.out.println("tmpBrowserType = " + tmpBrowserType);
+            UpdateTestResults("tmpBrowserType = " + tmpBrowserType);
 
             if (tmpBrowserType.indexOf("chrome") >= 0) {
                 set_selectedBrowserType(BrowserType.Chrome);
                 SetChromeDriver();
-                System.out.println("selectedBrowserType = " + get_selectedBrowserType().toString());
+                UpdateTestResults("selectedBrowserType = " + get_selectedBrowserType().toString());
             }
             else if (tmpBrowserType.indexOf("firefox") >= 0) {
                 //this.selectedBrowserType = BrowserType.Firefox;
                 set_selectedBrowserType(BrowserType.Firefox);
                 SetFireFoxDriver();
-                System.out.println("selectedBrowserType = " + get_selectedBrowserType().toString());
+                UpdateTestResults("selectedBrowserType = " + get_selectedBrowserType().toString());
             }
             else {
                 //this.selectedBrowserType = BrowserType.PhantomJS;
                 set_selectedBrowserType(BrowserType.PhantomJS);
                 SetPhantomJsDriver();
-                System.out.println("selectedBrowserType = " + get_selectedBrowserType().toString());
+                UpdateTestResults("selectedBrowserType = " + get_selectedBrowserType().toString());
             }
 
             this.testPage = configSettings.get_testPageRoot();
@@ -154,13 +158,14 @@ public class HomePage {
             this.testFileName = configSettings.get_testSettingsFile();
         }
         else {
-            System.out.println("configSettings is null!!!");
+            UpdateTestResults("configSettings is null!!!");
         }
     }
 
 
     private void SetPhantomJsDriver() {
-        System.out.println("Setting PhantomJSDriver");
+        //System.out.println("Setting PhantomJSDriver");
+        UpdateTestResults("Setting PhantomJSDriver");
         File src=new File("C:\\Gary\\PhantomJS\\phantomjs-2.1.1-windows\\bin\\phantomjs.exe");
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, src.getAbsolutePath());
@@ -169,11 +174,11 @@ public class HomePage {
         capabilities.setCapability("phantomjs.page.settings.userAgent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36");
         System.setProperty("phantomjs.binary.path", src.getAbsolutePath());
         this.driver = new PhantomJSDriver(capabilities);
-        //this.driver.manage().window().maximize();
     }
 
     private void SetChromeDriver() {
-        System.out.println("Setting ChromeDriver");
+        //System.out.println("Setting ChromeDriver");
+        UpdateTestResults("Setting ChromeDriver");
         System.setProperty("webdriver.chrome.driver", "/Users/gjackson/Downloads/chromedriver_win32/chromedriver.exe");
         if (runHeadless) {
             ChromeOptions options = new ChromeOptions();
@@ -186,7 +191,7 @@ public class HomePage {
     }
 
     private void SetFireFoxDriver() {
-        System.out.println("Setting FireFoxDriver");
+        UpdateTestResults("Setting FireFoxDriver");
         File gecko = new File("c:\\GeckoDriver\\geckodriver-v0.23.0-win64\\geckodriver.exe");
         System.setProperty("webdriver.gecko.driver", gecko.getAbsolutePath());
         FirefoxOptions options = new FirefoxOptions();
@@ -215,7 +220,7 @@ public class HomePage {
 
             //get value and check against expected
             if (!ts.getPerformWrite()) {
-                System.out.println("Element type being checked is <" + accessor.substring(accessor.lastIndexOf("/") + 1).trim());
+                UpdateTestResults("Element type being checked is <" + accessor.substring(accessor.lastIndexOf("/") + 1).trim());
 
                 String actual = "";
 
@@ -238,10 +243,10 @@ public class HomePage {
                 pageHelper.captureScreenShot(driver, browserUsed + expected.replace(' ', '_'), screenShotSaveFolder);
             }
             else {  //set a value or perform a click
-                System.out.println("Performing non-read action");
+                UpdateTestResults("Performing non-read action");
                 Boolean status;
                 if (ts.get_searchType().toLowerCase().indexOf("xpath") >= 0) {
-                    System.out.println("Performing XPath non-read action");
+                    UpdateTestResults("Performing XPath non-read action");
                     status = PerformXPathAction(ts.get_xPath(), ts.get_expectedValue());
                     if (ts.get_expectedValue().toLowerCase().indexOf("-") >= 0) {
                         //url has changed, check url against expected value
@@ -249,15 +254,15 @@ public class HomePage {
                         String actualUrl = GetCurrentPageUrl();
                         assertEquals(expectedUrl, actualUrl);
                         if (expectedUrl.equals(actualUrl)) {
-                            System.out.println("Successful Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")");
+                            UpdateTestResults("Successful Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")");
                         }
                         else if (!expectedUrl.equals(actualUrl)) {
-                            System.out.println("Failed Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")");
+                            UpdateTestResults("Failed Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")");
                         }
                     }
                 }
                 else if (ts.get_searchType().toLowerCase().indexOf("cssselector") >= 0) {
-                    System.out.println("Performing CssSelector non-read action");
+                    UpdateTestResults("Performing CssSelector non-read action");
                     status = PerformCssSelectorAction(ts.get_xPath(), ts.get_expectedValue());
                     if (ts.get_expectedValue().toLowerCase().indexOf("-") >= 0) {
                         //url has changed, check url against expected value
@@ -265,15 +270,15 @@ public class HomePage {
                         String actualUrl = GetCurrentPageUrl();
                         assertEquals(expectedUrl, actualUrl);
                         if (expectedUrl.equals(actualUrl)) {
-                            System.out.println("Successful Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")");
+                            UpdateTestResults("Successful Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")");
                         }
                         else if (!expectedUrl.equals(actualUrl)) {
-                            System.out.println("Failed Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")");
+                            UpdateTestResults("Failed Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")");
                         }
                     }
                 }
                 else if (ts.get_searchType().toLowerCase().indexOf("tagname") >= 0) {
-                    System.out.println("Performing TagName non-read action");
+                    UpdateTestResults("Performing TagName non-read action");
                     status = PerformTagNameAction(ts.get_xPath(), ts.get_expectedValue());
                     if (ts.get_expectedValue().toLowerCase().indexOf("-") >= 0) {
                         //url has changed, check url against expected value
@@ -281,15 +286,15 @@ public class HomePage {
                         String actualUrl = GetCurrentPageUrl();
                         assertEquals(expectedUrl, actualUrl);
                         if (expectedUrl.equals(actualUrl)) {
-                            System.out.println("Successful Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")");
+                            UpdateTestResults("Successful Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")");
                         }
                         else if (!expectedUrl.equals(actualUrl)) {
-                            System.out.println("Failed Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")");
+                            UpdateTestResults("Failed Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")");
                         }
                     }
                 }
                 else if (ts.get_searchType().toLowerCase().indexOf("classname") >= 0) {
-                    System.out.println("Performing ClassName non-read action");
+                    UpdateTestResults("Performing ClassName non-read action");
                     status = PerformTagNameAction(ts.get_xPath(), ts.get_expectedValue());
                     if (ts.get_expectedValue().toLowerCase().indexOf("-") >= 0) {
                         //url has changed, check url against expected value
@@ -297,10 +302,10 @@ public class HomePage {
                         String actualUrl = GetCurrentPageUrl();
                         assertEquals(expectedUrl, actualUrl);
                         if (expectedUrl.equals(actualUrl)) {
-                            System.out.println("Successful Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")");
+                            UpdateTestResults("Successful Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")");
                         }
                         else if (!expectedUrl.equals(actualUrl)) {
-                            System.out.println("Failed Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")");
+                            UpdateTestResults("Failed Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")");
                         }
                     }
                 }
@@ -311,13 +316,13 @@ public class HomePage {
                         this.testPage = navigateUrl;
                         String actualUrl = CheckPageUrl();
                         assertEquals(expectedUrl, actualUrl);
-                        System.out.println("----[ Start Excplcit Navigation Event ]------------------");
+                        UpdateTestResults("----[ Start Explicit Navigation Event ]------------------");
                         if (expectedUrl.trim().equals(actualUrl.trim())) {
-                            System.out.println("Navigation and URL Check successful!");
+                            UpdateTestResults("Navigation and URL Check successful!");
                         } else {
-                            System.out.println("Navigation and URL Check unsuccessful! Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")");
+                            UpdateTestResults("Navigation and URL Check unsuccessful! Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")");
                         }
-                        System.out.println("----[ Excplcit Navigation Event ]------------------");
+                        UpdateTestResults("----[ Explicit Navigation Event ]------------------");
                     }
                 }
             }
@@ -335,7 +340,7 @@ public class HomePage {
 
     //@Test  //this works with headless phantomJS
     public String CheckPageUrl() throws Exception{
-        System.out.println("In CheckPageUrl method.  Driver = " + this.driver.toString());
+        UpdateTestResults("In CheckPageUrl method.  Driver = " + this.driver.toString());
         pageHelper.NavigateToPage(this.driver, testPage);
 
         return this.driver.getCurrentUrl();
@@ -346,9 +351,6 @@ public class HomePage {
     }
 
 
-
-
-
     public String CheckElementWithXPath(String accessor)  throws Exception {
         String actualValue = "";
 
@@ -357,7 +359,7 @@ public class HomePage {
         }
         try {
             actualValue = this.driver.findElement(By.xpath(accessor)).getText();
-            System.out.println("Checking " + ElementTypeLookup(accessor) + " with XPath: \"" + actualValue + "\"");
+            UpdateTestResults("Checking " + ElementTypeLookup(accessor) + " with XPath: \"" + actualValue + "\"");
             return actualValue;
         } catch (Exception e) {
             String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
@@ -393,7 +395,6 @@ public class HomePage {
     }
 
     public String CheckElementWithCssSelector(String headingCssSelector) throws Exception {
-        //dv-band-hero__content__main__title
         String heading = "";
 
         if (this.driver.getCurrentUrl() != testPage) {
@@ -402,8 +403,7 @@ public class HomePage {
         heading = this.driver.findElement(By.cssSelector(headingCssSelector)).getText();
 
         Thread.sleep(2000);
-        //System.out.println("heading = " + heading);
-        System.out.println("Checking heading with CssSelector: \"" + heading + "\"");
+        UpdateTestResults("Checking heading with CssSelector: \"" + heading + "\"");
         return heading;
     }
 
@@ -440,7 +440,7 @@ public class HomePage {
         }
         try {
             actualValue = this.driver.findElement(By.className(accessor)).getText();
-            System.out.println("Checking " + ElementTypeLookup(accessor) + " with ClassName: \"" + actualValue + "\"");
+            UpdateTestResults("Checking " + ElementTypeLookup(accessor) + " with ClassName: \"" + actualValue + "\"");
             return actualValue;
         } catch (Exception e) {
             String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
@@ -482,7 +482,7 @@ public class HomePage {
         }
         try {
             actualValue = this.driver.findElement(By.className(accessor)).getText();
-            System.out.println("Checking " + ElementTypeLookup(accessor) + " with ClassName: \"" + actualValue + "\"");
+            UpdateTestResults("Checking " + ElementTypeLookup(accessor) + " with ClassName: \"" + actualValue + "\"");
             return actualValue;
         } catch (Exception e) {
             String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
@@ -519,26 +519,36 @@ public class HomePage {
 
 
     private String ElementTypeLookup(String xPath) {
-
-        //String elementTag = xPath.indexOf("/") > 0 ? xPath.substring(xPath.lastIndexOf("/") + 1).trim() : xPath;
+        //NOTE: When checking string equality in Java you must use the "".Equals("") method.
+        // Using the == operator checks the memory address not the value
         String elementTag = xPath.substring(xPath.lastIndexOf("/") + 1).trim();
-        System.out.println("Looking up elementTag: (" + elementTag + ") Length = " + elementTag.length());
-
-        System.out.println("Difference between elementTag and h3 = " + StringUtils.difference(elementTag,"h3"));
+        UpdateTestResults("Looking up elementTag: (" + elementTag + ") Length = " + elementTag.length());
 
         if (elementTag.toLowerCase().indexOf("a") >= 0 && elementTag.length() == 1) {
             return "Anchor";
         }
         if (elementTag.toLowerCase().indexOf("h") >= 0 && (elementTag.length() == 2 || elementTag.toLowerCase().indexOf("[") > 1)) {
-            System.out.println("This is true!!!!");
+            //System.out.println("This is true!!!!");
             return "Heading";
         }
         if (elementTag.toLowerCase().indexOf("li") >= 0 && elementTag.length() == 2) {
-            System.out.println("This is true!!!!");
+            //System.out.println("This is true!!!!");
             return "List Item";
         }
+        if (elementTag.toLowerCase().indexOf("span") >= 0 && elementTag.length() == 4) {
+            //System.out.println("This is true!!!!");
+            return "Span";
+        }
+        if (elementTag.toLowerCase().indexOf("div") >= 0 && elementTag.length() == 3) {
+            //System.out.println("This is true!!!!");
+            return "Div";
+        }
+        if (elementTag.toLowerCase().indexOf("p") >= 0 && elementTag.length() == 1) {
+            //System.out.println("This is true!!!!");
+            return "Paragraph";
+        }
         if (elementTag.toLowerCase().indexOf("img") >= 0 && elementTag.length() == 3) {
-            System.out.println("This is true!!!!");
+            //System.out.println("This is true!!!!");
             return "Image";
         }
         //region { values not equal but not sure why }
@@ -579,6 +589,7 @@ public class HomePage {
             String command = "taskkill /im chromedriver.exe /f";
             Process child = Runtime.getRuntime().exec(command);
 
+            //region { Unnecessary code }
             // Get output stream to write from it
             /*OutputStream out = child.getOutputStream();
 
@@ -589,8 +600,9 @@ public class HomePage {
 
             out.write("exit /r/n".getBytes());
             out.close();*/
+            //endregion
         } catch (IOException e) {
-            System.out.println("The following error occurred while trying to shut down ChromeDriver: " + e.getMessage());
+            UpdateTestResults("The following error occurred while trying to shut down ChromeDriver: " + e.getMessage());
         }
     }
 
