@@ -1,0 +1,716 @@
+tmpBrowserType = chrome
+Setting ChromeDriver
+selectedBrowserType = Chrome
+---------[ Beginning Configuration ]-----------------
+Configured Browser Selection = Chrome
+Setting ChromeDriver
+---------[ Ending Configuration ]-----------------
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (21727dd8f2fc95452b17e472482ba523)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath: "Empower Yourself with Kidney Knowledge"
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath: "Explore Home Dialysis"
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath: "Kidney-Friendly Recipes for a Healthier You"
+Element type being checked is <a[1]
+Looking up elementTag: (a[1]) Length = 4
+Checking Indeterminate with XPath: "FIND A CLASS"
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (21727dd8f2fc95452b17e472482ba523)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath: "Education"
+Element type being checked is <h2[1]
+Looking up elementTag: (h2[1]) Length = 5
+Checking Heading with XPath: "Kidney Disease Education, Tools & Resources"
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath: "Take Charge of Your Kidney Health"
+Element type being checked is <h5[1]
+Looking up elementTag: (h5[1]) Length = 5
+Checking Heading with XPath: "KIDNEY DISEASE"
+Performing non-read action
+Performing XPath non-read action
+Successful Post Action results Expected URL: (https://www.davita.com/education) Actual URL: (https://www.davita.com/education)
+tmpBrowserType = chrome
+Setting ChromeDriver
+selectedBrowserType = Chrome
+tmpBrowserType = chrome
+Setting ChromeDriver
+selectedBrowserType = Chrome
+---------[ Beginning Configuration ]-----------------
+Configured Browser Selection = Chrome
+Setting ChromeDriver
+---------[ Ending Configuration ]-----------------
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (46d50eea0de316e5a5c23a5c6fbde3ff)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Empower Yourself with Kidney Knowledge"
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Explore Home Dialysis"
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Kidney-Friendly Recipes for a Healthier You"
+Element type being checked is <a[1]
+Looking up elementTag: (a[1]) Length = 4
+Checking Indeterminate with XPath.  Actual Value: "FIND A CLASS"
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (46d50eea0de316e5a5c23a5c6fbde3ff)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Education"
+Element type being checked is <h2[1]
+Looking up elementTag: (h2[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Kidney Disease Education, Tools & Resources"
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Take Charge of Your Kidney Health"
+Element type being checked is <h5[1]
+Looking up elementTag: (h5[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "KIDNEY DISEASE"
+Performing non-read action
+Performing XPath non-read action
+Sleeping for 5000 milliseconds.
+Successful Post Action results Expected URL: (https://www.davita.com/education) Actual URL: (https://www.davita.com/education)
+tmpBrowserType = chrome
+Setting ChromeDriver
+selectedBrowserType = Chrome
+---------[ Beginning Configuration ]-----------------
+Configured Browser Selection = Chrome
+Setting ChromeDriver
+---------[ Ending Configuration ]-----------------
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (b5cd7f531fab6e0d4bcd3baf2d9ba355)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Empower Yourself with Kidney Knowledge"
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Explore Home Dialysis"
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Kidney-Friendly Recipes for a Healthier You"
+Element type being checked is <a[1]
+Looking up elementTag: (a[1]) Length = 4
+Checking Indeterminate with XPath.  Actual Value: "FIND A CLASS"
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (b5cd7f531fab6e0d4bcd3baf2d9ba355)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Education"
+Element type being checked is <h2[1]
+Looking up elementTag: (h2[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Kidney Disease Education, Tools & Resources"
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Take Charge of Your Kidney Health"
+Element type being checked is <h5[1]
+Looking up elementTag: (h5[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "KIDNEY DISEASE"
+Performing non-read action
+Performing XPath non-read action
+Sleeping for 5000 milliseconds.
+Successful Post Action results Expected URL: (https://www.davita.com/education) Actual URL: (https://www.davita.com/education)
+tmpBrowserType = chrome
+Setting ChromeDriver
+selectedBrowserType = Chrome
+---------[ Beginning Configuration ]-----------------
+Configured Browser Selection = Chrome
+Setting ChromeDriver
+---------[ Ending Configuration ]-----------------
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (3e2f7e19e2c18d2c746e6a1977f0e5ae)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Empower Yourself with Kidney Knowledge"
+Successful comparison results Expected value: (Empower Yourself with Kidney Knowledge) Actual value: (Empower Yourself with Kidney Knowledge)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Explore Home Dialysis"
+Successful comparison results Expected value: (Explore Home Dialysis) Actual value: (Explore Home Dialysis)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Kidney-Friendly Recipes for a Healthier You"
+Successful comparison results Expected value: (Kidney-Friendly Recipes for a Healthier You) Actual value: (Kidney-Friendly Recipes for a Healthier You)
+Element type being checked is <a[1]
+Looking up elementTag: (a[1]) Length = 4
+Checking Indeterminate with XPath.  Actual Value: "FIND A CLASS"
+Failed comparison results Expected value: (FiND A CLASS) Actual value: (FIND A CLASS)
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (3e2f7e19e2c18d2c746e6a1977f0e5ae)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Education"
+Successful comparison results Expected value: (Education) Actual value: (Education)
+Element type being checked is <h2[1]
+Looking up elementTag: (h2[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Kidney Disease Education, Tools & Resources"
+Successful comparison results Expected value: (Kidney Disease Education, Tools & Resources) Actual value: (Kidney Disease Education, Tools & Resources)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Take Charge of Your Kidney Health"
+Successful comparison results Expected value: (Take Charge of Your Kidney Health) Actual value: (Take Charge of Your Kidney Health)
+Element type being checked is <h5[1]
+Looking up elementTag: (h5[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "KIDNEY DISEASE"
+Successful comparison results Expected value: (KIDNEY DISEASE) Actual value: (KIDNEY DISEASE)
+Performing non-read action
+Performing XPath non-read action
+Sleeping for 5000 milliseconds.
+Successful Post Action results Expected URL: (https://www.davita.com/education) Actual URL: (https://www.davita.com/education)
+tmpBrowserType = chrome
+Setting ChromeDriver
+selectedBrowserType = Chrome
+---------[ Beginning Configuration ]-----------------
+Configured Browser Selection = Chrome
+Setting ChromeDriver
+---------[ Ending Configuration ]-----------------
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (e006aef0732da432db7ada60edd4b249)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Empower Yourself with Kidney Knowledge"
+Successful comparison results Expected value: (Empower Yourself with Kidney Knowledge) Actual value: (Empower Yourself with Kidney Knowledge)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Explore Home Dialysis"
+Successful comparison results Expected value: (Explore Home Dialysis) Actual value: (Explore Home Dialysis)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Kidney-Friendly Recipes for a Healthier You"
+Successful comparison results Expected value: (Kidney-Friendly Recipes for a Healthier You) Actual value: (Kidney-Friendly Recipes for a Healthier You)
+Element type being checked is <a[1]
+Looking up elementTag: (a[1]) Length = 4
+Checking Indeterminate with XPath.  Actual Value: "FIND A CLASS"
+Failed comparison results Expected value: (FiND A CLASS) Actual value: (FIND A CLASS)
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (e006aef0732da432db7ada60edd4b249)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Education"
+Successful comparison results Expected value: (Education) Actual value: (Education)
+Element type being checked is <h2[1]
+Looking up elementTag: (h2[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Kidney Disease Education, Tools & Resources"
+Successful comparison results Expected value: (Kidney Disease Education, Tools & Resources) Actual value: (Kidney Disease Education, Tools & Resources)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Take Charge of Your Kidney Health"
+Successful comparison results Expected value: (Take Charge of Your Kidney Health) Actual value: (Take Charge of Your Kidney Health)
+Element type being checked is <h5[1]
+Looking up elementTag: (h5[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "KIDNEY DISEASE"
+Successful comparison results Expected value: (KIDNEY DISEASE) Actual value: (KIDNEY DISEASE)
+Performing non-read action
+Performing XPath non-read action
+Sleeping for 5000 milliseconds.
+Successful Post Action results Expected URL: (https://www.davita.com/education) Actual URL: (https://www.davita.com/education)
+tmpBrowserType = chrome
+Setting ChromeDriver
+selectedBrowserType = Chrome
+---------[ Beginning Configuration ]-----------------
+Configured Browser Selection = Chrome
+Setting ChromeDriver
+---------[ Ending Configuration ]-----------------
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (2095b15aa280500ac58f3b4c12317641)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Empower Yourself with Kidney Knowledge"
+Successful comparison results Expected value: (Empower Yourself with Kidney Knowledge) Actual value: (Empower Yourself with Kidney Knowledge)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Explore Home Dialysis"
+Successful comparison results Expected value: (Explore Home Dialysis) Actual value: (Explore Home Dialysis)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Kidney-Friendly Recipes for a Healthier You"
+Successful comparison results Expected value: (Kidney-Friendly Recipes for a Healthier You) Actual value: (Kidney-Friendly Recipes for a Healthier You)
+Element type being checked is <a[1]
+Looking up elementTag: (a[1]) Length = 4
+Checking Indeterminate with XPath.  Actual Value: "FIND A CLASS"
+Failed comparison results Expected value: (FiND A CLASS) Actual value: (FIND A CLASS)
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (2095b15aa280500ac58f3b4c12317641)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Education"
+Successful comparison results Expected value: (Education) Actual value: (Education)
+Element type being checked is <h2[1]
+Looking up elementTag: (h2[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Kidney Disease Education, Tools & Resources"
+Successful comparison results Expected value: (Kidney Disease Education, Tools & Resources) Actual value: (Kidney Disease Education, Tools & Resources)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Take Charge of Your Kidney Health"
+Successful comparison results Expected value: (Take Charge of Your Kidney Health) Actual value: (Take Charge of Your Kidney Health)
+Element type being checked is <h5[1]
+Looking up elementTag: (h5[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "KIDNEY DISEASE"
+Successful comparison results Expected value: (KIDNEY DISEASE) Actual value: (KIDNEY DISEASE)
+Performing non-read action
+Performing XPath non-read action
+Sleeping for 5000 milliseconds.
+Successful Post Action results Expected URL: (https://www.davita.com/education) Actual URL: (https://www.davita.com/education)
+tmpBrowserType = chrome
+Setting ChromeDriver
+selectedBrowserType = Chrome
+---------[ Beginning Configuration ]-----------------
+Configured Browser Selection = Chrome
+Setting ChromeDriver
+---------[ Ending Configuration ]-----------------
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (21ba931dfe718a5c4fb4c22a197f3e17)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Empower Yourself with Kidney Knowledge"
+Successful comparison results Expected value: (Empower Yourself with Kidney Knowledge) Actual value: (Empower Yourself with Kidney Knowledge)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Explore Home Dialysis"
+Successful comparison results Expected value: (Explore Home Dialysis) Actual value: (Explore Home Dialysis)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Kidney-Friendly Recipes for a Healthier You"
+Successful comparison results Expected value: (Kidney-Friendly Recipes for a Healthier You) Actual value: (Kidney-Friendly Recipes for a Healthier You)
+Element type being checked is <a[1]
+Looking up elementTag: (a[1]) Length = 4
+Checking Indeterminate with XPath.  Actual Value: "FIND A CLASS"
+Failed comparison results Expected value: (FiND A CLASS) Actual value: (FIND A CLASS)
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (21ba931dfe718a5c4fb4c22a197f3e17)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Education"
+Successful comparison results Expected value: (Education) Actual value: (Education)
+Element type being checked is <h2[1]
+Looking up elementTag: (h2[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Kidney Disease Education, Tools & Resources"
+Successful comparison results Expected value: (Kidney Disease Education, Tools & Resources) Actual value: (Kidney Disease Education, Tools & Resources)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Take Charge of Your Kidney Health"
+Successful comparison results Expected value: (Take Charge of Your Kidney Health) Actual value: (Take Charge of Your Kidney Health)
+Element type being checked is <h5[1]
+Looking up elementTag: (h5[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "KIDNEY DISEASE"
+Successful comparison results Expected value: (KIDNEY DISEASE) Actual value: (KIDNEY DISEASE)
+Performing non-read action
+Performing XPath non-read action
+Sleeping for 5000 milliseconds.
+Successful Post Action results Expected URL: (https://www.davita.com/education) Actual URL: (https://www.davita.com/education)
+Element type being checked is <p[1]
+Looking up elementTag: (p[1]) Length = 4
+Checking Indeterminate with XPath.  Actual Value: "How Does Dialysis Work?"
+Successful comparison results Expected value: (How Does Dialysis Work?) Actual value: (How Does Dialysis Work?)
+tmpBrowserType = chrome
+Setting ChromeDriver
+selectedBrowserType = Chrome
+---------[ Beginning Configuration ]-----------------
+Configured Browser Selection = Chrome
+Setting ChromeDriver
+---------[ Ending Configuration ]-----------------
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (29d8db7b1b74424363f65d5f389115a7)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Empower Yourself with Kidney Knowledge"
+Successful comparison results Expected value: (Empower Yourself with Kidney Knowledge) Actual value: (Empower Yourself with Kidney Knowledge)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Explore Home Dialysis"
+Successful comparison results Expected value: (Explore Home Dialysis) Actual value: (Explore Home Dialysis)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Kidney-Friendly Recipes for a Healthier You"
+Successful comparison results Expected value: (Kidney-Friendly Recipes for a Healthier You) Actual value: (Kidney-Friendly Recipes for a Healthier You)
+Element type being checked is <a[1]
+Looking up elementTag: (a[1]) Length = 4
+Checking Indeterminate with XPath.  Actual Value: "FIND A CLASS"
+Failed comparison results Expected value: (FiND A CLASS) Actual value: (FIND A CLASS)
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (29d8db7b1b74424363f65d5f389115a7)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Education"
+Successful comparison results Expected value: (Education) Actual value: (Education)
+Element type being checked is <h2[1]
+tmpBrowserType = chrome
+Setting ChromeDriver
+selectedBrowserType = Chrome
+---------[ Beginning Configuration ]-----------------
+Configured Browser Selection = Chrome
+Setting ChromeDriver
+---------[ Ending Configuration ]-----------------
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (3afbffe2c2501b026cf61fecc0e50f2c)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Empower Yourself with Kidney Knowledge"
+Successful comparison results Expected value: (Empower Yourself with Kidney Knowledge) Actual value: (Empower Yourself with Kidney Knowledge)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Explore Home Dialysis"
+Successful comparison results Expected value: (Explore Home Dialysis) Actual value: (Explore Home Dialysis)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Kidney-Friendly Recipes for a Healthier You"
+Successful comparison results Expected value: (Kidney-Friendly Recipes for a Healthier You) Actual value: (Kidney-Friendly Recipes for a Healthier You)
+Element type being checked is <a[1]
+Looking up elementTag: (a[1]) Length = 4
+Checking Indeterminate with XPath.  Actual Value: "FIND A CLASS"
+Failed comparison results Expected value: (FiND A CLASS) Actual value: (FIND A CLASS)
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (3afbffe2c2501b026cf61fecc0e50f2c)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Education"
+Successful comparison results Expected value: (Education) Actual value: (Education)
+Element type being checked is <h2[1]
+Looking up elementTag: (h2[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Kidney Disease Education, Tools & Resources"
+Successful comparison results Expected value: (Kidney Disease Education, Tools & Resources) Actual value: (Kidney Disease Education, Tools & Resources)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Take Charge of Your Kidney Health"
+Successful comparison results Expected value: (Take Charge of Your Kidney Health) Actual value: (Take Charge of Your Kidney Health)
+Element type being checked is <h5[1]
+Looking up elementTag: (h5[1]) Length = 5
+Checking Heading with XPath.  Actual Value: ""
+Failed comparison results Expected value: (KIDNEY DISEASE) Actual value: ()
+Performing non-read action
+Performing XPath non-read action
+Sleeping for 5000 milliseconds.
+Successful Post Action results Expected URL: (https://www.davita.com/education) Actual URL: (https://www.davita.com/education)
+Element type being checked is <p[1]
+Looking up elementTag: (p[1]) Length = 4
+Checking Indeterminate with XPath.  Actual Value: "How Does Dialysis Work?"
+Successful comparison results Expected value: (How Does Dialysis Work?) Actual value: (How Does Dialysis Work?)
+tmpBrowserType = chrome
+Setting ChromeDriver
+selectedBrowserType = Chrome
+---------[ Beginning Configuration ]-----------------
+Configured Browser Selection = Chrome
+Setting ChromeDriver
+---------[ Ending Configuration ]-----------------
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (c142bad5a3629f7e1001860e7f9aa676)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Empower Yourself with Kidney Knowledge"
+Successful comparison results Expected value: (Empower Yourself with Kidney Knowledge) Actual value: (Empower Yourself with Kidney Knowledge)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Explore Home Dialysis"
+Successful comparison results Expected value: (Explore Home Dialysis) Actual value: (Explore Home Dialysis)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Kidney-Friendly Recipes for a Healthier You"
+Successful comparison results Expected value: (Kidney-Friendly Recipes for a Healthier You) Actual value: (Kidney-Friendly Recipes for a Healthier You)
+Element type being checked is <a[1]
+Looking up elementTag: (a[1]) Length = 4
+Checking Indeterminate with XPath.  Actual Value: "FIND A CLASS"
+Failed comparison results Expected value: (FiND A CLASS) Actual value: (FIND A CLASS)
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (c142bad5a3629f7e1001860e7f9aa676)
+tmpBrowserType = chrome
+Setting ChromeDriver
+selectedBrowserType = Chrome
+---------[ Beginning Configuration ]-----------------
+Configured Browser Selection = Chrome
+Setting ChromeDriver
+---------[ Ending Configuration ]-----------------
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (f479f3aa1dda108d7d7c6c462115f5fb)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Empower Yourself with Kidney Knowledge"
+Successful comparison results Expected value: (Empower Yourself with Kidney Knowledge) Actual value: (Empower Yourself with Kidney Knowledge)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Explore Home Dialysis"
+Successful comparison results Expected value: (Explore Home Dialysis) Actual value: (Explore Home Dialysis)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Kidney-Friendly Recipes for a Healthier You"
+Successful comparison results Expected value: (Kidney-Friendly Recipes for a Healthier You) Actual value: (Kidney-Friendly Recipes for a Healthier You)
+Element type being checked is <a[1]
+Looking up elementTag: (a[1]) Length = 4
+Checking Indeterminate with XPath.  Actual Value: "FIND A CLASS"
+Failed comparison results Expected value: (FiND A CLASS) Actual value: (FIND A CLASS)
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (f479f3aa1dda108d7d7c6c462115f5fb)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Education"
+Successful comparison results Expected value: (Education) Actual value: (Education)
+Element type being checked is <h2[1]
+Looking up elementTag: (h2[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Kidney Disease Education, Tools & Resources"
+Successful comparison results Expected value: (Kidney Disease Education, Tools & Resources) Actual value: (Kidney Disease Education, Tools & Resources)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Take Charge of Your Kidney Health"
+Successful comparison results Expected value: (Take Charge of Your Kidney Health) Actual value: (Take Charge of Your Kidney Health)
+Element type being checked is <h5[1]
+tmpBrowserType = chrome
+Setting ChromeDriver
+selectedBrowserType = Chrome
+---------[ Beginning Configuration ]-----------------
+Configured Browser Selection = Chrome
+Setting ChromeDriver
+---------[ Ending Configuration ]-----------------
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (b79b8e6c7b30b4019e8ad82275d1a3e0)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Empower Yourself with Kidney Knowledge"
+Successful comparison results Expected value: (Empower Yourself with Kidney Knowledge) Actual value: (Empower Yourself with Kidney Knowledge)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Explore Home Dialysis"
+Successful comparison results Expected value: (Explore Home Dialysis) Actual value: (Explore Home Dialysis)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Kidney-Friendly Recipes for a Healthier You"
+Successful comparison results Expected value: (Kidney-Friendly Recipes for a Healthier You) Actual value: (Kidney-Friendly Recipes for a Healthier You)
+Element type being checked is <a[1]
+Looking up elementTag: (a[1]) Length = 4
+Checking Indeterminate with XPath.  Actual Value: "FIND A CLASS"
+Failed comparison results Expected value: (FiND A CLASS) Actual value: (FIND A CLASS)
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (b79b8e6c7b30b4019e8ad82275d1a3e0)
+tmpBrowserType = chrome
+Setting ChromeDriver
+selectedBrowserType = Chrome
+---------[ Beginning Configuration ]-----------------
+Configured Browser Selection = Chrome
+Setting ChromeDriver
+---------[ Ending Configuration ]-----------------
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (f31493342cefcaf1c653ca3b26c7ddfe)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Empower Yourself with Kidney Knowledge"
+Successful comparison results Expected value: (Empower Yourself with Kidney Knowledge) Actual value: (Empower Yourself with Kidney Knowledge)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Explore Home Dialysis"
+Successful comparison results Expected value: (Explore Home Dialysis) Actual value: (Explore Home Dialysis)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Kidney-Friendly Recipes for a Healthier You"
+Successful comparison results Expected value: (Kidney-Friendly Recipes for a Healthier You) Actual value: (Kidney-Friendly Recipes for a Healthier You)
+Element type being checked is <a[1]
+Looking up elementTag: (a[1]) Length = 4
+Checking Indeterminate with XPath.  Actual Value: "FIND A CLASS"
+Failed comparison results Expected value: (FiND A CLASS) Actual value: (FIND A CLASS)
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (f31493342cefcaf1c653ca3b26c7ddfe)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Education"
+Successful comparison results Expected value: (Education) Actual value: (Education)
+Element type being checked is <h2[1]
+Looking up elementTag: (h2[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Kidney Disease Education, Tools & Resources"
+Successful comparison results Expected value: (Kidney Disease Education, Tools & Resources) Actual value: (Kidney Disease Education, Tools & Resources)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Take Charge of Your Kidney Health"
+Successful comparison results Expected value: (Take Charge of Your Kidney Health) Actual value: (Take Charge of Your Kidney Health)
+Element type being checked is <h5[1]
+Looking up elementTag: (h5[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "KIDNEY DISEASE"
+Successful comparison results Expected value: (KIDNEY DISEASE) Actual value: (KIDNEY DISEASE)
+Performing non-read action
+Performing XPath non-read action
+Sleeping for 5000 milliseconds.
+Successful Post Action results Expected URL: (https://www.davita.com/education) Actual URL: (https://www.davita.com/education)
+Element type being checked is <p[1]
+Looking up elementTag: (p[1]) Length = 4
+Checking Indeterminate with XPath.  Actual Value: "How Does Dialysis Work?"
+Successful comparison results Expected value: (How Does Dialysis Work?) Actual value: (How Does Dialysis Work?)
+tmpBrowserType = chrome
+Setting ChromeDriver
+selectedBrowserType = Chrome
+---------[ Beginning Configuration ]-----------------
+Configured Browser Selection = Chrome
+Setting ChromeDriver
+---------[ Ending Configuration ]-----------------
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (a778438367db0aa48ee7e74350e520dc)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Empower Yourself with Kidney Knowledge"
+Successful comparison results Expected value: (Empower Yourself with Kidney Knowledge) Actual value: (Empower Yourself with Kidney Knowledge)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Explore Home Dialysis"
+Successful comparison results Expected value: (Explore Home Dialysis) Actual value: (Explore Home Dialysis)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Kidney-Friendly Recipes for a Healthier You"
+Successful comparison results Expected value: (Kidney-Friendly Recipes for a Healthier You) Actual value: (Kidney-Friendly Recipes for a Healthier You)
+Element type being checked is <a[1]
+Looking up elementTag: (a[1]) Length = 4
+Checking Indeterminate with XPath.  Actual Value: "FIND A CLASS"
+Failed comparison results Expected value: (FiND A CLASS) Actual value: (FIND A CLASS)
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (a778438367db0aa48ee7e74350e520dc)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Education"
+Successful comparison results Expected value: (Education) Actual value: (Education)
+Element type being checked is <h2[1]
+Looking up elementTag: (h2[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Kidney Disease Education, Tools & Resources"
+Successful comparison results Expected value: (Kidney Disease Education, Tools & Resources) Actual value: (Kidney Disease Education, Tools & Resources)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Take Charge of Your Kidney Health"
+Successful comparison results Expected value: (Take Charge of Your Kidney Health) Actual value: (Take Charge of Your Kidney Health)
+Element type being checked is <h5[1]
+Looking up elementTag: (h5[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "KIDNEY DISEASE"
+Successful comparison results Expected value: (KIDNEY DISEASE) Actual value: (KIDNEY DISEASE)
+Performing non-read action
+Performing XPath non-read action
+Sleeping for 5000 milliseconds.
+Successful Post Action results Expected URL: (https://www.davita.com/education) Actual URL: (https://www.davita.com/education)
+Element type being checked is <p[1]
+Looking up elementTag: (p[1]) Length = 4
+Checking Indeterminate with XPath.  Actual Value: "How Does Dialysis Work?"
+Successful comparison results Expected value: (How Does Dialysis Work?) Actual value: (How Does Dialysis Work?)
+tmpBrowserType = chrome
+Setting ChromeDriver
+selectedBrowserType = Chrome
+---------[ Beginning Configuration ]-----------------
+Configured Browser Selection = Chrome
+Setting ChromeDriver
+---------[ Ending Configuration ]-----------------
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (8a11e7f862ab7954c9e6937c001f4f6f)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Empower Yourself with Kidney Knowledge"
+Successful comparison results Expected value: (Empower Yourself with Kidney Knowledge) Actual value: (Empower Yourself with Kidney Knowledge)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Explore Home Dialysis"
+Successful comparison results Expected value: (Explore Home Dialysis) Actual value: (Explore Home Dialysis)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Kidney-Friendly Recipes for a Healthier You"
+Successful comparison results Expected value: (Kidney-Friendly Recipes for a Healthier You) Actual value: (Kidney-Friendly Recipes for a Healthier You)
+Element type being checked is <a[1]
+Looking up elementTag: (a[1]) Length = 4
+Checking Indeterminate with XPath.  Actual Value: "FIND A CLASS"
+Failed comparison results Expected value: (FiND A CLASS) Actual value: (FIND A CLASS)
+Performing non-read action
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (8a11e7f862ab7954c9e6937c001f4f6f)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Element type being checked is <h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Education"
+Successful comparison results Expected value: (Education) Actual value: (Education)
+Element type being checked is <h2[1]
+Looking up elementTag: (h2[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Kidney Disease Education, Tools & Resources"
+Successful comparison results Expected value: (Kidney Disease Education, Tools & Resources) Actual value: (Kidney Disease Education, Tools & Resources)
+Element type being checked is <h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "Take Charge of Your Kidney Health"
+Successful comparison results Expected value: (Take Charge of Your Kidney Health) Actual value: (Take Charge of Your Kidney Health)
+Element type being checked is <h5[1]
+Looking up elementTag: (h5[1]) Length = 5
+Checking Heading with XPath.  Actual Value: "KIDNEY DISEASE"

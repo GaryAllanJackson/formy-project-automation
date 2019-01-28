@@ -7,14 +7,14 @@
 ### The fourth parameter is the PeformAction boolean and true when text should be entered, a click occurs or Navigating and false when reading element values
 ### --------------------------------|-------------------------|-----------------------|-----------------------------------------------------
 ### [URL/XPath/CssSelector/TagName] ; [Action/Expected value] ; [Element Lookup Type] ; [Perform Action other than Read Value]
-https://www.davita.com/ ; Navigate - https://www.davita.com/ ; n/a ; true
-/html[1]/body[1]/div[1]/div[1]/div[1]/ul[1]/li[1]/div[1]/div[1]/h1[1] ; Empower Yourself with Kidney Knowledge ; xPath ; false
-/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/div[1]/h3[1] ; Explore Home Dialysis ; xPath ; false
-/html[1]/body[1]/div[1]/div[3]/div[1]/h3[1] ; Kidney-Friendly Recipes for a Healthier You ; xPath ; false
-/html[1]/body[1]/div[1]/div[1]/div[1]/ul[1]/li[1]/div[1]/div[1]/a[1] ; FIND A CLASS ; xPath ; false
-https://www.davita.com/education ; Navigate - https://www.davita.com/education ; n/a ; true
-/html[1]/body[1]/div[1]/div[1]/div[1]/ul[1]/li[1]/div[1]/div[1]/h1[1] ; Education ; xPath ; false
-/html[1]/body[1]/div[1]/div[1]/div[1]/div[2]/h2[1] ; Kidney Disease Education, Tools & Resources ; xPath ; false
-/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/h3[1] ; Take Charge of Your Kidney Health ; xPath ; false
-/html[1]/body[1]/header[1]/div[1]/div[3]/div[1]/ul[1]/li[2]/a[1]/h5[1] ; KIDNEY DISEASE ; xPath ; false
-/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/div[1]/h4[3] ; click - https://www.davita.com/education ; xPath ; true
+https://www.davita.com/ ; Navigate - https://www.davita.com/ ; n/a ; true ; true
+/html[1]/body[1]/div[1]/div[1]/div[1]/ul[1]/li[1]/div[1]/div[1]/h1[1] ; Empower Yourself with Kidney Knowledge ; xPath ; false ; false
+/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/div[1]/h3[1] ; Explore Home Dialysis ; xPath ; false ; false
+/html[1]/body[1]/div[1]/div[3]/div[1]/h3[1] ; Kidney-Friendly Recipes for a Healthier You ; xPath ; false ; false
+/html[1]/body[1]/div[1]/div[1]/div[1]/ul[1]/li[1]/div[1]/div[1]/a[1] ; FiND A CLASS ; xPath ; false ; false
+https://www.davita.com/education ; Navigate - https://www.davita.com/education ; n/a ; true ; true
+/html[1]/body[1]/div[1]/div[1]/div[1]/ul[1]/li[1]/div[1]/div[1]/h1[1] ; Education ; xPath ; false ; false
+/html[1]/body[1]/div[1]/div[1]/div[1]/div[2]/h2[1] ; Kidney Disease Education, Tools & Resources ; xPath ; false ; false
+/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/h3[1] ; Take Charge of Your Kidney Health ; xPath ; false ; false
+/html[1]/body[1]/header[1]/div[1]/div[3]/div[1]/ul[1]/li[2]/a[1]/h5[1] ; KIDNEY DISEASe ; xPath ; false ; true
+/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/div[1]/h4[3] ; click - https://www.davita.com/education - 5000 ; xPath ; true ; false

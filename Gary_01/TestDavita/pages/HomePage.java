@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Integer.parseInt;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 enum BrowserType {
@@ -51,10 +52,24 @@ public class HomePage {
     List<TestSettings> testSettings = new ArrayList<TestSettings>();
     private String testFileName;
     List<String> testResults = new ArrayList<>();
+    private String logFileName = configurationFile.substring(0, configurationFile.lastIndexOf("\\")) + "\\TestResults.log";
 
     public BrowserType get_selectedBrowserType() {
         return _selectedBrowserType;
     }
+
+    //region { System.out Colors }
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_BLACK = "\u001B[30m";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_PURPLE = "\u001B[35m";
+    public static final String ANSI_CYAN = "\u001B[36m";
+    public static final String ANSI_WHITE = "\u001B[37m";
+    //endregion
+
 
     public void set_selectedBrowserType(BrowserType newValue) {
         if (newValue == BrowserType.Chrome) {
@@ -93,11 +108,39 @@ public class HomePage {
         }
     }
 
+    /* ***************************************************************************
+     *  DESCRIPTION:
+     *  Adds a message to the List<String> testResults and writes out the current status to
+     *  the log file and then to the screen.
+     *  (testResults is not necessary and may be removed or you can write all test
+     *  results out when the program ends in the destructor.)
+     **************************************************************************** */
     private void UpdateTestResults(String testMessage) {
         testResults.add(testMessage);
-        System.out.println(testMessage);
+        try {
+            pageHelper.WriteToFile(logFileName, testMessage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (testMessage.indexOf("Successful") >= 0) {
+            // System.out.println((char)27 + "[31m" + testMessage);
+            System.out.println(ANSI_GREEN + testMessage + ANSI_RESET);
+        }
+        else if (testMessage.indexOf("Failed") >= 0) {
+            System.out.println(ANSI_RED + testMessage + ANSI_RESET);
+        }
+        else if (testMessage.indexOf("Navigation") >= 0) {
+            System.out.println(ANSI_BLUE + testMessage + ANSI_RESET);
+        }
+        else {
+            System.out.println(testMessage);
+        }
     }
 
+    /* ***************************************************************************
+     *  DESCRIPTION:
+     *    Runs all of the tests read in from the test settings file.
+     **************************************************************************** */
     @Test   //xpath lookup in this method does not work with headless phantomJS
     public void TestHomePage() throws Exception {
         if (testAllBrowsers) {
@@ -124,7 +167,11 @@ public class HomePage {
     }
 
 
-
+    /* ***************************************************************************
+     *  DESCRIPTION:
+     *  Calls the ReadConfigurationSettings method, to read the config file.
+     *  Sets configurable variables using those values.
+     *************************************************************************** */
     private void ConfigureTestEnvironment() {
         String tmpBrowserType;
         ConfigSettings configSettings = pageHelper.ReadConfigurationSettings(configurationFile);
@@ -162,7 +209,10 @@ public class HomePage {
         }
     }
 
-
+    /* ***************************************************************************
+     *  DESCRIPTION:
+     *  Sets the WebDriver to the PhantomJs Driver
+     **************************************************************************** */
     private void SetPhantomJsDriver() {
         //System.out.println("Setting PhantomJSDriver");
         UpdateTestResults("Setting PhantomJSDriver");
@@ -176,6 +226,10 @@ public class HomePage {
         this.driver = new PhantomJSDriver(capabilities);
     }
 
+    /* ***************************************************************************
+     *  DESCRIPTION:
+     *  Sets the WebDriver to the Chrome Driver
+     **************************************************************************** */
     private void SetChromeDriver() {
         //System.out.println("Setting ChromeDriver");
         UpdateTestResults("Setting ChromeDriver");
@@ -190,6 +244,10 @@ public class HomePage {
         }
     }
 
+    /* ***************************************************************************
+     *  DESCRIPTION:
+     *  Sets the WebDriver to the FireFox Driver
+     **************************************************************************** */
     private void SetFireFoxDriver() {
         UpdateTestResults("Setting FireFoxDriver");
         File gecko = new File("c:\\GeckoDriver\\geckodriver-v0.23.0-win64\\geckodriver.exe");
@@ -208,9 +266,11 @@ public class HomePage {
     }
 
 
-
+    /* ***************************************************************************
+     *  DESCRIPTION:
+     *    Runs all tests read in from the test settings file.
+     **************************************************************************** */
     public void TestPageElements() throws Exception {
-
         int startIndex = 0;  //used for instances when you do not want to start at the first element to test
 
         for (int x = startIndex; x < testSettings.size(); x++) {
@@ -237,7 +297,23 @@ public class HomePage {
                     actual = CheckElementWithClass(accessor);
                 }
 
-                assertEquals(expected, actual);
+                //assertEquals(expected, actual);
+                if (ts.get_isCrucial()) {
+                    assertEquals(expected, actual);
+                }
+                else {
+                    try {
+                        assertEquals(expected, actual);
+                    } catch (AssertionError ae) {
+                        //this is expected, so ignore it
+                    }
+                }
+                if (expected.equals(actual)) {
+                    UpdateTestResults("Successful comparison results Expected value: (" + expected + ") Actual value: (" + actual + ")");
+                }
+                else if (!expected.equals(actual)) {
+                    UpdateTestResults("Failed comparison results Expected value: (" + expected + ") Actual value: (" + actual + ")");
+                }
                 String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
 
                 pageHelper.captureScreenShot(driver, browserUsed + expected.replace(' ', '_'), screenShotSaveFolder);
@@ -245,14 +321,30 @@ public class HomePage {
             else {  //set a value or perform a click
                 UpdateTestResults("Performing non-read action");
                 Boolean status;
+                int dashCount = StringUtils.countMatches(ts.get_expectedValue(), "-");
                 if (ts.get_searchType().toLowerCase().indexOf("xpath") >= 0) {
                     UpdateTestResults("Performing XPath non-read action");
                     status = PerformXPathAction(ts.get_xPath(), ts.get_expectedValue());
                     if (ts.get_expectedValue().toLowerCase().indexOf("-") >= 0) {
                         //url has changed, check url against expected value
                         String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf("-") + 1).trim();
+                        if (dashCount > 1)
+                        {
+                            expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf("-") + 1, ts.get_expectedValue().lastIndexOf("-")).trim();
+                            int delayMilliSeconds = parseInt(ts.get_expectedValue().substring(ts.get_expectedValue().lastIndexOf("-") + 1).trim());
+                            DelayCheck(delayMilliSeconds);
+                        }
                         String actualUrl = GetCurrentPageUrl();
-                        assertEquals(expectedUrl, actualUrl);
+                        if (ts.get_isCrucial()) {
+                            assertEquals(expectedUrl, actualUrl);
+                        }
+                        else {
+                            try {
+                                assertEquals(expectedUrl, actualUrl);
+                            } catch (AssertionError ae) {
+                                //this is expected, so ignore it
+                            }
+                        }
                         if (expectedUrl.equals(actualUrl)) {
                             UpdateTestResults("Successful Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")");
                         }
@@ -267,6 +359,11 @@ public class HomePage {
                     if (ts.get_expectedValue().toLowerCase().indexOf("-") >= 0) {
                         //url has changed, check url against expected value
                         String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf("-") + 1).trim();
+                        if (dashCount > 1)
+                        {
+                            int delayMilliSeconds = parseInt(ts.get_expectedValue().substring(ts.get_expectedValue().lastIndexOf("-") + 1).trim());
+                            DelayCheck(delayMilliSeconds);
+                        }
                         String actualUrl = GetCurrentPageUrl();
                         assertEquals(expectedUrl, actualUrl);
                         if (expectedUrl.equals(actualUrl)) {
@@ -283,6 +380,11 @@ public class HomePage {
                     if (ts.get_expectedValue().toLowerCase().indexOf("-") >= 0) {
                         //url has changed, check url against expected value
                         String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf("-") + 1).trim();
+                        if (dashCount > 1)
+                        {
+                            int delayMilliSeconds = parseInt(ts.get_expectedValue().substring(ts.get_expectedValue().lastIndexOf("-") + 1).trim());
+                            DelayCheck(delayMilliSeconds);
+                        }
                         String actualUrl = GetCurrentPageUrl();
                         assertEquals(expectedUrl, actualUrl);
                         if (expectedUrl.equals(actualUrl)) {
@@ -299,6 +401,11 @@ public class HomePage {
                     if (ts.get_expectedValue().toLowerCase().indexOf("-") >= 0) {
                         //url has changed, check url against expected value
                         String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf("-") + 1).trim();
+                        if (dashCount > 1)
+                        {
+                            int delayMilliSeconds = parseInt(ts.get_expectedValue().substring(ts.get_expectedValue().lastIndexOf("-") + 1).trim());
+                            DelayCheck(delayMilliSeconds);
+                        }
                         String actualUrl = GetCurrentPageUrl();
                         assertEquals(expectedUrl, actualUrl);
                         if (expectedUrl.equals(actualUrl)) {
@@ -313,6 +420,11 @@ public class HomePage {
                     if (ts.get_expectedValue().toLowerCase().indexOf("navigate") >= 0) {
                         String navigateUrl = ts.get_xPath();
                         String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf("-") + 1).trim();
+                        if (dashCount > 1)
+                        {
+                            int delayMilliSeconds = parseInt(ts.get_expectedValue().substring(ts.get_expectedValue().lastIndexOf("-") + 1).trim());
+                            DelayCheck(delayMilliSeconds);
+                        }
                         this.testPage = navigateUrl;
                         String actualUrl = CheckPageUrl();
                         assertEquals(expectedUrl, actualUrl);
@@ -335,7 +447,10 @@ public class HomePage {
         }
     }
 
-
+    private void DelayCheck(int milliseconds) throws InterruptedException {
+        UpdateTestResults("Sleeping for " + milliseconds + " milliseconds.");
+        Thread.sleep(milliseconds);
+    }
 
 
     //@Test  //this works with headless phantomJS
@@ -359,7 +474,7 @@ public class HomePage {
         }
         try {
             actualValue = this.driver.findElement(By.xpath(accessor)).getText();
-            UpdateTestResults("Checking " + ElementTypeLookup(accessor) + " with XPath: \"" + actualValue + "\"");
+            UpdateTestResults("Checking " + ElementTypeLookup(accessor) + " with XPath.  Actual Value: \"" + actualValue + "\"");
             return actualValue;
         } catch (Exception e) {
             String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
@@ -403,7 +518,7 @@ public class HomePage {
         heading = this.driver.findElement(By.cssSelector(headingCssSelector)).getText();
 
         Thread.sleep(2000);
-        UpdateTestResults("Checking heading with CssSelector: \"" + heading + "\"");
+        UpdateTestResults("Checking heading with CssSelector.  Actual Value: \"" + heading + "\"");
         return heading;
     }
 
@@ -440,7 +555,7 @@ public class HomePage {
         }
         try {
             actualValue = this.driver.findElement(By.className(accessor)).getText();
-            UpdateTestResults("Checking " + ElementTypeLookup(accessor) + " with ClassName: \"" + actualValue + "\"");
+            UpdateTestResults("Checking " + ElementTypeLookup(accessor) + " with ClassName.  Actual Value: \"" + actualValue + "\"");
             return actualValue;
         } catch (Exception e) {
             String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
@@ -482,7 +597,7 @@ public class HomePage {
         }
         try {
             actualValue = this.driver.findElement(By.className(accessor)).getText();
-            UpdateTestResults("Checking " + ElementTypeLookup(accessor) + " with ClassName: \"" + actualValue + "\"");
+            UpdateTestResults("Checking " + ElementTypeLookup(accessor) + " with ClassName.  Actual Value: \"" + actualValue + "\"");
             return actualValue;
         } catch (Exception e) {
             String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";

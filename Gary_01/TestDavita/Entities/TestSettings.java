@@ -4,6 +4,7 @@ public class TestSettings {
     private String _expectedValue;
     private String _searchType;
     private Boolean performWrite;
+    private Boolean _isCrucial;
 
 
     public String get_xPath() {
@@ -36,5 +37,13 @@ public class TestSettings {
 
     public void setPerformWrite(Boolean performWrite) {
         this.performWrite = performWrite;
+    }
+
+    public Boolean get_isCrucial() {
+        return _isCrucial;
+    }
+
+    public void set_isCrucial(Boolean _isCrucial) {
+        this._isCrucial = _isCrucial;
     }
 }

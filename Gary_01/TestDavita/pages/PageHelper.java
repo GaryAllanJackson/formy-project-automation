@@ -15,6 +15,18 @@ public class PageHelper {
 
     private String testFileName = "C:\\Users\\gjackson\\Downloads\\Ex_Files_Selenium_EssT\\Ex_Files_Selenium_EssT\\Exercise Files\\Gary_01\\TestFiles\\TestSettingsFile.txt";
 
+    //region { System.out Colors }
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_BLACK = "\u001B[30m";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_PURPLE = "\u001B[35m";
+    public static final String ANSI_CYAN = "\u001B[36m";
+    public static final String ANSI_WHITE = "\u001B[37m";
+    //endregion
+
     /* ****************************************************************
      *  DESCRIPTION:
      *  Navigates to the web address passed in
@@ -40,10 +52,16 @@ public class PageHelper {
             Dimension dimension = GetWindowContentDimensions(driver);
             driver.manage().window().setSize(dimension);
 
+            screenShotName = MakeValidFileName(screenShotName);
+
             //take the screen shot
             TakesScreenshot ts = (TakesScreenshot)driver;
             File source = ts.getScreenshotAs(OutputType.FILE);
             if (screenShotFolder != null && !screenShotFolder.isEmpty() && Files.exists(Paths.get(screenShotFolder))) {
+                if (!screenShotFolder.endsWith("\\"))
+                {
+                    screenShotFolder = screenShotFolder + "\\";
+                }
                 FileUtils.copyFile(source, new File(screenShotFolder + screenShotName+".png"));
             }
             else {
@@ -58,10 +76,24 @@ public class PageHelper {
             driver.manage().window().setSize(originalDimension);
         }
         catch (Exception e) {
-            System.out.println("Exception while taking screenshot " + e.getMessage());
+            System.out.println(ANSI_RED + "Exception while taking screenshot (" + screenShotName + "): " + e.getMessage() + ANSI_RESET);
         }
     }
 
+    private String MakeValidFileName(String screenShotName) {
+        String allowedCharacters = "abcdefghijklmnopqrstuvwxyz1234567890_-";
+        String cleanValue = "";
+        //System.out.println("Allowed Characters: (" + allowedCharacters + ")");
+        for (int x=0;x<(screenShotName.length()-1);x++)
+        {
+            //System.out.println(screenShotName.substring(x,x + 1).toLowerCase());
+            if (allowedCharacters.indexOf(screenShotName.substring(x,x + 1).toLowerCase()) >= 0)
+            {
+                cleanValue = cleanValue + screenShotName.substring(x, x + 1);
+            }
+        }
+        return cleanValue;
+    }
 
 
     /* ****************************************************************
@@ -94,8 +126,8 @@ public class PageHelper {
         try (BufferedReader br = new BufferedReader(new FileReader(testFileName))) {
             String line;
             String [] lineValues;
-            System.out.println("----------[ Start of Reading Test Settings file File ]--------------");
-            System.out.println("Reading " + testFileName +  " file");
+            System.out.println(ANSI_PURPLE + "----------[ Start of Reading Test Settings file File ]--------------" + ANSI_RESET);
+            System.out.println(ANSI_PURPLE + "Reading " + testFileName +  " file" + ANSI_RESET);
             while ((line = br.readLine()) != null) {
                 //line comments in this file are indicated with ###
                 if (line.indexOf("###") < 0) {
@@ -106,12 +138,13 @@ public class PageHelper {
                     test.set_expectedValue(lineValues[1].trim());
                     test.set_searchType(lineValues[2].trim());
                     test.setPerformWrite(Boolean.parseBoolean(lineValues[3].trim()));
+                    test.set_isCrucial(Boolean.parseBoolean(lineValues[4].trim()));
                     testSettings.add(test);
                     // Show input to user
-                    System.out.println("Reading Test File values(xPath = " + test.get_xPath() + ") - (Expected Value = " + test.get_expectedValue() + ")");
+                    System.out.println(ANSI_PURPLE + "Reading Test File values(xPath = " + test.get_xPath() + ") - (Expected Value = " + test.get_expectedValue() + ")" + ANSI_RESET);
                 }
             }
-            System.out.println("----------[ End of Reading Test Settings file File ]--------------");
+            System.out.println(ANSI_PURPLE + "----------[ End of Reading Test Settings file File ]--------------" + ANSI_RESET);
             return testSettings;
         }
     }
@@ -176,6 +209,7 @@ public class PageHelper {
     public void WriteToFile(String fileName, String fileContents) throws Exception {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
             writer.write(fileContents);
+            writer.newLine();
             writer.close();
         }
         catch(Exception ex) {
@@ -183,6 +217,7 @@ public class PageHelper {
         }
     }
 
+    //region { Commented Out Code }
 //    private void UpdateTestResults(String testMessage) {
 //        testResults.add(testMessage);
 //        System.out.println(testMessage);
@@ -240,4 +275,5 @@ public class PageHelper {
 
         return new Dimension(contentWidth, contentHeight);
     }*/
+    //endregion
 }
