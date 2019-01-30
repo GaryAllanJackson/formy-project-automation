@@ -1,0 +1,14 @@
+//NOTES: all lines beginning with double slashes will be ignored by the configuration reader
+//BrowserType values: Firefox, Chrome, PhantomJS
+//All, will cycle through all browsers
+//TestPageRoot - site page to be tested
+//RunHeadless can be true to run headless or false to show the browser, but PhantomJs is always headless
+//ScreenShotSaveFolder - folder where screenshots should be saved - Must already exist
+//testAllBrowsers - can be true or false.  If false, BrowserType must be set.  If true, BrowserType is ignored.
+//testFileName - name of the file containing the test settings file which is a colon separated file with the following structure:
+//TestFileName=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\Gary_01\TestFiles\AutomatedDavitaTestSettings.txt
+ScreenShotSaveFolder=C:\Gary\ScreenShots\Davita
+BrowserType=Chrome
+RunHeadless=false
+testAllBrowsers=false
+TestFileName2=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\Gary_01\TestFiles\DavitaTestSettings.txt

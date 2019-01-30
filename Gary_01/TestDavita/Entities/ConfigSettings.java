@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class ConfigSettings {
     private String _browserType;
     private String _testPageRoot;
@@ -5,6 +8,11 @@ public class ConfigSettings {
     private String _screenShotSaveFolder;
     private Boolean _testAllBrowsers;
     private String _testSettingsFile;
+    private List<String> _testFiles;
+
+    public ConfigSettings() {
+        _testFiles = new ArrayList<>();
+    }
 
 
     public String get_browserType() {
@@ -53,5 +61,10 @@ public class ConfigSettings {
 
     public void set_testSettingsFile(String _testSettingsFile) {
         this._testSettingsFile = _testSettingsFile;
+        _testFiles.add(_testSettingsFile);
+    }
+
+    public List<String> get_testFiles() {
+        return _testFiles;
     }
 }

@@ -1,4 +1,5 @@
 import com.sun.xml.internal.fastinfoset.util.StringArray;
+import javafx.scene.paint.Color;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -13,11 +14,15 @@ import java.util.List;
 
 public class PageHelper {
 
-    private String testFileName = "C:\\Users\\gjackson\\Downloads\\Ex_Files_Selenium_EssT\\Ex_Files_Selenium_EssT\\Exercise Files\\Gary_01\\TestFiles\\TestSettingsFile.txt";
+    //private String testFileName = "C:\\Users\\gjackson\\Downloads\\Ex_Files_Selenium_EssT\\Ex_Files_Selenium_EssT\\Exercise Files\\Gary_01\\TestFiles\\TestSettingsFile.txt";
+
+    //bold
+    public static final String ANSI_BOLD = "\u001B[1m";
 
     //region { System.out Colors }
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_BLACK = "\u001B[30m";
+    //public static final String ANSI_BLACK_ALT = "\033[30m";
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_YELLOW = "\u001B[33m";
@@ -26,6 +31,31 @@ public class PageHelper {
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
     //endregion
+
+    //region {System out background colors }
+    public static final String ANSI_BLACK_BACKGROUND = "\u001B[40m";
+    public static final String ANSI_RED_BACKGROUND = "\u001B[41m";
+    public static final String ANSI_GREEN_BACKGROUND = "\u001B[42m";
+    public static final String ANSI_YELLOW_BACKGROUND = "\u001B[43m";
+    public static final String ANSI_BLUE_BACKGROUND = "\u001B[44m";
+    public static final String ANSI_PURPLE_BACKGROUND = "\u001B[45m";
+    public static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
+    public static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
+
+    public static final String COMBO_YELLOW_BLACK = "\u001B[43m;\u001B[30m";
+    public static final String FRAMED = "\u001B[51m";
+    //endregion
+
+    //region { Properties }
+    private String _logFileName;
+    public String get_logFileName() {
+        return _logFileName;
+    }
+    public void set_logFileName(String _logFileName) {
+        this._logFileName = _logFileName;
+    }
+    //endregion
+
 
     /* ****************************************************************
      *  DESCRIPTION:
@@ -36,6 +66,14 @@ public class PageHelper {
         Thread.sleep(10000);
     }
 
+    /* ****************************************************************
+     *  DESCRIPTION:
+     *  Navigates to the web address passed in and sleeps for the number of milliseconds passed in
+     **************************************************************** */
+    public void NavigateToPage(WebDriver driver, String webAddress, int milliseconds) throws InterruptedException{
+        driver.get(webAddress);
+        Thread.sleep(milliseconds);
+    }
 
 
     /* ****************************************************************
@@ -70,13 +108,15 @@ public class PageHelper {
                 }
                 FileUtils.copyFile(source, new File("./ScreenShots/" + screenShotName + ".png"));
             }
-            System.out.println("Screenshot taken");
+            //System.out.println("Screenshot taken");
+            UpdateTestResults("Screenshot taken");
 
             //resize the browser to the original dimensions
             driver.manage().window().setSize(originalDimension);
         }
         catch (Exception e) {
-            System.out.println(ANSI_RED + "Exception while taking screenshot (" + screenShotName + "): " + e.getMessage() + ANSI_RESET);
+            //System.out.println(ANSI_RED + "Exception while taking screenshot (" + screenShotName + "): " + e.getMessage() + ANSI_RESET);
+            UpdateTestResults(ANSI_RED + "Exception while taking screenshot (" + screenShotName + "): " + e.getMessage() + ANSI_RESET);
         }
     }
 
@@ -119,6 +159,7 @@ public class PageHelper {
      ******************************************************************************************* */
     public List<TestSettings> ReadTestSettingsFile(List<TestSettings> testSettings, String testFileName) throws Exception {
         TestSettings test;
+        int requiredFields = 5;
         /*if (testFileName == null || testFileName.isEmpty())
         {
             testFileName = this.testFileName;
@@ -126,13 +167,19 @@ public class PageHelper {
         try (BufferedReader br = new BufferedReader(new FileReader(testFileName))) {
             String line;
             String [] lineValues;
-            System.out.println(ANSI_PURPLE + "----------[ Start of Reading Test Settings file File ]--------------" + ANSI_RESET);
-            System.out.println(ANSI_PURPLE + "Reading " + testFileName +  " file" + ANSI_RESET);
+            //System.out.println(ANSI_PURPLE + "----------[ Start of Reading Test Settings file File ]--------------" + ANSI_RESET);
+            //System.out.println(ANSI_PURPLE + "Reading " + testFileName +  " file" + ANSI_RESET);
+            UpdateTestResults(ANSI_PURPLE + "----------[ Start of Reading Test Settings file File ]--------------" + ANSI_RESET);
+            UpdateTestResults(ANSI_PURPLE + "Reading " + testFileName +  " file" + ANSI_RESET);
             while ((line = br.readLine()) != null) {
                 //line comments in this file are indicated with ###
                 if (line.indexOf("###") < 0) {
                     test = new TestSettings();
                     lineValues = line.split(";");
+                    if (lineValues.length != requiredFields) {
+                        //System.out.println(ANSI_RED + "[ Incorrect file format." + requiredFields + " fields required separated by semi-colons ]" + ANSI_RESET);
+                        UpdateTestResults(ANSI_RED + "[ Incorrect file format." + requiredFields + " fields required separated by semi-colons ]" + ANSI_RESET);
+                    }
                     //test.set_xPath(line.substring(0, line.indexOf(":")).trim());
                     test.set_xPath(lineValues[0].trim());
                     test.set_expectedValue(lineValues[1].trim());
@@ -141,10 +188,12 @@ public class PageHelper {
                     test.set_isCrucial(Boolean.parseBoolean(lineValues[4].trim()));
                     testSettings.add(test);
                     // Show input to user
-                    System.out.println(ANSI_PURPLE + "Reading Test File values(xPath = " + test.get_xPath() + ") - (Expected Value = " + test.get_expectedValue() + ")" + ANSI_RESET);
+                    //System.out.println(ANSI_PURPLE + "Reading Test File values(xPath = " + test.get_xPath() + ") - (Expected Value = " + test.get_expectedValue() + ")" + ANSI_RESET);
+                    UpdateTestResults(ANSI_PURPLE + "Reading Test File values(xPath = " + test.get_xPath() + ") - (Expected Value = " + test.get_expectedValue() + ")" + ANSI_RESET);
                 }
             }
-            System.out.println(ANSI_PURPLE + "----------[ End of Reading Test Settings file File ]--------------" + ANSI_RESET);
+            //System.out.println(ANSI_PURPLE + "----------[ End of Reading Test Settings file File ]--------------" + ANSI_RESET);
+            UpdateTestResults(ANSI_PURPLE + "----------[ End of Reading Test Settings file File ]--------------" + ANSI_RESET);
             return testSettings;
         }
     }
@@ -160,11 +209,13 @@ public class PageHelper {
     public ConfigSettings ReadConfigurationSettings(String configurationFile) {
         ConfigSettings configSettings = new ConfigSettings();
         String configValue;
-        //System.out.println("Reading " + configurationFile +  " file");
+        //System.out.println(FRAMED + ANSI_YELLOW_BACKGROUND + ANSI_BLUE + ANSI_BOLD + "----------[ Reading Configuration file ]----------" + ANSI_RESET);
+        UpdateTestResults(FRAMED + ANSI_YELLOW_BACKGROUND + ANSI_BLUE + ANSI_BOLD + "----------[ Reading Configuration file ]----------" + ANSI_RESET);
         try (BufferedReader br = new BufferedReader(new FileReader(configurationFile))) {
             String line;
-            System.out.println("----------[ Start of Reading Configuration File ]--------------");
-            System.out.println("Reading " + configurationFile +  " file");
+            //System.out.print();
+            //System.out.println(ANSI_WHITE + ANSI_BOLD + "----[ Reading Config (" + configurationFile +  ") file ]----");
+            UpdateTestResults(ANSI_WHITE + ANSI_BOLD + "----[ Reading Config (" + configurationFile +  ") file ]----");
             while ((line = br.readLine()) != null) {
                 //if (line.substring(0,2) != "//") {
                 if (line.substring(0,2).indexOf("//") < 0) {
@@ -172,38 +223,95 @@ public class PageHelper {
                     //System.out.println("configValue = " + configValue);
                     if (line.toLowerCase().indexOf("browsertype") >= 0) {
                         configSettings.set_browserType(configValue);
-                        System.out.println("browserType = " + configSettings.get_browserType().toString());
+                        //System.out.println("browserType = " + configSettings.get_browserType().toString());
+                        UpdateTestResults("browserType = " + configSettings.get_browserType().toString());
                     }
                     else if (line.toLowerCase().indexOf("testpageroot") >= 0) {
                         configSettings.set_testPageRoot(configValue);
-                        System.out.println("testPageRoot = " + configSettings.get_testPageRoot());
+                        //System.out.println("testPageRoot = " + configSettings.get_testPageRoot());
+                        UpdateTestResults("testPageRoot = " + configSettings.get_testPageRoot());
                     }
                     else if (line.toLowerCase().indexOf("runheadless") >= 0) {
                         configSettings.set_runHeadless(Boolean.parseBoolean(configValue));
-                        System.out.println("runHeadless = " + configSettings.get_runHeadless().toString());
+                        //System.out.println("runHeadless = " + configSettings.get_runHeadless().toString());
+                        UpdateTestResults("runHeadless = " + configSettings.get_runHeadless().toString());
                     }
                     else if (line.toLowerCase().indexOf("screenshotsavefolder") >= 0) {
                         configSettings .set_screenShotSaveFolder(configValue);
-                        System.out.println("screenShotSaveFolder = " + configSettings.get_screenShotSaveFolder());
+                        //System.out.println("screenShotSaveFolder = " + configSettings.get_screenShotSaveFolder());
+                        UpdateTestResults("screenShotSaveFolder = " + configSettings.get_screenShotSaveFolder());
                     }
                     else if (line.toLowerCase().indexOf("testallbrowsers") >= 0) {
                         configSettings.set_testAllBrowsers(Boolean.parseBoolean(configValue));
-                        System.out.println("testAllBrowsers = " + configSettings.get_testAllBrowsers().toString());
+                        //System.out.println("testAllBrowsers = " + configSettings.get_testAllBrowsers().toString());
+                        UpdateTestResults("testAllBrowsers = " + configSettings.get_testAllBrowsers().toString());
                     }
                     else if (line.toLowerCase().indexOf("testfilename") >= 0) {
                         configSettings.set_testSettingsFile(configValue);
-                        System.out.println("testFileName = " + configSettings.get_testSettingsFile());
+                        //System.out.println("testFileName = " + configSettings.get_testSettingsFile());
+                        UpdateTestResults("testFileName = " + configSettings.get_testSettingsFile());
                     }
                 }
             }
         }
         catch (Exception e) {
             //configSettings = null;
-            System.out.println("The following error occurred while attempting to read the configuration file:" + configurationFile + "\\r\\n" + e.getMessage());
+            //System.out.println(ANSI_RED + "The following error occurred while attempting to read the configuration file:" + configurationFile + "\\r\\n" + e.getMessage() + ANSI_RESET);
+            UpdateTestResults(ANSI_RED + "The following error occurred while attempting to read the configuration file:" + configurationFile + "\\r\\n" + e.getMessage() + ANSI_RESET);
         }
         //System.out.println("testSetup.config file read.");
-        System.out.println("----------[ End of Reading Configuration File ]--------------");
+        //System.out.println(FRAMED + ANSI_YELLOW_BACKGROUND + ANSI_BLUE + ANSI_BOLD + "----------[ End of Reading Configuration File ]--------------" + ANSI_RESET);
+        UpdateTestResults(FRAMED + ANSI_YELLOW_BACKGROUND + ANSI_BLUE + ANSI_BOLD + "----------[ End of Reading Configuration File ]--------------" + ANSI_RESET);
         return configSettings;
+    }
+
+    /* ***************************************************************************
+     *  DESCRIPTION:
+     *  Adds a message to the List<String> testResults and writes out the current status to
+     *  the log file and then to the screen.
+     *  (testResults is not necessary and may be removed or you can write all test
+     *  results out when the program ends in the destructor.)
+     **************************************************************************** */
+    public List<String> UpdateTestResults(String testMessage, List<String> testResults) {
+        if (testResults != null) {
+            testResults.add(testMessage);
+        }
+        try {
+            WriteToFile(get_logFileName(), testMessage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (testMessage.indexOf("Successful") >= 0) {
+            // System.out.println((char)27 + "[31m" + testMessage);
+            System.out.println(ANSI_GREEN + testMessage + ANSI_RESET);
+        }
+        else if (testMessage.indexOf("Failed") >= 0) {
+            System.out.println(ANSI_RED + testMessage + ANSI_RESET);
+        }
+        else if (testMessage.indexOf("Navigation") >= 0) {
+            System.out.println(ANSI_BLUE + testMessage + ANSI_RESET);
+        }
+        else if (testMessage.indexOf("--[") > 0 && testMessage.toLowerCase().indexOf("end") > 0)
+        {
+            System.out.println(testMessage);
+            System.out.println("");
+        }
+        else {
+            System.out.println(testMessage);
+        }
+        return testResults;
+    }
+
+    public void UpdateTestResults(String testMessage) {
+        //UpdateTestResults(testMessage, null);
+        if (testMessage.indexOf("--[") > 0 && testMessage.toLowerCase().indexOf("end") > 0)
+        {
+            System.out.println(testMessage);
+            System.out.println();
+        }
+        else {
+            System.out.println(testMessage);
+        }
     }
 
     public void WriteToFile(String fileName, String fileContents) throws Exception {
@@ -213,9 +321,12 @@ public class PageHelper {
             writer.close();
         }
         catch(Exception ex) {
-            System.out.println("The following error occurred when attempting to write to the test log file:" + ex.getMessage());
+            //System.out.println("The following error occurred when attempting to write to the test log file:" + ex.getMessage());
+            UpdateTestResults("The following error occurred when attempting to write to the test log file:" + ex.getMessage());
         }
     }
+
+
 
     //region { Commented Out Code }
 //    private void UpdateTestResults(String testMessage) {

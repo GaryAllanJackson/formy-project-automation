@@ -16,5 +16,5 @@ https://www.davita.com/education ; Navigate - https://www.davita.com/education ;
 /html[1]/body[1]/div[1]/div[1]/div[1]/ul[1]/li[1]/div[1]/div[1]/h1[1] ; Education ; xPath ; false ; false
 /html[1]/body[1]/div[1]/div[1]/div[1]/div[2]/h2[1] ; Kidney Disease Education, Tools & Resources ; xPath ; false ; false
 /html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/h3[1] ; Take Charge of Your Kidney Health ; xPath ; false ; false
-/html[1]/body[1]/header[1]/div[1]/div[3]/div[1]/ul[1]/li[2]/a[1]/h5[1] ; KIDNEY DISEASe ; xPath ; false ; true
+/html[1]/body[1]/header[1]/div[1]/div[3]/div[1]/ul[1]/li[2]/a[1]/h5[1] ; KIDNEY DISEASE ; xPath ; false ; true
 /html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/div[1]/h4[3] ; click - https://www.davita.com/education - 5000 ; xPath ; true ; false
