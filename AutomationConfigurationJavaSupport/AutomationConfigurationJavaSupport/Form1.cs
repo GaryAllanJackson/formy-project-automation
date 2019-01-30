@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Drawing;
 using System.IO;
@@ -14,13 +15,14 @@ namespace AutomationConfigurationJavaSupport
 {
     public partial class frmAutomationConfigurationJavaSupport : Form
     {
-        public static string ConfigurationFileName = "testSetup.config";
+        public static string ConfigurationFileName = "ConfigurationSetup.tconfig"; //"testSetup.config";
         //List<string> fileComments = new List<string>();
         string[] comments;
         //make this a binding list so that the clicking the grid doesn't throw IndexOutOfRangeException
         BindingList<TestCommand> testCommands;
         string[] testCommandComments;
         bool elementClicked = false;
+        int selectedRow;
 
         public frmAutomationConfigurationJavaSupport()
         {
@@ -50,14 +52,26 @@ namespace AutomationConfigurationJavaSupport
 
         private void dgvCommands_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            //if (e.RowIndex > 0)
-            //{
-            //    DataGridViewCell cell = dgvCommands[e.ColumnIndex, e.RowIndex];
-            //}
+            try
+            {
+                if (e.RowIndex > -1 && e.ColumnIndex > -1)
+                {
+                    selectedRow = e.RowIndex;
+                    DataGridViewCell cell = dgvCommands[e.ColumnIndex, e.RowIndex];
+                    int row = dgvCommands.CurrentCell.RowIndex;
+                    //DataGridViewCell cell = dgvCommands.SelectedCells[0];
+                    txtAccessor.Text = dgvCommands[0, row].Value.ToString();
+                    txtExpectedValueAction.Text = dgvCommands[1, row].Value.ToString();
+                    cboAccessorType.SelectedIndex  = cboAccessorType.FindString(dgvCommands[2, row].Value.ToString());
+                    cboPerformNonReadAction.SelectedIndex = cboPerformNonReadAction.FindString(dgvCommands[3, row].Value.ToString());
+                    cboCrucialAssertion.SelectedIndex = cboCrucialAssertion.FindString(dgvCommands[4, row].Value.ToString());
+                }
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Error clicking cell contents" + ex.Message, "Grid Error!!!");
+            }
         }
-
-
-
 
 
         #region { Configuration Button Controls }
@@ -79,6 +93,31 @@ namespace AutomationConfigurationJavaSupport
         private void btnSaveConfigurationSettings_Click(object sender, EventArgs e)
         {
             SaveConfigurationFile();
+        }        
+
+        private void btnAddTestFile_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(txtTestFileName.Text))
+            {
+                lstTestSettingsFileName.Items.Add(txtTestFileName.Text);
+            }
+        }
+
+        private void btnRemoveTestFile_Click(object sender, EventArgs e)
+        {
+            if (lstTestSettingsFileName.SelectedIndex > -1)
+            {
+                lstTestSettingsFileName.Items.RemoveAt(lstTestSettingsFileName.SelectedIndex);
+            }
+        }
+        #endregion
+
+        #region {Browser Buttons}
+        private void btnGetXPath_Click(object sender, EventArgs e)
+        {
+            grpWebPage.Visible = true;
+            grpWebPage.BringToFront();
+            elementClicked = false;
         }
         #endregion
 
@@ -100,7 +139,6 @@ namespace AutomationConfigurationJavaSupport
                 if (cboRunHeadless.SelectedIndex == 0)
                 {
                     ShowHeadlessMessage();
-
                 }
             }
             else
@@ -139,8 +177,6 @@ namespace AutomationConfigurationJavaSupport
             SaveTestSettingCommandsFile();
             ToggleOpenFileState(false);
         }
-
-
 
         private void mnuViewFormConfiguration_Click(object sender, EventArgs e)
         {
@@ -211,15 +247,15 @@ namespace AutomationConfigurationJavaSupport
                 };
                 testCommands.Add(item);
 
-
-                dgvCommands.DataSource = new List<TestCommand>();
-                dgvCommands.Refresh();
-                if (testCommands.Count > 0)
-                {
-                    dgvCommands.DataSource = testCommands;
-                    dgvCommands.Update();
-                    dgvCommands.AutoResizeColumns();
-                }
+                UpdateDataGrid();
+                //dgvCommands.DataSource = new List<TestCommand>();
+                //dgvCommands.Refresh();
+                //if (testCommands.Count > 0)
+                //{
+                //    dgvCommands.DataSource = testCommands;
+                //    dgvCommands.Update();
+                //    dgvCommands.AutoResizeColumns();
+                //}
             }
         }
 
@@ -235,17 +271,30 @@ namespace AutomationConfigurationJavaSupport
                 string isAction = dgvCommands[3, row].Value.ToString();
                 string isCrucial = dgvCommands[4, row].Value.ToString();
 
-                TestCommand item = (from t in testCommands
-                                    where t.Accessor.Equals(accessor) &&
-                                         t.AccessorType.Equals(accessorType) &&
-                                         t.ExpectedValueAction.Equals(expected) &&
-                                         t.IsNonReadAction.Equals(isAction) &&
-                                         t.IsCrucial.Equals(isCrucial)
-                                    select t).FirstOrDefault();
+                
+                TestCommand item = testCommands[row];
+                if (item.Accessor == accessor && item.ExpectedValueAction == expected && 
+                    item.AccessorType == accessorType && item.IsNonReadAction == isAction &&
+                    item.IsCrucial == isCrucial)
+                {
+                    //you have the correct item, nothing more to do
+                }
+                else
+                {
+                    //just in case the indexes are off, which should never happen
+                    item = (from t in testCommands
+                            where t.Accessor.Equals(accessor) &&
+                                 t.AccessorType.Equals(accessorType) &&
+                                 t.ExpectedValueAction.Equals(expected) &&
+                                 t.IsNonReadAction.Equals(isAction) &&
+                                 t.IsCrucial.Equals(isCrucial)
+                            select t).FirstOrDefault();
+                }
 
                 testCommands.Remove(item);
-                dgvCommands.DataSource = null;
-                dgvCommands.DataSource = testCommands;
+                UpdateDataGrid();
+                //dgvCommands.DataSource = null;
+                //dgvCommands.DataSource = testCommands;
                 //dgvCommands.Refresh();
             }
             catch (Exception ex)
@@ -289,6 +338,10 @@ namespace AutomationConfigurationJavaSupport
         private void SelectFolder(TextBox txtBx)
         {
             FolderBrowserDialog fld = new FolderBrowserDialog();
+            if (!string.IsNullOrEmpty(txtBx.Text) && Directory.Exists(txtBx.Text))
+            {
+                fld.SelectedPath = txtBx.Text;
+            }
             DialogResult rslt = fld.ShowDialog();
             if (rslt == DialogResult.OK && !string.IsNullOrEmpty(fld.SelectedPath))
             {
@@ -316,16 +369,18 @@ namespace AutomationConfigurationJavaSupport
         private void SaveConfigurationFile()
         {
             StringBuilder sb = new StringBuilder();
-            if (!string.IsNullOrEmpty(txtConfigurationFilePath.Text) && !string.IsNullOrEmpty(txtScreenShotFolder.Text) && !string.IsNullOrEmpty(txtTestFileName.Text) &&
-                (cboBrowserType.SelectedIndex > -1 || cboBrowserType.Enabled == false) && (cboRunHeadless.SelectedIndex > -1 || cboRunHeadless.Enabled == false)
-                && cboTestAllBrowsers.SelectedIndex > -1)
+            if (!string.IsNullOrEmpty(txtConfigurationFilePath.Text) && !string.IsNullOrEmpty(txtScreenShotFolder.Text) && 
+                lstTestSettingsFileName.Items.Count > 0 && (cboBrowserType.SelectedIndex > -1 || cboBrowserType.Enabled == false) && 
+                (cboRunHeadless.SelectedIndex > -1 || cboRunHeadless.Enabled == false) && cboTestAllBrowsers.SelectedIndex > -1)
             {
                 for (int x = 0; x < comments.GetUpperBound(0); x++)
                 {
                     sb.AppendLine(comments[x]);
                 }
-
-                sb.AppendLine(string.Format("TestFileName={0}", txtTestFileName.Text));
+                for (int x = 0; x < lstTestSettingsFileName.Items.Count; x++)
+                {
+                    sb.AppendLine(string.Format("TestFileName{0}={1}", x.ToString(), lstTestSettingsFileName.Items[x].ToString()));
+                }
                 sb.AppendLine(string.Format("ScreenShotSaveFolder={0}", txtScreenShotFolder.Text));
                 sb.AppendLine(string.Format("BrowserType={0}", cboBrowserType.SelectedItem.ToString()));
                 sb.AppendLine(string.Format("RunHeadless={0}", cboRunHeadless.SelectedItem.ToString()));
@@ -383,15 +438,17 @@ namespace AutomationConfigurationJavaSupport
 
         private void PopulateFileComments()
         {
-            comments = new String[]{ "//NOTES: all lines beginning with double slashes will be ignored by the configuration reader",
-                                  "//BrowserType values: Firefox, Chrome, PhantomJS",
-                                    "//All, will cycle through all browsers",
-                                "//TestPageRoot - site page to be tested",
-                                "//RunHeadless can be true to run headless or false to show the browser, but PhantomJs is always headless",
-                                "//ScreenShotSaveFolder - folder where screenshots should be saved - Must already exist",
-                                "//testAllBrowsers - can be true or false.  If false, BrowserType must be set.  If true, BrowserType is ignored.",
-                                "//testFileName - name of the file containing the test settings file which is a colon separated file with the following structure:",
-                                "// [xPath] : [Expected Value]" };
+            //"//All, will cycle through all browsers",
+            //"//TestPageRoot - site page to be tested",
+            comments = new String[]{ "// NOTES: Lines beginning with double slashes denote comments and will be ignored by the configuration reader.",
+                                    "// TestFileName - names beginning with this are used to point to the file/files containing the test setting commands.",
+                                    "//    -   The Test Setting Commands file is a colon delimited file with the following structure:",
+                                    "//    -   [URL/XPath/CssSelector/TagName] ; [Action/Expected value] ; [Element Lookup Type] ; [Perform Action other than Read Value] ; [Critical Assertion]",
+                                    "// ScreenShotSaveFolder - folder where screenshots should be saved - Must already exist",
+                                    "// BrowserType values: Firefox, Chrome, PhantomJS",
+                                    "// RunHeadless can be true to run headless or false to show the browser, but PhantomJs is always headless",
+                                    "// testAllBrowsers - can be true or false.  If false, BrowserType must be set.  If true, BrowserType is ignored and the program will cycle through all browsers."
+                                    };
         }
 
         private void PopulateTestCommandComments()
@@ -414,10 +471,11 @@ namespace AutomationConfigurationJavaSupport
         private void InitializeGrid()
         {
             testCommands = new BindingList<TestCommand>();
-            dgvCommands.DataSource = null;
+            UpdateDataGrid();
+            //dgvCommands.DataSource = null;
 
-            dgvCommands.DataSource = testCommands;
-            dgvCommands.Update();
+            //dgvCommands.DataSource = testCommands;
+            //dgvCommands.Update();
         }
 
         private void ConfigureGroupBoxes()
@@ -483,8 +541,12 @@ namespace AutomationConfigurationJavaSupport
         private void SaveTestCommandFile(string fileContents)
         {
             SaveFileDialog cdFile = new SaveFileDialog();
-            cdFile.Filter = "Text Files|*.txt | All Files|*.*";
+            cdFile.Filter = "Text Files|*.txt|All Files|*.*";
             cdFile.Title = "Save Test Commands File";
+            if (!string.IsNullOrEmpty(lblOpenedTestFileName.Text))
+            {
+                cdFile.FileName = lblOpenedTestFileName.Text;
+            }
 
             DialogResult rslt = cdFile.ShowDialog();
             if (rslt == DialogResult.OK && !string.IsNullOrEmpty(cdFile.FileName))
@@ -531,14 +593,7 @@ namespace AutomationConfigurationJavaSupport
                     lblOpenedTestFileName.Text = fileName;
                     ToggleOpenFileState(true);
 
-                    dgvCommands.DataSource = new List<TestCommand>();
-                    dgvCommands.Refresh();
-                    if (testCommands.Count > 0)
-                    {
-                        dgvCommands.DataSource = testCommands;
-                        dgvCommands.Update();
-                        //dgvCommands.AutoResizeColumns();
-                    }
+                    UpdateDataGrid();
                 }
             }
         }
@@ -569,7 +624,8 @@ namespace AutomationConfigurationJavaSupport
                             value = line.Substring(line.IndexOf("=") + 1);
                             if (line.StartsWith(testFileName))
                             {
-                                txtTestFileName.Text = value;
+                                //txtTestFileName.Text = value;
+                                lstTestSettingsFileName.Items.Add(value);
                             }
                             else if (line.StartsWith(screenShotSaveFolder))
                             {
@@ -635,23 +691,19 @@ namespace AutomationConfigurationJavaSupport
             grpWebPage.Visible = false;
             elementClicked = true;
         }
-
-
-
         #endregion
 
         private void txtURL_KeyPress(object sender, KeyPressEventArgs e)
         {
-
             if (e.KeyChar == (char)13)
             {
-                wbTestPage.Navigate(txtURL.Text);
-                
+                wbTestPage.Navigate(txtURL.Text);                
             }
         }
 
         private void wbTestPage_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
+            //add this handler after navigation
             this.wbTestPage.Document.Body.MouseDown += new HtmlElementEventHandler(Body_MouseDown);
         }
 
@@ -673,12 +725,83 @@ namespace AutomationConfigurationJavaSupport
             }
         }
 
-        private void btnGetXPath_Click(object sender, EventArgs e)
+        private void btnMoveUp_Click(object sender, EventArgs e)
         {
-            grpWebPage.Visible = true;
-            grpWebPage.BringToFront();
-            elementClicked = false;
+            string prevItem;
+            int selectedIndex;
 
+            if (lstTestSettingsFileName.SelectedIndex > 0)
+            {
+                selectedIndex = lstTestSettingsFileName.SelectedIndex;
+                prevItem = lstTestSettingsFileName.Items[lstTestSettingsFileName.SelectedIndex - 1].ToString();
+                lstTestSettingsFileName.Items.RemoveAt(lstTestSettingsFileName.SelectedIndex -1);
+                lstTestSettingsFileName.Items.Insert(selectedIndex, prevItem);
+            }
+        }
+
+        private void btnMoveDown_Click(object sender, EventArgs e)
+        {
+            string item;
+            int selectedIndex;
+
+            if (lstTestSettingsFileName.SelectedIndex > -1 && lstTestSettingsFileName.SelectedIndex < lstTestSettingsFileName.Items.Count - 1)
+            {
+                selectedIndex = lstTestSettingsFileName.SelectedIndex;
+                item = lstTestSettingsFileName.SelectedItem.ToString();
+                lstTestSettingsFileName.Items.RemoveAt(lstTestSettingsFileName.SelectedIndex);
+                lstTestSettingsFileName.Items.Insert(selectedIndex + 1, item);
+                lstTestSettingsFileName.SelectedIndex = selectedIndex + 1;
+            }
+        }
+
+        private void btnUpdateTestCommand_Click(object sender, EventArgs e)
+        {
+            if (selectedRow > 0)
+            {
+                if (!string.IsNullOrEmpty(txtAccessor.Text) && !string.IsNullOrEmpty(txtExpectedValueAction.Text) &&
+                cboAccessorType.SelectedIndex > -1 && cboPerformNonReadAction.SelectedIndex > -1 && cboCrucialAssertion.SelectedIndex > -1)
+                {
+                    TestCommand item = testCommands[selectedRow];
+                    item.Accessor = txtAccessor.Text;
+                    item.ExpectedValueAction = txtExpectedValueAction.Text;
+                    item.AccessorType = cboAccessorType.SelectedItem.ToString();
+                    item.IsCrucial = cboCrucialAssertion.SelectedItem.ToString();
+                    item.IsNonReadAction = cboPerformNonReadAction.SelectedItem.ToString();
+                    testCommands[selectedRow] = item;
+                    UpdateDataGrid();
+                }
+            }
+        }
+
+        private void UpdateDataGrid()
+        {
+            dgvCommands.DataSource = new List<TestCommand>();
+            dgvCommands.Refresh();
+            if (testCommands.Count > 0)
+            {
+                dgvCommands.DataSource = testCommands;
+                dgvCommands.Update();
+                dgvCommands.AutoResizeColumns();
+            }
+        }
+
+        private void mnuToolsAddWaitDelay_Click(object sender, EventArgs e)
+        {
+            #region {AppConfig Reference}
+            /*
+             *  <add key="Wait_Accessor" value="n/a"/>
+                <add key="Wait_ExpectedValue" value="Wait - 5000"/>
+                <add key="Wait_AccessorType" value="n/a"/>
+                <add key="Wait_PerformNonReadAction" value="true"/>
+                <add key="Wait_Crucial" value="false"/>
+             * */
+            #endregion
+
+            txtAccessor.Text = ConfigurationManager.AppSettings["Wait_Accessor"] != null ? ConfigurationManager.AppSettings["Wait_Accessor"] : "n/a";
+            txtExpectedValueAction.Text = ConfigurationManager.AppSettings["Wait_ExpectedValue"] != null ? ConfigurationManager.AppSettings["Wait_ExpectedValue"] : "Wait - 5000";
+            cboAccessorType.SelectedIndex = cboAccessorType.FindString(ConfigurationManager.AppSettings["Wait_AccessorType"] != null ? ConfigurationManager.AppSettings["Wait_AccessorType"] : "n/a");
+            cboPerformNonReadAction.SelectedIndex = cboPerformNonReadAction.FindString(ConfigurationManager.AppSettings["Wait_PerformNonReadAction"] != null ? ConfigurationManager.AppSettings["Wait_PerformNonReadAction"] : "true");
+            cboCrucialAssertion.SelectedIndex = cboCrucialAssertion.FindString(ConfigurationManager.AppSettings["Wait_Crucial"] != null ? ConfigurationManager.AppSettings["Wait_Crucial"] : "false");
         }
     }
 }
