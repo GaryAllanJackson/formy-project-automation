@@ -111,6 +111,14 @@ public class HomePage {
     {
         ConfigureTestEnvironment();
         pageHelper.set_logFileName(logFileName);
+        //File tmp = new File(configurationFile);
+        //File tmp = new File(configurationFile.substring(0, configurationFile.lastIndexOf("\\")));
+
+        //testing this
+        //pageHelper.GetAllFilesInFolder(configurationFile.substring(0, configurationFile.lastIndexOf("\\")), ".txt");
+        //pageHelper.GetAllFilesInFolder(tmp, ".txt");
+
+
         //testSettings = pageHelper.ReadTestSettingsFile(testSettings, testFileName);
         pageHelper.UpdateTestResults(FRAMED + ANSI_GREEN_BACKGROUND + ANSI_BLUE + ANSI_BOLD + "---------[ Beginning Configuration ]-----------------" + ANSI_RESET, testResults);
         pageHelper.UpdateTestResults("Configured Browser Selection = " + get_selectedBrowserType(), testResults);

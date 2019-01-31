@@ -10,6 +10,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PageHelper {
@@ -217,51 +218,81 @@ public class PageHelper {
             //System.out.println(ANSI_WHITE + ANSI_BOLD + "----[ Reading Config (" + configurationFile +  ") file ]----");
             UpdateTestResults(ANSI_WHITE + ANSI_BOLD + "----[ Reading Config (" + configurationFile +  ") file ]----");
             while ((line = br.readLine()) != null) {
-                //if (line.substring(0,2) != "//") {
+                //UpdateTestResults("line = " + line);
                 if (line.substring(0,2).indexOf("//") < 0) {
                     configValue = line.substring(line.indexOf("=") + 1);
-                    //System.out.println("configValue = " + configValue);
                     if (line.toLowerCase().indexOf("browsertype") >= 0) {
                         configSettings.set_browserType(configValue);
-                        //System.out.println("browserType = " + configSettings.get_browserType().toString());
                         UpdateTestResults("browserType = " + configSettings.get_browserType().toString());
                     }
                     else if (line.toLowerCase().indexOf("testpageroot") >= 0) {
                         configSettings.set_testPageRoot(configValue);
-                        //System.out.println("testPageRoot = " + configSettings.get_testPageRoot());
                         UpdateTestResults("testPageRoot = " + configSettings.get_testPageRoot());
                     }
                     else if (line.toLowerCase().indexOf("runheadless") >= 0) {
                         configSettings.set_runHeadless(Boolean.parseBoolean(configValue));
-                        //System.out.println("runHeadless = " + configSettings.get_runHeadless().toString());
                         UpdateTestResults("runHeadless = " + configSettings.get_runHeadless().toString());
                     }
                     else if (line.toLowerCase().indexOf("screenshotsavefolder") >= 0) {
                         configSettings .set_screenShotSaveFolder(configValue);
-                        //System.out.println("screenShotSaveFolder = " + configSettings.get_screenShotSaveFolder());
                         UpdateTestResults("screenShotSaveFolder = " + configSettings.get_screenShotSaveFolder());
                     }
                     else if (line.toLowerCase().indexOf("testallbrowsers") >= 0) {
                         configSettings.set_testAllBrowsers(Boolean.parseBoolean(configValue));
-                        //System.out.println("testAllBrowsers = " + configSettings.get_testAllBrowsers().toString());
                         UpdateTestResults("testAllBrowsers = " + configSettings.get_testAllBrowsers().toString());
                     }
                     else if (line.toLowerCase().indexOf("testfilename") >= 0) {
                         configSettings.set_testSettingsFile(configValue);
-                        //System.out.println("testFileName = " + configSettings.get_testSettingsFile());
                         UpdateTestResults("testFileName = " + configSettings.get_testSettingsFile());
+                    }
+                    else if (line.toLowerCase().indexOf("testfoldername") >= 0) {
+                        configSettings.set_testFolderName(configValue);
+                        UpdateTestResults("testFolderName = " + configSettings.get_testFolderName());
+                    }
+                    else if (line.toLowerCase().indexOf("specifytestfiles") >= 0) {
+                        configSettings.set_specifyFileNames(Boolean.parseBoolean(configValue));
+                        UpdateTestResults("specifytestfilenames = " + configSettings.get_specifyFileNames());
                     }
                 }
             }
+            if (!configSettings.get_specifyFileNames()) {
+                UpdateTestResults( FRAMED + ANSI_BLUE_BACKGROUND + ANSI_YELLOW + "---[ Start - Retrieving Files in specified folder. ]---" + ANSI_RESET);
+                configSettings.reset_testFiles();
+                File temp = new File(configSettings.get_testFolderName());
+                configSettings = GetAllFilesInFolder(temp, "txt", configSettings);
+                //UpdateTestResults("2. configSettings.get_testFiles() = " + configSettings.get_testFiles());
+                UpdateTestResults(FRAMED + ANSI_BLUE_BACKGROUND + ANSI_YELLOW + "---[ End Retrieving Files in specified folder. ]---" + ANSI_RESET);
+            }
         }
         catch (Exception e) {
-            //configSettings = null;
-            //System.out.println(ANSI_RED + "The following error occurred while attempting to read the configuration file:" + configurationFile + "\\r\\n" + e.getMessage() + ANSI_RESET);
             UpdateTestResults(ANSI_RED + "The following error occurred while attempting to read the configuration file:" + configurationFile + "\\r\\n" + e.getMessage() + ANSI_RESET);
         }
-        //System.out.println("testSetup.config file read.");
-        //System.out.println(FRAMED + ANSI_YELLOW_BACKGROUND + ANSI_BLUE + ANSI_BOLD + "----------[ End of Reading Configuration File ]--------------" + ANSI_RESET);
         UpdateTestResults(FRAMED + ANSI_YELLOW_BACKGROUND + ANSI_BLUE + ANSI_BOLD + "----------[ End of Reading Configuration File ]--------------" + ANSI_RESET);
+        return configSettings;
+    }
+
+    public ConfigSettings GetAllFilesInFolder(final File folder, String extension, ConfigSettings configSettings) {
+        //List<String> testFiles = new ArrayList<>();
+        for (final File fileEntry : folder.listFiles()) {
+            String temp;
+            if (fileEntry.isFile()) {
+                temp = fileEntry.getAbsoluteFile().toString(); //  fileEntry.getName();
+                if ((temp.substring(temp.lastIndexOf('.') + 1, temp.length()).toLowerCase()).equals("txt")) {
+                    configSettings.set_testSettingsFile(temp);
+                    UpdateTestResults(temp);
+                    //testFiles.add(temp);
+                    //System.out.println("File= " + folder.getAbsolutePath()+ "\\" + fileEntry.getName());
+                }
+                //region { Recursive Directory reading not needed }
+//            if (fileEntry.isDirectory()) {
+//                listFilesForFolder(fileEntry);
+//            } else {
+//                System.out.println(fileEntry.getName());
+//            }
+            //endregion
+            }
+        }
+        //return testFiles;
         return configSettings;
     }
 

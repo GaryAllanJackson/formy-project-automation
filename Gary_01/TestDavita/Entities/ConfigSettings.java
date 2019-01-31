@@ -9,6 +9,8 @@ public class ConfigSettings {
     private Boolean _testAllBrowsers;
     private String _testSettingsFile;
     private List<String> _testFiles;
+    private Boolean _specifyFileNames;
+    private String _testFolderName;
 
     public ConfigSettings() {
         _testFiles = new ArrayList<>();
@@ -66,5 +68,26 @@ public class ConfigSettings {
 
     public List<String> get_testFiles() {
         return _testFiles;
+    }
+
+    public List<String> reset_testFiles() {
+        _testFiles = new ArrayList<>();
+        return _testFiles;
+    }
+
+    public Boolean get_specifyFileNames() {
+        return _specifyFileNames;
+    }
+
+    public void set_specifyFileNames(Boolean _specifyFileNames) {
+        this._specifyFileNames = _specifyFileNames;
+    }
+
+    public String get_testFolderName() {
+        return _testFolderName;
+    }
+
+    public void set_testFolderName(String _testFolderName) {
+        this._testFolderName = _testFolderName;
     }
 }
