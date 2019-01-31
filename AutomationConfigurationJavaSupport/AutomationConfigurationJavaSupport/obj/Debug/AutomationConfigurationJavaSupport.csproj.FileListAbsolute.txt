@@ -9,3 +9,4 @@ C:\Gary\Utilities_VS-2015\AutomationConfigurationJavaSupport\AutomationConfigura
 C:\Gary\Utilities_VS-2015\AutomationConfigurationJavaSupport\AutomationConfigurationJavaSupport\bin\Debug\HtmlAgilityPack.dll
 C:\Gary\Utilities_VS-2015\AutomationConfigurationJavaSupport\AutomationConfigurationJavaSupport\bin\Debug\HtmlAgilityPack.pdb
 C:\Gary\Utilities_VS-2015\AutomationConfigurationJavaSupport\AutomationConfigurationJavaSupport\bin\Debug\HtmlAgilityPack.xml
+C:\Gary\Utilities_VS-2015\AutomationConfigurationJavaSupport\AutomationConfigurationJavaSupport\obj\Debug\AutomationConfigurationJavaSupport.csprojResolveAssemblyReference.cache

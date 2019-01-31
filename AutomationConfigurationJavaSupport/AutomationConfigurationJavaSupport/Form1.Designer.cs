@@ -69,7 +69,11 @@
             this.mnuViewForm = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuViewFormConfiguration = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuViewFormTestSettingCommands = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuTools = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuToolsAdd = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuToolsAddWaitDelay = new System.Windows.Forms.ToolStripMenuItem();
             this.grpTestCommands = new System.Windows.Forms.GroupBox();
+            this.btnUpdateTestCommand = new System.Windows.Forms.Button();
             this.cboCrucialAssertion = new System.Windows.Forms.ComboBox();
             this.lblCrucialAssertion = new System.Windows.Forms.Label();
             this.btnGetXPath = new System.Windows.Forms.Button();
@@ -91,11 +95,9 @@
             this.lblURL = new System.Windows.Forms.Label();
             this.txtURL = new System.Windows.Forms.TextBox();
             this.wbTestPage = new System.Windows.Forms.WebBrowser();
-            this.btnUpdateTestCommand = new System.Windows.Forms.Button();
             this.testCommandBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.mnuTools = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuToolsAdd = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuToolsAddWaitDelay = new System.Windows.Forms.ToolStripMenuItem();
+            this.cboSpecifyFilesOrSelectFolder = new System.Windows.Forms.ComboBox();
+            this.lblFolderOfSpecificFiles = new System.Windows.Forms.Label();
             this.grpConfiguration.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.grpTestCommands.SuspendLayout();
@@ -109,6 +111,8 @@
             this.grpConfiguration.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpConfiguration.Controls.Add(this.cboSpecifyFilesOrSelectFolder);
+            this.grpConfiguration.Controls.Add(this.lblFolderOfSpecificFiles);
             this.grpConfiguration.Controls.Add(this.btnMoveDown);
             this.grpConfiguration.Controls.Add(this.btnMoveUp);
             this.grpConfiguration.Controls.Add(this.btnRemoveTestFile);
@@ -132,7 +136,7 @@
             this.grpConfiguration.Controls.Add(this.lblConfigurationFilePath);
             this.grpConfiguration.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.grpConfiguration.ForeColor = System.Drawing.Color.Blue;
-            this.grpConfiguration.Location = new System.Drawing.Point(13, 43);
+            this.grpConfiguration.Location = new System.Drawing.Point(13, 42);
             this.grpConfiguration.Name = "grpConfiguration";
             this.grpConfiguration.Size = new System.Drawing.Size(773, 524);
             this.grpConfiguration.TabIndex = 0;
@@ -143,7 +147,7 @@
             // 
             this.btnMoveDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnMoveDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnMoveDown.Location = new System.Drawing.Point(668, 353);
+            this.btnMoveDown.Location = new System.Drawing.Point(668, 418);
             this.btnMoveDown.Name = "btnMoveDown";
             this.btnMoveDown.Size = new System.Drawing.Size(69, 29);
             this.btnMoveDown.TabIndex = 20;
@@ -155,7 +159,7 @@
             // 
             this.btnMoveUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnMoveUp.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnMoveUp.Location = new System.Drawing.Point(668, 327);
+            this.btnMoveUp.Location = new System.Drawing.Point(668, 392);
             this.btnMoveUp.Name = "btnMoveUp";
             this.btnMoveUp.Size = new System.Drawing.Size(69, 26);
             this.btnMoveUp.TabIndex = 19;
@@ -166,7 +170,7 @@
             // btnRemoveTestFile
             // 
             this.btnRemoveTestFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRemoveTestFile.Location = new System.Drawing.Point(668, 302);
+            this.btnRemoveTestFile.Location = new System.Drawing.Point(668, 367);
             this.btnRemoveTestFile.Name = "btnRemoveTestFile";
             this.btnRemoveTestFile.Size = new System.Drawing.Size(69, 23);
             this.btnRemoveTestFile.TabIndex = 18;
@@ -177,7 +181,7 @@
             // btnAddTestFile
             // 
             this.btnAddTestFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddTestFile.Location = new System.Drawing.Point(668, 278);
+            this.btnAddTestFile.Location = new System.Drawing.Point(668, 343);
             this.btnAddTestFile.Name = "btnAddTestFile";
             this.btnAddTestFile.Size = new System.Drawing.Size(69, 23);
             this.btnAddTestFile.TabIndex = 17;
@@ -191,7 +195,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lstTestSettingsFileName.FormattingEnabled = true;
             this.lstTestSettingsFileName.ItemHeight = 20;
-            this.lstTestSettingsFileName.Location = new System.Drawing.Point(13, 278);
+            this.lstTestSettingsFileName.Location = new System.Drawing.Point(13, 343);
             this.lstTestSettingsFileName.Name = "lstTestSettingsFileName";
             this.lstTestSettingsFileName.Size = new System.Drawing.Size(645, 104);
             this.lstTestSettingsFileName.TabIndex = 16;
@@ -199,7 +203,7 @@
             // btnSaveConfigurationSettings
             // 
             this.btnSaveConfigurationSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveConfigurationSettings.Location = new System.Drawing.Point(456, 444);
+            this.btnSaveConfigurationSettings.Location = new System.Drawing.Point(456, 454);
             this.btnSaveConfigurationSettings.Name = "btnSaveConfigurationSettings";
             this.btnSaveConfigurationSettings.Size = new System.Drawing.Size(281, 40);
             this.btnSaveConfigurationSettings.TabIndex = 15;
@@ -210,7 +214,7 @@
             // btnBrowseTestFile
             // 
             this.btnBrowseTestFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowseTestFile.Location = new System.Drawing.Point(692, 238);
+            this.btnBrowseTestFile.Location = new System.Drawing.Point(692, 309);
             this.btnBrowseTestFile.Name = "btnBrowseTestFile";
             this.btnBrowseTestFile.Size = new System.Drawing.Size(45, 23);
             this.btnBrowseTestFile.TabIndex = 14;
@@ -222,7 +226,7 @@
             // 
             this.txtTestFileName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtTestFileName.Location = new System.Drawing.Point(13, 234);
+            this.txtTestFileName.Location = new System.Drawing.Point(13, 305);
             this.txtTestFileName.Name = "txtTestFileName";
             this.txtTestFileName.Size = new System.Drawing.Size(648, 27);
             this.txtTestFileName.TabIndex = 13;
@@ -230,7 +234,7 @@
             // lblTestFileName
             // 
             this.lblTestFileName.AutoSize = true;
-            this.lblTestFileName.Location = new System.Drawing.Point(9, 211);
+            this.lblTestFileName.Location = new System.Drawing.Point(9, 282);
             this.lblTestFileName.Name = "lblTestFileName";
             this.lblTestFileName.Size = new System.Drawing.Size(143, 20);
             this.lblTestFileName.TabIndex = 12;
@@ -494,6 +498,29 @@
             this.mnuViewFormTestSettingCommands.Text = "Test Setting Commands";
             this.mnuViewFormTestSettingCommands.Click += new System.EventHandler(this.mnuViewFormTestSettingCommands_Click);
             // 
+            // mnuTools
+            // 
+            this.mnuTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuToolsAdd});
+            this.mnuTools.Name = "mnuTools";
+            this.mnuTools.Size = new System.Drawing.Size(57, 24);
+            this.mnuTools.Text = "Tools";
+            // 
+            // mnuToolsAdd
+            // 
+            this.mnuToolsAdd.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuToolsAddWaitDelay});
+            this.mnuToolsAdd.Name = "mnuToolsAdd";
+            this.mnuToolsAdd.Size = new System.Drawing.Size(112, 26);
+            this.mnuToolsAdd.Text = "&Add";
+            // 
+            // mnuToolsAddWaitDelay
+            // 
+            this.mnuToolsAddWaitDelay.Name = "mnuToolsAddWaitDelay";
+            this.mnuToolsAddWaitDelay.Size = new System.Drawing.Size(246, 26);
+            this.mnuToolsAddWaitDelay.Text = "&Wait / Delay (5 seconds)";
+            this.mnuToolsAddWaitDelay.Click += new System.EventHandler(this.mnuToolsAddWaitDelay_Click);
+            // 
             // grpTestCommands
             // 
             this.grpTestCommands.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -527,11 +554,23 @@
             this.grpTestCommands.Text = "Test Commands";
             this.grpTestCommands.Visible = false;
             // 
+            // btnUpdateTestCommand
+            // 
+            this.btnUpdateTestCommand.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUpdateTestCommand.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnUpdateTestCommand.Location = new System.Drawing.Point(481, 256);
+            this.btnUpdateTestCommand.Name = "btnUpdateTestCommand";
+            this.btnUpdateTestCommand.Size = new System.Drawing.Size(104, 28);
+            this.btnUpdateTestCommand.TabIndex = 17;
+            this.btnUpdateTestCommand.Text = "Update";
+            this.btnUpdateTestCommand.UseVisualStyleBackColor = true;
+            this.btnUpdateTestCommand.Click += new System.EventHandler(this.btnUpdateTestCommand_Click);
+            // 
             // cboCrucialAssertion
             // 
             this.cboCrucialAssertion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboCrucialAssertion.FormattingEnabled = true;
-            this.cboCrucialAssertion.Location = new System.Drawing.Point(511, 170);
+            this.cboCrucialAssertion.Location = new System.Drawing.Point(511, 164);
             this.cboCrucialAssertion.Name = "cboCrucialAssertion";
             this.cboCrucialAssertion.Size = new System.Drawing.Size(204, 28);
             this.cboCrucialAssertion.TabIndex = 16;
@@ -539,7 +578,7 @@
             // lblCrucialAssertion
             // 
             this.lblCrucialAssertion.AutoSize = true;
-            this.lblCrucialAssertion.Location = new System.Drawing.Point(509, 147);
+            this.lblCrucialAssertion.Location = new System.Drawing.Point(509, 141);
             this.lblCrucialAssertion.Name = "lblCrucialAssertion";
             this.lblCrucialAssertion.Size = new System.Drawing.Size(161, 20);
             this.lblCrucialAssertion.TabIndex = 15;
@@ -615,7 +654,7 @@
             // 
             this.cboPerformNonReadAction.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboPerformNonReadAction.FormattingEnabled = true;
-            this.cboPerformNonReadAction.Location = new System.Drawing.Point(269, 170);
+            this.cboPerformNonReadAction.Location = new System.Drawing.Point(269, 164);
             this.cboPerformNonReadAction.Name = "cboPerformNonReadAction";
             this.cboPerformNonReadAction.Size = new System.Drawing.Size(204, 28);
             this.cboPerformNonReadAction.TabIndex = 8;
@@ -623,7 +662,7 @@
             // lblPerformNonReadAction
             // 
             this.lblPerformNonReadAction.AutoSize = true;
-            this.lblPerformNonReadAction.Location = new System.Drawing.Point(267, 147);
+            this.lblPerformNonReadAction.Location = new System.Drawing.Point(267, 141);
             this.lblPerformNonReadAction.Name = "lblPerformNonReadAction";
             this.lblPerformNonReadAction.Size = new System.Drawing.Size(230, 20);
             this.lblPerformNonReadAction.TabIndex = 7;
@@ -633,7 +672,7 @@
             // 
             this.cboAccessorType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboAccessorType.FormattingEnabled = true;
-            this.cboAccessorType.Location = new System.Drawing.Point(27, 170);
+            this.cboAccessorType.Location = new System.Drawing.Point(27, 164);
             this.cboAccessorType.Name = "cboAccessorType";
             this.cboAccessorType.Size = new System.Drawing.Size(219, 28);
             this.cboAccessorType.TabIndex = 6;
@@ -641,7 +680,7 @@
             // lblAccessorType
             // 
             this.lblAccessorType.AutoSize = true;
-            this.lblAccessorType.Location = new System.Drawing.Point(23, 147);
+            this.lblAccessorType.Location = new System.Drawing.Point(23, 141);
             this.lblAccessorType.Name = "lblAccessorType";
             this.lblAccessorType.Size = new System.Drawing.Size(140, 20);
             this.lblAccessorType.TabIndex = 5;
@@ -750,54 +789,40 @@
             this.wbTestPage.TabIndex = 0;
             this.wbTestPage.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.wbTestPage_DocumentCompleted);
             // 
-            // btnUpdateTestCommand
-            // 
-            this.btnUpdateTestCommand.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUpdateTestCommand.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnUpdateTestCommand.Location = new System.Drawing.Point(481, 256);
-            this.btnUpdateTestCommand.Name = "btnUpdateTestCommand";
-            this.btnUpdateTestCommand.Size = new System.Drawing.Size(104, 28);
-            this.btnUpdateTestCommand.TabIndex = 17;
-            this.btnUpdateTestCommand.Text = "Update";
-            this.btnUpdateTestCommand.UseVisualStyleBackColor = true;
-            this.btnUpdateTestCommand.Click += new System.EventHandler(this.btnUpdateTestCommand_Click);
-            // 
             // testCommandBindingSource
             // 
             this.testCommandBindingSource.DataSource = typeof(AutomationConfigurationJavaSupport.Entities.TestCommand);
             // 
-            // mnuTools
+            // cboSpecifyFilesOrSelectFolder
             // 
-            this.mnuTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuToolsAdd});
-            this.mnuTools.Name = "mnuTools";
-            this.mnuTools.Size = new System.Drawing.Size(57, 24);
-            this.mnuTools.Text = "Tools";
+            this.cboSpecifyFilesOrSelectFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cboSpecifyFilesOrSelectFolder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboSpecifyFilesOrSelectFolder.FormattingEnabled = true;
+            this.cboSpecifyFilesOrSelectFolder.Location = new System.Drawing.Point(13, 245);
+            this.cboSpecifyFilesOrSelectFolder.Name = "cboSpecifyFilesOrSelectFolder";
+            this.cboSpecifyFilesOrSelectFolder.Size = new System.Drawing.Size(649, 28);
+            this.cboSpecifyFilesOrSelectFolder.TabIndex = 22;
+            this.cboSpecifyFilesOrSelectFolder.SelectedIndexChanged += new System.EventHandler(this.cboSpecifyFilesOrSelectFolder_SelectedIndexChanged);
             // 
-            // mnuToolsAdd
+            // lblFolderOfSpecificFiles
             // 
-            this.mnuToolsAdd.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuToolsAddWaitDelay});
-            this.mnuToolsAdd.Name = "mnuToolsAdd";
-            this.mnuToolsAdd.Size = new System.Drawing.Size(181, 26);
-            this.mnuToolsAdd.Text = "&Add";
-            // 
-            // mnuToolsAddWaitDelay
-            // 
-            this.mnuToolsAddWaitDelay.Name = "mnuToolsAddWaitDelay";
-            this.mnuToolsAddWaitDelay.Size = new System.Drawing.Size(246, 26);
-            this.mnuToolsAddWaitDelay.Text = "&Wait / Delay (5 seconds)";
-            this.mnuToolsAddWaitDelay.Click += new System.EventHandler(this.mnuToolsAddWaitDelay_Click);
+            this.lblFolderOfSpecificFiles.AutoSize = true;
+            this.lblFolderOfSpecificFiles.Location = new System.Drawing.Point(13, 222);
+            this.lblFolderOfSpecificFiles.Name = "lblFolderOfSpecificFiles";
+            this.lblFolderOfSpecificFiles.Size = new System.Drawing.Size(418, 20);
+            this.lblFolderOfSpecificFiles.TabIndex = 21;
+            this.lblFolderOfSpecificFiles.Text = "Specificify Test Script files (..or select a folder):";
             // 
             // frmAutomationConfigurationJavaSupport
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(798, 549);
+            this.Controls.Add(this.grpConfiguration);
             this.Controls.Add(this.grpTestCommands);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.grpWebPage);
-            this.Controls.Add(this.grpConfiguration);
             this.Name = "frmAutomationConfigurationJavaSupport";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Java Automation Configuration Support Utility";
@@ -886,6 +911,8 @@
         private System.Windows.Forms.ToolStripMenuItem mnuTools;
         private System.Windows.Forms.ToolStripMenuItem mnuToolsAdd;
         private System.Windows.Forms.ToolStripMenuItem mnuToolsAddWaitDelay;
+        private System.Windows.Forms.ComboBox cboSpecifyFilesOrSelectFolder;
+        private System.Windows.Forms.Label lblFolderOfSpecificFiles;
     }
 }
 

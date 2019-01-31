@@ -15,7 +15,7 @@ namespace AutomationConfigurationJavaSupport
 {
     public partial class frmAutomationConfigurationJavaSupport : Form
     {
-        public static string ConfigurationFileName = "ConfigurationSetup.tconfig"; //"testSetup.config";
+        public static string ConfigurationFileName { get; set; }    //= "ConfigurationSetup.tconfig"; //"testSetup.config";
         //List<string> fileComments = new List<string>();
         string[] comments;
         //make this a binding list so that the clicking the grid doesn't throw IndexOutOfRangeException
@@ -31,12 +31,16 @@ namespace AutomationConfigurationJavaSupport
 
         private void frmAutomationConfigurationJavaSupport_Load(object sender, EventArgs e)
         {
+            SetConfigurationFileName();
             //configuration specific items
             LoadTrueFalse(cboRunHeadless);
             LoadTrueFalse(cboTestAllBrowsers);
             LoadBrowsers(cboBrowserType);
+            LoadTrueFalse(cboSpecifyFilesOrSelectFolder);
+            //LoadFolderOrSpecificFiles(cboFolderOfSpecificFiles);
             PopulateFileComments();
             PopulateTestCommandComments();
+           
 
             ConfigureGroupBoxes();
 
@@ -47,8 +51,15 @@ namespace AutomationConfigurationJavaSupport
             LoadTrueFalse(cboCrucialAssertion);
         }
 
+        //private void LoadFolderOrSpecificFiles(ComboBox cboFolderOfSpecificFiles)
+        //{
+            
+        //}
 
-
+        private void SetConfigurationFileName()
+        {
+            ConfigurationFileName = ConfigurationManager.AppSettings["ConfigurationFileName"] != null ? ConfigurationManager.AppSettings["ConfigurationFileName"].ToString() : "ConfigurationSetup.tconfig";
+        }
 
         private void dgvCommands_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -73,6 +84,29 @@ namespace AutomationConfigurationJavaSupport
             }
         }
 
+        private void cboSpecifyFilesOrSelectFolder_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cboSpecifyFilesOrSelectFolder.SelectedIndex == 1)
+            {
+                lblTestFileName.Text = "Test Folder Name:";
+                EnableSelectedFiles(false);
+                lstTestSettingsFileName.Enabled = false;
+            }
+            else
+            {                
+                lblTestFileName.Text = "Test File Name:";
+                EnableSelectedFiles(true);
+                lstTestSettingsFileName.Enabled = true;
+            }
+        }
+
+        private void EnableSelectedFiles(bool tf)
+        {
+            btnAddTestFile.Enabled = tf;
+            btnRemoveTestFile.Enabled = tf;
+            btnMoveUp.Enabled = tf;
+            btnMoveDown.Enabled = tf;            
+        }
 
         #region { Configuration Button Controls }
         private void btnConfigBrowse_Click(object sender, EventArgs e)
@@ -87,7 +121,15 @@ namespace AutomationConfigurationJavaSupport
 
         private void btnBrowseTestFile_Click(object sender, EventArgs e)
         {
-            SelectFile(txtTestFileName);
+            if (cboSpecifyFilesOrSelectFolder.SelectedIndex == 0)
+            {
+                SelectFile(txtTestFileName);
+            }
+            else
+            {
+                SelectFolder(txtTestFileName);
+            }
+            
         }
 
         private void btnSaveConfigurationSettings_Click(object sender, EventArgs e)
@@ -370,12 +412,15 @@ namespace AutomationConfigurationJavaSupport
         {
             StringBuilder sb = new StringBuilder();
             if (!string.IsNullOrEmpty(txtConfigurationFilePath.Text) && !string.IsNullOrEmpty(txtScreenShotFolder.Text) && 
-                lstTestSettingsFileName.Items.Count > 0 && (cboBrowserType.SelectedIndex > -1 || cboBrowserType.Enabled == false) && 
+                ((lstTestSettingsFileName.Items.Count > 0 && cboSpecifyFilesOrSelectFolder.SelectedIndex == 0) 
+                || !string.IsNullOrEmpty(txtTestFileName.Text) && cboSpecifyFilesOrSelectFolder.SelectedIndex == 1) 
+                && (cboBrowserType.SelectedIndex > -1 || cboBrowserType.Enabled == false) && 
                 (cboRunHeadless.SelectedIndex > -1 || cboRunHeadless.Enabled == false) && cboTestAllBrowsers.SelectedIndex > -1)
             {
-                for (int x = 0; x < comments.GetUpperBound(0); x++)
+               
+                foreach (string item in comments)
                 {
-                    sb.AppendLine(comments[x]);
+                    sb.AppendLine(item);
                 }
                 for (int x = 0; x < lstTestSettingsFileName.Items.Count; x++)
                 {
@@ -384,7 +429,9 @@ namespace AutomationConfigurationJavaSupport
                 sb.AppendLine(string.Format("ScreenShotSaveFolder={0}", txtScreenShotFolder.Text));
                 sb.AppendLine(string.Format("BrowserType={0}", cboBrowserType.SelectedItem.ToString()));
                 sb.AppendLine(string.Format("RunHeadless={0}", cboRunHeadless.SelectedItem.ToString()));
-                sb.AppendLine(string.Format("testAllBrowsers={0}", cboTestAllBrowsers.SelectedItem.ToString()));
+                sb.AppendLine(string.Format("TestAllBrowsers={0}", cboTestAllBrowsers.SelectedItem.ToString()));
+                sb.AppendLine(string.Format("SpecifyTestFiles={0}", cboSpecifyFilesOrSelectFolder.SelectedItem.ToString()));
+                sb.AppendLine(string.Format("TestFolderName={0}", txtTestFileName.Text));
 
                 SaveFile(Path.Combine(txtConfigurationFilePath.Text, ConfigurationFileName), sb.ToString());
             }
@@ -446,8 +493,10 @@ namespace AutomationConfigurationJavaSupport
                                     "//    -   [URL/XPath/CssSelector/TagName] ; [Action/Expected value] ; [Element Lookup Type] ; [Perform Action other than Read Value] ; [Critical Assertion]",
                                     "// ScreenShotSaveFolder - folder where screenshots should be saved - Must already exist",
                                     "// BrowserType values: Firefox, Chrome, PhantomJS",
-                                    "// RunHeadless can be true to run headless or false to show the browser, but PhantomJs is always headless",
-                                    "// testAllBrowsers - can be true or false.  If false, BrowserType must be set.  If true, BrowserType is ignored and the program will cycle through all browsers."
+                                    "// RunHeadless - can be true to run headless or false to show the browser, but PhantomJs is always headless",
+                                    "// TestAllBrowsers - can be true or false.  If false, BrowserType must be set.  If true, BrowserType is ignored and the program will cycle through all browsers.",
+                                    "// SpecifyTestFiles - Can be true to specifiy each file and the order that files are run, or false to select a folder of files that will be ordered alphabetically.",
+                                    "// TestFolderName - will contain the folder where test files exist when SpecifyTestFiles is false."
                                     };
         }
 
@@ -604,8 +653,10 @@ namespace AutomationConfigurationJavaSupport
             const string screenShotSaveFolder = "ScreenShotSaveFolder";
             const string browserType = "BrowserType";
             const string runHeadless = "RunHeadless";
-            const string testAllBrowsers = "testAllBrowsers";
-            string filter = "Configuration Files|*.config|Bak Files|*.bak|All Files|*.*";
+            const string testAllBrowsers = "TestAllBrowsers";
+            const string specifyTestFiles = "SpecifyTestFiles";
+            const string testFolderName = "TestFolderName";
+            string filter = "Test Configuration Files|*.tconfig|Bak Files|*.bak|All Files|*.*";
             string dialogTitle = "Open Configuration File";
             string fileName = SelectFile(filter, dialogTitle);
             string line;
@@ -622,26 +673,34 @@ namespace AutomationConfigurationJavaSupport
                         if (!string.IsNullOrEmpty(line) && !line.StartsWith("//"))
                         {
                             value = line.Substring(line.IndexOf("=") + 1);
-                            if (line.StartsWith(testFileName))
+                            if (line.StartsWith(testFileName) || line.ToLower().StartsWith(testFileName.ToLower()))
                             {
                                 //txtTestFileName.Text = value;
                                 lstTestSettingsFileName.Items.Add(value);
                             }
-                            else if (line.StartsWith(screenShotSaveFolder))
+                            else if (line.StartsWith(screenShotSaveFolder) || line.ToLower().StartsWith(screenShotSaveFolder.ToLower()))
                             {
                                 txtScreenShotFolder.Text = value;
                             }
-                            else if (line.StartsWith(browserType))
+                            else if (line.StartsWith(browserType) || line.ToLower().StartsWith(browserType.ToLower()))
                             {
                                 cboBrowserType.SelectedIndex = cboBrowserType.FindString(value);
                             }
-                            else if (line.StartsWith(runHeadless))
+                            else if (line.StartsWith(runHeadless) || line.ToLower().StartsWith(runHeadless.ToLower()))
                             {
                                 cboRunHeadless.SelectedIndex = cboRunHeadless.FindString(value);
                             }
-                            else if (line.StartsWith(testAllBrowsers))
+                            else if (line.StartsWith(testAllBrowsers) || line.ToLower().StartsWith(testAllBrowsers.ToLower()))
                             {
                                 cboTestAllBrowsers.SelectedIndex = cboTestAllBrowsers.FindString(value);
+                            }
+                            else if (line.StartsWith(specifyTestFiles) || line.ToLower().StartsWith(specifyTestFiles.ToLower()))
+                            {
+                                cboSpecifyFilesOrSelectFolder.SelectedIndex = cboSpecifyFilesOrSelectFolder.FindString(value);
+                            }
+                            else if (line.StartsWith(testFolderName) || line.ToLower().StartsWith(testFolderName.ToLower()))
+                            {
+                                txtTestFileName.Text = value;
                             }
                         }
                     }
@@ -803,5 +862,7 @@ namespace AutomationConfigurationJavaSupport
             cboPerformNonReadAction.SelectedIndex = cboPerformNonReadAction.FindString(ConfigurationManager.AppSettings["Wait_PerformNonReadAction"] != null ? ConfigurationManager.AppSettings["Wait_PerformNonReadAction"] : "true");
             cboCrucialAssertion.SelectedIndex = cboCrucialAssertion.FindString(ConfigurationManager.AppSettings["Wait_Crucial"] != null ? ConfigurationManager.AppSettings["Wait_Crucial"] : "false");
         }
+
+       
     }
 }
