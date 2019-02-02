@@ -37,6 +37,7 @@ namespace AutomationConfigurationJavaSupport
             LoadTrueFalse(cboTestAllBrowsers);
             LoadBrowsers(cboBrowserType);
             LoadTrueFalse(cboSpecifyFilesOrSelectFolder);
+            LoadFileFilterType(cboFileFilterType);
             //LoadFolderOrSpecificFiles(cboFolderOfSpecificFiles);
             PopulateFileComments();
             PopulateTestCommandComments();
@@ -51,9 +52,16 @@ namespace AutomationConfigurationJavaSupport
             LoadTrueFalse(cboCrucialAssertion);
         }
 
+        private void LoadFileFilterType(ComboBox cboBx)
+        {
+            cboBx.Items.Add("Starts With");
+            cboBx.Items.Add("Contains");
+            cboBx.Items.Add("Ends With");
+        }
+
         //private void LoadFolderOrSpecificFiles(ComboBox cboFolderOfSpecificFiles)
         //{
-            
+
         //}
 
         private void SetConfigurationFileName()
@@ -91,12 +99,16 @@ namespace AutomationConfigurationJavaSupport
                 lblTestFileName.Text = "Test Folder Name:";
                 EnableSelectedFiles(false);
                 lstTestSettingsFileName.Enabled = false;
+                txtFolderFilter.Enabled = true;
+                cboFileFilterType.Enabled = true;
             }
-            else
+            else if (cboSpecifyFilesOrSelectFolder.SelectedIndex == 0)
             {                
                 lblTestFileName.Text = "Test File Name:";
                 EnableSelectedFiles(true);
                 lstTestSettingsFileName.Enabled = true;
+                txtFolderFilter.Enabled = false;
+                cboFileFilterType.Enabled = false;
             }
         }
 
@@ -128,8 +140,7 @@ namespace AutomationConfigurationJavaSupport
             else
             {
                 SelectFolder(txtTestFileName);
-            }
-            
+            }            
         }
 
         private void btnSaveConfigurationSettings_Click(object sender, EventArgs e)
@@ -256,6 +267,14 @@ namespace AutomationConfigurationJavaSupport
             cboRunHeadless.SelectedIndex = -1;
             cboBrowserType.SelectedIndex = -1;
             cboTestAllBrowsers.SelectedIndex = -1;
+            cboSpecifyFilesOrSelectFolder.SelectedIndex = -1;
+            cboFileFilterType.SelectedIndex = -1;
+            txtFolderFilter.Text = string.Empty;
+            lstTestSettingsFileName.Items.Clear();
+            btnAddTestFile.Enabled = true;
+            btnRemoveTestFile.Enabled = true;
+            btnMoveUp.Enabled = true;
+            btnMoveDown.Enabled = true;
         }
 
         private void mnuFileNewTestSettingsCommandFile_Click(object sender, EventArgs e)
@@ -432,6 +451,8 @@ namespace AutomationConfigurationJavaSupport
                 sb.AppendLine(string.Format("TestAllBrowsers={0}", cboTestAllBrowsers.SelectedItem.ToString()));
                 sb.AppendLine(string.Format("SpecifyTestFiles={0}", cboSpecifyFilesOrSelectFolder.SelectedItem.ToString()));
                 sb.AppendLine(string.Format("TestFolderName={0}", txtTestFileName.Text));
+                sb.AppendLine(string.Format("FolderFileFilterType={0}", cboFileFilterType.SelectedItem.ToString().Replace(" ","_")));
+                sb.AppendLine(string.Format("FolderFileFilter={0}", txtFolderFilter.Text));
 
                 SaveFile(Path.Combine(txtConfigurationFilePath.Text, ConfigurationFileName), sb.ToString());
             }
@@ -496,7 +517,13 @@ namespace AutomationConfigurationJavaSupport
                                     "// RunHeadless - can be true to run headless or false to show the browser, but PhantomJs is always headless",
                                     "// TestAllBrowsers - can be true or false.  If false, BrowserType must be set.  If true, BrowserType is ignored and the program will cycle through all browsers.",
                                     "// SpecifyTestFiles - Can be true to specifiy each file and the order that files are run, or false to select a folder of files that will be ordered alphabetically.",
-                                    "// TestFolderName - will contain the folder where test files exist when SpecifyTestFiles is false."
+                                    "// TestFolderName - will contain the folder where test files exist when SpecifyTestFiles is false.",
+                                    "// FolderFileFilterType - type of filtering you want to use to select similarly named files within a folder options are: ",
+                                    "//    -   [Starts With], [Contains] and [Ends With] ",
+                                    "//    -   [Starts With] - will select only the test files starting with the filter entered",
+                                    "//    -   [Contains] - will select only test files containing the filter entered",
+                                    "//    -   [Ends With] - will select only test files ending with the filter entered",
+                                    "// FolderFileFilter - the filter used to select only matching files within the Test Folder."
                                     };
         }
 
@@ -626,15 +653,22 @@ namespace AutomationConfigurationJavaSupport
                             if (!string.IsNullOrEmpty(line) && !line.StartsWith("###"))
                             {
                                 lineItems = line.Split(';');
-                                TestCommand item = new TestCommand
+                                try
                                 {
-                                    Accessor = !string.IsNullOrEmpty(lineItems[0]) ? lineItems[0].Trim() : string.Empty,
-                                    ExpectedValueAction = !string.IsNullOrEmpty(lineItems[1]) ? lineItems[1].Trim() : string.Empty,
-                                    AccessorType = !string.IsNullOrEmpty(lineItems[2]) ? lineItems[2].Trim() : string.Empty,
-                                    IsNonReadAction = !string.IsNullOrEmpty(lineItems[3]) ? lineItems[3].Trim() : string.Empty,
-                                    IsCrucial = !string.IsNullOrEmpty(lineItems[4]) ? lineItems[4].Trim() : string.Empty
-                                };
-                                testCommands.Add(item);
+                                    TestCommand item = new TestCommand
+                                    {
+                                        Accessor = !string.IsNullOrEmpty(lineItems[0]) ? lineItems[0].Trim() : string.Empty,
+                                        ExpectedValueAction = !string.IsNullOrEmpty(lineItems[1]) ? lineItems[1].Trim() : string.Empty,
+                                        AccessorType = !string.IsNullOrEmpty(lineItems[2]) ? lineItems[2].Trim() : string.Empty,
+                                        IsNonReadAction = !string.IsNullOrEmpty(lineItems[3]) ? lineItems[3].Trim() : string.Empty,
+                                        IsCrucial = !string.IsNullOrEmpty(lineItems[4]) ? lineItems[4].Trim() : string.Empty
+                                    };
+                                    testCommands.Add(item);
+                                }
+                                catch(Exception ex)
+                                {
+                                    MessageBox.Show("", "File Format not supported!");
+                                }
                             }
                         }
                     }
@@ -656,14 +690,18 @@ namespace AutomationConfigurationJavaSupport
             const string testAllBrowsers = "TestAllBrowsers";
             const string specifyTestFiles = "SpecifyTestFiles";
             const string testFolderName = "TestFolderName";
+            const string folderFileFilterType = "FolderFileFilterType";
+            const string folderFileFilter = "FolderFileFilter";
             string filter = "Test Configuration Files|*.tconfig|Bak Files|*.bak|All Files|*.*";
             string dialogTitle = "Open Configuration File";
             string fileName = SelectFile(filter, dialogTitle);
             string line;
             string value;
+
             if (!string.IsNullOrEmpty(fileName))
             {
                 txtConfigurationFilePath.Text = fileName.Substring(0, fileName.LastIndexOf("\\"));
+                lstTestSettingsFileName.Items.Clear();
 
                 using (StreamReader sr = new StreamReader(fileName))
                 {
@@ -701,6 +739,14 @@ namespace AutomationConfigurationJavaSupport
                             else if (line.StartsWith(testFolderName) || line.ToLower().StartsWith(testFolderName.ToLower()))
                             {
                                 txtTestFileName.Text = value;
+                            }
+                            else if (line.StartsWith(folderFileFilterType) || line.ToLower().StartsWith(folderFileFilterType.ToLower()))
+                            {
+                                cboFileFilterType.SelectedIndex = cboFileFilterType.FindString(value.Replace("_", " "));
+                            }
+                            else if (line.StartsWith(folderFileFilter) || line.ToLower().StartsWith(folderFileFilter.ToLower()))
+                            {
+                                txtFolderFilter.Text = value;
                             }
                         }
                     }

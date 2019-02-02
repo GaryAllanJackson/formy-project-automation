@@ -95,9 +95,13 @@
             this.lblURL = new System.Windows.Forms.Label();
             this.txtURL = new System.Windows.Forms.TextBox();
             this.wbTestPage = new System.Windows.Forms.WebBrowser();
-            this.testCommandBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.cboSpecifyFilesOrSelectFolder = new System.Windows.Forms.ComboBox();
             this.lblFolderOfSpecificFiles = new System.Windows.Forms.Label();
+            this.cboFileFilterType = new System.Windows.Forms.ComboBox();
+            this.lblFileFilterType = new System.Windows.Forms.Label();
+            this.lblFolderFilter = new System.Windows.Forms.Label();
+            this.txtFolderFilter = new System.Windows.Forms.TextBox();
+            this.testCommandBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.grpConfiguration.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.grpTestCommands.SuspendLayout();
@@ -111,6 +115,10 @@
             this.grpConfiguration.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpConfiguration.Controls.Add(this.txtFolderFilter);
+            this.grpConfiguration.Controls.Add(this.lblFolderFilter);
+            this.grpConfiguration.Controls.Add(this.cboFileFilterType);
+            this.grpConfiguration.Controls.Add(this.lblFileFilterType);
             this.grpConfiguration.Controls.Add(this.cboSpecifyFilesOrSelectFolder);
             this.grpConfiguration.Controls.Add(this.lblFolderOfSpecificFiles);
             this.grpConfiguration.Controls.Add(this.btnMoveDown);
@@ -292,7 +300,7 @@
             // 
             this.cboRunHeadless.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboRunHeadless.FormattingEnabled = true;
-            this.cboRunHeadless.Location = new System.Drawing.Point(410, 176);
+            this.cboRunHeadless.Location = new System.Drawing.Point(460, 174);
             this.cboRunHeadless.Name = "cboRunHeadless";
             this.cboRunHeadless.Size = new System.Drawing.Size(156, 28);
             this.cboRunHeadless.TabIndex = 6;
@@ -301,7 +309,7 @@
             // lblRunHeadless
             // 
             this.lblRunHeadless.AutoSize = true;
-            this.lblRunHeadless.Location = new System.Drawing.Point(406, 153);
+            this.lblRunHeadless.Location = new System.Drawing.Point(456, 151);
             this.lblRunHeadless.Name = "lblRunHeadless";
             this.lblRunHeadless.Size = new System.Drawing.Size(133, 20);
             this.lblRunHeadless.TabIndex = 5;
@@ -311,7 +319,7 @@
             // 
             this.cboBrowserType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboBrowserType.FormattingEnabled = true;
-            this.cboBrowserType.Location = new System.Drawing.Point(207, 176);
+            this.cboBrowserType.Location = new System.Drawing.Point(257, 174);
             this.cboBrowserType.Name = "cboBrowserType";
             this.cboBrowserType.Size = new System.Drawing.Size(156, 28);
             this.cboBrowserType.TabIndex = 4;
@@ -320,7 +328,7 @@
             // lblBrowserType
             // 
             this.lblBrowserType.AutoSize = true;
-            this.lblBrowserType.Location = new System.Drawing.Point(212, 151);
+            this.lblBrowserType.Location = new System.Drawing.Point(262, 149);
             this.lblBrowserType.Name = "lblBrowserType";
             this.lblBrowserType.Size = new System.Drawing.Size(131, 20);
             this.lblBrowserType.TabIndex = 3;
@@ -387,7 +395,7 @@
             this.mnuFileNewConfigurationFile,
             this.mnuFileNewTestSettingsCommandFile});
             this.mnuFileNew.Name = "mnuFileNew";
-            this.mnuFileNew.Size = new System.Drawing.Size(120, 26);
+            this.mnuFileNew.Size = new System.Drawing.Size(181, 26);
             this.mnuFileNew.Text = "&New";
             // 
             // mnuFileNewConfigurationFile
@@ -410,7 +418,7 @@
             this.mnuFileOpenConfigurationFile,
             this.mnuFileOpenTestSettingsCommandFile});
             this.mnuFileOpen.Name = "mnuFileOpen";
-            this.mnuFileOpen.Size = new System.Drawing.Size(120, 26);
+            this.mnuFileOpen.Size = new System.Drawing.Size(181, 26);
             this.mnuFileOpen.Text = "&Open";
             // 
             // mnuFileOpenConfigurationFile
@@ -430,7 +438,7 @@
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(117, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(178, 6);
             // 
             // mnuFileSave
             // 
@@ -438,7 +446,7 @@
             this.mnuFileSaveConfigurationFile,
             this.mnuFileSaveTestSettingsCommandsFile});
             this.mnuFileSave.Name = "mnuFileSave";
-            this.mnuFileSave.Size = new System.Drawing.Size(120, 26);
+            this.mnuFileSave.Size = new System.Drawing.Size(181, 26);
             this.mnuFileSave.Text = "&Save";
             // 
             // mnuFileSaveConfigurationFile
@@ -458,12 +466,12 @@
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(117, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(178, 6);
             // 
             // mnuFileExit
             // 
             this.mnuFileExit.Name = "mnuFileExit";
-            this.mnuFileExit.Size = new System.Drawing.Size(120, 26);
+            this.mnuFileExit.Size = new System.Drawing.Size(181, 26);
             this.mnuFileExit.Text = "E&xit";
             this.mnuFileExit.Click += new System.EventHandler(this.mnuFileExit_Click);
             // 
@@ -789,30 +797,64 @@
             this.wbTestPage.TabIndex = 0;
             this.wbTestPage.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.wbTestPage_DocumentCompleted);
             // 
-            // testCommandBindingSource
-            // 
-            this.testCommandBindingSource.DataSource = typeof(AutomationConfigurationJavaSupport.Entities.TestCommand);
-            // 
             // cboSpecifyFilesOrSelectFolder
             // 
-            this.cboSpecifyFilesOrSelectFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.cboSpecifyFilesOrSelectFolder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboSpecifyFilesOrSelectFolder.FormattingEnabled = true;
-            this.cboSpecifyFilesOrSelectFolder.Location = new System.Drawing.Point(13, 245);
+            this.cboSpecifyFilesOrSelectFolder.Location = new System.Drawing.Point(13, 249);
             this.cboSpecifyFilesOrSelectFolder.Name = "cboSpecifyFilesOrSelectFolder";
-            this.cboSpecifyFilesOrSelectFolder.Size = new System.Drawing.Size(649, 28);
+            this.cboSpecifyFilesOrSelectFolder.Size = new System.Drawing.Size(159, 28);
             this.cboSpecifyFilesOrSelectFolder.TabIndex = 22;
             this.cboSpecifyFilesOrSelectFolder.SelectedIndexChanged += new System.EventHandler(this.cboSpecifyFilesOrSelectFolder_SelectedIndexChanged);
             // 
             // lblFolderOfSpecificFiles
             // 
             this.lblFolderOfSpecificFiles.AutoSize = true;
-            this.lblFolderOfSpecificFiles.Location = new System.Drawing.Point(13, 222);
+            this.lblFolderOfSpecificFiles.Location = new System.Drawing.Point(9, 221);
             this.lblFolderOfSpecificFiles.Name = "lblFolderOfSpecificFiles";
-            this.lblFolderOfSpecificFiles.Size = new System.Drawing.Size(418, 20);
+            this.lblFolderOfSpecificFiles.Size = new System.Drawing.Size(162, 20);
             this.lblFolderOfSpecificFiles.TabIndex = 21;
-            this.lblFolderOfSpecificFiles.Text = "Specificify Test Script files (..or select a folder):";
+            this.lblFolderOfSpecificFiles.Text = "Specify Test files:";
+            // 
+            // cboFileFilterType
+            // 
+            this.cboFileFilterType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboFileFilterType.FormattingEnabled = true;
+            this.cboFileFilterType.Location = new System.Drawing.Point(257, 249);
+            this.cboFileFilterType.Name = "cboFileFilterType";
+            this.cboFileFilterType.Size = new System.Drawing.Size(156, 28);
+            this.cboFileFilterType.TabIndex = 24;
+            // 
+            // lblFileFilterType
+            // 
+            this.lblFileFilterType.AutoSize = true;
+            this.lblFileFilterType.Location = new System.Drawing.Point(257, 226);
+            this.lblFileFilterType.Name = "lblFileFilterType";
+            this.lblFileFilterType.Size = new System.Drawing.Size(142, 20);
+            this.lblFileFilterType.TabIndex = 23;
+            this.lblFileFilterType.Text = "File Filter Type:";
+            // 
+            // lblFolderFilter
+            // 
+            this.lblFolderFilter.AutoSize = true;
+            this.lblFolderFilter.Location = new System.Drawing.Point(456, 226);
+            this.lblFolderFilter.Name = "lblFolderFilter";
+            this.lblFolderFilter.Size = new System.Drawing.Size(96, 20);
+            this.lblFolderFilter.TabIndex = 23;
+            this.lblFolderFilter.Text = "File Filter:";
+            // 
+            // txtFolderFilter
+            // 
+            this.txtFolderFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFolderFilter.Location = new System.Drawing.Point(460, 250);
+            this.txtFolderFilter.Name = "txtFolderFilter";
+            this.txtFolderFilter.Size = new System.Drawing.Size(198, 27);
+            this.txtFolderFilter.TabIndex = 25;
+            // 
+            // testCommandBindingSource
+            // 
+            this.testCommandBindingSource.DataSource = typeof(AutomationConfigurationJavaSupport.Entities.TestCommand);
             // 
             // frmAutomationConfigurationJavaSupport
             // 
@@ -913,6 +955,10 @@
         private System.Windows.Forms.ToolStripMenuItem mnuToolsAddWaitDelay;
         private System.Windows.Forms.ComboBox cboSpecifyFilesOrSelectFolder;
         private System.Windows.Forms.Label lblFolderOfSpecificFiles;
+        private System.Windows.Forms.TextBox txtFolderFilter;
+        private System.Windows.Forms.Label lblFolderFilter;
+        private System.Windows.Forms.ComboBox cboFileFilterType;
+        private System.Windows.Forms.Label lblFileFilterType;
     }
 }
 
