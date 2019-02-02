@@ -253,6 +253,14 @@ public class PageHelper {
                         configSettings.set_specifyFileNames(Boolean.parseBoolean(configValue));
                         UpdateTestResults("specifytestfilenames = " + configSettings.get_specifyFileNames());
                     }
+                    else if (line.toLowerCase().indexOf("folderfilefiltertype") >= 0) {
+                        configSettings.set_folderFileFilterType(configValue);
+                        UpdateTestResults("FolderFileFilterType = " + configSettings.get_folderFileFilterType());
+                    }
+                    else if (line.toLowerCase().indexOf("folderfilefilter") >= 0) {
+                        configSettings.set_folderFileFilter(configValue);
+                        UpdateTestResults("FolderFileFilter = " + configSettings.get_folderFileFilter());
+                    }
                 }
             }
             if (!configSettings.get_specifyFileNames()) {
@@ -277,11 +285,23 @@ public class PageHelper {
             String temp;
             if (fileEntry.isFile()) {
                 temp = fileEntry.getAbsoluteFile().toString(); //  fileEntry.getName();
-                if ((temp.substring(temp.lastIndexOf('.') + 1, temp.length()).toLowerCase()).equals("txt")) {
-                    configSettings.set_testSettingsFile(temp);
-                    UpdateTestResults(temp);
-                    //testFiles.add(temp);
-                    //System.out.println("File= " + folder.getAbsolutePath()+ "\\" + fileEntry.getName());
+                if (configSettings.get_folderFileFilterType().toLowerCase().equals("ends_with")) {
+                    if (temp.toLowerCase().endsWith(configSettings.get_folderFileFilter().toLowerCase())) {
+                        configSettings.set_testSettingsFile(temp);
+                        UpdateTestResults(temp);
+                    }
+                }
+                else if (configSettings.get_folderFileFilterType().toLowerCase().equals("starts_with")) {
+                    if (temp.toLowerCase().startsWith(configSettings.get_folderFileFilter().toLowerCase())) {
+                        configSettings.set_testSettingsFile(temp);
+                        UpdateTestResults(temp);
+                    }
+                }
+                else if (configSettings.get_folderFileFilterType().toLowerCase().equals("contains")) {
+                    if (temp.toLowerCase().contains(configSettings.get_folderFileFilter().toLowerCase())) {
+                        configSettings.set_testSettingsFile(temp);
+                        UpdateTestResults(temp);
+                    }
                 }
                 //region { Recursive Directory reading not needed }
 //            if (fileEntry.isDirectory()) {

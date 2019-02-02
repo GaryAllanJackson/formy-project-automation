@@ -11,6 +11,8 @@ public class ConfigSettings {
     private List<String> _testFiles;
     private Boolean _specifyFileNames;
     private String _testFolderName;
+    private String _folderFileFilterType;
+    private String _folderFileFilter;
 
     public ConfigSettings() {
         _testFiles = new ArrayList<>();
@@ -89,5 +91,21 @@ public class ConfigSettings {
 
     public void set_testFolderName(String _testFolderName) {
         this._testFolderName = _testFolderName;
+    }
+
+    public String get_folderFileFilterType() {
+        return _folderFileFilterType;
+    }
+
+    public void set_folderFileFilterType(String _folderFileFilterType) {
+        this._folderFileFilterType = _folderFileFilterType;
+    }
+
+    public String get_folderFileFilter() {
+        return _folderFileFilter;
+    }
+
+    public void set_folderFileFilter(String _folderFileFilter) {
+        this._folderFileFilter = _folderFileFilter;
     }
 }
