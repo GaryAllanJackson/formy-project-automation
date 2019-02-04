@@ -1,0 +1,52 @@
+[51m[42m[34m[1m---------[ Beginning Configuration ]-----------------[0m
+Configured Browser Selection = Chrome
+Setting ChromeDriver
+[51m[42m[34m[1m---------[ Ending Configuration ]-----------------[0m
+[51m[45m[33m-------[ Running Test Script ]-------[0m
+Performing non-read action
+dashCount = 1
+----[ navigate - https://formy-project.herokuapp.com/form]------------------
+In CheckPageUrl method.  Driver = ChromeDriver: chrome on XP (5683d4d23b8319f3d8e905cc5568683d)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!
+----[ Explicit Navigation Event ]------------------
+Performing non-read action
+dashCount = 0
+Performing Id non-read action
+Performing non-read action
+dashCount = 0
+Performing Id non-read action
+Performing non-read action
+dashCount = 0
+Performing Id non-read action
+Performing non-read action
+dashCount = 0
+Performing Id non-read action
+Performing non-read action
+dashCount = 0
+Performing Id non-read action
+Performing non-read action
+dashCount = 0
+Performing CssSelector non-read action
+Performing non-read action
+dashCount = 0
+Performing Id non-read action
+Performing non-read action
+dashCount = 0
+Performing Id non-read action
+Performing non-read action
+dashCount = 0
+Performing CssSelector non-read action
+Performing non-read action
+dashCount = 1
+Sleeping for 5000 milliseconds.
+Element type being checked is <alert
+Looking up elementTag: (alert) Length = 5
+Checking Indeterminate with ClassName.  Actual Value: "The form was successfully submitted!"
+Successful comparison results Expected value: (The form was successfully submitted!) Actual value: (The form was successfully submitted!)
+Performing non-read action
+dashCount = 0
+Performing non-read action
+dashCount = 1
+[32mURL Check successful! Expected: (https://formy-project.herokuapp.com/thanks) Actual: (https://formy-project.herokuapp.com/thanks)[0m
+[51m[45m[33m-------[ End of Test Script ]-------[0m

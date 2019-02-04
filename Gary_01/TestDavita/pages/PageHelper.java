@@ -125,7 +125,7 @@ public class PageHelper {
         String allowedCharacters = "abcdefghijklmnopqrstuvwxyz1234567890_-";
         String cleanValue = "";
         //System.out.println("Allowed Characters: (" + allowedCharacters + ")");
-        for (int x=0;x<(screenShotName.length()-1);x++)
+        for (int x=0;x<=(screenShotName.length()-1);x++)
         {
             //System.out.println(screenShotName.substring(x,x + 1).toLowerCase());
             if (allowedCharacters.indexOf(screenShotName.substring(x,x + 1).toLowerCase()) >= 0)
