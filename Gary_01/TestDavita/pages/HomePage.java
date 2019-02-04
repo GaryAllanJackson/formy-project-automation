@@ -41,19 +41,22 @@ public class HomePage {
     //endregion
 
     //private String configurationFile = "C:\\Users\\gjackson\\Downloads\\Ex_Files_Selenium_EssT\\Ex_Files_Selenium_EssT\\Exercise Files\\Gary_01\\TestFiles\\testSetup.config";
-    private String configurationFile = "C:\\Users\\gjackson\\Downloads\\Ex_Files_Selenium_EssT\\Ex_Files_Selenium_EssT\\Exercise Files\\Gary_01\\TestFiles\\ConfigurationSetup.tconfig";
+    //private String configurationFile = "C:\\Users\\gjackson\\Downloads\\Ex_Files_Selenium_EssT\\Ex_Files_Selenium_EssT\\Exercise Files\\Gary_01\\TestFiles\\ConfigurationSetup.tconfig";
+    private String configurationFile = "Config/ConfigurationSetup.tconfig";
     private WebDriver driver;
     private static String testPage = "https://www.davita.com/";
     private PageHelper pageHelper = new PageHelper();
     private boolean runHeadless = true;
-    private String screenShotSaveFolder = "C:\\Gary\\ScreenShots\\";
+    private String screenShotSaveFolder;  // = "C:\\Gary\\ScreenShots\\";
     private BrowserType _selectedBrowserType; // = BrowserType.Firefox;    //BrowserType.Chrome;  //BrowserType.PhantomJS;
     private int maxBrowsers = 3;
     private boolean testAllBrowsers = false;  //true;
     List<TestSettings> testSettings = new ArrayList<TestSettings>();
     private String testFileName;
     List<String> testResults = new ArrayList<>();
-    private String logFileName = configurationFile.substring(0, configurationFile.lastIndexOf("\\")) + "\\TestResults.log";
+    private String logFileName = configurationFile.contains("\\") ?
+            configurationFile.substring(0, configurationFile.lastIndexOf("\\")) + "\\TestResults.log" :
+            configurationFile.substring(0, configurationFile.lastIndexOf("/")) + "/TestResults.log";
     List<String> testFiles = new ArrayList<>();
 
 
@@ -109,10 +112,14 @@ public class HomePage {
      **************************************************************** */
     public HomePage() throws Exception
     {
-        ConfigureTestEnvironment();
-        pageHelper.set_logFileName(logFileName);
-        //File tmp = new File(configurationFile);
+        File tmp = new File(configurationFile);
         //File tmp = new File(configurationFile.substring(0, configurationFile.lastIndexOf("\\")));
+        pageHelper.UpdateTestResults("config absolute path = " + tmp.getAbsolutePath());
+        pageHelper.UpdateTestResults("logFileName = " + logFileName);
+        ConfigureTestEnvironment();
+
+        pageHelper.set_logFileName(logFileName);
+
 
         //testing this
         //pageHelper.GetAllFilesInFolder(configurationFile.substring(0, configurationFile.lastIndexOf("\\")), ".txt");

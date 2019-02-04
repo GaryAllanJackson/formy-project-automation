@@ -14,12 +14,13 @@
 //    -   [Contains] - will select only test files containing the filter entered
 //    -   [Ends With] - will select only test files ending with the filter entered
 // FolderFileFilter - the filter used to select only matching files within the Test Folder.
-TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\Gary_01\TestFiles\Tests\DaVitaTestSettings.txt
-ScreenShotSaveFolder=C:\Gary\ScreenShots\CHOA
+TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\Gary_01\TestFiles\AutomatedDavitaTestSettings.txt
+TestFileName1=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\Gary_01\TestFiles\DaVitaTestSettings.txt
+ScreenShotSaveFolder=C:\Gary\ScreenShots\Davita
 BrowserType=Chrome
 RunHeadless=false
 TestAllBrowsers=false
 SpecifyTestFiles=true
-TestFolderName=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\Gary_01\TestFiles\Tests\DaVitaTestSettings.txt
-FolderFileFilterType=Contains
-FolderFileFilter=Choa
+TestFolderName=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\Gary_01\TestFiles\Tests\
+FolderFileFilterType=Starts_With
+FolderFileFilter=Fis
