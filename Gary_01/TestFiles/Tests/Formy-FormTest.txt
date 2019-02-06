@@ -27,3 +27,7 @@ n/a ; ScreenShot ; n/a ; true ; false
 n/a ; URL - https://formy-project.herokuapp.com/thanks ; n/a ; true ; false
 https://formy-project.herokuapp.com/form ; Navigate -  - 4000; n/a ; true ; false
 n/a ; URL - https://formy-project.herokuapp.com/form ; n/a ; true ; false
+https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_ref_comp_dropdown-menu&stacked=h ; Navigate ; n/a ; true ; true
+###//button[@class='btn btn-default dropdown-toggle'][contains(.,'Tutorials')] ; Tutorials ; xPath ; false ; true
+###//*[@id="iframe"]/html/body/div/div/ul ; Tutorials ; xPath ; false ; true
+###//button[contains(@id,'menu1')] ; Tutorials ; xPath ; false ; true

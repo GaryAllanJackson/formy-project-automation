@@ -1,0 +1,73 @@
+[51m[42m[34m[1m---------[ Beginning Configuration ]-----------------[0m
+Configured Browser Selection = Firefox
+Setting FireFoxDriver
+[51m[42m[34m[1m---------[ Ending Configuration ]-----------------[0m
+[51m[45m[33m-------[ Running Test Script ]-------[0m
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!_F0_S0_ Expected: (https://formy-project.herokuapp.com/form) Actual: (https://formy-project.herokuapp.com/form)
+----[ Explicit Navigation Event ]------------------
+Performing ID_F0_S1_ non-read action
+Performing ID_F0_S2_ non-read action
+Performing ID_F0_S3_ non-read action
+Performing ID_F0_S4_ non-read action
+Performing ID_F0_S5_ non-read action
+Performing CssSelector_F0_S6_ non-read action
+Sleeping for 1000 milliseconds for script _F0_S7_
+Element type being checked by Id: _F0_S8_select-menu2
+Failed comparison results Expected value: (0-1) Actual value: (null)
+Performing ID_F0_S9_ non-read action
+Performing ID_F0_S10_ non-read action
+Performing CssSelector_F0_S11_ non-read action
+Sleeping for 5000 milliseconds for script _F0_S12_
+Element type being checked by ClassName: _F0_S13_alert
+Looking up elementTag: (alert) Length = 5
+Checking element by ClassName: Indeterminate for script. _F0_S13_ Actual Value: "The form was successfully submitted!"
+Successful comparison results Expected value: (The form was successfully submitted!) Actual value: (The form was successfully submitted!)
+[32mURL Check successful! _F0_S15_ Expected: (https://formy-project.herokuapp.com/thanks) Actual: (https://formy-project.herokuapp.com/thanks)[0m
+----[ Start Explicit Navigation Event ]------------------
+----[ Explicit Navigation Event ]------------------
+[32mURL Check successful! _F0_S17_ Expected: (https://formy-project.herokuapp.com/form) Actual: (https://formy-project.herokuapp.com/form)[0m
+[51m[45m[33m-------[ End of Test Script ]-------[0m
+[51m[45m[33m-------[ Running Test Script ]-------[0m
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!_F1_S0_ Expected: (https://www.davita.com/) Actual: (https://www.davita.com/)
+----[ Explicit Navigation Event ]------------------
+Element type being checked by xPath: _F1_S1_h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking element by XPath: Heading for script _F1_S1_ Actual Value: "Empower Yourself with Kidney Knowledge"
+Successful comparison results Expected value: (Empower Yourself with Kidney Knowledge) Actual value: (Empower Yourself with Kidney Knowledge)
+Element type being checked by xPath: _F1_S2_h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking element by XPath: Heading for script _F1_S2_ Actual Value: "Explore Home Dialysis"
+Successful comparison results Expected value: (Explore Home Dialysis) Actual value: (Explore Home Dialysis)
+Element type being checked by xPath: _F1_S3_h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking element by XPath: Heading for script _F1_S3_ Actual Value: "Kidney-Friendly Recipes for a Healthier You"
+Successful comparison results Expected value: (Kidney-Friendly Recipes for a Healthier You) Actual value: (Kidney-Friendly Recipes for a Healthier You)
+Element type being checked by xPath: _F1_S4_a[1]
+Looking up elementTag: (a[1]) Length = 4
+Checking element by XPath: Indeterminate for script _F1_S4_ Actual Value: "FIND A CLASS"
+Failed comparison results Expected value: (FiND A CLASS) Actual value: (FIND A CLASS)
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!_F1_S5_ Expected: (https://www.davita.com/education) Actual: (https://www.davita.com/education)
+----[ Explicit Navigation Event ]------------------
+Element type being checked by xPath: _F1_S6_h1[1]
+Looking up elementTag: (h1[1]) Length = 5
+Checking element by XPath: Heading for script _F1_S6_ Actual Value: "Education"
+Successful comparison results Expected value: (Education) Actual value: (Education)
+Element type being checked by xPath: _F1_S7_h2[1]
+Looking up elementTag: (h2[1]) Length = 5
+Checking element by XPath: Heading for script _F1_S7_ Actual Value: "Kidney Disease Education, Tools & Resources"
+Successful comparison results Expected value: (Kidney Disease Education, Tools & Resources) Actual value: (Kidney Disease Education, Tools & Resources)
+Element type being checked by xPath: _F1_S8_h3[1]
+Looking up elementTag: (h3[1]) Length = 5
+Checking element by XPath: Heading for script _F1_S8_ Actual Value: "Take Charge of Your Kidney Health"
+Successful comparison results Expected value: (Take Charge of Your Kidney Health) Actual value: (Take Charge of Your Kidney Health)
+Element type being checked by xPath: _F1_S9_h5[1]
+Looking up elementTag: (h5[1]) Length = 5
+Checking element by XPath: Heading for script _F1_S9_ Actual Value: "KIDNEY DISEASE"
+Successful comparison results Expected value: (KIDNEY DISEASE) Actual value: (KIDNEY DISEASE)
+Performing xPath_F1_S10_ non-read action
+Sleeping for 5000 milliseconds for script _F1_S10_
+Successful Post Action results for script _F1_S10_ Expected URL: (https://www.davita.com/education) Actual URL: (https://www.davita.com/education)
+[51m[45m[33m-------[ End of Test Script ]-------[0m

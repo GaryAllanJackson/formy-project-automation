@@ -1,0 +1,32 @@
+[51m[42m[34m[1m---------[ Beginning Configuration ]-----------------[0m
+Configured Browser Selection = Firefox
+Setting FireFoxDriver
+[51m[42m[34m[1m---------[ Ending Configuration ]-----------------[0m
+[51m[45m[33m-------[ Running Test Script ]-------[0m
+----[ Start Explicit Navigation Event ]------------------
+Navigation and URL Check successful!_F0_S0_ Expected: (https://formy-project.herokuapp.com/form) Actual: (https://formy-project.herokuapp.com/form)
+----[ Explicit Navigation Event ]------------------
+Performing ID_F0_S1_ non-read action
+Performing ID_F0_S2_ non-read action
+Performing ID_F0_S3_ non-read action
+Performing ID_F0_S4_ non-read action
+Performing ID_F0_S5_ non-read action
+Performing CssSelector_F0_S6_ non-read action
+Sleeping for 1000 milliseconds for script _F0_S7_
+Element type being checked at step _F0_S8_ by Id: select-menu2
+Failed comparison results Expected value: (0-1) Actual value: (null)
+Performing ID_F0_S9_ non-read action
+Performing ID_F0_S10_ non-read action
+Performing CssSelector_F0_S11_ non-read action
+Sleeping for 5000 milliseconds for script _F0_S12_
+Element type being checked at step _F0_S13_ by ClassName: _F0_S13_alert
+Looking up elementTag: (alert) Length = 5
+Checking element by ClassName: Indeterminate for script. _F0_S13_ Actual Value: "The form was successfully submitted!"
+Successful comparison results Expected value: (The form was successfully submitted!) Actual value: (The form was successfully submitted!)
+[32mURL Check successful! _F0_S15_ Expected: (https://formy-project.herokuapp.com/thanks) Actual: (https://formy-project.herokuapp.com/thanks)[0m
+----[ Start Explicit Navigation Event ]------------------
+----[ Explicit Navigation Event ]------------------
+[32mURL Check successful! _F0_S17_ Expected: (https://formy-project.herokuapp.com/form) Actual: (https://formy-project.herokuapp.com/form)[0m
+----[ Start Explicit Navigation Event ]------------------
+----[ Explicit Navigation Event ]------------------
+Element type being checked at step _F0_S19_ by xPath: //button[contains(@id,'menu1')]

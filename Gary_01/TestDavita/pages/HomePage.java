@@ -38,6 +38,8 @@ public class HomePage {
      *       //private static String homePageRoot = "https://www.davita.com/";
      *
      *   Setup Instructions:
+     *      First, mark the Entities folder and the pages folder as Source Root.
+     *      Second, mark the test folder as Test Source Root.
      *      Update the following items if necessary:
      *      configurationFile,
      *      configurationFolder,
@@ -45,6 +47,12 @@ public class HomePage {
      *      chromeDriverPath,
      *      fireFoxDriverPath,
      *      phantomJsDriverPath
+     *
+     *      Future updates:
+     *      1.  Need to add switch to frame for iFrames
+     *          driver.switch_to.frame('NAME')
+     *      2.  Need to separate debug output from required output and make
+     *          it configurable whether extra information is output.
      ********************************************************************* */
     //endregion
 
@@ -283,6 +291,7 @@ public class HomePage {
                 String expected = ts.get_expectedValue();
                 String accessor = ts.get_xPath();
                 String fileStepIndex = "_F" + fileIndex + "_S" + x + "_";
+                String fileStepIndexForLog = "F" + fileIndex + "_S" + x;
 
                 //get value and check against expected
                 if (!ts.getPerformWrite()) {
@@ -292,20 +301,25 @@ public class HomePage {
                     pageHelper.UpdateTestResults("Search Type = " + ts.get_searchType());
 
                     if (ts.get_searchType().toLowerCase().equals("xpath")) {
-                        pageHelper.UpdateTestResults("Element type being checked by xPath: " + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
+                        //pageHelper.UpdateTestResults("Element type being checked at step " + fileStepIndex +  " by xPath: " + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
+                        pageHelper.UpdateTestResults("Element type being checked at step " + fileStepIndexForLog +  " by xPath: " + accessor, testResults);
                         actual = CheckElementWithXPath(accessor, fileStepIndex);
                     } else if (ts.get_searchType().toLowerCase().equals("cssselector")) {
-                        pageHelper.UpdateTestResults("Element type being checked by CssSelector: " + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
+                        //pageHelper.UpdateTestResults("Element type being checked at step " + fileStepIndex +  " by CssSelector: " + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
+                        pageHelper.UpdateTestResults("Element type being checked at step " + fileStepIndexForLog +  " by CssSelector: " + accessor, testResults);
                         actual = CheckElementWithCssSelector(accessor, fileStepIndex);
                     } else if (ts.get_searchType().toLowerCase().equals("tagname")) {
-                        pageHelper.UpdateTestResults("Element type being checked by TagName: " + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
+                        //pageHelper.UpdateTestResults("Element type being checked at step " + fileStepIndex + " by TagName: " + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
+                        pageHelper.UpdateTestResults("Element type being checked at step " + fileStepIndexForLog + " by TagName: " + accessor, testResults);
                         actual = CheckElementWithTagName(accessor, fileStepIndex);
                     } else if (ts.get_searchType().toLowerCase().equals("classname")) {
-                        pageHelper.UpdateTestResults("Element type being checked by ClassName: " + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
+                        //pageHelper.UpdateTestResults("Element type being checked at step " + fileStepIndex + " by ClassName: " + fileStepIndex + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
+                        pageHelper.UpdateTestResults("Element type being checked at step " + fileStepIndexForLog + " by ClassName: " + accessor, testResults);
                         //pageHelper.UpdateTestResults("IN the correct part of the else statement");
                         actual = CheckElementWithClassName(accessor, fileStepIndex);
                     } else if (ts.get_searchType().toLowerCase().equals("id")) {
-                        pageHelper.UpdateTestResults("Element type being checked by Id: " + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
+                        //pageHelper.UpdateTestResults("Element type being checked at step " + fileStepIndex + " by Id: " + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
+                        pageHelper.UpdateTestResults("Element type being checked at step " + fileStepIndexForLog + " by Id: " + accessor, testResults);
                         actual = CheckElementWithId(accessor, fileStepIndex);
                     }
 
@@ -327,9 +341,9 @@ public class HomePage {
                         }
                     }
                     if (expected.equals(actual)) {
-                        pageHelper.UpdateTestResults("Successful comparison results Expected value: (" + expected + ") Actual value: (" + actual + ")", testResults);
+                        pageHelper.UpdateTestResults("Successful comparison results at step " + fileStepIndexForLog + " Expected value: (" + expected + ") Actual value: (" + actual + ")", testResults);
                     } else if (!expected.equals(actual)) {
-                        pageHelper.UpdateTestResults("Failed comparison results Expected value: (" + expected + ") Actual value: (" + actual + ")", testResults);
+                        pageHelper.UpdateTestResults("Failed comparison results at step " + fileStepIndexForLog + " Expected value: (" + expected + ") Actual value: (" + actual + ")", testResults);
                         //String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
                         if (screenShotSaveFolder != null && !screenShotSaveFolder.isEmpty()) {
                             //pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "AssertFail" + expected.replace(' ', '_'), screenShotSaveFolder);
@@ -346,7 +360,7 @@ public class HomePage {
                     if ((ts.get_searchType().toLowerCase().indexOf("xpath") >= 0) || (ts.get_searchType().toLowerCase().indexOf("cssselector") >= 0) ||
                             (ts.get_searchType().toLowerCase().indexOf("tagname") >= 0) || (ts.get_searchType().toLowerCase().indexOf("id") >= 0) ||
                             (ts.get_searchType().toLowerCase().indexOf("classname") >= 0)){
-                        pageHelper.UpdateTestResults("Performing " + ts.get_searchType() + " non-read action", testResults);
+                        pageHelper.UpdateTestResults("Performing " + ts.get_searchType() + " " + fileStepIndexForLog + " non-read action", testResults);
                         status = PerformAction(ts.get_searchType(), ts.get_xPath(), ts.get_expectedValue(), fileStepIndex);
 
                         //region { refactored and no longer used }
@@ -371,7 +385,7 @@ public class HomePage {
                             String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf(" - ") + 3).trim();
                             if (dashCount > 1) {
                                 int delayMilliSeconds = parseInt(ts.get_expectedValue().substring(ts.get_expectedValue().lastIndexOf("-") + 1).trim());
-                                DelayCheck(delayMilliSeconds);
+                                DelayCheck(delayMilliSeconds, fileStepIndex);
                                 expectedUrl = expectedUrl.substring(0, expectedUrl.indexOf(" - "));
                             }
                             String actualUrl = GetCurrentPageUrl();
@@ -392,9 +406,9 @@ public class HomePage {
                                 }
                             }
                             if (expectedUrl.equals(actualUrl)) {
-                                pageHelper.UpdateTestResults("Successful Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")", testResults);
+                                pageHelper.UpdateTestResults("Successful Post Action results for step " + fileStepIndexForLog +  " Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")", testResults);
                             } else if (!expectedUrl.equals(actualUrl)) {
-                                pageHelper.UpdateTestResults("Failed Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")", testResults);
+                                pageHelper.UpdateTestResults("Failed Post Action results for step " + fileStepIndexForLog + " Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")", testResults);
                             }
                         }
                     } else if (ts.get_searchType().toLowerCase().indexOf("n/a") >= 0) {
@@ -402,24 +416,24 @@ public class HomePage {
                         if (ts.get_expectedValue().toLowerCase().indexOf("navigate") >= 0) {
                             String navigateUrl = ts.get_xPath();
                             String [] expectedItems = ts.get_expectedValue().split(" - ");
-                            //pageHelper.UpdateTestResults("ExpectedItems = " + expectedItems.length);
-                            String expectedUrl = expectedItems[1].trim();
-                            //pageHelper.UpdateTestResults("expectedUrl = " + expectedUrl);
-                            //pageHelper.UpdateTestResults("----[ " + ts.get_expectedValue().toLowerCase() + "]------------------", testResults);
+                            String expectedUrl = null;
                             int delayMilliSeconds = 0;
-                            if (dashCount > 1) {
-                                //pageHelper.UpdateTestResults("expectedItems[2] = " + expectedItems[2]);
-                                delayMilliSeconds = parseInt(expectedItems[2].trim());
+                            if (dashCount > 0) {
+                                expectedUrl = expectedItems[1].trim();
+                                //pageHelper.UpdateTestResults("----[ " + ts.get_expectedValue().toLowerCase() + "]------------------", testResults);
+                                if (dashCount > 1) {
+                                    delayMilliSeconds = parseInt(expectedItems[2].trim());
+                                }
                             }
                             this.testPage = navigateUrl;
                             pageHelper.UpdateTestResults("----[ Start Explicit Navigation Event ]------------------", testResults);
                             String actualUrl = CheckPageUrl(delayMilliSeconds);
-                            if (expectedUrl.trim().length() > 0) {
+                            if (expectedUrl != null && expectedUrl.trim().length() > 0) {
                                 assertEquals(expectedUrl, actualUrl);
                                 if (expectedUrl.trim().equals(actualUrl.trim())) {
-                                    pageHelper.UpdateTestResults("Navigation and URL Check successful!", testResults);
+                                    pageHelper.UpdateTestResults("Navigation and URL Check successful for step " + fileStepIndexForLog + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")", testResults);
                                 } else {
-                                    pageHelper.UpdateTestResults("Navigation and URL Check unsuccessful! Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")", testResults);
+                                    pageHelper.UpdateTestResults("Navigation and URL Check unsuccessful for step " + fileStepIndexForLog + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")", testResults);
                                 }
                             }
                             pageHelper.UpdateTestResults("----[ Explicit Navigation Event ]------------------", testResults);
@@ -431,30 +445,29 @@ public class HomePage {
                             } else {
                                 delayMilliSeconds = parseInt(ts.get_xPath());
                             }
-                            DelayCheck(delayMilliSeconds);
+                            DelayCheck(delayMilliSeconds, fileStepIndex);
                         }
                         else if (ts.get_expectedValue().toLowerCase().indexOf("screenshot") >= 0) {
-                            //browserUsed + testFileName + ts.get_searchType()  + "_" + x
                             //PerformScreenShotCapture(browserUsed + testFileName + ts.get_searchType() + fileStepIndex + ts.get_xPath());
                             PerformScreenShotCapture(browserUsed + ts.get_expectedValue() + fileStepIndex);
                         }
                         else if (ts.get_expectedValue().toLowerCase().indexOf("url") >= 0) {
                             //pageHelper.UpdateTestResults("----[ URL if before call ]------------------", testResults);
                             String [] expectedItems = ts.get_expectedValue().split(" - ");
-                            //String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf(" - ") + 3).trim();
-                            String expectedUrl = expectedItems[1].trim();
-                            if (dashCount > 1) {
-                                //int delayMilliSeconds = parseInt(ts.get_expectedValue().substring(ts.get_expectedValue().lastIndexOf("-") + 1).trim());
-                                int delayMilliSeconds = parseInt(expectedItems[2].trim());
-                                DelayCheck(delayMilliSeconds);
-                                //expectedUrl = expectedUrl.substring(0, expectedUrl.indexOf(" - "));
+                            String expectedUrl = null;
+                            if (dashCount > 0) {
+                                expectedUrl = expectedItems[1].trim();
+                                if (dashCount > 1) {
+                                    int delayMilliSeconds = parseInt(expectedItems[2].trim());
+                                    DelayCheck(delayMilliSeconds, fileStepIndex);
+                                }
                             }
                             String actualUrl = GetCurrentPageUrl();
                             assertEquals(expectedUrl, actualUrl);
                             if (expectedUrl.trim().equals(actualUrl.trim())) {
-                                pageHelper.UpdateTestResults(PageHelper.ANSI_GREEN + "URL Check successful! Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")" + ANSI_RESET, testResults);
+                                pageHelper.UpdateTestResults(PageHelper.ANSI_GREEN + "URL Check successful for step " + fileStepIndexForLog + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")" + ANSI_RESET, testResults);
                             } else {
-                                pageHelper.UpdateTestResults(PageHelper.ANSI_RED + "URL Check unsuccessful! Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")" + ANSI_RESET, testResults);
+                                pageHelper.UpdateTestResults(PageHelper.ANSI_RED + "URL Check unsuccessful for step " + fileStepIndexForLog + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")" + ANSI_RESET, testResults);
                             }
                             //pageHelper.UpdateTestResults("----[ URL if after call ]------------------", testResults);
                         }
@@ -479,8 +492,9 @@ public class HomePage {
      *      that depends upon some change like a navigation or
      *      new items populating the page.
      ************************************************************ */
-    private void DelayCheck(int milliseconds) throws InterruptedException {
-        pageHelper.UpdateTestResults("Sleeping for " + milliseconds + " milliseconds.", testResults);
+    private void DelayCheck(int milliseconds, String fileStepIndex) throws InterruptedException {
+        String fileStepIndexForLog = fileStepIndex.substring(1, fileStepIndex.length() - 1);
+        pageHelper.UpdateTestResults("Sleeping for " + milliseconds + " milliseconds for script " + fileStepIndexForLog, testResults);
         Thread.sleep(milliseconds);
     }
 
@@ -520,7 +534,8 @@ public class HomePage {
 //        }
         //endregion
         try {
-            //actualValue = this.driver.findElement(By.xpath(accessor)).getText();
+            String fileStepIndexForLog = fileStepIndex.substring(1, fileStepIndex.length() - 1);
+                    //actualValue = this.driver.findElement(By.xpath(accessor)).getText();
             String typeOfElement = this.driver.findElement(By.xpath(accessor)).getAttribute("type");
             //if (typeOfElement.contains("select-one") || typeOfElement.contains("select-many")) {
             if (typeOfElement!= null && (typeOfElement.contains("select-one") || typeOfElement.contains("select-many"))) {
@@ -531,7 +546,7 @@ public class HomePage {
             else {
                 actualValue = this.driver.findElement(By.xpath(accessor)).getText();
             }
-            pageHelper.UpdateTestResults("Checking " + ElementTypeLookup(accessor) + " with XPath.  Actual Value: \"" + actualValue + "\"", testResults);
+            pageHelper.UpdateTestResults("Checking element by XPath: " + ElementTypeLookup(accessor) + " for script " + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
             return actualValue;
         } catch (Exception e) {
             String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
@@ -551,10 +566,8 @@ public class HomePage {
     public String CheckElementWithCssSelector(String accessor, String fileStepIndex) throws Exception {
         String actualValue = "";
 
-//        if (this.driver.getCurrentUrl() != testPage) {
-//            pageHelper.NavigateToPage(this.driver, testPage);
-//        }
         try {
+            String fileStepIndexForLog = fileStepIndex.substring(1, fileStepIndex.length() - 1);
             //actualValue = this.driver.findElement(By.cssSelector(accessor)).getText();
             String typeOfElement = this.driver.findElement(By.cssSelector(accessor)).getAttribute("type");
             if (typeOfElement!= null && (typeOfElement.contains("select-one") || typeOfElement.contains("select-many"))) {
@@ -565,7 +578,7 @@ public class HomePage {
             else {
                 actualValue = this.driver.findElement(By.cssSelector(accessor)).getText();
             }
-            pageHelper.UpdateTestResults("Checking " + ElementTypeLookup(accessor) + " with CssSelector.  Actual Value: \"" + actualValue + "\"", testResults);
+            pageHelper.UpdateTestResults("Checking element by CssSelector: " + ElementTypeLookup(accessor) + " for script " + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
             return actualValue;
         } catch (Exception e) {
             String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
@@ -588,6 +601,7 @@ public class HomePage {
 
         try {
             //actualValue = this.driver.findElement(By.tagName(accessor)).getText();
+            String fileStepIndexForLog = fileStepIndex.substring(1, fileStepIndex.length() - 1);
             String typeOfElement = this.driver.findElement(By.tagName(accessor)).getAttribute("type");
             if (typeOfElement!= null && (typeOfElement.contains("select-one") || typeOfElement.contains("select-many"))) {
                 Select select = new Select(this.driver.findElement(By.tagName(accessor)));
@@ -597,7 +611,7 @@ public class HomePage {
             else {
                 actualValue = this.driver.findElement(By.tagName(accessor)).getText();
             }
-            pageHelper.UpdateTestResults("Checking " + ElementTypeLookup(accessor) + " with TagName.  Actual Value: \"" + actualValue + "\"", testResults);
+            pageHelper.UpdateTestResults("Checking element by TagName: " + ElementTypeLookup(accessor) + " for script. " + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
             return actualValue;
         } catch (Exception e) {
             String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
@@ -620,6 +634,7 @@ public class HomePage {
 
         try {
             //actualValue = this.driver.findElement(By.className(accessor)).getText();
+            String fileStepIndexForLog = fileStepIndex.substring(1, fileStepIndex.length() - 1);
             String typeOfElement = this.driver.findElement(By.className(accessor)).getAttribute("type");
             //pageHelper.UpdateTestResults("typeOfElement = " + typeOfElement != null ? typeOfElement : "NULL");
             if (typeOfElement!= null && (typeOfElement.contains("select-one") || typeOfElement.contains("select-many"))) {
@@ -630,7 +645,7 @@ public class HomePage {
             else {
                 actualValue = this.driver.findElement(By.className(accessor)).getText();
             }
-            pageHelper.UpdateTestResults("Checking " + ElementTypeLookup(accessor) + " with ClassName.  Actual Value: \"" + actualValue + "\"", testResults);
+            pageHelper.UpdateTestResults("Checking element by ClassName: " + ElementTypeLookup(accessor) + " for script. " + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
             return actualValue;
         } catch (Exception e) {
             String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
@@ -652,6 +667,7 @@ public class HomePage {
        String actualValue = "";
 
        try {
+           String fileStepIndexForLog = fileStepIndex.substring(1, fileStepIndex.length() - 1);
            String typeOfElement = this.driver.findElement(By.id(accessor)).getAttribute("type");
            //pageHelper.UpdateTestResults("typeOfElement = " + typeOfElement);
            if (typeOfElement!= null && (typeOfElement.contains("select-one") || typeOfElement.contains("select-many"))) {
@@ -662,7 +678,7 @@ public class HomePage {
            else {
                actualValue = this.driver.findElement(By.id(accessor)).getText();
            }
-           pageHelper.UpdateTestResults("Checking element by ID: " + accessor + ".  Actual Value: \"" + actualValue + "\"", testResults);
+           pageHelper.UpdateTestResults("Checking element by ID: " + accessor + " for script." + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
            return actualValue;
        } catch (Exception e) {
            String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
@@ -835,7 +851,8 @@ public class HomePage {
 
     private CharSequence GetKeyValue(String value, String fileStepIndex) {
         value = value.toLowerCase().trim();
-        pageHelper.UpdateTestResults("GetKeyValue value = (" + value + ")");
+        String fileStepIndexForLog = fileStepIndex.substring(1, fileStepIndex.length() - 1);
+        pageHelper.UpdateTestResults("Replacing (" + value + ") with corresponding Key value keyword for step " + fileStepIndexForLog);
 
         if (value.equals("keys.enter"))
         {
