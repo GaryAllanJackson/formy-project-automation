@@ -72,8 +72,15 @@ public class PageHelper {
      *  Navigates to the web address passed in and sleeps for the number of milliseconds passed in
      **************************************************************** */
     public void NavigateToPage(WebDriver driver, String webAddress, int milliseconds) throws InterruptedException{
-        driver.get(webAddress);
-        Thread.sleep(milliseconds);
+        //UpdateTestResults("In NavigateToPage waiting " + milliseconds + " milliseconds!");
+        if (milliseconds > 0) {
+            driver.get(webAddress);
+            Thread.sleep(milliseconds);
+        }
+        else
+        {
+            NavigateToPage(driver, webAddress);
+        }
     }
 
 

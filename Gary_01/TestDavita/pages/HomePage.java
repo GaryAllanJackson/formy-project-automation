@@ -1,9 +1,9 @@
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xpath.operations.Bool;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxBinary;
@@ -12,6 +12,7 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.support.ui.Select;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,21 +37,24 @@ public class HomePage {
      *   Moved to file:
      *       //private static String homePageRoot = "https://www.davita.com/";
      *
-     *   Completely removed:
-     *      //private boolean usePhantomJsDriver = true;
-     *      //private FirefoxDriver ffDriver;
-     *      //private String testFileName = "C:\\Users\\gjackson\\Downloads\\Ex_Files_Selenium_EssT\\Ex_Files_Selenium_EssT\\Exercise Files\\Gary_01\\TestFiles\\TestSettingsFile.txt";
+     *   Setup Instructions:
+     *      Update the following items if necessary:
+     *      configurationFile,
+     *      configurationFolder,
+     *      logFileName,
+     *      chromeDriverPath,
+     *      fireFoxDriverPath,
+     *      phantomJsDriverPath
      ********************************************************************* */
     //endregion
 
-    //private String configurationFile = "C:\\Users\\gjackson\\Downloads\\Ex_Files_Selenium_EssT\\Ex_Files_Selenium_EssT\\Exercise Files\\Gary_01\\TestFiles\\testSetup.config";
-    //private String configurationFile = "C:\\Users\\gjackson\\Downloads\\Ex_Files_Selenium_EssT\\Ex_Files_Selenium_EssT\\Exercise Files\\Gary_01\\TestFiles\\ConfigurationSetup.tconfig";
     private String configurationFile = "Config/ConfigurationSetup.tconfig";
+    private String configurationFolder = "Config/";
     private WebDriver driver;
     private static String testPage = "https://www.davita.com/";
     private PageHelper pageHelper = new PageHelper();
     private boolean runHeadless = true;
-    private String screenShotSaveFolder;  // = "C:\\Gary\\ScreenShots\\";
+    private String screenShotSaveFolder;
     private BrowserType _selectedBrowserType; // = BrowserType.Firefox;    //BrowserType.Chrome;  //BrowserType.PhantomJS;
     private int maxBrowsers = 3;
     private boolean testAllBrowsers = false;  //true;
@@ -63,7 +67,10 @@ public class HomePage {
             configurationFile.substring(0, configurationFile.lastIndexOf("\\")) + "\\TestResults_" + logFileUniqueName + ".log" :
             configurationFile.substring(0, configurationFile.lastIndexOf("/")) + "/TestResults_" + logFileUniqueName + ".log";
     List<String> testFiles = new ArrayList<>();
-
+    private String chromeDriverPath = "/Users/gjackson/Downloads/chromedriver_win32/chromedriver.exe";
+    private String fireFoxDriverPath = "/GeckoDriver/geckodriver-v0.23.0-win64/geckodriver.exe";
+    private String phantomJsDriverPath = "/Gary/PhantomJS/phantomjs-2.1.1-windows/bin/phantomjs.exe";
+    //private String internetExplorerDriverPath;
 
     public BrowserType get_selectedBrowserType() {
         return _selectedBrowserType;
@@ -115,7 +122,6 @@ public class HomePage {
      **************************************************************** */
     public HomePage() throws Exception {
         File tmp = new File(configurationFile);
-        //File tmp = new File(configurationFile.substring(0, configurationFile.lastIndexOf("\\")));
         pageHelper.UpdateTestResults("config absolute path = " + tmp.getAbsolutePath());
         pageHelper.UpdateTestResults("logFileName = " + logFileName);
         ConfigureTestEnvironment();
@@ -192,7 +198,7 @@ public class HomePage {
             this.runHeadless = configSettings.get_runHeadless();
             this.screenShotSaveFolder = configSettings.get_screenShotSaveFolder();
             this.testAllBrowsers = configSettings.get_testAllBrowsers();
-            //this.testFileName = configSettings.get_testSettingsFile();
+
             if (testFiles.size() > 1) {
                 this.testFileName = testFiles.get(0);
             } else {
@@ -208,9 +214,8 @@ public class HomePage {
      *  Sets the WebDriver to the PhantomJs Driver
      **************************************************************************** */
     private void SetPhantomJsDriver() {
-        //System.out.println("Setting PhantomJSDriver");
         pageHelper.UpdateTestResults("Setting PhantomJSDriver", testResults);
-        File src = new File("C:\\Gary\\PhantomJS\\phantomjs-2.1.1-windows\\bin\\phantomjs.exe");
+        File src = new File(phantomJsDriverPath);
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, src.getAbsolutePath());
         //IMPORTANT: for phantomJS you may need to add a user agent for automation testing as the default user agent is old
@@ -225,9 +230,9 @@ public class HomePage {
      *  Sets the WebDriver to the Chrome Driver
      **************************************************************************** */
     private void SetChromeDriver() {
-        //System.out.println("Setting ChromeDriver");
         pageHelper.UpdateTestResults("Setting ChromeDriver", testResults);
-        System.setProperty("webdriver.chrome.driver", "/Users/gjackson/Downloads/chromedriver_win32/chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", chromeDriverPath);
+
         if (runHeadless) {
             ChromeOptions options = new ChromeOptions();
             options.addArguments("window-size=1400,800");
@@ -244,7 +249,7 @@ public class HomePage {
      **************************************************************************** */
     private void SetFireFoxDriver() {
         pageHelper.UpdateTestResults("Setting FireFoxDriver", testResults);
-        File gecko = new File("c:\\GeckoDriver\\geckodriver-v0.23.0-win64\\geckodriver.exe");
+        File gecko = new File(fireFoxDriverPath);
         System.setProperty("webdriver.gecko.driver", gecko.getAbsolutePath());
         FirefoxOptions options = new FirefoxOptions();
         //options.setCapability("marionette", false);
@@ -266,7 +271,7 @@ public class HomePage {
      **************************************************************************** */
     public void TestPageElements() throws Exception {
         int startIndex = 0;  //used for instances when you do not want to start at the first element to test
-
+        String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
 
         for (int fileIndex = 0; fileIndex < testFiles.size(); fileIndex++) {
             testFileName = testFiles.get(fileIndex);
@@ -277,57 +282,94 @@ public class HomePage {
                 TestSettings ts = testSettings.get(x);
                 String expected = ts.get_expectedValue();
                 String accessor = ts.get_xPath();
+                String fileStepIndex = "_F" + fileIndex + "_S" + x + "_";
 
                 //get value and check against expected
                 if (!ts.getPerformWrite()) {
-                    pageHelper.UpdateTestResults("Element type being checked is <" + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
+                    //pageHelper.UpdateTestResults("Element type being checked is <" + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
 
                     String actual = "";
+                    pageHelper.UpdateTestResults("Search Type = " + ts.get_searchType());
 
                     if (ts.get_searchType().toLowerCase().equals("xpath")) {
-                        actual = CheckElementWithXPath(accessor);
+                        pageHelper.UpdateTestResults("Element type being checked by xPath: " + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
+                        actual = CheckElementWithXPath(accessor, fileStepIndex);
                     } else if (ts.get_searchType().toLowerCase().equals("cssselector")) {
-                        actual = CheckElementWithCssSelector(accessor);
+                        pageHelper.UpdateTestResults("Element type being checked by CssSelector: " + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
+                        actual = CheckElementWithCssSelector(accessor, fileStepIndex);
                     } else if (ts.get_searchType().toLowerCase().equals("tagname")) {
-                        actual = CheckElementWithTagName(accessor);
+                        pageHelper.UpdateTestResults("Element type being checked by TagName: " + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
+                        actual = CheckElementWithTagName(accessor, fileStepIndex);
                     } else if (ts.get_searchType().toLowerCase().equals("classname")) {
-                        actual = CheckElementWithClassName(accessor);
+                        pageHelper.UpdateTestResults("Element type being checked by ClassName: " + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
+                        //pageHelper.UpdateTestResults("IN the correct part of the else statement");
+                        actual = CheckElementWithClassName(accessor, fileStepIndex);
                     } else if (ts.get_searchType().toLowerCase().equals("id")) {
-                        actual = CheckElementWithId(accessor);
+                        pageHelper.UpdateTestResults("Element type being checked by Id: " + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
+                        actual = CheckElementWithId(accessor, fileStepIndex);
                     }
 
-                    //assertEquals(expected, actual);
                     if (ts.get_isCrucial()) {
                         assertEquals(expected, actual);
                     } else {
                         try {
                             assertEquals(expected, actual);
                         } catch (AssertionError ae) {
-                            //this is expected, so ignore it
+                            // do not capture screen shot here, if element not found, check methods will capture screen shot
+                            // if assert fails, the next if statement will capture the screen shot
+                            // [WRONG]if the non-crucial test fails, take a screenshot and keep processing remaining tests
+                            //String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
+//                            if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
+//                                pageHelper.captureScreenShot(driver, browserUsed + ts.get_searchType() + fileStepIndex + "_Element_Not_Found", configurationFolder);
+//                            } else {
+//                                pageHelper.captureScreenShot(driver, browserUsed + ts.get_searchType() + fileStepIndex + "_Element_Not_Found", screenShotSaveFolder);
+//                            }
                         }
                     }
                     if (expected.equals(actual)) {
                         pageHelper.UpdateTestResults("Successful comparison results Expected value: (" + expected + ") Actual value: (" + actual + ")", testResults);
                     } else if (!expected.equals(actual)) {
                         pageHelper.UpdateTestResults("Failed comparison results Expected value: (" + expected + ") Actual value: (" + actual + ")", testResults);
-                    }
-                    String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
-                    if (screenShotSaveFolder != null && !screenShotSaveFolder.isEmpty()) {
-                        pageHelper.captureScreenShot(driver, browserUsed + expected.replace(' ', '_'), screenShotSaveFolder);
+                        //String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
+                        if (screenShotSaveFolder != null && !screenShotSaveFolder.isEmpty()) {
+                            //pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "AssertFail" + expected.replace(' ', '_'), screenShotSaveFolder);
+                            pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "Assert_Fail", screenShotSaveFolder);
+                        }
                     }
                 } else {  //set a value or perform a click
-                    pageHelper.UpdateTestResults("Performing non-read action", testResults);
+                    //pageHelper.UpdateTestResults("Performing non-read action", testResults);
                     Boolean status;
                     int dashCount = ts.get_expectedValue().contains(" - ") ? StringUtils.countMatches(ts.get_expectedValue(), " - ") : 0;
-                    pageHelper.UpdateTestResults("dashCount = " + dashCount, testResults);
-                    if (ts.get_searchType().toLowerCase().indexOf("xpath") >= 0) {
-                        pageHelper.UpdateTestResults("Performing XPath non-read action", testResults);
-                        status = PerformXPathAction(ts.get_xPath(), ts.get_expectedValue());
+                    //pageHelper.UpdateTestResults("dashCount = " + dashCount, testResults);
+
+                    //GAJ working here perform all non read actions below that use an accessor
+                    if ((ts.get_searchType().toLowerCase().indexOf("xpath") >= 0) || (ts.get_searchType().toLowerCase().indexOf("cssselector") >= 0) ||
+                            (ts.get_searchType().toLowerCase().indexOf("tagname") >= 0) || (ts.get_searchType().toLowerCase().indexOf("id") >= 0) ||
+                            (ts.get_searchType().toLowerCase().indexOf("classname") >= 0)){
+                        pageHelper.UpdateTestResults("Performing " + ts.get_searchType() + " non-read action", testResults);
+                        status = PerformAction(ts.get_searchType(), ts.get_xPath(), ts.get_expectedValue(), fileStepIndex);
+
+                        //region { refactored and no longer used }
+                        /*if (ts.get_searchType().toLowerCase().indexOf("xpath") >= 0) {
+                            status = PerformXPathAction(ts.get_xPath(), ts.get_expectedValue());
+                        }
+                        else if (ts.get_searchType().toLowerCase().indexOf("cssselector") >= 0) {
+                            status = PerformCssSelectorAction(ts.get_xPath(), ts.get_expectedValue());
+                        }
+                        else if (ts.get_searchType().toLowerCase().indexOf("tagname") >= 0) {
+                            status = PerformTagNameAction(ts.get_xPath(), ts.get_expectedValue());
+                        }
+                        else if (ts.get_searchType().toLowerCase().indexOf("id") >= 0) {
+                            status = PerformIdAction(ts.get_xPath(), ts.get_expectedValue());
+                        }
+                        else if (ts.get_searchType().toLowerCase().indexOf("classname") >= 0) {
+                            status = PerformClassAction(ts.get_xPath(), ts.get_expectedValue());
+                        }*/
+                        //endregion
                         if (ts.get_expectedValue().toLowerCase().indexOf(" - ") >= 0) {
                             //url has changed, check url against expected value
                             String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf(" - ") + 3).trim();
                             if (dashCount > 1) {
-                                //expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf(" - ") + 3, ts.get_expectedValue().lastIndexOf(" - ")).trim();
                                 int delayMilliSeconds = parseInt(ts.get_expectedValue().substring(ts.get_expectedValue().lastIndexOf("-") + 1).trim());
                                 DelayCheck(delayMilliSeconds);
                                 expectedUrl = expectedUrl.substring(0, expectedUrl.indexOf(" - "));
@@ -339,7 +381,14 @@ public class HomePage {
                                 try {
                                     assertEquals(expectedUrl, actualUrl);
                                 } catch (AssertionError ae) {
-                                    //this is expected, so ignore it
+                                    //if the non-crucial test fails, take a screenshot and keep processing remaining tests
+                                    if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
+                                        //pageHelper.captureScreenShot(driver, browserUsed + ts.get_searchType() + "_Element_Not_Found", configurationFolder);
+                                        pageHelper.captureScreenShot(driver, browserUsed  + ts.get_searchType()  + fileStepIndex + "Element_Not_Found" + expected.replace(' ', '_'), configurationFolder);
+                                    } else {
+                                        //pageHelper.captureScreenShot(driver, browserUsed + ts.get_searchType() + "_Element_Not_Found", screenShotSaveFolder);
+                                        pageHelper.captureScreenShot(driver, browserUsed + ts.get_searchType()  + fileStepIndex + "Element_Not_Found" + expected.replace(' ', '_'), screenShotSaveFolder);
+                                    }
                                 }
                             }
                             if (expectedUrl.equals(actualUrl)) {
@@ -348,100 +397,30 @@ public class HomePage {
                                 pageHelper.UpdateTestResults("Failed Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")", testResults);
                             }
                         }
-                    } else if (ts.get_searchType().toLowerCase().indexOf("cssselector") >= 0) {
-                        pageHelper.UpdateTestResults("Performing CssSelector non-read action", testResults);
-                        status = PerformCssSelectorAction(ts.get_xPath(), ts.get_expectedValue());
-                        if (ts.get_expectedValue().toLowerCase().indexOf("-") >= 0) {
-                            //url has changed, check url against expected value
-                            String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf(" - ") + 3).trim();
-                            if (dashCount > 1) {
-                                int delayMilliSeconds = parseInt(ts.get_expectedValue().substring(ts.get_expectedValue().lastIndexOf("-") + 1).trim());
-                                DelayCheck(delayMilliSeconds);
-                                expectedUrl = expectedUrl.substring(0, expectedUrl.indexOf(" - "));
-                            }
-                            String actualUrl = GetCurrentPageUrl();
-                            assertEquals(expectedUrl, actualUrl);
-                            if (expectedUrl.equals(actualUrl)) {
-                                pageHelper.UpdateTestResults("Successful Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")", testResults);
-                            } else if (!expectedUrl.equals(actualUrl)) {
-                                pageHelper.UpdateTestResults("Failed Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")", testResults);
-                            }
-                        }
-                    } else if (ts.get_searchType().toLowerCase().indexOf("tagname") >= 0) {
-                        pageHelper.UpdateTestResults("Performing TagName non-read action", testResults);
-                        status = PerformTagNameAction(ts.get_xPath(), ts.get_expectedValue());
-                        if (ts.get_expectedValue().toLowerCase().indexOf(" - ") >= 0) {
-                            //url has changed, check url against expected value
-                            String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf(" - ") + 3).trim();
-                            if (dashCount > 1) {
-                                int delayMilliSeconds = parseInt(ts.get_expectedValue().substring(ts.get_expectedValue().lastIndexOf("-") + 1).trim());
-                                DelayCheck(delayMilliSeconds);
-                                expectedUrl = expectedUrl.substring(0, expectedUrl.indexOf(" - "));
-                            }
-                            String actualUrl = GetCurrentPageUrl();
-                            assertEquals(expectedUrl, actualUrl);
-                            if (expectedUrl.equals(actualUrl)) {
-                                pageHelper.UpdateTestResults("Successful Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")", testResults);
-                            } else if (!expectedUrl.equals(actualUrl)) {
-                                pageHelper.UpdateTestResults("Failed Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")", testResults);
-                            }
-                        }
-                    } else if (ts.get_searchType().toLowerCase().indexOf("id") >= 0) {
-                        pageHelper.UpdateTestResults("Performing Id non-read action", testResults);
-                        status = PerformIdAction(ts.get_xPath(), ts.get_expectedValue());
-                        if (ts.get_expectedValue().toLowerCase().indexOf(" - ") >= 0) {
-                            //url has changed, check url against expected value
-                            String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf(" - ") + 3).trim();
-                            if (dashCount > 1) {
-                                int delayMilliSeconds = parseInt(ts.get_expectedValue().substring(ts.get_expectedValue().lastIndexOf("-") + 1).trim());
-                                DelayCheck(delayMilliSeconds);
-                                expectedUrl = expectedUrl.substring(0, expectedUrl.indexOf(" - "));
-                            }
-                            String actualUrl = GetCurrentPageUrl();
-                            assertEquals(expectedUrl, actualUrl);
-                            if (expectedUrl.equals(actualUrl)) {
-                                pageHelper.UpdateTestResults("Successful Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")", testResults);
-                            } else if (!expectedUrl.equals(actualUrl)) {
-                                pageHelper.UpdateTestResults("Failed Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")", testResults);
-                            }
-                        }
-                    } else if (ts.get_searchType().toLowerCase().indexOf("classname") >= 0) {
-                        pageHelper.UpdateTestResults("Performing ClassName non-read action", testResults);
-                        status = PerformTagNameAction(ts.get_xPath(), ts.get_expectedValue());
-                        if (ts.get_expectedValue().toLowerCase().indexOf(" - ") >= 0) {
-                            //url has changed, check url against expected value
-                            String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf(" - ") + 3).trim();
-                            if (dashCount > 1) {
-                                int delayMilliSeconds = parseInt(ts.get_expectedValue().substring(ts.get_expectedValue().lastIndexOf("-") + 1).trim());
-                                DelayCheck(delayMilliSeconds);
-                                expectedUrl = expectedUrl.substring(0, expectedUrl.indexOf(" - "));
-                            }
-                            String actualUrl = GetCurrentPageUrl();
-                            assertEquals(expectedUrl, actualUrl);
-                            if (expectedUrl.equals(actualUrl)) {
-                                pageHelper.UpdateTestResults("Successful Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")", testResults);
-                            } else if (!expectedUrl.equals(actualUrl)) {
-                                pageHelper.UpdateTestResults("Failed Post Action results Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")", testResults);
-                            }
-                        }
                     } else if (ts.get_searchType().toLowerCase().indexOf("n/a") >= 0) {
+                        //perform all non-read actions below that do not use an accessor
                         if (ts.get_expectedValue().toLowerCase().indexOf("navigate") >= 0) {
                             String navigateUrl = ts.get_xPath();
-                            String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf(" - ") + 3).trim();
-                            pageHelper.UpdateTestResults("----[ " + ts.get_expectedValue().toLowerCase() + "]------------------", testResults);
+                            String [] expectedItems = ts.get_expectedValue().split(" - ");
+                            //pageHelper.UpdateTestResults("ExpectedItems = " + expectedItems.length);
+                            String expectedUrl = expectedItems[1].trim();
+                            //pageHelper.UpdateTestResults("expectedUrl = " + expectedUrl);
+                            //pageHelper.UpdateTestResults("----[ " + ts.get_expectedValue().toLowerCase() + "]------------------", testResults);
+                            int delayMilliSeconds = 0;
                             if (dashCount > 1) {
-                                int delayMilliSeconds = parseInt(ts.get_expectedValue().substring(ts.get_expectedValue().lastIndexOf("-") + 1).trim());
-                                DelayCheck(delayMilliSeconds);
-                                expectedUrl = expectedUrl.substring(0, expectedUrl.indexOf(" - "));
+                                //pageHelper.UpdateTestResults("expectedItems[2] = " + expectedItems[2]);
+                                delayMilliSeconds = parseInt(expectedItems[2].trim());
                             }
                             this.testPage = navigateUrl;
-                            String actualUrl = CheckPageUrl();
-                            assertEquals(expectedUrl, actualUrl);
                             pageHelper.UpdateTestResults("----[ Start Explicit Navigation Event ]------------------", testResults);
-                            if (expectedUrl.trim().equals(actualUrl.trim())) {
-                                pageHelper.UpdateTestResults("Navigation and URL Check successful!", testResults);
-                            } else {
-                                pageHelper.UpdateTestResults("Navigation and URL Check unsuccessful! Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")", testResults);
+                            String actualUrl = CheckPageUrl(delayMilliSeconds);
+                            if (expectedUrl.trim().length() > 0) {
+                                assertEquals(expectedUrl, actualUrl);
+                                if (expectedUrl.trim().equals(actualUrl.trim())) {
+                                    pageHelper.UpdateTestResults("Navigation and URL Check successful!", testResults);
+                                } else {
+                                    pageHelper.UpdateTestResults("Navigation and URL Check unsuccessful! Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")", testResults);
+                                }
                             }
                             pageHelper.UpdateTestResults("----[ Explicit Navigation Event ]------------------", testResults);
                         }
@@ -455,15 +434,20 @@ public class HomePage {
                             DelayCheck(delayMilliSeconds);
                         }
                         else if (ts.get_expectedValue().toLowerCase().indexOf("screenshot") >= 0) {
-                            PerformScreenShotCapture(ts.get_xPath());
+                            //browserUsed + testFileName + ts.get_searchType()  + "_" + x
+                            //PerformScreenShotCapture(browserUsed + testFileName + ts.get_searchType() + fileStepIndex + ts.get_xPath());
+                            PerformScreenShotCapture(browserUsed + ts.get_expectedValue() + fileStepIndex);
                         }
                         else if (ts.get_expectedValue().toLowerCase().indexOf("url") >= 0) {
                             //pageHelper.UpdateTestResults("----[ URL if before call ]------------------", testResults);
-                            String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf(" - ") + 3).trim();
+                            String [] expectedItems = ts.get_expectedValue().split(" - ");
+                            //String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf(" - ") + 3).trim();
+                            String expectedUrl = expectedItems[1].trim();
                             if (dashCount > 1) {
-                                int delayMilliSeconds = parseInt(ts.get_expectedValue().substring(ts.get_expectedValue().lastIndexOf("-") + 1).trim());
+                                //int delayMilliSeconds = parseInt(ts.get_expectedValue().substring(ts.get_expectedValue().lastIndexOf("-") + 1).trim());
+                                int delayMilliSeconds = parseInt(expectedItems[2].trim());
                                 DelayCheck(delayMilliSeconds);
-                                expectedUrl = expectedUrl.substring(0, expectedUrl.indexOf(" - "));
+                                //expectedUrl = expectedUrl.substring(0, expectedUrl.indexOf(" - "));
                             }
                             String actualUrl = GetCurrentPageUrl();
                             assertEquals(expectedUrl, actualUrl);
@@ -487,57 +471,241 @@ public class HomePage {
         }
     }
 
+
+    /* ************************************************************
+     * DESCRIPTION:
+     *      Performs a thread sleep to allow for items to load and
+     *      is intended to be used prior to making an assertion
+     *      that depends upon some change like a navigation or
+     *      new items populating the page.
+     ************************************************************ */
     private void DelayCheck(int milliseconds) throws InterruptedException {
         pageHelper.UpdateTestResults("Sleeping for " + milliseconds + " milliseconds.", testResults);
         Thread.sleep(milliseconds);
     }
 
 
-    //@Test  //this works with headless phantomJS
-    public String CheckPageUrl() throws Exception {
-        pageHelper.UpdateTestResults("In CheckPageUrl method.  Driver = " + this.driver.toString(), testResults);
-        pageHelper.NavigateToPage(this.driver, testPage);
+    /* ************************************************************
+     * DESCRIPTION:
+     *      Calls the NavigateToPage method passing the driver
+     *      and the destination URL, where a default 10 second
+     *      wait happens to allow the page to load
+     *      and then returns the current URL
+     ************************************************************ */
+    public String CheckPageUrl(int delayMilliSeconds) throws Exception {
+        //pageHelper.UpdateTestResults("In CheckPageUrl method.  Driver = " + this.driver.toString(), testResults);
+        pageHelper.NavigateToPage(this.driver, testPage, delayMilliSeconds);
 
         return this.driver.getCurrentUrl();
     }
 
+    /* ************************************************************
+     * DESCRIPTION:
+     *      Returns the URL of the current page.
+     ************************************************************ */
     public String GetCurrentPageUrl() {
         return this.driver.getCurrentUrl();
     }
 
 
-    public String CheckElementWithXPath(String accessor) throws Exception {
+    /* ************************************************************
+     * DESCRIPTION:
+     *      Returns the text of an element using its xPath accessor.
+     ************************************************************ */
+    public String CheckElementWithXPath(String accessor, String fileStepIndex) throws Exception {
+        String actualValue = "";
+          //region { Removed but was initially here to ensure app was on the correct page }
+//        if (this.driver.getCurrentUrl() != testPage) {
+//            pageHelper.NavigateToPage(this.driver, testPage);
+//        }
+        //endregion
+        try {
+            //actualValue = this.driver.findElement(By.xpath(accessor)).getText();
+            String typeOfElement = this.driver.findElement(By.xpath(accessor)).getAttribute("type");
+            //if (typeOfElement.contains("select-one") || typeOfElement.contains("select-many")) {
+            if (typeOfElement!= null && (typeOfElement.contains("select-one") || typeOfElement.contains("select-many"))) {
+                Select select = new Select(this.driver.findElement(By.xpath(accessor)));
+                WebElement option = select.getFirstSelectedOption();
+                actualValue = option.getText();
+            }
+            else {
+                actualValue = this.driver.findElement(By.xpath(accessor)).getText();
+            }
+            pageHelper.UpdateTestResults("Checking " + ElementTypeLookup(accessor) + " with XPath.  Actual Value: \"" + actualValue + "\"", testResults);
+            return actualValue;
+        } catch (Exception e) {
+            String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
+            if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
+                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "xPath_Element_Not_Found", configurationFolder);
+            } else {
+                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "xPath_Element_Not_Found", screenShotSaveFolder);
+            }
+            return null;
+        }
+    }
+
+    /* ************************************************************
+     * DESCRIPTION:
+     *      Returns the text of an element using its CssSelector accessor.
+     ************************************************************ */
+    public String CheckElementWithCssSelector(String accessor, String fileStepIndex) throws Exception {
         String actualValue = "";
 
 //        if (this.driver.getCurrentUrl() != testPage) {
 //            pageHelper.NavigateToPage(this.driver, testPage);
 //        }
         try {
-            actualValue = this.driver.findElement(By.xpath(accessor)).getText();
-            pageHelper.UpdateTestResults("Checking " + ElementTypeLookup(accessor) + " with XPath.  Actual Value: \"" + actualValue + "\"", testResults);
+            //actualValue = this.driver.findElement(By.cssSelector(accessor)).getText();
+            String typeOfElement = this.driver.findElement(By.cssSelector(accessor)).getAttribute("type");
+            if (typeOfElement!= null && (typeOfElement.contains("select-one") || typeOfElement.contains("select-many"))) {
+                Select select = new Select(this.driver.findElement(By.cssSelector(accessor)));
+                WebElement option = select.getFirstSelectedOption();
+                actualValue = option.getText();
+            }
+            else {
+                actualValue = this.driver.findElement(By.cssSelector(accessor)).getText();
+            }
+            pageHelper.UpdateTestResults("Checking " + ElementTypeLookup(accessor) + " with CssSelector.  Actual Value: \"" + actualValue + "\"", testResults);
             return actualValue;
         } catch (Exception e) {
             String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
             if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
-                pageHelper.captureScreenShot(driver, browserUsed + "xPath_Element_Not_Found", configurationFile.substring(0, configurationFile.lastIndexOf("\\") + 1));
-            } else {
-                pageHelper.captureScreenShot(driver, browserUsed + "xPath_Element_Not_Found", screenShotSaveFolder);
+                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "CssSelector_Element_Not_Found", configurationFolder);
+            }
+            else {
+                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "CssSelector_Element_Not_Found", screenShotSaveFolder);
             }
             return null;
         }
     }
 
-    public Boolean PerformXPathAction(String accessor, String value) {
+    /* ************************************************************
+     * DESCRIPTION:
+     *      Returns the text of an element using its TagName accessor.
+     ************************************************************ */
+    public String CheckElementWithTagName(String accessor, String fileStepIndex) throws Exception {
+        String actualValue = "";
+
+        try {
+            //actualValue = this.driver.findElement(By.tagName(accessor)).getText();
+            String typeOfElement = this.driver.findElement(By.tagName(accessor)).getAttribute("type");
+            if (typeOfElement!= null && (typeOfElement.contains("select-one") || typeOfElement.contains("select-many"))) {
+                Select select = new Select(this.driver.findElement(By.tagName(accessor)));
+                WebElement option = select.getFirstSelectedOption();
+                actualValue = option.getText();
+            }
+            else {
+                actualValue = this.driver.findElement(By.tagName(accessor)).getText();
+            }
+            pageHelper.UpdateTestResults("Checking " + ElementTypeLookup(accessor) + " with TagName.  Actual Value: \"" + actualValue + "\"", testResults);
+            return actualValue;
+        } catch (Exception e) {
+            String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
+            if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
+                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "TagName_Element_Not_Found", configurationFolder);
+            }
+            else {
+                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "TagName_Element_Not_Found", screenShotSaveFolder);
+            }
+            return null;
+        }
+    }
+
+    /* ************************************************************
+     * DESCRIPTION:
+     *      Returns the text of an element using its ClassName accessor.
+     ************************************************************ */
+    private String CheckElementWithClassName(String accessor, String fileStepIndex) throws Exception {
+        String actualValue = "";
+
+        try {
+            //actualValue = this.driver.findElement(By.className(accessor)).getText();
+            String typeOfElement = this.driver.findElement(By.className(accessor)).getAttribute("type");
+            //pageHelper.UpdateTestResults("typeOfElement = " + typeOfElement != null ? typeOfElement : "NULL");
+            if (typeOfElement!= null && (typeOfElement.contains("select-one") || typeOfElement.contains("select-many"))) {
+                Select select = new Select(this.driver.findElement(By.className(accessor)));
+                WebElement option = select.getFirstSelectedOption();
+                actualValue = option.getText();
+            }
+            else {
+                actualValue = this.driver.findElement(By.className(accessor)).getText();
+            }
+            pageHelper.UpdateTestResults("Checking " + ElementTypeLookup(accessor) + " with ClassName.  Actual Value: \"" + actualValue + "\"", testResults);
+            return actualValue;
+        } catch (Exception e) {
+            String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
+            if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
+                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "ClassName_Element_Not_Found", configurationFolder);
+            }
+            else {
+                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "ClassName_Element_Not_Found", screenShotSaveFolder);
+            }
+            return null;
+        }
+    }
+
+    /* ************************************************************
+     * DESCRIPTION:
+     *      Returns the text of an element using its Id accessor.
+     ************************************************************ */
+   public String CheckElementWithId(String accessor, String fileStepIndex)  throws Exception {
+       String actualValue = "";
+
+       try {
+           String typeOfElement = this.driver.findElement(By.id(accessor)).getAttribute("type");
+           //pageHelper.UpdateTestResults("typeOfElement = " + typeOfElement);
+           if (typeOfElement!= null && (typeOfElement.contains("select-one") || typeOfElement.contains("select-many"))) {
+               Select select = new Select(this.driver.findElement(By.id(accessor)));
+               WebElement option = select.getFirstSelectedOption();
+               actualValue = option.getText();
+           }
+           else {
+               actualValue = this.driver.findElement(By.id(accessor)).getText();
+           }
+           pageHelper.UpdateTestResults("Checking element by ID: " + accessor + ".  Actual Value: \"" + actualValue + "\"", testResults);
+           return actualValue;
+       } catch (Exception e) {
+           String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
+           if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
+               pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "Id_Element_Not_Found", configurationFolder);
+           }
+           else {
+               pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "Id_Element_Not_Found", screenShotSaveFolder);
+           }
+           return null;
+       }
+   }
+
+    //region { Perform non-text retrieval actions }
+    /* ************************************************************
+     * DESCRIPTION:
+     *      Performs non-text retrieval actions such as clicking,
+     *      navigating, waiting, taking screen shots etc...
+     ************************************************************ */
+    public Boolean PerformAction(String accesssorType, String accessor, String value, String fileStepIndex) {
         Boolean status = false;
         //if this is a click event, click it
         if (value.toLowerCase().indexOf("click") >= 0) {
             try {
-                this.driver.findElement(By.xpath(accessor)).click();
+                if (accesssorType.toLowerCase().equals("xpath")) {
+                    this.driver.findElement(By.xpath(accessor)).click();
+                }
+                else if (accesssorType.toLowerCase().equals("id")) {
+                    this.driver.findElement(By.id(accessor)).click();
+                }
+                else if (accesssorType.toLowerCase().equals("classname")) {
+                    this.driver.findElement(By.className(accessor)).click();
+                }
+                else if (accesssorType.toLowerCase().equals("cssselector")) {
+                    this.driver.findElement(By.cssSelector(accessor)).click();
+                }
+                else if (accesssorType.toLowerCase().equals("tagname")) {
+                    this.driver.findElement(By.tagName(accessor)).click();
+                }
                 status = true;
             } catch (Exception e) {
                 status = false;
             }
-            //return status;
         } else if (value.toLowerCase().indexOf("screenshot") >= 0) {
             try {
                 PerformScreenShotCapture(value);
@@ -548,9 +716,37 @@ public class HomePage {
         } else {  //if it is not a click, send keys
             try {
                 if (value.contains("Keys.")) {
-                    this.driver.findElement(By.xpath(accessor)).sendKeys(GetKeyValue(value));
+                    if (accesssorType.toLowerCase().equals("xpath")) {
+                        this.driver.findElement(By.xpath(accessor)).sendKeys(GetKeyValue(value, fileStepIndex));
+                    }
+                    else if (accesssorType.toLowerCase().equals("id")) {
+                        this.driver.findElement(By.id(accessor)).sendKeys(GetKeyValue(value, fileStepIndex));
+                    }
+                    else if (accesssorType.toLowerCase().equals("classname")) {
+                        this.driver.findElement(By.className(accessor)).sendKeys(GetKeyValue(value, fileStepIndex));
+                    }
+                    else if (accesssorType.toLowerCase().equals("cssselector")) {
+                        this.driver.findElement(By.cssSelector(accessor)).sendKeys(GetKeyValue(value, fileStepIndex));
+                    }
+                    else if (accesssorType.toLowerCase().equals("tagname")) {
+                        this.driver.findElement(By.tagName(accessor)).sendKeys(GetKeyValue(value, fileStepIndex));
+                    }
                 } else {
-                    this.driver.findElement(By.xpath(accessor)).sendKeys(value);
+                    if (accesssorType.toLowerCase().equals("xpath")) {
+                        this.driver.findElement(By.xpath(accessor)).sendKeys(value);
+                    }
+                    else if (accesssorType.toLowerCase().equals("id")) {
+                        this.driver.findElement(By.id(accessor)).sendKeys(value);
+                    }
+                    else if (accesssorType.toLowerCase().equals("classname")) {
+                        this.driver.findElement(By.className(accessor)).sendKeys(value);
+                    }
+                    else if (accesssorType.toLowerCase().equals("cssselector")) {
+                        this.driver.findElement(By.cssSelector(accessor)).sendKeys(value);
+                    }
+                    else if (accesssorType.toLowerCase().equals("tagname")) {
+                        this.driver.findElement(By.tagName(accessor)).sendKeys(value);
+                    }
                 }
                 status = true;
             } catch (Exception e) {
@@ -560,302 +756,19 @@ public class HomePage {
         return status;
     }
 
-
-
+    /* ************************************************************
+     * DESCRIPTION:
+     *      Performs a screen shot capture by calling the
+     *      screen shot capture method in the pageHelper class.
+     ************************************************************ */
     private void PerformScreenShotCapture(String value) {
-        //GAJ working here
         String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
-        pageHelper.captureScreenShot(driver, browserUsed + "ScreenShotAction_", screenShotSaveFolder);
+        //pageHelper.captureScreenShot(driver, browserUsed + "ScreenShotAction_" + value, screenShotSaveFolder);
+        pageHelper.captureScreenShot(driver, value, screenShotSaveFolder);
     }
+    //endregion
 
-    private CharSequence GetKeyValue(String value) {
-        if (value.toLowerCase().equals("keys.enter"))
-        {
-            return Keys.ENTER;
-        }
-        else if (value.toLowerCase().equals("keys.return"))
-        {
-            return Keys.RETURN;
-        }
-        else if (value.toLowerCase().equals("keys.arrow_down"))
-        {
-            return Keys.ARROW_DOWN;
-        }
-        else if (value.toLowerCase().equals("keys.arrow_up"))
-        {
-            return Keys.ARROW_UP;
-        }
-        else if (value.toLowerCase().equals("keys.arrow_left"))
-        {
-            return Keys.ARROW_LEFT;
-        }
-        else if (value.toLowerCase().equals("keys.arrow_right"))
-        {
-            return Keys.ARROW_RIGHT;
-        }
-        else if (value.toLowerCase().equals("keys.back_space"))
-        {
-            return Keys.BACK_SPACE;
-        }
-        else if (value.toLowerCase().equals("keys.cancel"))
-        {
-            return Keys.CANCEL;
-        }
-        else if (value.toLowerCase().equals("keys.escape"))
-        {
-            return Keys.ESCAPE;
-        }
-        else
-        {
-            pageHelper.UpdateTestResults(PageHelper.ANSI_RED + "Key: " + value + " not mapped!" + ANSI_RESET, testResults);
-        }
-        return value;
-    }
-
-    public String CheckElementWithCssSelector(String accessor) throws Exception {
-        String actualValue = "";
-
-//        if (this.driver.getCurrentUrl() != testPage) {
-//            pageHelper.NavigateToPage(this.driver, testPage);
-//        }
-        try {
-            actualValue = this.driver.findElement(By.cssSelector(accessor)).getText();
-            pageHelper.UpdateTestResults("Checking " + ElementTypeLookup(accessor) + " with CssSelector.  Actual Value: \"" + actualValue + "\"", testResults);
-            return actualValue;
-        } catch (Exception e) {
-            String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
-            if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
-                pageHelper.captureScreenShot(driver, browserUsed + "CssSelector_Element_Not_Found", configurationFile.substring(0, configurationFile.lastIndexOf("\\") + 1));
-            }
-            else {
-                pageHelper.captureScreenShot(driver, browserUsed + "CssSelector_Element_Not_Found", screenShotSaveFolder);
-            }
-            return null;
-        }
-    }
-
-    public Boolean PerformCssSelectorAction(String accessor, String value) {
-        Boolean status = false;
-        //if this is a click event, click it
-        if (value.toLowerCase().indexOf("click") >= 0) {
-            try {
-                this.driver.findElement(By.cssSelector(accessor)).click();
-                status = true;
-            }
-            catch(Exception e) {
-                status = false;
-            }
-            //return status;
-        } else if (value.toLowerCase().indexOf("screenshot") >= 0) {
-            try {
-                PerformScreenShotCapture(value);
-                status = true;
-            }catch (Exception e) {
-                status = false;
-            }
-        }
-        else {  //if it is not a click, send keys
-            try {
-                if (value.contains("Keys.")) {
-                    this.driver.findElement(By.cssSelector(accessor)).sendKeys(GetKeyValue(value));
-                } else {
-                    this.driver.findElement(By.cssSelector(accessor)).sendKeys(value);
-                }
-                status = true;
-            }
-            catch(Exception e) {
-                status = false;
-            }
-            //return status;
-        }
-        return status;
-    }
-
-    public String CheckElementWithTagName(String accessor) throws Exception {
-        String actualValue = "";
-
-//        if (this.driver.getCurrentUrl() != testPage) {
-//            pageHelper.NavigateToPage(this.driver, testPage);
-//        }
-        try {
-            actualValue = this.driver.findElement(By.tagName(accessor)).getText();
-            pageHelper.UpdateTestResults("Checking " + ElementTypeLookup(accessor) + " with TagName.  Actual Value: \"" + actualValue + "\"", testResults);
-            return actualValue;
-        } catch (Exception e) {
-            String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
-            if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
-                pageHelper.captureScreenShot(driver, browserUsed + "TagName_Element_Not_Found", configurationFile.substring(0, configurationFile.lastIndexOf("\\") + 1));
-            }
-            else {
-                pageHelper.captureScreenShot(driver, browserUsed + "TagName_Element_Not_Found", screenShotSaveFolder);
-            }
-            return null;
-        }
-    }
-
-    public Boolean PerformTagNameAction(String accessor, String value) {
-        Boolean status = false;
-        //if this is a click event, click it
-        if (value.toLowerCase().indexOf("click") >= 0) {
-            try {
-                this.driver.findElement(By.tagName(accessor)).click();
-                status = true;
-            }
-            catch(Exception e) {
-                status = false;
-            }
-            //return status;
-        }
-        else if (value.toLowerCase().indexOf("screenshot") >= 0) {
-            try {
-                PerformScreenShotCapture(value);
-                status = true;
-            }catch (Exception e) {
-                status = false;
-            }
-        }
-        else {  //if it is not a click, send keys
-            try {
-                //
-                if (value.contains("Keys.")) {
-                    this.driver.findElement(By.tagName(accessor)).sendKeys(GetKeyValue(value));
-                } else {
-                    this.driver.findElement(By.tagName(accessor)).sendKeys(value);
-                }
-                status = true;
-            }
-            catch(Exception e) {
-                status = false;
-            }
-            //return status;
-        }
-        return status;
-    }
-
-    private String CheckElementWithClassName(String accessor) throws Exception {
-        String actualValue = "";
-
-//        if (this.driver.getCurrentUrl() != testPage) {
-//            pageHelper.NavigateToPage(this.driver, testPage);
-//        }
-        try {
-            actualValue = this.driver.findElement(By.className(accessor)).getText();
-            pageHelper.UpdateTestResults("Checking " + ElementTypeLookup(accessor) + " with ClassName.  Actual Value: \"" + actualValue + "\"", testResults);
-            return actualValue;
-        } catch (Exception e) {
-            String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
-            if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
-                pageHelper.captureScreenShot(driver, browserUsed + "ClassName_Element_Not_Found", configurationFile.substring(0, configurationFile.lastIndexOf("\\") + 1));
-            }
-            else {
-                pageHelper.captureScreenShot(driver, browserUsed + "ClassName_Element_Not_Found", screenShotSaveFolder);
-            }
-            return null;
-        }
-    }
-
-    public Boolean PerformClassAction(String accessor, String value) {
-        Boolean status = false;
-        //if this is a click event, click it
-        if (value.toLowerCase().indexOf("click") >= 0) {
-            try {
-                this.driver.findElement(By.className(accessor)).click();
-                status = true;
-            }
-            catch(Exception e) {
-                status = false;
-            }
-            //return status;
-        }
-        else if (value.toLowerCase().indexOf("screenshot") >= 0) {
-            try {
-                PerformScreenShotCapture(value);
-                status = true;
-            }catch (Exception e) {
-                status = false;
-            }
-        }
-        else {  //if it is not a click, send keys
-            try {
-                //
-                if (value.contains("Keys.")) {
-                    this.driver.findElement(By.className(accessor)).sendKeys(GetKeyValue(value));
-                } else {
-                    this.driver.findElement(By.className(accessor)).sendKeys(value);
-                }
-                status = true;
-            }
-            catch(Exception e) {
-                status = false;
-            }
-            //return status;
-        }
-        return status;
-    }
-
-   // by  id
-   public String CheckElementWithId(String accessor)  throws Exception {
-       String actualValue = "";
-
-//       if (this.driver.getCurrentUrl() != testPage) {
-//           pageHelper.NavigateToPage(this.driver, testPage);
-//       }
-       try {
-           actualValue = this.driver.findElement(By.id(accessor)).getText();
-           pageHelper.UpdateTestResults("Checking " + ElementTypeLookup(accessor) + " with id.  Actual Value: \"" + actualValue + "\"", testResults);
-           return actualValue;
-       } catch (Exception e) {
-           String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
-           if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
-               pageHelper.captureScreenShot(driver, browserUsed + "id_Element_Not_Found", configurationFile.substring(0, configurationFile.lastIndexOf("\\") + 1));
-           }
-           else {
-               pageHelper.captureScreenShot(driver, browserUsed + "id_Element_Not_Found", screenShotSaveFolder);
-           }
-           return null;
-       }
-   }
-
-    public Boolean PerformIdAction(String accessor, String value) {
-        Boolean status = false;
-        //if this is a click event, click it
-        if (value.toLowerCase().indexOf("click") >= 0) {
-            try {
-                this.driver.findElement(By.id(accessor)).click();
-                status = true;
-            }
-            catch(Exception e) {
-                status = false;
-            }
-            //return status;
-        }
-        else if (value.toLowerCase().indexOf("screenshot") >= 0) {
-            try {
-                PerformScreenShotCapture(value);
-                status = true;
-            }catch (Exception e) {
-                status = false;
-            }
-        }
-        else {  //if it is not a click, send keys
-            try {
-                //
-                if (value.contains("Keys.")) {
-                    this.driver.findElement(By.id(accessor)).sendKeys(GetKeyValue(value));
-                } else {
-                    this.driver.findElement(By.id(accessor)).sendKeys(value);
-                }
-                status = true;
-            }
-            catch(Exception e) {
-                status = false;
-            }
-            //return status;
-        }
-        return status;
-    }
-    // end of by id
-
+   //region {Lookup Methods}
     private String ElementTypeLookup(String xPath) {
         //NOTE: When checking string equality in Java you must use the "".Equals("") method.
         // Using the == operator checks the memory address not the value
@@ -920,6 +833,54 @@ public class HomePage {
         return "Indeterminate";
     }
 
+    private CharSequence GetKeyValue(String value, String fileStepIndex) {
+        value = value.toLowerCase().trim();
+        pageHelper.UpdateTestResults("GetKeyValue value = (" + value + ")");
+
+        if (value.equals("keys.enter"))
+        {
+            return Keys.ENTER;
+        }
+        else if (value.equals("keys.return"))
+        {
+            return Keys.RETURN;
+        }
+        else if (value.equals("keys.arrow_down"))
+        {
+            return Keys.ARROW_DOWN;
+        }
+        else if (value.equals("keys.arrow_up"))
+        {
+            return Keys.ARROW_UP;
+        }
+        else if (value.equals("keys.arrow_left"))
+        {
+            return Keys.ARROW_LEFT;
+        }
+        else if (value.equals("keys.arrow_right"))
+        {
+            return Keys.ARROW_RIGHT;
+        }
+        else if (value.equals("keys.back_space"))
+        {
+            return Keys.BACK_SPACE;
+        }
+        else if (value.equals("keys.cancel"))
+        {
+            return Keys.CANCEL;
+        }
+        else if (value.equals("keys.escape"))
+        {
+            return Keys.ESCAPE;
+        }
+        else
+        {
+            pageHelper.UpdateTestResults(PageHelper.ANSI_RED + "Key: " + value + fileStepIndex + " not mapped!" + ANSI_RESET, testResults);
+        }
+        return value;
+    }
+    //endregion
+
     private void ShutDownChromeDriver() throws Exception{
         try {
             // Execute command
@@ -943,6 +904,191 @@ public class HomePage {
             pageHelper.UpdateTestResults("The following error occurred while trying to shut down ChromeDriver: " + e.getMessage(), testResults);
         }
     }
+
+    //region { Refactored Methods soon to be removed }
+    /*public Boolean PerformXPathAction(String accessor, String value) {
+        Boolean status = false;
+        //if this is a click event, click it
+        if (value.toLowerCase().indexOf("click") >= 0) {
+            try {
+                this.driver.findElement(By.xpath(accessor)).click();
+                status = true;
+            } catch (Exception e) {
+                status = false;
+            }
+            //return status;
+        } else if (value.toLowerCase().indexOf("screenshot") >= 0) {
+            try {
+                PerformScreenShotCapture(value);
+                status = true;
+            }catch (Exception e) {
+                status = false;
+            }
+        } else {  //if it is not a click, send keys
+            try {
+                if (value.contains("Keys.")) {
+                    this.driver.findElement(By.xpath(accessor)).sendKeys(GetKeyValue(value));
+                } else {
+                    this.driver.findElement(By.xpath(accessor)).sendKeys(value);
+                }
+                status = true;
+            } catch (Exception e) {
+                status = false;
+            }
+        }
+        return status;
+    }
+
+    public Boolean PerformClassAction(String accessor, String value) {
+        Boolean status = false;
+        //if this is a click event, click it
+        if (value.toLowerCase().indexOf("click") >= 0) {
+            try {
+                this.driver.findElement(By.className(accessor)).click();
+                status = true;
+            }
+            catch(Exception e) {
+                status = false;
+            }
+            //return status;
+        }
+        else if (value.toLowerCase().indexOf("screenshot") >= 0) {
+            try {
+                PerformScreenShotCapture(value);
+                status = true;
+            }catch (Exception e) {
+                status = false;
+            }
+        }
+        else {  //if it is not a click, send keys
+            try {
+                //
+                if (value.contains("Keys.")) {
+                    this.driver.findElement(By.className(accessor)).sendKeys(GetKeyValue(value));
+                } else {
+                    this.driver.findElement(By.className(accessor)).sendKeys(value);
+                }
+                status = true;
+            }
+            catch(Exception e) {
+                status = false;
+            }
+        }
+        return status;
+    }
+
+    public Boolean PerformTagNameAction(String accessor, String value) {
+        Boolean status = false;
+        //if this is a click event, click it
+        if (value.toLowerCase().indexOf("click") >= 0) {
+            try {
+                this.driver.findElement(By.tagName(accessor)).click();
+                status = true;
+            }
+            catch(Exception e) {
+                status = false;
+            }
+        }
+        else if (value.toLowerCase().indexOf("screenshot") >= 0) {
+            try {
+                PerformScreenShotCapture(value);
+                status = true;
+            }catch (Exception e) {
+                status = false;
+            }
+        }
+        else {  //if it is not a click, send keys
+            try {
+                //
+                if (value.contains("Keys.")) {
+                    this.driver.findElement(By.tagName(accessor)).sendKeys(GetKeyValue(value));
+                } else {
+                    this.driver.findElement(By.tagName(accessor)).sendKeys(value);
+                }
+                status = true;
+            }
+            catch(Exception e) {
+                status = false;
+            }
+        }
+        return status;
+    }
+
+    public Boolean PerformCssSelectorAction(String accessor, String value) {
+        Boolean status = false;
+        //if this is a click event, click it
+        if (value.toLowerCase().indexOf("click") >= 0) {
+            try {
+                this.driver.findElement(By.cssSelector(accessor)).click();
+                status = true;
+            }
+            catch(Exception e) {
+                status = false;
+            }
+        } else if (value.toLowerCase().indexOf("screenshot") >= 0) {
+            try {
+                PerformScreenShotCapture(value);
+                status = true;
+            }catch (Exception e) {
+                status = false;
+            }
+        }
+        else {  //if it is not a click, send keys
+            try {
+                if (value.contains("Keys.")) {
+                    this.driver.findElement(By.cssSelector(accessor)).sendKeys(GetKeyValue(value));
+                } else {
+                    this.driver.findElement(By.cssSelector(accessor)).sendKeys(value);
+                }
+                status = true;
+            }
+            catch(Exception e) {
+                status = false;
+            }
+        }
+        return status;
+    }
+
+    public Boolean PerformIdAction(String accessor, String value) {
+        Boolean status = false;
+        //if this is a click event, click it
+        if (value.toLowerCase().indexOf("click") >= 0) {
+            try {
+                this.driver.findElement(By.id(accessor)).click();
+                status = true;
+            }
+            catch(Exception e) {
+                status = false;
+            }
+        }
+        else if (value.toLowerCase().indexOf("screenshot") >= 0) {
+            try {
+                PerformScreenShotCapture(value);
+                status = true;
+            }catch (Exception e) {
+                status = false;
+            }
+        }
+        else {  //if it is not a click, send keys
+            try {
+                //
+                if (value.contains("Keys.")) {
+                    this.driver.findElement(By.id(accessor)).sendKeys(GetKeyValue(value));
+                } else {
+                    this.driver.findElement(By.id(accessor)).sendKeys(value);
+                }
+                status = true;
+            }
+            catch(Exception e) {
+                status = false;
+            }
+        }
+        return status;
+    }
+    */
+    //endregion
+
+
 
     //region { Commented out code }
     /*@Test
