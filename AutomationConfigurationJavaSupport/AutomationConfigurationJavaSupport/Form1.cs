@@ -1042,6 +1042,16 @@ namespace AutomationConfigurationJavaSupport
             cboCrucialAssertion.SelectedIndex = cboCrucialAssertion.FindString(crucialAssertion);
         }
 
-     
+        private void mnuToolsAddIFrameGetTextFromElement_Click(object sender, EventArgs e)
+        {
+            ////button[contains(@id,'menu1')] ; Switch to iframe [iframeResult] - Tutorials ; xPath ; false ; true
+            SetTestControls("//button[contains(@id,'menu1')]", "Switch to iframe [iframeResult] - Tutorials", "xPath", "false", "false");
+        }
+
+        private void mnuToolsAddIFramePerformAction_Click(object sender, EventArgs e)
+        {
+            ////button[contains(@id,'menu1')] ; Switch to iframe [iframeResult] - click     ; xPath ; true ; true
+            SetTestControls("//button[contains(@id,'menu1')]", "Switch to iframe [iframeResult] - click", "xPath", "true", "false");
+        }
     }
 }

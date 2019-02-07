@@ -83,6 +83,12 @@
             this.mnuToolsAddNavigation = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuToolsAddNavigationWithCheck = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuToolsAddNavigationWithoutCheck = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuToolsAddSendTextToTextInput = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuToolsAddSendTextToTextInputById = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuToolsAddSelectItemFromHTMLDropDownSelect = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuToolsAddSelectFromDropDownByCssSelector = new System.Windows.Forms.ToolStripMenuItem();
             this.grpTestCommands = new System.Windows.Forms.GroupBox();
             this.btnUpdateTestCommand = new System.Windows.Forms.Button();
             this.cboCrucialAssertion = new System.Windows.Forms.ComboBox();
@@ -106,13 +112,10 @@
             this.lblURL = new System.Windows.Forms.Label();
             this.txtURL = new System.Windows.Forms.TextBox();
             this.wbTestPage = new System.Windows.Forms.WebBrowser();
-            this.mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuToolsAddSendTextToTextInput = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuToolsAddSendTextToTextInputById = new System.Windows.Forms.ToolStripMenuItem();
             this.testCommandBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.mnuToolsAddSelectItemFromHTMLDropDownSelect = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuToolsAddSelectFromDropDownByCssSelector = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuToolsAddIFrame = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuToolsAddIFrameGetTextFromElement = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuToolsAddIFramePerformAction = new System.Windows.Forms.ToolStripMenuItem();
             this.grpConfiguration.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.grpTestCommands.SuspendLayout();
@@ -588,7 +591,8 @@
             this.mnuToolsAddUrlCheckWithoutNavigation,
             this.mnuToolsAddNavigation,
             this.mnuToolsAddSendTextToTextInput,
-            this.mnuToolsAddSelectItemFromHTMLDropDownSelect});
+            this.mnuToolsAddSelectItemFromHTMLDropDownSelect,
+            this.mnuToolsAddIFrame});
             this.mnuToolsAdd.Name = "mnuToolsAdd";
             this.mnuToolsAdd.Size = new System.Drawing.Size(181, 26);
             this.mnuToolsAdd.Text = "&Add";
@@ -638,6 +642,50 @@
             this.mnuToolsAddNavigationWithoutCheck.Size = new System.Drawing.Size(389, 26);
             this.mnuToolsAddNavigationWithoutCheck.Text = "Without Check";
             this.mnuToolsAddNavigationWithoutCheck.Click += new System.EventHandler(this.mnuToolsAddNavigationWithoutCheck_Click);
+            // 
+            // mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime
+            // 
+            this.mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime.Name = "mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime";
+            this.mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime.Size = new System.Drawing.Size(389, 26);
+            this.mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime.Text = "With Check including Additional Wait Time";
+            this.mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime.Click += new System.EventHandler(this.mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime_Click);
+            // 
+            // mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime
+            // 
+            this.mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime.Name = "mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime";
+            this.mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime.Size = new System.Drawing.Size(389, 26);
+            this.mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime.Text = "Without Check including additional Wait Time";
+            this.mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime.Click += new System.EventHandler(this.mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime_Click);
+            // 
+            // mnuToolsAddSendTextToTextInput
+            // 
+            this.mnuToolsAddSendTextToTextInput.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuToolsAddSendTextToTextInputById});
+            this.mnuToolsAddSendTextToTextInput.Name = "mnuToolsAddSendTextToTextInput";
+            this.mnuToolsAddSendTextToTextInput.Size = new System.Drawing.Size(356, 26);
+            this.mnuToolsAddSendTextToTextInput.Text = "Send Text to Text Input";
+            // 
+            // mnuToolsAddSendTextToTextInputById
+            // 
+            this.mnuToolsAddSendTextToTextInputById.Name = "mnuToolsAddSendTextToTextInputById";
+            this.mnuToolsAddSendTextToTextInputById.Size = new System.Drawing.Size(181, 26);
+            this.mnuToolsAddSendTextToTextInputById.Text = "By Id";
+            this.mnuToolsAddSendTextToTextInputById.Click += new System.EventHandler(this.mnuToolsAddSendTextToTextInputById_Click);
+            // 
+            // mnuToolsAddSelectItemFromHTMLDropDownSelect
+            // 
+            this.mnuToolsAddSelectItemFromHTMLDropDownSelect.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuToolsAddSelectFromDropDownByCssSelector});
+            this.mnuToolsAddSelectItemFromHTMLDropDownSelect.Name = "mnuToolsAddSelectItemFromHTMLDropDownSelect";
+            this.mnuToolsAddSelectItemFromHTMLDropDownSelect.Size = new System.Drawing.Size(356, 26);
+            this.mnuToolsAddSelectItemFromHTMLDropDownSelect.Text = "Select item from HTML drop down select";
+            // 
+            // mnuToolsAddSelectFromDropDownByCssSelector
+            // 
+            this.mnuToolsAddSelectFromDropDownByCssSelector.Name = "mnuToolsAddSelectFromDropDownByCssSelector";
+            this.mnuToolsAddSelectFromDropDownByCssSelector.Size = new System.Drawing.Size(181, 26);
+            this.mnuToolsAddSelectFromDropDownByCssSelector.Text = "By CssSelector";
+            this.mnuToolsAddSelectFromDropDownByCssSelector.Click += new System.EventHandler(this.mnuToolsAddSelectFromDropDownByCssSelector_Click);
             // 
             // grpTestCommands
             // 
@@ -907,53 +955,32 @@
             this.wbTestPage.TabIndex = 0;
             this.wbTestPage.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.wbTestPage_DocumentCompleted);
             // 
-            // mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime
-            // 
-            this.mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime.Name = "mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime";
-            this.mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime.Size = new System.Drawing.Size(389, 26);
-            this.mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime.Text = "With Check including Additional Wait Time";
-            this.mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime.Click += new System.EventHandler(this.mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime_Click);
-            // 
-            // mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime
-            // 
-            this.mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime.Name = "mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime";
-            this.mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime.Size = new System.Drawing.Size(389, 26);
-            this.mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime.Text = "Without Check including additional Wait Time";
-            this.mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime.Click += new System.EventHandler(this.mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime_Click);
-            // 
-            // mnuToolsAddSendTextToTextInput
-            // 
-            this.mnuToolsAddSendTextToTextInput.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuToolsAddSendTextToTextInputById});
-            this.mnuToolsAddSendTextToTextInput.Name = "mnuToolsAddSendTextToTextInput";
-            this.mnuToolsAddSendTextToTextInput.Size = new System.Drawing.Size(356, 26);
-            this.mnuToolsAddSendTextToTextInput.Text = "Send Text to Text Input";
-            // 
-            // mnuToolsAddSendTextToTextInputById
-            // 
-            this.mnuToolsAddSendTextToTextInputById.Name = "mnuToolsAddSendTextToTextInputById";
-            this.mnuToolsAddSendTextToTextInputById.Size = new System.Drawing.Size(181, 26);
-            this.mnuToolsAddSendTextToTextInputById.Text = "By Id";
-            this.mnuToolsAddSendTextToTextInputById.Click += new System.EventHandler(this.mnuToolsAddSendTextToTextInputById_Click);
-            // 
             // testCommandBindingSource
             // 
             this.testCommandBindingSource.DataSource = typeof(AutomationConfigurationJavaSupport.Entities.TestCommand);
             // 
-            // mnuToolsAddSelectItemFromHTMLDropDownSelect
+            // mnuToolsAddIFrame
             // 
-            this.mnuToolsAddSelectItemFromHTMLDropDownSelect.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuToolsAddSelectFromDropDownByCssSelector});
-            this.mnuToolsAddSelectItemFromHTMLDropDownSelect.Name = "mnuToolsAddSelectItemFromHTMLDropDownSelect";
-            this.mnuToolsAddSelectItemFromHTMLDropDownSelect.Size = new System.Drawing.Size(356, 26);
-            this.mnuToolsAddSelectItemFromHTMLDropDownSelect.Text = "Select item from HTML drop down select";
+            this.mnuToolsAddIFrame.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuToolsAddIFrameGetTextFromElement,
+            this.mnuToolsAddIFramePerformAction});
+            this.mnuToolsAddIFrame.Name = "mnuToolsAddIFrame";
+            this.mnuToolsAddIFrame.Size = new System.Drawing.Size(356, 26);
+            this.mnuToolsAddIFrame.Text = "iFrame";
             // 
-            // mnuToolsAddSelectFromDropDownByCssSelector
+            // mnuToolsAddIFrameGetTextFromElement
             // 
-            this.mnuToolsAddSelectFromDropDownByCssSelector.Name = "mnuToolsAddSelectFromDropDownByCssSelector";
-            this.mnuToolsAddSelectFromDropDownByCssSelector.Size = new System.Drawing.Size(181, 26);
-            this.mnuToolsAddSelectFromDropDownByCssSelector.Text = "By CssSelector";
-            this.mnuToolsAddSelectFromDropDownByCssSelector.Click += new System.EventHandler(this.mnuToolsAddSelectFromDropDownByCssSelector_Click);
+            this.mnuToolsAddIFrameGetTextFromElement.Name = "mnuToolsAddIFrameGetTextFromElement";
+            this.mnuToolsAddIFrameGetTextFromElement.Size = new System.Drawing.Size(303, 26);
+            this.mnuToolsAddIFrameGetTextFromElement.Text = "Get Text from contained Element";
+            this.mnuToolsAddIFrameGetTextFromElement.Click += new System.EventHandler(this.mnuToolsAddIFrameGetTextFromElement_Click);
+            // 
+            // mnuToolsAddIFramePerformAction
+            // 
+            this.mnuToolsAddIFramePerformAction.Name = "mnuToolsAddIFramePerformAction";
+            this.mnuToolsAddIFramePerformAction.Size = new System.Drawing.Size(303, 26);
+            this.mnuToolsAddIFramePerformAction.Text = "Perform Action";
+            this.mnuToolsAddIFramePerformAction.Click += new System.EventHandler(this.mnuToolsAddIFramePerformAction_Click);
             // 
             // frmAutomationConfigurationJavaSupport
             // 
@@ -1069,6 +1096,9 @@
         private System.Windows.Forms.ToolStripMenuItem mnuToolsAddSendTextToTextInputById;
         private System.Windows.Forms.ToolStripMenuItem mnuToolsAddSelectItemFromHTMLDropDownSelect;
         private System.Windows.Forms.ToolStripMenuItem mnuToolsAddSelectFromDropDownByCssSelector;
+        private System.Windows.Forms.ToolStripMenuItem mnuToolsAddIFrame;
+        private System.Windows.Forms.ToolStripMenuItem mnuToolsAddIFrameGetTextFromElement;
+        private System.Windows.Forms.ToolStripMenuItem mnuToolsAddIFramePerformAction;
     }
 }
 
