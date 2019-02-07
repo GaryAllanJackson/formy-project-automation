@@ -30,6 +30,12 @@
         {
             this.components = new System.ComponentModel.Container();
             this.grpConfiguration = new System.Windows.Forms.GroupBox();
+            this.txtFolderFilter = new System.Windows.Forms.TextBox();
+            this.lblFolderFilter = new System.Windows.Forms.Label();
+            this.cboFileFilterType = new System.Windows.Forms.ComboBox();
+            this.lblFileFilterType = new System.Windows.Forms.Label();
+            this.cboSpecifyFilesOrSelectFolder = new System.Windows.Forms.ComboBox();
+            this.lblFolderOfSpecificFiles = new System.Windows.Forms.Label();
             this.btnMoveDown = new System.Windows.Forms.Button();
             this.btnMoveUp = new System.Windows.Forms.Button();
             this.btnRemoveTestFile = new System.Windows.Forms.Button();
@@ -72,6 +78,11 @@
             this.mnuTools = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuToolsAdd = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuToolsAddWaitDelay = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuToolsAddScreenShot = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuToolsAddUrlCheckWithoutNavigation = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuToolsAddNavigation = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuToolsAddNavigationWithCheck = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuToolsAddNavigationWithoutCheck = new System.Windows.Forms.ToolStripMenuItem();
             this.grpTestCommands = new System.Windows.Forms.GroupBox();
             this.btnUpdateTestCommand = new System.Windows.Forms.Button();
             this.cboCrucialAssertion = new System.Windows.Forms.ComboBox();
@@ -95,13 +106,13 @@
             this.lblURL = new System.Windows.Forms.Label();
             this.txtURL = new System.Windows.Forms.TextBox();
             this.wbTestPage = new System.Windows.Forms.WebBrowser();
-            this.cboSpecifyFilesOrSelectFolder = new System.Windows.Forms.ComboBox();
-            this.lblFolderOfSpecificFiles = new System.Windows.Forms.Label();
-            this.cboFileFilterType = new System.Windows.Forms.ComboBox();
-            this.lblFileFilterType = new System.Windows.Forms.Label();
-            this.lblFolderFilter = new System.Windows.Forms.Label();
-            this.txtFolderFilter = new System.Windows.Forms.TextBox();
+            this.mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuToolsAddSendTextToTextInput = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuToolsAddSendTextToTextInputById = new System.Windows.Forms.ToolStripMenuItem();
             this.testCommandBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.mnuToolsAddSelectItemFromHTMLDropDownSelect = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuToolsAddSelectFromDropDownByCssSelector = new System.Windows.Forms.ToolStripMenuItem();
             this.grpConfiguration.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.grpTestCommands.SuspendLayout();
@@ -150,6 +161,61 @@
             this.grpConfiguration.TabIndex = 0;
             this.grpConfiguration.TabStop = false;
             this.grpConfiguration.Text = "Configuration";
+            // 
+            // txtFolderFilter
+            // 
+            this.txtFolderFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFolderFilter.Location = new System.Drawing.Point(460, 250);
+            this.txtFolderFilter.Name = "txtFolderFilter";
+            this.txtFolderFilter.Size = new System.Drawing.Size(198, 27);
+            this.txtFolderFilter.TabIndex = 25;
+            // 
+            // lblFolderFilter
+            // 
+            this.lblFolderFilter.AutoSize = true;
+            this.lblFolderFilter.Location = new System.Drawing.Point(456, 226);
+            this.lblFolderFilter.Name = "lblFolderFilter";
+            this.lblFolderFilter.Size = new System.Drawing.Size(96, 20);
+            this.lblFolderFilter.TabIndex = 23;
+            this.lblFolderFilter.Text = "File Filter:";
+            // 
+            // cboFileFilterType
+            // 
+            this.cboFileFilterType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboFileFilterType.FormattingEnabled = true;
+            this.cboFileFilterType.Location = new System.Drawing.Point(257, 249);
+            this.cboFileFilterType.Name = "cboFileFilterType";
+            this.cboFileFilterType.Size = new System.Drawing.Size(156, 28);
+            this.cboFileFilterType.TabIndex = 24;
+            // 
+            // lblFileFilterType
+            // 
+            this.lblFileFilterType.AutoSize = true;
+            this.lblFileFilterType.Location = new System.Drawing.Point(257, 226);
+            this.lblFileFilterType.Name = "lblFileFilterType";
+            this.lblFileFilterType.Size = new System.Drawing.Size(142, 20);
+            this.lblFileFilterType.TabIndex = 23;
+            this.lblFileFilterType.Text = "File Filter Type:";
+            // 
+            // cboSpecifyFilesOrSelectFolder
+            // 
+            this.cboSpecifyFilesOrSelectFolder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboSpecifyFilesOrSelectFolder.FormattingEnabled = true;
+            this.cboSpecifyFilesOrSelectFolder.Location = new System.Drawing.Point(13, 249);
+            this.cboSpecifyFilesOrSelectFolder.Name = "cboSpecifyFilesOrSelectFolder";
+            this.cboSpecifyFilesOrSelectFolder.Size = new System.Drawing.Size(159, 28);
+            this.cboSpecifyFilesOrSelectFolder.TabIndex = 22;
+            this.cboSpecifyFilesOrSelectFolder.SelectedIndexChanged += new System.EventHandler(this.cboSpecifyFilesOrSelectFolder_SelectedIndexChanged);
+            // 
+            // lblFolderOfSpecificFiles
+            // 
+            this.lblFolderOfSpecificFiles.AutoSize = true;
+            this.lblFolderOfSpecificFiles.Location = new System.Drawing.Point(9, 221);
+            this.lblFolderOfSpecificFiles.Name = "lblFolderOfSpecificFiles";
+            this.lblFolderOfSpecificFiles.Size = new System.Drawing.Size(162, 20);
+            this.lblFolderOfSpecificFiles.TabIndex = 21;
+            this.lblFolderOfSpecificFiles.Text = "Specify Test files:";
             // 
             // btnMoveDown
             // 
@@ -395,7 +461,7 @@
             this.mnuFileNewConfigurationFile,
             this.mnuFileNewTestSettingsCommandFile});
             this.mnuFileNew.Name = "mnuFileNew";
-            this.mnuFileNew.Size = new System.Drawing.Size(181, 26);
+            this.mnuFileNew.Size = new System.Drawing.Size(120, 26);
             this.mnuFileNew.Text = "&New";
             // 
             // mnuFileNewConfigurationFile
@@ -418,7 +484,7 @@
             this.mnuFileOpenConfigurationFile,
             this.mnuFileOpenTestSettingsCommandFile});
             this.mnuFileOpen.Name = "mnuFileOpen";
-            this.mnuFileOpen.Size = new System.Drawing.Size(181, 26);
+            this.mnuFileOpen.Size = new System.Drawing.Size(120, 26);
             this.mnuFileOpen.Text = "&Open";
             // 
             // mnuFileOpenConfigurationFile
@@ -438,7 +504,7 @@
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(178, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(117, 6);
             // 
             // mnuFileSave
             // 
@@ -446,7 +512,7 @@
             this.mnuFileSaveConfigurationFile,
             this.mnuFileSaveTestSettingsCommandsFile});
             this.mnuFileSave.Name = "mnuFileSave";
-            this.mnuFileSave.Size = new System.Drawing.Size(181, 26);
+            this.mnuFileSave.Size = new System.Drawing.Size(120, 26);
             this.mnuFileSave.Text = "&Save";
             // 
             // mnuFileSaveConfigurationFile
@@ -466,12 +532,12 @@
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(178, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(117, 6);
             // 
             // mnuFileExit
             // 
             this.mnuFileExit.Name = "mnuFileExit";
-            this.mnuFileExit.Size = new System.Drawing.Size(181, 26);
+            this.mnuFileExit.Size = new System.Drawing.Size(120, 26);
             this.mnuFileExit.Text = "E&xit";
             this.mnuFileExit.Click += new System.EventHandler(this.mnuFileExit_Click);
             // 
@@ -517,17 +583,61 @@
             // mnuToolsAdd
             // 
             this.mnuToolsAdd.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuToolsAddWaitDelay});
+            this.mnuToolsAddWaitDelay,
+            this.mnuToolsAddScreenShot,
+            this.mnuToolsAddUrlCheckWithoutNavigation,
+            this.mnuToolsAddNavigation,
+            this.mnuToolsAddSendTextToTextInput,
+            this.mnuToolsAddSelectItemFromHTMLDropDownSelect});
             this.mnuToolsAdd.Name = "mnuToolsAdd";
-            this.mnuToolsAdd.Size = new System.Drawing.Size(112, 26);
+            this.mnuToolsAdd.Size = new System.Drawing.Size(181, 26);
             this.mnuToolsAdd.Text = "&Add";
             // 
             // mnuToolsAddWaitDelay
             // 
             this.mnuToolsAddWaitDelay.Name = "mnuToolsAddWaitDelay";
-            this.mnuToolsAddWaitDelay.Size = new System.Drawing.Size(246, 26);
+            this.mnuToolsAddWaitDelay.Size = new System.Drawing.Size(356, 26);
             this.mnuToolsAddWaitDelay.Text = "&Wait / Delay (5 seconds)";
             this.mnuToolsAddWaitDelay.Click += new System.EventHandler(this.mnuToolsAddWaitDelay_Click);
+            // 
+            // mnuToolsAddScreenShot
+            // 
+            this.mnuToolsAddScreenShot.Name = "mnuToolsAddScreenShot";
+            this.mnuToolsAddScreenShot.Size = new System.Drawing.Size(356, 26);
+            this.mnuToolsAddScreenShot.Text = "Screen Shot";
+            this.mnuToolsAddScreenShot.Click += new System.EventHandler(this.mnuToolsAddScreenShot_Click);
+            // 
+            // mnuToolsAddUrlCheckWithoutNavigation
+            // 
+            this.mnuToolsAddUrlCheckWithoutNavigation.Name = "mnuToolsAddUrlCheckWithoutNavigation";
+            this.mnuToolsAddUrlCheckWithoutNavigation.Size = new System.Drawing.Size(356, 26);
+            this.mnuToolsAddUrlCheckWithoutNavigation.Text = "URL check without Navigation";
+            this.mnuToolsAddUrlCheckWithoutNavigation.Click += new System.EventHandler(this.mnuToolsAddUrlCheckWithoutNavigation_Click);
+            // 
+            // mnuToolsAddNavigation
+            // 
+            this.mnuToolsAddNavigation.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuToolsAddNavigationWithCheck,
+            this.mnuToolsAddNavigationWithoutCheck,
+            this.mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime,
+            this.mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime});
+            this.mnuToolsAddNavigation.Name = "mnuToolsAddNavigation";
+            this.mnuToolsAddNavigation.Size = new System.Drawing.Size(356, 26);
+            this.mnuToolsAddNavigation.Text = "Navigation";
+            // 
+            // mnuToolsAddNavigationWithCheck
+            // 
+            this.mnuToolsAddNavigationWithCheck.Name = "mnuToolsAddNavigationWithCheck";
+            this.mnuToolsAddNavigationWithCheck.Size = new System.Drawing.Size(389, 26);
+            this.mnuToolsAddNavigationWithCheck.Text = "With Check";
+            this.mnuToolsAddNavigationWithCheck.Click += new System.EventHandler(this.mnuToolsAddNavigationWithCheck_Click);
+            // 
+            // mnuToolsAddNavigationWithoutCheck
+            // 
+            this.mnuToolsAddNavigationWithoutCheck.Name = "mnuToolsAddNavigationWithoutCheck";
+            this.mnuToolsAddNavigationWithoutCheck.Size = new System.Drawing.Size(389, 26);
+            this.mnuToolsAddNavigationWithoutCheck.Text = "Without Check";
+            this.mnuToolsAddNavigationWithoutCheck.Click += new System.EventHandler(this.mnuToolsAddNavigationWithoutCheck_Click);
             // 
             // grpTestCommands
             // 
@@ -797,64 +907,53 @@
             this.wbTestPage.TabIndex = 0;
             this.wbTestPage.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.wbTestPage_DocumentCompleted);
             // 
-            // cboSpecifyFilesOrSelectFolder
+            // mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime
             // 
-            this.cboSpecifyFilesOrSelectFolder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboSpecifyFilesOrSelectFolder.FormattingEnabled = true;
-            this.cboSpecifyFilesOrSelectFolder.Location = new System.Drawing.Point(13, 249);
-            this.cboSpecifyFilesOrSelectFolder.Name = "cboSpecifyFilesOrSelectFolder";
-            this.cboSpecifyFilesOrSelectFolder.Size = new System.Drawing.Size(159, 28);
-            this.cboSpecifyFilesOrSelectFolder.TabIndex = 22;
-            this.cboSpecifyFilesOrSelectFolder.SelectedIndexChanged += new System.EventHandler(this.cboSpecifyFilesOrSelectFolder_SelectedIndexChanged);
+            this.mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime.Name = "mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime";
+            this.mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime.Size = new System.Drawing.Size(389, 26);
+            this.mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime.Text = "With Check including Additional Wait Time";
+            this.mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime.Click += new System.EventHandler(this.mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime_Click);
             // 
-            // lblFolderOfSpecificFiles
+            // mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime
             // 
-            this.lblFolderOfSpecificFiles.AutoSize = true;
-            this.lblFolderOfSpecificFiles.Location = new System.Drawing.Point(9, 221);
-            this.lblFolderOfSpecificFiles.Name = "lblFolderOfSpecificFiles";
-            this.lblFolderOfSpecificFiles.Size = new System.Drawing.Size(162, 20);
-            this.lblFolderOfSpecificFiles.TabIndex = 21;
-            this.lblFolderOfSpecificFiles.Text = "Specify Test files:";
+            this.mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime.Name = "mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime";
+            this.mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime.Size = new System.Drawing.Size(389, 26);
+            this.mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime.Text = "Without Check including additional Wait Time";
+            this.mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime.Click += new System.EventHandler(this.mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime_Click);
             // 
-            // cboFileFilterType
+            // mnuToolsAddSendTextToTextInput
             // 
-            this.cboFileFilterType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboFileFilterType.FormattingEnabled = true;
-            this.cboFileFilterType.Location = new System.Drawing.Point(257, 249);
-            this.cboFileFilterType.Name = "cboFileFilterType";
-            this.cboFileFilterType.Size = new System.Drawing.Size(156, 28);
-            this.cboFileFilterType.TabIndex = 24;
+            this.mnuToolsAddSendTextToTextInput.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuToolsAddSendTextToTextInputById});
+            this.mnuToolsAddSendTextToTextInput.Name = "mnuToolsAddSendTextToTextInput";
+            this.mnuToolsAddSendTextToTextInput.Size = new System.Drawing.Size(356, 26);
+            this.mnuToolsAddSendTextToTextInput.Text = "Send Text to Text Input";
             // 
-            // lblFileFilterType
+            // mnuToolsAddSendTextToTextInputById
             // 
-            this.lblFileFilterType.AutoSize = true;
-            this.lblFileFilterType.Location = new System.Drawing.Point(257, 226);
-            this.lblFileFilterType.Name = "lblFileFilterType";
-            this.lblFileFilterType.Size = new System.Drawing.Size(142, 20);
-            this.lblFileFilterType.TabIndex = 23;
-            this.lblFileFilterType.Text = "File Filter Type:";
-            // 
-            // lblFolderFilter
-            // 
-            this.lblFolderFilter.AutoSize = true;
-            this.lblFolderFilter.Location = new System.Drawing.Point(456, 226);
-            this.lblFolderFilter.Name = "lblFolderFilter";
-            this.lblFolderFilter.Size = new System.Drawing.Size(96, 20);
-            this.lblFolderFilter.TabIndex = 23;
-            this.lblFolderFilter.Text = "File Filter:";
-            // 
-            // txtFolderFilter
-            // 
-            this.txtFolderFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtFolderFilter.Location = new System.Drawing.Point(460, 250);
-            this.txtFolderFilter.Name = "txtFolderFilter";
-            this.txtFolderFilter.Size = new System.Drawing.Size(198, 27);
-            this.txtFolderFilter.TabIndex = 25;
+            this.mnuToolsAddSendTextToTextInputById.Name = "mnuToolsAddSendTextToTextInputById";
+            this.mnuToolsAddSendTextToTextInputById.Size = new System.Drawing.Size(181, 26);
+            this.mnuToolsAddSendTextToTextInputById.Text = "By Id";
+            this.mnuToolsAddSendTextToTextInputById.Click += new System.EventHandler(this.mnuToolsAddSendTextToTextInputById_Click);
             // 
             // testCommandBindingSource
             // 
             this.testCommandBindingSource.DataSource = typeof(AutomationConfigurationJavaSupport.Entities.TestCommand);
+            // 
+            // mnuToolsAddSelectItemFromHTMLDropDownSelect
+            // 
+            this.mnuToolsAddSelectItemFromHTMLDropDownSelect.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuToolsAddSelectFromDropDownByCssSelector});
+            this.mnuToolsAddSelectItemFromHTMLDropDownSelect.Name = "mnuToolsAddSelectItemFromHTMLDropDownSelect";
+            this.mnuToolsAddSelectItemFromHTMLDropDownSelect.Size = new System.Drawing.Size(356, 26);
+            this.mnuToolsAddSelectItemFromHTMLDropDownSelect.Text = "Select item from HTML drop down select";
+            // 
+            // mnuToolsAddSelectFromDropDownByCssSelector
+            // 
+            this.mnuToolsAddSelectFromDropDownByCssSelector.Name = "mnuToolsAddSelectFromDropDownByCssSelector";
+            this.mnuToolsAddSelectFromDropDownByCssSelector.Size = new System.Drawing.Size(181, 26);
+            this.mnuToolsAddSelectFromDropDownByCssSelector.Text = "By CssSelector";
+            this.mnuToolsAddSelectFromDropDownByCssSelector.Click += new System.EventHandler(this.mnuToolsAddSelectFromDropDownByCssSelector_Click);
             // 
             // frmAutomationConfigurationJavaSupport
             // 
@@ -959,6 +1058,17 @@
         private System.Windows.Forms.Label lblFolderFilter;
         private System.Windows.Forms.ComboBox cboFileFilterType;
         private System.Windows.Forms.Label lblFileFilterType;
+        private System.Windows.Forms.ToolStripMenuItem mnuToolsAddScreenShot;
+        private System.Windows.Forms.ToolStripMenuItem mnuToolsAddUrlCheckWithoutNavigation;
+        private System.Windows.Forms.ToolStripMenuItem mnuToolsAddNavigation;
+        private System.Windows.Forms.ToolStripMenuItem mnuToolsAddNavigationWithCheck;
+        private System.Windows.Forms.ToolStripMenuItem mnuToolsAddNavigationWithoutCheck;
+        private System.Windows.Forms.ToolStripMenuItem mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime;
+        private System.Windows.Forms.ToolStripMenuItem mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime;
+        private System.Windows.Forms.ToolStripMenuItem mnuToolsAddSendTextToTextInput;
+        private System.Windows.Forms.ToolStripMenuItem mnuToolsAddSendTextToTextInputById;
+        private System.Windows.Forms.ToolStripMenuItem mnuToolsAddSelectItemFromHTMLDropDownSelect;
+        private System.Windows.Forms.ToolStripMenuItem mnuToolsAddSelectFromDropDownByCssSelector;
     }
 }
 

@@ -7,6 +7,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -108,6 +109,7 @@ namespace AutomationConfigurationJavaSupport
                 EnableSelectedFiles(true);
                 lstTestSettingsFileName.Enabled = true;
                 txtFolderFilter.Enabled = false;
+                //txtFolderFilter.Text =
                 cboFileFilterType.Enabled = false;
             }
         }
@@ -236,13 +238,15 @@ namespace AutomationConfigurationJavaSupport
             grpConfiguration.Visible = true;
             grpConfiguration.BringToFront();
             grpTestCommands.Visible = false;
+            ShowGroupBox(grpConfiguration);
         }
 
         private void mnuViewFormTestSettingCommands_Click(object sender, EventArgs e)
         {
-            grpTestCommands.Visible = true;
-            grpTestCommands.BringToFront();
-            grpConfiguration.Visible = false;
+            //grpTestCommands.Visible = true;
+            //grpTestCommands.BringToFront();
+            //grpConfiguration.Visible = false;
+            ShowGroupBox(grpTestCommands);
         }
 
         private void mnuFileOpenConfigurationFile_Click(object sender, EventArgs e)
@@ -251,6 +255,7 @@ namespace AutomationConfigurationJavaSupport
             ReadConfigurationFile();
         }
 
+       
 
 
         private void mnuFileOpenTestSettingsCommandFile_Click(object sender, EventArgs e)
@@ -363,15 +368,104 @@ namespace AutomationConfigurationJavaSupport
                 MessageBox.Show("Error:" + ex.Message, "Unusual Error with Grid");
             }
         }
+
+        private void txtURL_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)13)
+            {
+                wbTestPage.Navigate(txtURL.Text);
+            }
+        }
+
+        private void wbTestPage_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        {
+            //add this handler after navigation
+            this.wbTestPage.Document.Body.MouseDown += new HtmlElementEventHandler(Body_MouseDown);
+        }
+
+        void Body_MouseDown(Object sender, HtmlElementEventArgs e)
+        {
+            if (!elementClicked)
+            {
+                switch (e.MouseButtonsPressed)
+                {
+                    case MouseButtons.Left:
+                        HtmlElement element = this.wbTestPage.Document.GetElementFromPoint(e.ClientMousePosition);
+                        //if (element != null && "submit".Equals(element.GetAttribute("type"), StringComparison.OrdinalIgnoreCase))
+                        if (element != null)
+                        {
+                            GetElementXPath(e);
+                        }
+                        break;
+                }
+            }
+        }
+
+        private void btnMoveUp_Click(object sender, EventArgs e)
+        {
+            string prevItem;
+            int selectedIndex;
+
+            if (lstTestSettingsFileName.SelectedIndex > 0)
+            {
+                selectedIndex = lstTestSettingsFileName.SelectedIndex;
+                prevItem = lstTestSettingsFileName.Items[lstTestSettingsFileName.SelectedIndex - 1].ToString();
+                lstTestSettingsFileName.Items.RemoveAt(lstTestSettingsFileName.SelectedIndex - 1);
+                lstTestSettingsFileName.Items.Insert(selectedIndex, prevItem);
+            }
+        }
+
+        private void btnMoveDown_Click(object sender, EventArgs e)
+        {
+            string item;
+            int selectedIndex;
+
+            if (lstTestSettingsFileName.SelectedIndex > -1 && lstTestSettingsFileName.SelectedIndex < lstTestSettingsFileName.Items.Count - 1)
+            {
+                selectedIndex = lstTestSettingsFileName.SelectedIndex;
+                item = lstTestSettingsFileName.SelectedItem.ToString();
+                lstTestSettingsFileName.Items.RemoveAt(lstTestSettingsFileName.SelectedIndex);
+                lstTestSettingsFileName.Items.Insert(selectedIndex + 1, item);
+                lstTestSettingsFileName.SelectedIndex = selectedIndex + 1;
+            }
+        }
+
+        private void btnUpdateTestCommand_Click(object sender, EventArgs e)
+        {
+            if (selectedRow > 0)
+            {
+                if (!string.IsNullOrEmpty(txtAccessor.Text) && !string.IsNullOrEmpty(txtExpectedValueAction.Text) &&
+                cboAccessorType.SelectedIndex > -1 && cboPerformNonReadAction.SelectedIndex > -1 && cboCrucialAssertion.SelectedIndex > -1)
+                {
+                    TestCommand item = testCommands[selectedRow];
+                    item.Accessor = txtAccessor.Text;
+                    item.ExpectedValueAction = txtExpectedValueAction.Text;
+                    item.AccessorType = cboAccessorType.SelectedItem.ToString();
+                    item.IsCrucial = cboCrucialAssertion.SelectedItem.ToString();
+                    item.IsNonReadAction = cboPerformNonReadAction.SelectedItem.ToString();
+                    testCommands[selectedRow] = item;
+                    UpdateDataGrid();
+                }
+            }
+        }
         #endregion
 
 
         #region { Helper Methods }
-        //private void LoadYesNo(ComboBox cboBx)
-        //{
-        //    cboBx.Items.Add("Yes");
-        //    cboBx.Items.Add("No");
-        //}
+
+        private void ShowGroupBox(GroupBox grpBx)
+        {
+            grpBx.Visible = true;
+            grpBx.BringToFront();
+            if (grpBx == grpConfiguration)
+            {
+                grpTestCommands.Visible = false;
+            }
+            else
+            {
+                grpConfiguration.Visible = false;
+            }
+        }
 
         private void LoadTrueFalse(ComboBox cboBx)
         {
@@ -392,6 +486,7 @@ namespace AutomationConfigurationJavaSupport
             cboBx.Items.Add("CssSelector");
             cboBx.Items.Add("TagName");
             cboBx.Items.Add("ClassName");
+            cboBx.Items.Add("ID");
             cboBx.Items.Add("n/a");
         }
 
@@ -796,87 +891,52 @@ namespace AutomationConfigurationJavaSupport
             grpWebPage.Visible = false;
             elementClicked = true;
         }
+
+
+        //GAJ working here
+        /*
+        private void GetXPathForAllElements(string webAddress, string elementType)
+        {
+            //WebClient webClient = new WebClient();
+            //webClient.BaseAddress = webAddress;
+            //webClient.OpenRead(webAddress);
+            //HtmlElement element = elementType;
+
+            WebRequest webRequest = WebRequest.Create(webAddress);
+            var responseFromServer = string.Empty;
+
+            using (WebResponse webResponse = webRequest.GetResponse())
+            {
+                var responseDataStream = webResponse.GetResponseStream();
+                if (responseDataStream != null)
+                {
+                    var reader = new StreamReader(responseDataStream);
+
+                    responseFromServer = reader.ReadToEnd();
+
+                    reader.Close();
+                }
+            }
+
+
+            var doc = new HtmlAgilityPack.HtmlDocument();
+            //doc.LoadHtml(element.Document.GetElementsByTagName("html")[0].OuterHtml);
+            doc.LoadHtml(responseFromServer);
+            foreach (HtmlElement item in doc.)
+
+            
+
+        }
+        */
+
+        //private void LoadYesNo(ComboBox cboBx)
+        //{
+        //    cboBx.Items.Add("Yes");
+        //    cboBx.Items.Add("No");
+        //}
         #endregion
 
-        private void txtURL_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar == (char)13)
-            {
-                wbTestPage.Navigate(txtURL.Text);                
-            }
-        }
 
-        private void wbTestPage_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
-        {
-            //add this handler after navigation
-            this.wbTestPage.Document.Body.MouseDown += new HtmlElementEventHandler(Body_MouseDown);
-        }
-
-        void Body_MouseDown(Object sender, HtmlElementEventArgs e)
-        {
-            if (!elementClicked)
-            {
-                switch (e.MouseButtonsPressed)
-                {
-                    case MouseButtons.Left:
-                        HtmlElement element = this.wbTestPage.Document.GetElementFromPoint(e.ClientMousePosition);
-                        //if (element != null && "submit".Equals(element.GetAttribute("type"), StringComparison.OrdinalIgnoreCase))
-                        if (element != null)
-                        {
-                            GetElementXPath(e);
-                        }
-                        break;
-                }
-            }
-        }
-
-        private void btnMoveUp_Click(object sender, EventArgs e)
-        {
-            string prevItem;
-            int selectedIndex;
-
-            if (lstTestSettingsFileName.SelectedIndex > 0)
-            {
-                selectedIndex = lstTestSettingsFileName.SelectedIndex;
-                prevItem = lstTestSettingsFileName.Items[lstTestSettingsFileName.SelectedIndex - 1].ToString();
-                lstTestSettingsFileName.Items.RemoveAt(lstTestSettingsFileName.SelectedIndex -1);
-                lstTestSettingsFileName.Items.Insert(selectedIndex, prevItem);
-            }
-        }
-
-        private void btnMoveDown_Click(object sender, EventArgs e)
-        {
-            string item;
-            int selectedIndex;
-
-            if (lstTestSettingsFileName.SelectedIndex > -1 && lstTestSettingsFileName.SelectedIndex < lstTestSettingsFileName.Items.Count - 1)
-            {
-                selectedIndex = lstTestSettingsFileName.SelectedIndex;
-                item = lstTestSettingsFileName.SelectedItem.ToString();
-                lstTestSettingsFileName.Items.RemoveAt(lstTestSettingsFileName.SelectedIndex);
-                lstTestSettingsFileName.Items.Insert(selectedIndex + 1, item);
-                lstTestSettingsFileName.SelectedIndex = selectedIndex + 1;
-            }
-        }
-
-        private void btnUpdateTestCommand_Click(object sender, EventArgs e)
-        {
-            if (selectedRow > 0)
-            {
-                if (!string.IsNullOrEmpty(txtAccessor.Text) && !string.IsNullOrEmpty(txtExpectedValueAction.Text) &&
-                cboAccessorType.SelectedIndex > -1 && cboPerformNonReadAction.SelectedIndex > -1 && cboCrucialAssertion.SelectedIndex > -1)
-                {
-                    TestCommand item = testCommands[selectedRow];
-                    item.Accessor = txtAccessor.Text;
-                    item.ExpectedValueAction = txtExpectedValueAction.Text;
-                    item.AccessorType = cboAccessorType.SelectedItem.ToString();
-                    item.IsCrucial = cboCrucialAssertion.SelectedItem.ToString();
-                    item.IsNonReadAction = cboPerformNonReadAction.SelectedItem.ToString();
-                    testCommands[selectedRow] = item;
-                    UpdateDataGrid();
-                }
-            }
-        }
 
         private void UpdateDataGrid()
         {
@@ -890,6 +950,7 @@ namespace AutomationConfigurationJavaSupport
             }
         }
 
+        #region { Tools Menu -> Add menu items }
         private void mnuToolsAddWaitDelay_Click(object sender, EventArgs e)
         {
             #region {AppConfig Reference}
@@ -901,14 +962,86 @@ namespace AutomationConfigurationJavaSupport
                 <add key="Wait_Crucial" value="false"/>
              * */
             #endregion
-
+            /*
             txtAccessor.Text = ConfigurationManager.AppSettings["Wait_Accessor"] != null ? ConfigurationManager.AppSettings["Wait_Accessor"] : "n/a";
             txtExpectedValueAction.Text = ConfigurationManager.AppSettings["Wait_ExpectedValue"] != null ? ConfigurationManager.AppSettings["Wait_ExpectedValue"] : "Wait - 5000";
             cboAccessorType.SelectedIndex = cboAccessorType.FindString(ConfigurationManager.AppSettings["Wait_AccessorType"] != null ? ConfigurationManager.AppSettings["Wait_AccessorType"] : "n/a");
             cboPerformNonReadAction.SelectedIndex = cboPerformNonReadAction.FindString(ConfigurationManager.AppSettings["Wait_PerformNonReadAction"] != null ? ConfigurationManager.AppSettings["Wait_PerformNonReadAction"] : "true");
             cboCrucialAssertion.SelectedIndex = cboCrucialAssertion.FindString(ConfigurationManager.AppSettings["Wait_Crucial"] != null ? ConfigurationManager.AppSettings["Wait_Crucial"] : "false");
+            */
+            string accessor = ConfigurationManager.AppSettings["Wait_Accessor"] != null ? ConfigurationManager.AppSettings["Wait_Accessor"] : "n/a";
+            string expectedValueAction = ConfigurationManager.AppSettings["Wait_ExpectedValue"] != null ? ConfigurationManager.AppSettings["Wait_ExpectedValue"] : "Wait - 5000";
+            string accessorType = ConfigurationManager.AppSettings["Wait_AccessorType"] != null ? ConfigurationManager.AppSettings["Wait_AccessorType"] : "n/a";
+            string performNonReadAction = ConfigurationManager.AppSettings["Wait_PerformNonReadAction"] != null ? ConfigurationManager.AppSettings["Wait_PerformNonReadAction"] : "true";
+            string crucialAssertion = ConfigurationManager.AppSettings["Wait_Crucial"] != null ? ConfigurationManager.AppSettings["Wait_Crucial"] : "false";
+            SetTestControls(accessor, expectedValueAction, accessorType, performNonReadAction, crucialAssertion);
         }
 
-       
+        private void mnuToolsAddScreenShot_Click(object sender, EventArgs e)
+        {
+            //n/a ; ScreenShot ; n/a ; true ; false
+            SetTestControls("n/a", "ScreenShot", "n/a", "true", "false");
+        }
+
+        
+
+        private void mnuToolsAddUrlCheckWithoutNavigation_Click(object sender, EventArgs e)
+        {
+            //n/a ; URL - https://formy-project.herokuapp.com/thanks ; n/a ; true ; false
+            SetTestControls("n/a", "URL - https://YourUrlHere.com/FillItIn", "n/a", "true", "false");
+        }
+
+        private void mnuToolsAddNavigationWithCheck_Click(object sender, EventArgs e)
+        {
+            //https://formy-project.herokuapp.com/form ; Navigate - https://formy-project.herokuapp.com/form ; n/a ; true ; true
+            SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate - https://YourUrlHere.com/FillItIn/CouldBeDifferent", "n/a", "true", "true");
+        }
+
+        private void mnuToolsAddNavigationWithoutCheck_Click(object sender, EventArgs e)
+        {
+            //https://formy-project.herokuapp.com/form ; Navigate ; n/a ; true ; true
+            SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate", "n/a", "true", "false");
+        }
+
+        private void mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime_Click(object sender, EventArgs e)
+        {
+            //https://formy-project.herokuapp.com/form ; Navigate - https://formy-project.herokuapp.com/form - 5000; n/a ; true ; true
+            SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate - https://YourUrlHere.com/FillItIn/CouldBeDifferent - 5000", "n/a", "true", "true");
+        }
+
+        private void mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime_Click(object sender, EventArgs e)
+        {
+            //https://formy-project.herokuapp.com/form ; Navigate - - 5000; n/a ; true ; true
+            SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate - - 5000", "n/a", "true", "false");
+        }
+
+        private void mnuToolsAddSendTextToTextInputById_Click(object sender, EventArgs e)
+        {
+            //first-name; John; ID; true; false
+            SetTestControls("first-name", "John", "ID", "true", "false");
+        }
+
+        
+        private void mnuToolsAddSelectFromDropDownByCssSelector_Click(object sender, EventArgs e)
+        {
+            //option[value='1'] ; click ; CssSelector ; true ; false
+            SetTestControls("option[value='1']", "click", "CssSelector", "true", "false");
+        }
+        #endregion
+
+        private void SetTestControls(string accessor, string expectedValue, string accessorType, string performAction, string crucialAssertion)
+        {
+            if (!grpTestCommands.Visible)
+            {
+                ShowGroupBox(grpTestCommands);
+            }
+            txtAccessor.Text = accessor;
+            txtExpectedValueAction.Text = expectedValue;
+            cboAccessorType.SelectedIndex = cboAccessorType.FindString(accessorType);
+            cboPerformNonReadAction.SelectedIndex = cboPerformNonReadAction.FindString(performAction);
+            cboCrucialAssertion.SelectedIndex = cboCrucialAssertion.FindString(crucialAssertion);
+        }
+
+     
     }
 }
