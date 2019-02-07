@@ -349,7 +349,7 @@ public class PageHelper {
         else if (testMessage.indexOf("Navigation") >= 0) {
             System.out.println(ANSI_BLUE + testMessage + ANSI_RESET);
         }
-        else if (testMessage.indexOf("--[") > 0 && testMessage.toLowerCase().indexOf("end") > 0)
+        else if (testMessage.indexOf("--[") > 0 && (testMessage.toLowerCase().indexOf("end") > 0 || testMessage.toLowerCase().indexOf("revert") > 0))
         {
             System.out.println(testMessage);
             System.out.println("");

@@ -280,6 +280,7 @@ public class HomePage {
     public void TestPageElements() throws Exception {
         int startIndex = 0;  //used for instances when you do not want to start at the first element to test
         String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
+        boolean revertToParent = false;
 
         for (int fileIndex = 0; fileIndex < testFiles.size(); fileIndex++) {
             testFileName = testFiles.get(fileIndex);
@@ -287,40 +288,56 @@ public class HomePage {
             testSettings = pageHelper.ReadTestSettingsFile(testSettings, testFileName);
             pageHelper.UpdateTestResults(FRAMED + ANSI_PURPLE_BACKGROUND + ANSI_YELLOW + "-------[ Running Test Script ]-------" + ANSI_RESET, testResults);
             for (int x = startIndex; x < testSettings.size(); x++) {
+                if (revertToParent) {
+                    driver.switchTo().defaultContent();
+                    pageHelper.UpdateTestResults( PageHelper.ANSI_CYAN + "-------[ Reverting back to defaultContent from iFrame ]-------" + PageHelper.ANSI_RESET);
+                    revertToParent = false;
+                }
                 TestSettings ts = testSettings.get(x);
                 String expected = ts.get_expectedValue();
                 String accessor = ts.get_xPath();
                 String fileStepIndex = "_F" + fileIndex + "_S" + x + "_";
                 String fileStepIndexForLog = "F" + fileIndex + "_S" + x;
+                //pageHelper.UpdateTestResults("#1 expected = " + expected);
+                //if switching to an iframe, switch first
+                if (expected.toLowerCase().contains("switch to iframe"))
+                {
+                    String [] expectedItems = expected.split(" - ");
+                    String frameName = expectedItems[0].substring(expectedItems[0].indexOf("[") + 1, expectedItems[0].indexOf("]"));
+                    pageHelper.UpdateTestResults(PageHelper.ANSI_CYAN + "-------[ Switching to iFrame: " + frameName + " for step " + fileStepIndexForLog + " ]-------" + PageHelper.ANSI_RESET);
+                    driver.switchTo().frame(frameName);
+                    expected = expectedItems[1];
+                    revertToParent = true;
+                }
+
 
                 //get value and check against expected
                 if (!ts.getPerformWrite()) {
                     //pageHelper.UpdateTestResults("Element type being checked is <" + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
 
                     String actual = "";
-                    pageHelper.UpdateTestResults("Search Type = " + ts.get_searchType());
+                    //pageHelper.UpdateTestResults("Search Type = " + ts.get_searchType());
 
                     if (ts.get_searchType().toLowerCase().equals("xpath")) {
-                        //pageHelper.UpdateTestResults("Element type being checked at step " + fileStepIndex +  " by xPath: " + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
                         pageHelper.UpdateTestResults("Element type being checked at step " + fileStepIndexForLog +  " by xPath: " + accessor, testResults);
-                        actual = CheckElementWithXPath(accessor, fileStepIndex);
+                        //actual = CheckElementWithXPath(accessor, ts, fileStepIndex);
+                        actual = CheckElementWithXPath(ts, fileStepIndex);
                     } else if (ts.get_searchType().toLowerCase().equals("cssselector")) {
-                        //pageHelper.UpdateTestResults("Element type being checked at step " + fileStepIndex +  " by CssSelector: " + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
                         pageHelper.UpdateTestResults("Element type being checked at step " + fileStepIndexForLog +  " by CssSelector: " + accessor, testResults);
-                        actual = CheckElementWithCssSelector(accessor, fileStepIndex);
+                        //actual = CheckElementWithCssSelector(accessor, fileStepIndex);
+                        actual = CheckElementWithCssSelector(ts, fileStepIndex);
                     } else if (ts.get_searchType().toLowerCase().equals("tagname")) {
-                        //pageHelper.UpdateTestResults("Element type being checked at step " + fileStepIndex + " by TagName: " + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
                         pageHelper.UpdateTestResults("Element type being checked at step " + fileStepIndexForLog + " by TagName: " + accessor, testResults);
-                        actual = CheckElementWithTagName(accessor, fileStepIndex);
+                        //actual = CheckElementWithTagName(accessor, fileStepIndex);
+                        actual = CheckElementWithTagName(ts, fileStepIndex);
                     } else if (ts.get_searchType().toLowerCase().equals("classname")) {
-                        //pageHelper.UpdateTestResults("Element type being checked at step " + fileStepIndex + " by ClassName: " + fileStepIndex + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
                         pageHelper.UpdateTestResults("Element type being checked at step " + fileStepIndexForLog + " by ClassName: " + accessor, testResults);
-                        //pageHelper.UpdateTestResults("IN the correct part of the else statement");
-                        actual = CheckElementWithClassName(accessor, fileStepIndex);
+                        //actual = CheckElementWithClassName(accessor, fileStepIndex);
+                        actual = CheckElementWithClassName(ts, fileStepIndex);
                     } else if (ts.get_searchType().toLowerCase().equals("id")) {
-                        //pageHelper.UpdateTestResults("Element type being checked at step " + fileStepIndex + " by Id: " + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
                         pageHelper.UpdateTestResults("Element type being checked at step " + fileStepIndexForLog + " by Id: " + accessor, testResults);
-                        actual = CheckElementWithId(accessor, fileStepIndex);
+                        //actual = CheckElementWithId(accessor, fileStepIndex);
+                        actual = CheckElementWithId(ts, fileStepIndex);
                     }
 
                     if (ts.get_isCrucial()) {
@@ -330,21 +347,12 @@ public class HomePage {
                             assertEquals(expected, actual);
                         } catch (AssertionError ae) {
                             // do not capture screen shot here, if element not found, check methods will capture screen shot
-                            // if assert fails, the next if statement will capture the screen shot
-                            // [WRONG]if the non-crucial test fails, take a screenshot and keep processing remaining tests
-                            //String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
-//                            if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
-//                                pageHelper.captureScreenShot(driver, browserUsed + ts.get_searchType() + fileStepIndex + "_Element_Not_Found", configurationFolder);
-//                            } else {
-//                                pageHelper.captureScreenShot(driver, browserUsed + ts.get_searchType() + fileStepIndex + "_Element_Not_Found", screenShotSaveFolder);
-//                            }
                         }
                     }
                     if (expected.equals(actual)) {
                         pageHelper.UpdateTestResults("Successful comparison results at step " + fileStepIndexForLog + " Expected value: (" + expected + ") Actual value: (" + actual + ")", testResults);
                     } else if (!expected.equals(actual)) {
                         pageHelper.UpdateTestResults("Failed comparison results at step " + fileStepIndexForLog + " Expected value: (" + expected + ") Actual value: (" + actual + ")", testResults);
-                        //String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
                         if (screenShotSaveFolder != null && !screenShotSaveFolder.isEmpty()) {
                             //pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "AssertFail" + expected.replace(' ', '_'), screenShotSaveFolder);
                             pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "Assert_Fail", screenShotSaveFolder);
@@ -361,7 +369,16 @@ public class HomePage {
                             (ts.get_searchType().toLowerCase().indexOf("tagname") >= 0) || (ts.get_searchType().toLowerCase().indexOf("id") >= 0) ||
                             (ts.get_searchType().toLowerCase().indexOf("classname") >= 0)){
                         pageHelper.UpdateTestResults("Performing " + ts.get_searchType() + " " + fileStepIndexForLog + " non-read action", testResults);
-                        status = PerformAction(ts.get_searchType(), ts.get_xPath(), ts.get_expectedValue(), fileStepIndex);
+                        String [] expectedItems = ts.get_expectedValue().split(" - ");
+                        String subAction = null;
+
+                        if (!ts.get_expectedValue().toLowerCase().contains("switch to iframe")) {
+                            status = PerformAction(ts.get_searchType(), ts.get_xPath(), ts.get_expectedValue(), fileStepIndex);
+                        }
+                        else {
+                            subAction = expectedItems[1];
+                            status = PerformAction(ts.get_searchType(), ts.get_xPath(), subAction, fileStepIndex);
+                        }
 
                         //region { refactored and no longer used }
                         /*if (ts.get_searchType().toLowerCase().indexOf("xpath") >= 0) {
@@ -380,7 +397,7 @@ public class HomePage {
                             status = PerformClassAction(ts.get_xPath(), ts.get_expectedValue());
                         }*/
                         //endregion
-                        if (ts.get_expectedValue().toLowerCase().indexOf(" - ") >= 0) {
+                        if (ts.get_expectedValue().toLowerCase().indexOf(" - ") >= 0 && subAction == null) {
                             //url has changed, check url against expected value
                             String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf(" - ") + 3).trim();
                             if (dashCount > 1) {
@@ -526,18 +543,21 @@ public class HomePage {
      * DESCRIPTION:
      *      Returns the text of an element using its xPath accessor.
      ************************************************************ */
-    public String CheckElementWithXPath(String accessor, String fileStepIndex) throws Exception {
-        String actualValue = "";
+   // public String CheckElementWithXPath(String accessor, TestSettings ts, String fileStepIndex) throws Exception {
+    public String CheckElementWithXPath(TestSettings ts, String fileStepIndex) throws Exception {
+        String actualValue = null;
+        String accessor = ts.get_xPath();
+
           //region { Removed but was initially here to ensure app was on the correct page }
 //        if (this.driver.getCurrentUrl() != testPage) {
 //            pageHelper.NavigateToPage(this.driver, testPage);
 //        }
         //endregion
         try {
+            pageHelper.UpdateTestResults("CheckElementWithXPath iframeResult in try block " + ts.get_expectedValue().toLowerCase());
             String fileStepIndexForLog = fileStepIndex.substring(1, fileStepIndex.length() - 1);
-                    //actualValue = this.driver.findElement(By.xpath(accessor)).getText();
+            //actualValue = this.driver.findElement(By.xpath(accessor)).getText();
             String typeOfElement = this.driver.findElement(By.xpath(accessor)).getAttribute("type");
-            //if (typeOfElement.contains("select-one") || typeOfElement.contains("select-many")) {
             if (typeOfElement!= null && (typeOfElement.contains("select-one") || typeOfElement.contains("select-many"))) {
                 Select select = new Select(this.driver.findElement(By.xpath(accessor)));
                 WebElement option = select.getFirstSelectedOption();
@@ -547,7 +567,6 @@ public class HomePage {
                 actualValue = this.driver.findElement(By.xpath(accessor)).getText();
             }
             pageHelper.UpdateTestResults("Checking element by XPath: " + ElementTypeLookup(accessor) + " for script " + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
-            return actualValue;
         } catch (Exception e) {
             String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
             if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
@@ -555,7 +574,10 @@ public class HomePage {
             } else {
                 pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "xPath_Element_Not_Found", screenShotSaveFolder);
             }
-            return null;
+            actualValue = null;
+        }
+        finally {
+            return actualValue;
         }
     }
 
@@ -563,32 +585,34 @@ public class HomePage {
      * DESCRIPTION:
      *      Returns the text of an element using its CssSelector accessor.
      ************************************************************ */
-    public String CheckElementWithCssSelector(String accessor, String fileStepIndex) throws Exception {
-        String actualValue = "";
+    //public String CheckElementWithCssSelector(String accessor, String fileStepIndex) throws Exception {
+    public String CheckElementWithCssSelector(TestSettings ts, String fileStepIndex) throws Exception {
+        String accessor = ts.get_xPath();
+        String actualValue = null;
 
         try {
             String fileStepIndexForLog = fileStepIndex.substring(1, fileStepIndex.length() - 1);
             //actualValue = this.driver.findElement(By.cssSelector(accessor)).getText();
             String typeOfElement = this.driver.findElement(By.cssSelector(accessor)).getAttribute("type");
-            if (typeOfElement!= null && (typeOfElement.contains("select-one") || typeOfElement.contains("select-many"))) {
+            if (typeOfElement != null && (typeOfElement.contains("select-one") || typeOfElement.contains("select-many"))) {
                 Select select = new Select(this.driver.findElement(By.cssSelector(accessor)));
                 WebElement option = select.getFirstSelectedOption();
                 actualValue = option.getText();
-            }
-            else {
+            } else {
                 actualValue = this.driver.findElement(By.cssSelector(accessor)).getText();
             }
-            pageHelper.UpdateTestResults("Checking element by CssSelector: " + ElementTypeLookup(accessor) + " for script " + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
-            return actualValue;
+            pageHelper.UpdateTestResults("Checking element by CssSelector: " + accessor + " for script " + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
         } catch (Exception e) {
             String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
             if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
                 pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "CssSelector_Element_Not_Found", configurationFolder);
-            }
-            else {
+            } else {
                 pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "CssSelector_Element_Not_Found", screenShotSaveFolder);
             }
-            return null;
+            actualValue = null;
+        }
+        finally {
+            return actualValue;
         }
     }
 
@@ -596,8 +620,10 @@ public class HomePage {
      * DESCRIPTION:
      *      Returns the text of an element using its TagName accessor.
      ************************************************************ */
-    public String CheckElementWithTagName(String accessor, String fileStepIndex) throws Exception {
-        String actualValue = "";
+    //public String CheckElementWithTagName(String accessor, String fileStepIndex) throws Exception {
+    public String CheckElementWithTagName(TestSettings ts, String fileStepIndex) throws Exception {
+        String accessor = ts.get_xPath();
+        String actualValue = null;
 
         try {
             //actualValue = this.driver.findElement(By.tagName(accessor)).getText();
@@ -612,7 +638,6 @@ public class HomePage {
                 actualValue = this.driver.findElement(By.tagName(accessor)).getText();
             }
             pageHelper.UpdateTestResults("Checking element by TagName: " + ElementTypeLookup(accessor) + " for script. " + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
-            return actualValue;
         } catch (Exception e) {
             String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
             if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
@@ -621,7 +646,10 @@ public class HomePage {
             else {
                 pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "TagName_Element_Not_Found", screenShotSaveFolder);
             }
-            return null;
+            actualValue = null;
+        }
+        finally {
+            return actualValue;
         }
     }
 
@@ -629,14 +657,15 @@ public class HomePage {
      * DESCRIPTION:
      *      Returns the text of an element using its ClassName accessor.
      ************************************************************ */
-    private String CheckElementWithClassName(String accessor, String fileStepIndex) throws Exception {
-        String actualValue = "";
+    //private String CheckElementWithClassName(String accessor, String fileStepIndex) throws Exception {
+    private String CheckElementWithClassName(TestSettings ts, String fileStepIndex) throws Exception {
+        String accessor = ts.get_xPath();
+        String actualValue = null;
 
         try {
             //actualValue = this.driver.findElement(By.className(accessor)).getText();
             String fileStepIndexForLog = fileStepIndex.substring(1, fileStepIndex.length() - 1);
             String typeOfElement = this.driver.findElement(By.className(accessor)).getAttribute("type");
-            //pageHelper.UpdateTestResults("typeOfElement = " + typeOfElement != null ? typeOfElement : "NULL");
             if (typeOfElement!= null && (typeOfElement.contains("select-one") || typeOfElement.contains("select-many"))) {
                 Select select = new Select(this.driver.findElement(By.className(accessor)));
                 WebElement option = select.getFirstSelectedOption();
@@ -645,8 +674,7 @@ public class HomePage {
             else {
                 actualValue = this.driver.findElement(By.className(accessor)).getText();
             }
-            pageHelper.UpdateTestResults("Checking element by ClassName: " + ElementTypeLookup(accessor) + " for script. " + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
-            return actualValue;
+            pageHelper.UpdateTestResults("Checking element by ClassName: " + accessor + " for script. " + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
         } catch (Exception e) {
             String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
             if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
@@ -655,7 +683,10 @@ public class HomePage {
             else {
                 pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "ClassName_Element_Not_Found", screenShotSaveFolder);
             }
-            return null;
+            actualValue = null;
+        }
+        finally {
+            return actualValue;
         }
     }
 
@@ -663,13 +694,15 @@ public class HomePage {
      * DESCRIPTION:
      *      Returns the text of an element using its Id accessor.
      ************************************************************ */
-   public String CheckElementWithId(String accessor, String fileStepIndex)  throws Exception {
-       String actualValue = "";
+   //public String CheckElementWithId(String accessor, String fileStepIndex)  throws Exception {
+    public String CheckElementWithId(TestSettings ts, String fileStepIndex)  throws Exception {
+        String accessor = ts.get_xPath();
+        //boolean revertToParent = false;
+        String actualValue = null;
 
-       try {
+        try {
            String fileStepIndexForLog = fileStepIndex.substring(1, fileStepIndex.length() - 1);
            String typeOfElement = this.driver.findElement(By.id(accessor)).getAttribute("type");
-           //pageHelper.UpdateTestResults("typeOfElement = " + typeOfElement);
            if (typeOfElement!= null && (typeOfElement.contains("select-one") || typeOfElement.contains("select-many"))) {
                Select select = new Select(this.driver.findElement(By.id(accessor)));
                WebElement option = select.getFirstSelectedOption();
@@ -679,7 +712,6 @@ public class HomePage {
                actualValue = this.driver.findElement(By.id(accessor)).getText();
            }
            pageHelper.UpdateTestResults("Checking element by ID: " + accessor + " for script." + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
-           return actualValue;
        } catch (Exception e) {
            String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
            if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
@@ -688,8 +720,11 @@ public class HomePage {
            else {
                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "Id_Element_Not_Found", screenShotSaveFolder);
            }
-           return null;
+           actualValue = null;
        }
+        finally {
+            return actualValue;
+        }
    }
 
     //region { Perform non-text retrieval actions }
@@ -817,6 +852,10 @@ public class HomePage {
         if (elementTag.toLowerCase().indexOf("img") >= 0 && elementTag.length() >= 3) {
             //System.out.println("This is true!!!!");
             return "Image";
+        }
+        if (elementTag.toLowerCase().indexOf("select") >= 0 || elementTag.toLowerCase().equals("select")) {
+            //System.out.println("This is true!!!!");
+            return "Select";
         }
         //region { values not equal but not sure why - update when comparing strings must use .equals or it compares mem address}
         /*if (elementTag.toLowerCase() == "h1") {
