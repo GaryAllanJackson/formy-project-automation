@@ -112,10 +112,10 @@
             this.lblURL = new System.Windows.Forms.Label();
             this.txtURL = new System.Windows.Forms.TextBox();
             this.wbTestPage = new System.Windows.Forms.WebBrowser();
-            this.testCommandBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.mnuToolsAddIFrame = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuToolsAddIFrameGetTextFromElement = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuToolsAddIFramePerformAction = new System.Windows.Forms.ToolStripMenuItem();
+            this.testCommandBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.grpConfiguration.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.grpTestCommands.SuspendLayout();
@@ -464,7 +464,7 @@
             this.mnuFileNewConfigurationFile,
             this.mnuFileNewTestSettingsCommandFile});
             this.mnuFileNew.Name = "mnuFileNew";
-            this.mnuFileNew.Size = new System.Drawing.Size(120, 26);
+            this.mnuFileNew.Size = new System.Drawing.Size(181, 26);
             this.mnuFileNew.Text = "&New";
             // 
             // mnuFileNewConfigurationFile
@@ -487,7 +487,7 @@
             this.mnuFileOpenConfigurationFile,
             this.mnuFileOpenTestSettingsCommandFile});
             this.mnuFileOpen.Name = "mnuFileOpen";
-            this.mnuFileOpen.Size = new System.Drawing.Size(120, 26);
+            this.mnuFileOpen.Size = new System.Drawing.Size(181, 26);
             this.mnuFileOpen.Text = "&Open";
             // 
             // mnuFileOpenConfigurationFile
@@ -507,7 +507,7 @@
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(117, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(178, 6);
             // 
             // mnuFileSave
             // 
@@ -515,7 +515,7 @@
             this.mnuFileSaveConfigurationFile,
             this.mnuFileSaveTestSettingsCommandsFile});
             this.mnuFileSave.Name = "mnuFileSave";
-            this.mnuFileSave.Size = new System.Drawing.Size(120, 26);
+            this.mnuFileSave.Size = new System.Drawing.Size(181, 26);
             this.mnuFileSave.Text = "&Save";
             // 
             // mnuFileSaveConfigurationFile
@@ -535,12 +535,12 @@
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(117, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(178, 6);
             // 
             // mnuFileExit
             // 
             this.mnuFileExit.Name = "mnuFileExit";
-            this.mnuFileExit.Size = new System.Drawing.Size(120, 26);
+            this.mnuFileExit.Size = new System.Drawing.Size(181, 26);
             this.mnuFileExit.Text = "E&xit";
             this.mnuFileExit.Click += new System.EventHandler(this.mnuFileExit_Click);
             // 
@@ -668,7 +668,7 @@
             // mnuToolsAddSendTextToTextInputById
             // 
             this.mnuToolsAddSendTextToTextInputById.Name = "mnuToolsAddSendTextToTextInputById";
-            this.mnuToolsAddSendTextToTextInputById.Size = new System.Drawing.Size(181, 26);
+            this.mnuToolsAddSendTextToTextInputById.Size = new System.Drawing.Size(117, 26);
             this.mnuToolsAddSendTextToTextInputById.Text = "By Id";
             this.mnuToolsAddSendTextToTextInputById.Click += new System.EventHandler(this.mnuToolsAddSendTextToTextInputById_Click);
             // 
@@ -683,7 +683,7 @@
             // mnuToolsAddSelectFromDropDownByCssSelector
             // 
             this.mnuToolsAddSelectFromDropDownByCssSelector.Name = "mnuToolsAddSelectFromDropDownByCssSelector";
-            this.mnuToolsAddSelectFromDropDownByCssSelector.Size = new System.Drawing.Size(181, 26);
+            this.mnuToolsAddSelectFromDropDownByCssSelector.Size = new System.Drawing.Size(179, 26);
             this.mnuToolsAddSelectFromDropDownByCssSelector.Text = "By CssSelector";
             this.mnuToolsAddSelectFromDropDownByCssSelector.Click += new System.EventHandler(this.mnuToolsAddSelectFromDropDownByCssSelector_Click);
             // 
@@ -955,10 +955,6 @@
             this.wbTestPage.TabIndex = 0;
             this.wbTestPage.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.wbTestPage_DocumentCompleted);
             // 
-            // testCommandBindingSource
-            // 
-            this.testCommandBindingSource.DataSource = typeof(AutomationConfigurationJavaSupport.Entities.TestCommand);
-            // 
             // mnuToolsAddIFrame
             // 
             this.mnuToolsAddIFrame.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -981,6 +977,10 @@
             this.mnuToolsAddIFramePerformAction.Size = new System.Drawing.Size(303, 26);
             this.mnuToolsAddIFramePerformAction.Text = "Perform Action";
             this.mnuToolsAddIFramePerformAction.Click += new System.EventHandler(this.mnuToolsAddIFramePerformAction_Click);
+            // 
+            // testCommandBindingSource
+            // 
+            this.testCommandBindingSource.DataSource = typeof(AutomationConfigurationJavaSupport.Entities.TestCommand);
             // 
             // frmAutomationConfigurationJavaSupport
             // 

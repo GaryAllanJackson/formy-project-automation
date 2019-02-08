@@ -24,6 +24,8 @@ namespace AutomationConfigurationJavaSupport
         string[] testCommandComments;
         bool elementClicked = false;
         int selectedRow;
+        string recordStart = "╠";
+        string recordEnd = "╣";
 
         public frmAutomationConfigurationJavaSupport()
         {
@@ -52,6 +54,18 @@ namespace AutomationConfigurationJavaSupport
             LoadAccessorTypes(cboAccessorType);
             LoadTrueFalse(cboCrucialAssertion);
         }
+
+        private void TempMethod()
+        {
+            
+            //for (int x=0;x<1000;x++)
+            //{
+            //    ASCIIEncoding ascii = new ASCIIEncoding();
+            //    char c = char(ascii(x));
+            //    cboAccessorType.Items.Add(char(x));
+            //}
+        }
+
 
         private void LoadFileFilterType(ComboBox cboBx)
         {
@@ -432,7 +446,7 @@ namespace AutomationConfigurationJavaSupport
 
         private void btnUpdateTestCommand_Click(object sender, EventArgs e)
         {
-            if (selectedRow > 0)
+            if (selectedRow >= 0)
             {
                 if (!string.IsNullOrEmpty(txtAccessor.Text) && !string.IsNullOrEmpty(txtExpectedValueAction.Text) &&
                 cboAccessorType.SelectedIndex > -1 && cboPerformNonReadAction.SelectedIndex > -1 && cboCrucialAssertion.SelectedIndex > -1)
@@ -629,13 +643,15 @@ namespace AutomationConfigurationJavaSupport
                 "### Add URL to navigate to, first URL is where browser navigates, second url is what the expected URL will be, in case of redirection etc...",
                 "### Each parameter is separate by a semi-colon to prevent interference with navigation urls and colons",
                 "### The first parameter url to navigate to, xPath, CssSelector, Tag Name",
-                "### The second parameter action to take or expected value to retrieve for URLs both are required separated by a dash, ",
-                "###     -   optionally add a second dash delimiter to add a time delay (thread sleep value in milliseconds) to give the event time to complete.",
+                "### The second parameter action to take or expected value to retrieve for URLs both are required separated by a alt(206), ",
+                "###     ╬   optionally add a second alt(206) delimiter to add a time delay (thread sleep value in milliseconds) to give the event time to complete.",
                 "### The third parameter is the type of check to perform and will be ignored for performing Navigation where that is irrelevant",
+                "###        acceptable values are xPath, CssSelector, Tag Name, ClassName, ID and n/a",
                 "### The fourth parameter is the PeformAction boolean and true when text should be entered, a click occurs or Navigating and false when reading element values",
                 "### The fifth parameter is the IsCrucial boolean.  When true, if the assertion fails the test stops immediately.  When false, if the assertion fails, the tests continue.",
-                "### --------------------------------|-------------------------|-----------------------|-----------------------------------------------------",
-                "### [URL/XPath/CssSelector/TagName] ; [Action/Expected value] ; [Element Lookup Type] ; [Perform Action other than Read Value] ; [Critical Assertion]"
+                "### ╔════════════════════════════════╦═════════════════════════╦═══════════════════════╦════════════════════════════════════════╦══════════════════════════╗",
+                "### ║[URL/XPath/CssSelector/TagName] ; [Action/Expected value] ; [Element Lookup Type] ; [Perform Action other than Read Value] ; [Critical Assertion]     ║",   
+                "### ╚════════════════════════════════╩═════════════════════════╩═══════════════════════╩════════════════════════════════════════╩══════════════════════════╝"
             };
         }
 
@@ -698,7 +714,8 @@ namespace AutomationConfigurationJavaSupport
 
                     foreach (TestCommand item in testCommands)
                     {
-                        sb.AppendLine(string.Format("{0} ; {1} ; {2} ; {3} ; {4}", item.Accessor, item.ExpectedValueAction, item.AccessorType, item.IsNonReadAction, item.IsCrucial));
+                        //sb.AppendLine(string.Format("{0} ; {1} ; {2} ; {3} ; {4}", item.Accessor, item.ExpectedValueAction, item.AccessorType, item.IsNonReadAction, item.IsCrucial));
+                        sb.AppendLine(string.Format("{0}{1} ; {2} ; {3} ; {4} ; {5}{6}", recordStart, item.Accessor, item.ExpectedValueAction, item.AccessorType, item.IsNonReadAction, item.IsCrucial, recordEnd));
                     }
                     SaveTestCommandFile(sb.ToString());
                 }
@@ -730,10 +747,13 @@ namespace AutomationConfigurationJavaSupport
         private void ReadTestSettingsFile()
         {
             string line;
+            string tempLine = "";
             string[] lineItems;
             string filter = "Text Files|*.txt|All Files|*.*";
             string dialogTitle = "Open Configuration File";
             string fileName = SelectFile(filter, dialogTitle);
+
+
             if (!string.IsNullOrEmpty(fileName))
             {
                 if (!string.IsNullOrEmpty(fileName))
@@ -747,22 +767,37 @@ namespace AutomationConfigurationJavaSupport
                             line = sr.ReadLine();
                             if (!string.IsNullOrEmpty(line) && !line.StartsWith("###"))
                             {
-                                lineItems = line.Split(';');
-                                try
+                                if (line.IndexOf("╠") >= 0)
                                 {
-                                    TestCommand item = new TestCommand
-                                    {
-                                        Accessor = !string.IsNullOrEmpty(lineItems[0]) ? lineItems[0].Trim() : string.Empty,
-                                        ExpectedValueAction = !string.IsNullOrEmpty(lineItems[1]) ? lineItems[1].Trim() : string.Empty,
-                                        AccessorType = !string.IsNullOrEmpty(lineItems[2]) ? lineItems[2].Trim() : string.Empty,
-                                        IsNonReadAction = !string.IsNullOrEmpty(lineItems[3]) ? lineItems[3].Trim() : string.Empty,
-                                        IsCrucial = !string.IsNullOrEmpty(lineItems[4]) ? lineItems[4].Trim() : string.Empty
-                                    };
-                                    testCommands.Add(item);
+                                    tempLine = "";
                                 }
-                                catch(Exception ex)
+                                if (line.IndexOf("╣") >= 0)
                                 {
-                                    MessageBox.Show("", "File Format not supported!");
+                                    if (tempLine.Length > 0)
+                                    {
+                                        line = tempLine + line;
+                                    }
+                                    lineItems = line.Substring(1, line.Length - 2).Split(';');
+                                    try
+                                    {
+                                        TestCommand item = new TestCommand
+                                        {
+                                            Accessor = !string.IsNullOrEmpty(lineItems[0]) ? lineItems[0].Trim() : string.Empty,
+                                            ExpectedValueAction = !string.IsNullOrEmpty(lineItems[1]) ? lineItems[1].Trim() : string.Empty,
+                                            AccessorType = !string.IsNullOrEmpty(lineItems[2]) ? lineItems[2].Trim() : string.Empty,
+                                            IsNonReadAction = !string.IsNullOrEmpty(lineItems[3]) ? lineItems[3].Trim() : string.Empty,
+                                            IsCrucial = !string.IsNullOrEmpty(lineItems[4]) ? lineItems[4].Trim() : string.Empty
+                                        };
+                                        testCommands.Add(item);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        MessageBox.Show("", "File Format not supported!");
+                                    }
+                                }
+                                else
+                                {
+                                    tempLine += line;
                                 }
                             }
                         }
@@ -970,7 +1005,8 @@ namespace AutomationConfigurationJavaSupport
             cboCrucialAssertion.SelectedIndex = cboCrucialAssertion.FindString(ConfigurationManager.AppSettings["Wait_Crucial"] != null ? ConfigurationManager.AppSettings["Wait_Crucial"] : "false");
             */
             string accessor = ConfigurationManager.AppSettings["Wait_Accessor"] != null ? ConfigurationManager.AppSettings["Wait_Accessor"] : "n/a";
-            string expectedValueAction = ConfigurationManager.AppSettings["Wait_ExpectedValue"] != null ? ConfigurationManager.AppSettings["Wait_ExpectedValue"] : "Wait - 5000";
+            //string expectedValueAction = ConfigurationManager.AppSettings["Wait_ExpectedValue"] != null ? ConfigurationManager.AppSettings["Wait_ExpectedValue"] : "Wait - 5000";
+            string expectedValueAction = ConfigurationManager.AppSettings["Wait_ExpectedValue"] != null ? ConfigurationManager.AppSettings["Wait_ExpectedValue"] : "Wait ╬ 5000";
             string accessorType = ConfigurationManager.AppSettings["Wait_AccessorType"] != null ? ConfigurationManager.AppSettings["Wait_AccessorType"] : "n/a";
             string performNonReadAction = ConfigurationManager.AppSettings["Wait_PerformNonReadAction"] != null ? ConfigurationManager.AppSettings["Wait_PerformNonReadAction"] : "true";
             string crucialAssertion = ConfigurationManager.AppSettings["Wait_Crucial"] != null ? ConfigurationManager.AppSettings["Wait_Crucial"] : "false";
@@ -988,13 +1024,15 @@ namespace AutomationConfigurationJavaSupport
         private void mnuToolsAddUrlCheckWithoutNavigation_Click(object sender, EventArgs e)
         {
             //n/a ; URL - https://formy-project.herokuapp.com/thanks ; n/a ; true ; false
-            SetTestControls("n/a", "URL - https://YourUrlHere.com/FillItIn", "n/a", "true", "false");
+            //SetTestControls("n/a", "URL - https://YourUrlHere.com/FillItIn", "n/a", "true", "false");
+            SetTestControls("n/a", "URL ╬ https://YourUrlHere.com/FillItIn", "n/a", "true", "false");
         }
 
         private void mnuToolsAddNavigationWithCheck_Click(object sender, EventArgs e)
         {
             //https://formy-project.herokuapp.com/form ; Navigate - https://formy-project.herokuapp.com/form ; n/a ; true ; true
-            SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate - https://YourUrlHere.com/FillItIn/CouldBeDifferent", "n/a", "true", "true");
+            //SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate - https://YourUrlHere.com/FillItIn/CouldBeDifferent", "n/a", "true", "true");
+            SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate ╬ https://YourUrlHere.com/FillItIn/CouldBeDifferent", "n/a", "true", "true");
         }
 
         private void mnuToolsAddNavigationWithoutCheck_Click(object sender, EventArgs e)
@@ -1006,13 +1044,15 @@ namespace AutomationConfigurationJavaSupport
         private void mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime_Click(object sender, EventArgs e)
         {
             //https://formy-project.herokuapp.com/form ; Navigate - https://formy-project.herokuapp.com/form - 5000; n/a ; true ; true
-            SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate - https://YourUrlHere.com/FillItIn/CouldBeDifferent - 5000", "n/a", "true", "true");
+            //SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate - https://YourUrlHere.com/FillItIn/CouldBeDifferent - 5000", "n/a", "true", "true");
+            SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate ╬ https://YourUrlHere.com/FillItIn/CouldBeDifferent - 5000", "n/a", "true", "true");
         }
 
         private void mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime_Click(object sender, EventArgs e)
         {
             //https://formy-project.herokuapp.com/form ; Navigate - - 5000; n/a ; true ; true
-            SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate - - 5000", "n/a", "true", "false");
+            //SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate - - 5000", "n/a", "true", "false");
+            SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate ╬ ╬ 5000", "n/a", "true", "false");
         }
 
         private void mnuToolsAddSendTextToTextInputById_Click(object sender, EventArgs e)
@@ -1045,13 +1085,15 @@ namespace AutomationConfigurationJavaSupport
         private void mnuToolsAddIFrameGetTextFromElement_Click(object sender, EventArgs e)
         {
             ////button[contains(@id,'menu1')] ; Switch to iframe [iframeResult] - Tutorials ; xPath ; false ; true
-            SetTestControls("//button[contains(@id,'menu1')]", "Switch to iframe [iframeResult] - Tutorials", "xPath", "false", "false");
+            //SetTestControls("//button[contains(@id,'menu1')]", "Switch to iframe [iframeResult] - Tutorials", "xPath", "false", "false");
+            SetTestControls("//button[contains(@id,'menu1')]", "Switch to iframe [iframeResult] ╬ Tutorials", "xPath", "false", "false");
         }
 
         private void mnuToolsAddIFramePerformAction_Click(object sender, EventArgs e)
         {
             ////button[contains(@id,'menu1')] ; Switch to iframe [iframeResult] - click     ; xPath ; true ; true
-            SetTestControls("//button[contains(@id,'menu1')]", "Switch to iframe [iframeResult] - click", "xPath", "true", "false");
+            //SetTestControls("//button[contains(@id,'menu1')]", "Switch to iframe [iframeResult] - click", "xPath", "true", "false");
+            SetTestControls("//button[contains(@id,'menu1')]", "Switch to iframe [iframeResult] ╬ click", "xPath", "true", "false");
         }
     }
 }
