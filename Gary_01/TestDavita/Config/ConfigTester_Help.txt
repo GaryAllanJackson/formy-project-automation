@@ -1,0 +1,64 @@
+Test File Format:
+### ╔════════════════════════════════╦═════════════════════════╦═══════════════════════╦════════════════════════════════════════╦══════════════════════════╗
+### ║[URL/XPath/CssSelector/TagName] ; [Action/Expected value] ; [Element Lookup Type] ; [Perform Action other than Read Value] ; [Critical Assertion]     ║
+### ╚════════════════════════════════╩═════════════════════════╩═══════════════════════╩════════════════════════════════════════╩══════════════════════════╝
+### Each parameter is separate by a semi-colon to prevent interference with navigation urls and colons
+### The first parameter url to navigate to, xPath, CssSelector, Tag Name, ClassName, ID
+### The second parameter action to take or expected value to retrieve for URLs both are required separated by a space then alt(206),
+###     ╬ then space. ' ╬ '  optionally add a second space alt(206) space delimiter to add a time delay (thread sleep value in milliseconds) to give the event time to complete.
+###     The format is: Action ╬ Expected Value ╬ Time delay before making the assertion
+### The third parameter is the type of check to perform and will be ignored for performing Navigation where that is irrelevant
+###        acceptable values are xPath, CssSelector, Tag Name, ClassName, ID and n/a
+### The fourth parameter is the PerformAction boolean and true when text should be entered, a click occurs, a wait, or Navigating and false when reading element values
+### The fifth parameter is the IsCrucial boolean.  When true, if the assertion fails the test stops immediately.  When false, if the assertion fails, the tests continue.
+
+The examples below are are not all inclusive but rather attempt to provide you with a basic understanding so that you can make the necessary changes to accomplish the task.
+When an error occurs, usually an element not found error, a screenshot will automatically be taken.
+
+All Navigation steps should be marked as crucial, as all subsequent checks require that navigation to complete successfully!!!
+To Navigate and mark that step as crucial
+╠https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_ref_comp_dropdown-menu&stacked=h ; Navigate ; n/a ; true ; true╣
+
+To Navigate, assert that the URL is what follows the ╬ character and to wait 4 seconds before making the assertion to allow the page to load:
+╠https://formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000 ; n/a ; true ; true╣
+
+To check a URL without navigating and to make it non-curcial.  To make it crucial change the last parameter to true.
+╠n/a ; URL ╬ https://formy-project.herokuapp.com/thanks ; n/a ; true ; false╣
+
+To wait for a specific amount of time before continuing for page loading or script completion
+To wait for 5 seconds before continuing onto the next step.
+╠n/a ; Wait ╬ 5000 ; n/a ; true ; false╣
+
+To fill in a field by ID and to make it non-crucial.  To make it crucial change the last parameter to true.
+╠first-name ; John ; ID ; true ; false╣
+
+
+Retrieving text is usually non-crucial and test execution can usually continue so the following examples are all non-crucial.  Update based on your requirements.
+To retrieve the text of an element by ClassName and make the assertion non-crucial
+╠alert ; The form was successfully submitted! ; ClassName ; false ; false╣
+
+To retrieve the text of an element by xPath
+╠/html[1]/body[1]/div[1]/div[1]/div[1]/ul[1]/li[1]/div[1]/div[1]/h1[1] ; Empower Yourself with Kidney Knowledge ; xPath ; false ; false╣
+
+When you are attempting to access an element in an iFrame, you must first switch to that iframe.
+The syntax for doing so is placed in the second parameter using the key phrase Switch to iframe 
+followed by the name in square brackets as shown in the following example.
+To retrieve the text of an element in an iFrame by xPath
+╠/html/body/select ; Switch to iframe [iframeResult] ╬ Volvo ; xPath ; false ; false╣
+
+To click an element by ID
+╠checkbox-2 ; click ; ID ; true ; false╣
+
+To click an element by xPath
+╠/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/div[1]/h4[3] ; click ╬ https://www.davita.com/education ╬ 5000 ; xPath ; true ; false╣
+
+To click an element by xPath in an iFrame
+╠/html/body/div/div/ul/li[1]/a ; Switch to iframe [iframeResult] ╬ click ; xPath ; true ; true╣
+
+To select an option from an HTML Select (drop down/list) element.
+╠option[value='1'] ; click ; CssSelector ; true ; false╣
+
+To take a screen shot/print screen.  The browser will be resized automatically to capture all page content.
+╠n/a ; ScreenShot ; n/a ; true ; false╣
+
+
