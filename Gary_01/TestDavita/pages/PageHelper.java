@@ -1,16 +1,9 @@
-import com.sun.xml.internal.fastinfoset.util.StringArray;
-import javafx.scene.paint.Color;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.LinkOption;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
 public class PageHelper {
@@ -47,6 +40,8 @@ public class PageHelper {
     public static final String FRAMED = "\u001B[51m";
     //endregion
 
+
+
     //region { Properties }
     private String _logFileName;
     public String get_logFileName() {
@@ -55,6 +50,20 @@ public class PageHelper {
     public void set_logFileName(String _logFileName) {
         this._logFileName = _logFileName;
     }
+    public static final String sectionStartFormatLeft =  "╔══════════════[ ";
+    public static final String sectionStartFormatRight = " ]══════════════╗";
+    public static final String sectionEndFormatLeft =    "╚══════════════[ ";
+    public static final String sectionEndFormatRight =   " ]══════════════╝";
+
+    private String _helpFileName;
+    public String get_helpFileName() {
+        return _helpFileName;
+    }
+
+    public void set_helpFileName(String _helpFileName) {
+        this._helpFileName = _helpFileName;
+    }
+
     //endregion
 
 
@@ -87,7 +96,7 @@ public class PageHelper {
     /* ****************************************************************
      *  Saves a screenshot to the
      **************************************************************** */
-    public void captureScreenShot(WebDriver driver, String screenShotName, String screenShotFolder) {
+    public void captureScreenShot(WebDriver driver, String screenShotName, String screenShotFolder, boolean isError) {
         try {
             //get the original dimensions and save them
             Dimension originalDimension = driver.manage().window().getSize();
@@ -117,7 +126,13 @@ public class PageHelper {
                 FileUtils.copyFile(source, new File("./ScreenShots/" + screenShotName + ".png"));
             }
             //System.out.println("Screenshot taken");
-            UpdateTestResults("Screenshot taken");
+            if (!isError) {
+                UpdateTestResults("     Screenshot taken");
+            }
+            else {
+                UpdateTestResults(ANSI_RED + "Screenshot taken - Error condition!" + ANSI_RESET);
+            }
+
 
             //resize the browser to the original dimensions
             driver.manage().window().setSize(originalDimension);
@@ -168,6 +183,61 @@ public class PageHelper {
     public List<TestSettings> ReadTestSettingsFile(List<TestSettings> testSettings, String testFileName) throws Exception {
         TestSettings test;
         int requiredFields = 5;
+        int lineCount = 0;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(testFileName))) {
+            String line;
+            String tempLine = "";
+            String [] lineValues;
+            //UpdateTestResults(ANSI_PURPLE + "----------[ Start of Reading Test Settings file File ]--------------" + ANSI_RESET);
+            UpdateTestResults(ANSI_PURPLE + sectionStartFormatLeft + " Start of Reading Test Settings file File " + sectionStartFormatRight + ANSI_RESET);
+            UpdateTestResults(ANSI_PURPLE + "Reading " + testFileName +  " file" + ANSI_RESET);
+            while ((line = br.readLine()) != null) {
+                lineCount++;
+                //line comments in this file are indicated with ###
+                //UpdateTestResults("Line check #1: " + line);
+                if (line.indexOf("###") < 0) {
+                    //UpdateTestResults("Line check #2: " + line);
+                    if (line.indexOf("╠") >= 0) {
+                        tempLine = "";
+                    }
+                    if (line.indexOf("╣") >= 0) {
+                        if (tempLine.length() > 0) {
+                            line = tempLine + line;
+                        }
+                        //UpdateTestResults("Line check #4: " + line);
+                        line = line.substring(1, line.length() - 1);
+
+                        test = new TestSettings();
+                        //lineValues = line.split(";");
+                        lineValues = line.split(" ; ");
+                        if (lineValues.length != requiredFields) {
+                            UpdateTestResults(ANSI_RED + "[ Incorrect file format." + requiredFields + " fields required separated by semi-colons.  Retrieved " + lineValues.length + " fields on line: " + lineCount + ". ]" + ANSI_RESET);
+                        }
+                        test.set_xPath(lineValues[0].trim());
+                        test.set_expectedValue(lineValues[1].trim());
+                        test.set_searchType(lineValues[2].trim());
+                        test.setPerformWrite(Boolean.parseBoolean(lineValues[3].trim()));
+                        test.set_isCrucial(Boolean.parseBoolean(lineValues[4].trim()));
+                        testSettings.add(test);
+                        // Show input to user
+                        UpdateTestResults(ANSI_PURPLE + "     Reading Test File values(xPath = " + test.get_xPath() + ") - (Expected Value = " + test.get_expectedValue() + ")" + ANSI_RESET);
+                    }
+                    else {
+                        //UpdateTestResults("Line check (only for split lines) #3: " + line);
+                        tempLine += line + "\r\n";
+                    }
+                }
+            }
+            //UpdateTestResults(ANSI_PURPLE + "----------[ End of Reading Test Settings file File ]--------------" + ANSI_RESET);
+            UpdateTestResults(ANSI_PURPLE + sectionEndFormatLeft + "End of Reading Test Settings file File " + sectionEndFormatRight + ANSI_RESET);
+            return testSettings;
+        }
+    }
+
+    public List<TestSettings> ReadTestSettingsFileOld(List<TestSettings> testSettings, String testFileName) throws Exception {
+        TestSettings test;
+        int requiredFields = 5;
         /*if (testFileName == null || testFileName.isEmpty())
         {
             testFileName = this.testFileName;
@@ -175,13 +245,17 @@ public class PageHelper {
         try (BufferedReader br = new BufferedReader(new FileReader(testFileName))) {
             String line;
             String [] lineValues;
-            //System.out.println(ANSI_PURPLE + "----------[ Start of Reading Test Settings file File ]--------------" + ANSI_RESET);
             //System.out.println(ANSI_PURPLE + "Reading " + testFileName +  " file" + ANSI_RESET);
-            UpdateTestResults(ANSI_PURPLE + "----------[ Start of Reading Test Settings file File ]--------------" + ANSI_RESET);
+            //UpdateTestResults(ANSI_PURPLE + "----------[ Start of Reading Test Settings file File ]--------------" + ANSI_RESET);
+            UpdateTestResults(ANSI_PURPLE + sectionStartFormatLeft + "Start of Reading Test Settings file File " + sectionStartFormatRight + ANSI_RESET);
+
             UpdateTestResults(ANSI_PURPLE + "Reading " + testFileName +  " file" + ANSI_RESET);
             while ((line = br.readLine()) != null) {
                 //line comments in this file are indicated with ###
                 if (line.indexOf("###") < 0) {
+                    if (line.indexOf("╚") >= 0) {
+                        UpdateTestResults("The character is recognized: " + line);
+                    }
                     test = new TestSettings();
                     lineValues = line.split(";");
                     if (lineValues.length != requiredFields) {
@@ -196,16 +270,14 @@ public class PageHelper {
                     test.set_isCrucial(Boolean.parseBoolean(lineValues[4].trim()));
                     testSettings.add(test);
                     // Show input to user
-                    //System.out.println(ANSI_PURPLE + "Reading Test File values(xPath = " + test.get_xPath() + ") - (Expected Value = " + test.get_expectedValue() + ")" + ANSI_RESET);
-                    UpdateTestResults(ANSI_PURPLE + "Reading Test File values(xPath = " + test.get_xPath() + ") - (Expected Value = " + test.get_expectedValue() + ")" + ANSI_RESET);
+                    UpdateTestResults(ANSI_PURPLE + "     Reading Test File values(xPath = " + test.get_xPath() + ") - (Expected Value = " + test.get_expectedValue() + ")" + ANSI_RESET);
                 }
             }
-            //System.out.println(ANSI_PURPLE + "----------[ End of Reading Test Settings file File ]--------------" + ANSI_RESET);
-            UpdateTestResults(ANSI_PURPLE + "----------[ End of Reading Test Settings file File ]--------------" + ANSI_RESET);
+            //UpdateTestResults(ANSI_PURPLE + "----------[ End of Reading Test Settings file File ]--------------" + ANSI_RESET);
+            UpdateTestResults(ANSI_PURPLE + sectionEndFormatLeft + "End of Reading Test Settings file File" + sectionEndFormatRight + ANSI_RESET);
             return testSettings;
         }
     }
-
 
 
     /* ******************************************************************
@@ -214,75 +286,80 @@ public class PageHelper {
      * which in turn direct the test to use the selected browser and
      * to test the configured site.
      ****************************************************************** */
-    public ConfigSettings ReadConfigurationSettings(String configurationFile) {
+    public ConfigSettings ReadConfigurationSettings(String configurationFile) throws Exception  {
+        File helpFile = new File(get_helpFileName());
+        if (!helpFile.exists()) {
+            PrintSamples();
+        }
         ConfigSettings configSettings = new ConfigSettings();
         String configValue;
         //System.out.println(FRAMED + ANSI_YELLOW_BACKGROUND + ANSI_BLUE + ANSI_BOLD + "----------[ Reading Configuration file ]----------" + ANSI_RESET);
-        UpdateTestResults(FRAMED + ANSI_YELLOW_BACKGROUND + ANSI_BLUE + ANSI_BOLD + "----------[ Reading Configuration file ]----------" + ANSI_RESET);
+        //UpdateTestResults(FRAMED + ANSI_YELLOW_BACKGROUND + ANSI_BLUE + ANSI_BOLD + "----------[ Reading Configuration file ]----------" + ANSI_RESET);
         try (BufferedReader br = new BufferedReader(new FileReader(configurationFile))) {
             String line;
-            //System.out.print();
-            //System.out.println(ANSI_WHITE + ANSI_BOLD + "----[ Reading Config (" + configurationFile +  ") file ]----");
-            UpdateTestResults(ANSI_WHITE + ANSI_BOLD + "----[ Reading Config (" + configurationFile +  ") file ]----");
+            //UpdateTestResults(ANSI_WHITE + ANSI_BOLD + "----[ Reading Config (" + configurationFile +  ") file ]----");
+            UpdateTestResults(FRAMED + ANSI_YELLOW_BACKGROUND + ANSI_BLUE + ANSI_BOLD + sectionStartFormatLeft + "Reading Config (" + configurationFile +  ") file" + sectionStartFormatRight + ANSI_RESET);
             while ((line = br.readLine()) != null) {
                 //UpdateTestResults("line = " + line);
                 if (line.substring(0,2).indexOf("//") < 0) {
                     configValue = line.substring(line.indexOf("=") + 1);
                     if (line.toLowerCase().indexOf("browsertype") >= 0) {
                         configSettings.set_browserType(configValue);
-                        UpdateTestResults("browserType = " + configSettings.get_browserType().toString());
+                        UpdateTestResults("     browserType = " + configSettings.get_browserType().toString());
                     }
                     else if (line.toLowerCase().indexOf("testpageroot") >= 0) {
                         configSettings.set_testPageRoot(configValue);
-                        UpdateTestResults("testPageRoot = " + configSettings.get_testPageRoot());
+                        UpdateTestResults("     testPageRoot = " + configSettings.get_testPageRoot());
                     }
                     else if (line.toLowerCase().indexOf("runheadless") >= 0) {
                         configSettings.set_runHeadless(Boolean.parseBoolean(configValue));
-                        UpdateTestResults("runHeadless = " + configSettings.get_runHeadless().toString());
+                        UpdateTestResults("     runHeadless = " + configSettings.get_runHeadless().toString());
                     }
                     else if (line.toLowerCase().indexOf("screenshotsavefolder") >= 0) {
                         configSettings .set_screenShotSaveFolder(configValue);
-                        UpdateTestResults("screenShotSaveFolder = " + configSettings.get_screenShotSaveFolder());
+                        UpdateTestResults("     screenShotSaveFolder = " + configSettings.get_screenShotSaveFolder());
                     }
                     else if (line.toLowerCase().indexOf("testallbrowsers") >= 0) {
                         configSettings.set_testAllBrowsers(Boolean.parseBoolean(configValue));
-                        UpdateTestResults("testAllBrowsers = " + configSettings.get_testAllBrowsers().toString());
+                        UpdateTestResults("     testAllBrowsers = " + configSettings.get_testAllBrowsers().toString());
                     }
                     else if (line.toLowerCase().indexOf("testfilename") >= 0) {
                         configSettings.set_testSettingsFile(configValue);
-                        UpdateTestResults("testFileName = " + configSettings.get_testSettingsFile());
+                        UpdateTestResults("     testFileName = " + configSettings.get_testSettingsFile());
                     }
                     else if (line.toLowerCase().indexOf("testfoldername") >= 0) {
                         configSettings.set_testFolderName(configValue);
-                        UpdateTestResults("testFolderName = " + configSettings.get_testFolderName());
+                        UpdateTestResults("     testFolderName = " + configSettings.get_testFolderName());
                     }
                     else if (line.toLowerCase().indexOf("specifytestfiles") >= 0) {
                         configSettings.set_specifyFileNames(Boolean.parseBoolean(configValue));
-                        UpdateTestResults("specifytestfilenames = " + configSettings.get_specifyFileNames());
+                        UpdateTestResults("     specifytestfilenames = " + configSettings.get_specifyFileNames());
                     }
                     else if (line.toLowerCase().indexOf("folderfilefiltertype") >= 0) {
                         configSettings.set_folderFileFilterType(configValue);
-                        UpdateTestResults("FolderFileFilterType = " + configSettings.get_folderFileFilterType());
+                        UpdateTestResults("     FolderFileFilterType = " + configSettings.get_folderFileFilterType());
                     }
                     else if (line.toLowerCase().indexOf("folderfilefilter") >= 0) {
                         configSettings.set_folderFileFilter(configValue);
-                        UpdateTestResults("FolderFileFilter = " + configSettings.get_folderFileFilter());
+                        UpdateTestResults("     FolderFileFilter = " + configSettings.get_folderFileFilter());
                     }
                 }
             }
             if (!configSettings.get_specifyFileNames()) {
-                UpdateTestResults( FRAMED + ANSI_BLUE_BACKGROUND + ANSI_YELLOW + "---[ Start - Retrieving Files in specified folder. ]---" + ANSI_RESET);
+                //UpdateTestResults( FRAMED + ANSI_BLUE_BACKGROUND + ANSI_YELLOW + "---[ Start - Retrieving Files in specified folder. ]---" + ANSI_RESET);
+                UpdateTestResults( FRAMED + ANSI_BLUE_BACKGROUND + ANSI_YELLOW + sectionStartFormatLeft + " Start - Retrieving Files in specified folder." + sectionStartFormatRight + ANSI_RESET);
                 configSettings.reset_testFiles();
                 File temp = new File(configSettings.get_testFolderName());
                 configSettings = GetAllFilesInFolder(temp, "txt", configSettings);
                 //UpdateTestResults("2. configSettings.get_testFiles() = " + configSettings.get_testFiles());
-                UpdateTestResults(FRAMED + ANSI_BLUE_BACKGROUND + ANSI_YELLOW + "---[ End Retrieving Files in specified folder. ]---" + ANSI_RESET);
+                UpdateTestResults(FRAMED + ANSI_BLUE_BACKGROUND + ANSI_YELLOW + sectionEndFormatLeft + "End Retrieving Files in specified folder." + sectionEndFormatRight + ANSI_RESET);
             }
         }
         catch (Exception e) {
             UpdateTestResults(ANSI_RED + "The following error occurred while attempting to read the configuration file:" + configurationFile + "\\r\\n" + e.getMessage() + ANSI_RESET);
         }
-        UpdateTestResults(FRAMED + ANSI_YELLOW_BACKGROUND + ANSI_BLUE + ANSI_BOLD + "----------[ End of Reading Configuration File ]--------------" + ANSI_RESET);
+        //UpdateTestResults(FRAMED + ANSI_YELLOW_BACKGROUND + ANSI_BLUE + ANSI_BOLD + "----------[ End of Reading Configuration File ]--------------" + ANSI_RESET);
+        UpdateTestResults(FRAMED + ANSI_YELLOW_BACKGROUND + ANSI_BLUE + ANSI_BOLD + sectionEndFormatLeft + "End of Reading Configuration File" + sectionEndFormatRight + ANSI_RESET);
         return configSettings;
     }
 
@@ -349,7 +426,7 @@ public class PageHelper {
         else if (testMessage.indexOf("Navigation") >= 0) {
             System.out.println(ANSI_BLUE + testMessage + ANSI_RESET);
         }
-        else if (testMessage.indexOf("--[") > 0 && (testMessage.toLowerCase().indexOf("end") > 0 || testMessage.toLowerCase().indexOf("revert") > 0))
+        else if ((testMessage.indexOf("--[") > 0 || testMessage.indexOf("══[") > 0) && (testMessage.toLowerCase().indexOf("end") > 0 || testMessage.toLowerCase().indexOf("revert") > 0))
         {
             System.out.println(testMessage);
             System.out.println("");
@@ -362,7 +439,7 @@ public class PageHelper {
 
     public void UpdateTestResults(String testMessage) {
         //UpdateTestResults(testMessage, null);
-        if (testMessage.indexOf("--[") > 0 && testMessage.toLowerCase().indexOf("end") > 0)
+        if ((testMessage.indexOf("--[") > 0 || testMessage.indexOf("══[") > 0) && testMessage.toLowerCase().indexOf("end") > 0)
         {
             System.out.println(testMessage);
             System.out.println();
@@ -380,10 +457,90 @@ public class PageHelper {
         }
         catch(Exception ex) {
             //System.out.println("The following error occurred when attempting to write to the test log file:" + ex.getMessage());
-            UpdateTestResults("The following error occurred when attempting to write to the test log file:" + ex.getMessage());
+            UpdateTestResults(ANSI_RED + ANSI_BOLD + "The following error occurred when attempting to write to the test log file:" + ex.getMessage());
         }
     }
 
+
+    public void PrintSamples() throws Exception {
+
+        try {
+            WriteToFile(get_helpFileName(), "Test File Format:");
+            WriteToFile(get_helpFileName(), "### ╔════════════════════════════════╦═════════════════════════╦═══════════════════════╦════════════════════════════════════════╦══════════════════════════╗");
+            WriteToFile(get_helpFileName(), "### ║[URL/XPath/CssSelector/TagName] ; [Action/Expected value] ; [Element Lookup Type] ; [Perform Action other than Read Value] ; [Critical Assertion]     ║");
+            WriteToFile(get_helpFileName(), "### ╚════════════════════════════════╩═════════════════════════╩═══════════════════════╩════════════════════════════════════════╩══════════════════════════╝");
+            WriteToFile(get_helpFileName(), "### Each parameter is separate by a semi-colon to prevent interference with navigation urls and colons");
+            WriteToFile(get_helpFileName(), "### The first parameter url to navigate to, xPath, CssSelector, Tag Name, ClassName, ID");
+            WriteToFile(get_helpFileName(), "### The second parameter action to take or expected value to retrieve for URLs both are required separated by a space then alt(206),");
+            WriteToFile(get_helpFileName(), "###     ╬ then space. ' ╬ '  optionally add a second space alt(206) space delimiter to add a time delay (thread sleep value in milliseconds) to give the event time to complete.");
+            WriteToFile(get_helpFileName(), "###     The format is: Action ╬ Expected Value ╬ Time delay before making the assertion");
+            WriteToFile(get_helpFileName(), "### The third parameter is the type of check to perform and will be ignored for performing Navigation where that is irrelevant");
+            WriteToFile(get_helpFileName(), "###        acceptable values are xPath, CssSelector, Tag Name, ClassName, ID and n/a");
+            WriteToFile(get_helpFileName(), "### The fourth parameter is the PerformAction boolean and true when text should be entered, a click occurs, a wait, or Navigating and false when reading element values");
+            WriteToFile(get_helpFileName(), "### The fifth parameter is the IsCrucial boolean.  When true, if the assertion fails the test stops immediately.  When false, if the assertion fails, the tests continue.");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "The examples below are are not all inclusive but rather attempt to provide you with a basic understanding so that you can make the necessary changes to accomplish the task.");
+            WriteToFile(get_helpFileName(), "When an error occurs, usually an element not found error, a screenshot will automatically be taken.");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "All Navigation steps should be marked as crucial, as all subsequent checks require that navigation to complete successfully!!!");
+            WriteToFile(get_helpFileName(), "To Navigate and mark that step as crucial");
+            WriteToFile(get_helpFileName(), "╠https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_ref_comp_dropdown-menu&stacked=h ; Navigate ; n/a ; true ; true╣");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To Navigate, assert that the URL is what follows the ╬ character and to wait 4 seconds before making the assertion to allow the page to load:");
+            WriteToFile(get_helpFileName(), "╠https://formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000 ; n/a ; true ; true╣");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To check a URL without navigating and to make it non-curcial.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "╠n/a ; URL ╬ https://formy-project.herokuapp.com/thanks ; n/a ; true ; false╣");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To wait for a specific amount of time before continuing for page loading or script completion");
+            WriteToFile(get_helpFileName(), "To wait for 5 seconds before continuing onto the next step.");
+            WriteToFile(get_helpFileName(), "╠n/a ; Wait ╬ 5000 ; n/a ; true ; false╣");
+            WriteToFile(get_helpFileName(), "");
+
+            WriteToFile(get_helpFileName(), "To fill in a field by ID and to make it non-crucial.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "╠first-name ; John ; ID ; true ; false╣");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "Retrieving text is usually non-crucial and test execution can usually continue so the following examples are all non-crucial.  Update based on your requirements.");
+            WriteToFile(get_helpFileName(), "To retrieve the text of an element by ClassName and make the assertion non-crucial");
+            WriteToFile(get_helpFileName(), "╠alert ; The form was successfully submitted! ; ClassName ; false ; false╣");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To retrieve the text of an element by xPath");
+            WriteToFile(get_helpFileName(), "╠/html[1]/body[1]/div[1]/div[1]/div[1]/ul[1]/li[1]/div[1]/div[1]/h1[1] ; Empower Yourself with Kidney Knowledge ; xPath ; false ; false╣");
+            WriteToFile(get_helpFileName(), "");
+
+            WriteToFile(get_helpFileName(), "When you are attempting to access an element in an iFrame, you must first switch to that iframe.");
+            WriteToFile(get_helpFileName(), "The syntax for doing so is placed in the second parameter using the key phrase Switch to iframe ");
+            WriteToFile(get_helpFileName(), "followed by the name in square brackets as shown in the following example.");
+            WriteToFile(get_helpFileName(), "To retrieve the text of an element in an iFrame by xPath");
+            WriteToFile(get_helpFileName(), "╠/html/body/select ; Switch to iframe [iframeResult] ╬ Volvo ; xPath ; false ; false╣");
+            WriteToFile(get_helpFileName(), "");
+
+            WriteToFile(get_helpFileName(), "To click an element by ID");
+            WriteToFile(get_helpFileName(), "╠checkbox-2 ; click ; ID ; true ; false╣");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To click an element by xPath");
+            WriteToFile(get_helpFileName(), "╠/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/div[1]/h4[3] ; click ╬ https://www.davita.com/education ╬ 5000 ; xPath ; true ; false╣");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To click an element by xPath in an iFrame");
+            WriteToFile(get_helpFileName(), "╠/html/body/div/div/ul/li[1]/a ; Switch to iframe [iframeResult] ╬ click ; xPath ; true ; true╣");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To select an option from an HTML Select (drop down/list) element.");
+            WriteToFile(get_helpFileName(), "╠option[value='1'] ; click ; CssSelector ; true ; false╣");
+            WriteToFile(get_helpFileName(), "");
+
+
+            WriteToFile(get_helpFileName(), "To take a screen shot/print screen.  The browser will be resized automatically to capture all page content.");
+            WriteToFile(get_helpFileName(), "╠n/a ; ScreenShot ; n/a ; true ; false╣");
+            WriteToFile(get_helpFileName(), "");
+
+
+            WriteToFile(get_helpFileName(), "");
+        }
+        catch (Exception ex) {
+            UpdateTestResults(ANSI_RED + ANSI_BOLD + "Error Writing Help File" + ANSI_RESET);
+        }
+    }
 
 
     //region { Commented Out Code }

@@ -1,0 +1,36 @@
+### Comments in this file use 3 pound signs and anything following these will be ignored by the test program.
+### Add URL to navigate to, first URL is where browser navigates, second url is what the expected URL will be, in case of redirection etc...
+### Each parameter is separate by a semi-colon to prevent interference with navigation urls and colons
+### The first parameter url to navigate to, xPath, CssSelector, Tag Name
+### The second parameter action to take or expected value to retrieve for URLs both are required separated by a alt(206), 
+###     ╬   optionally add a second alt(206) delimiter to add a time delay (thread sleep value in milliseconds) to give the event time to complete.
+### The third parameter is the type of check to perform and will be ignored for performing Navigation where that is irrelevant
+### The fourth parameter is the PeformAction boolean and true when text should be entered, a click occurs or Navigating and false when reading element values
+### The fifth parameter is the IsCrucial boolean.  When true, if the assertion fails the test stops immediately.  When false, if the assertion fails, the tests continue.
+### ╔════════════════════════════════╦═════════════════════════╦═══════════════════════╦════════════════════════════════════════╦══════════════════════════╗
+### ║[URL/XPath/CssSelector/TagName] ; [Action/Expected value] ; [Element Lookup Type] ; [Perform Action other than Read Value] ; [Critical Assertion]     ║
+### ╚════════════════════════════════╩═════════════════════════╩═══════════════════════╩════════════════════════════════════════╩══════════════════════════╝
+╠https://formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000 ; n/a ; true ; true╣
+╠first-name ; John ; ID ; true ; false╣
+╠last-name ; Doe ; ID ; true ; false╣
+╠job-title ; QA Engineer ; ID ; true ; false╣
+╠radio-button-2 ; click ; ID ; true ; false╣
+╠checkbox-2 ; click ; ID ; true ; false╣
+╠option[value='1'] ; click ; CssSelector ; true ; false╣
+╠n/a ; Wait ╬ 1000 ; n/a ; true ; false╣
+╠select-menu2 ; 0-1 ; ID ; false ; false╣
+╠datepicker ; 05/28/2019 ; ID ; true ; false╣
+╠datepicker ; Keys.RETURN ; ID ; true ; false╣
+╠.btn.btn-lg.btn-primary ; click ; CssSelector ; true ; false╣
+╠n/a ; Wait ╬ 5000 ; n/a ; true ; false╣
+╠alert ; The form was successfully submitted! ; ClassName ; false ; false╣
+╠n/a ; ScreenShot ; n/a ; true ; false╣
+╠n/a ; URL ╬ https://formy-project.herokuapp.com/thanks ; n/a ; true ; false╣
+╠https://formy-project.herokuapp.com/form ; Navigate ╬  ╬ 4000 ; n/a ; true ; false╣
+╠n/a ; URL ╬ https://formy-project.herokuapp.com/form ; n/a ; true ; false╣
+╠https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_ref_comp_dropdown-menu&stacked=h ; Navigate ; n/a ; true ; true╣
+╠//button[contains(@id,'menu1')] ; Switch to iframe [iframeResult] ╬ Tutorials ; xPath ; false ; true╣
+╠//button[contains(@id,'menu1')] ; Switch to iframe [iframeResult] ╬ click ; xPath ; true ; true╣
+╠/html/body/div/div/ul/li[1]/a ; Switch to iframe [iframeResult] ╬ click ; xPath ; true ; true╣
+╠https://www.w3schools.com/tags/tryit.asp?filename=tryhtml_select ; Navigate ; n/a ; true ; true╣
+╠/html/body/select ; Switch to iframe [iframeResult] ╬ Volvo ; xPath ; false ; true╣

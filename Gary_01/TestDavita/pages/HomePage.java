@@ -31,7 +31,8 @@ enum BrowserType {
 public class HomePage {
 
     //region { NOTES }
-    /* *********************************************************************
+    /*
+    *╔═══════════════════════════════════════════════════════════════════════════════╗
      *  NOTES:
      *   Headless firefox https://developer.mozilla.org/en-US/Firefox/Headless_mode
      *   Moved to file:
@@ -53,7 +54,7 @@ public class HomePage {
      *          driver.switch_to.frame('NAME')
      *      2.  Need to separate debug output from required output and make
      *          it configurable whether extra information is output.
-     ********************************************************************* */
+     ╚═══════════════════════════════════════════════════════════════════════════════╝ */
     //endregion
 
     private String configurationFile = "Config/ConfigurationSetup.tconfig";
@@ -74,6 +75,9 @@ public class HomePage {
     private String logFileName = configurationFile.contains("\\") ?
             configurationFile.substring(0, configurationFile.lastIndexOf("\\")) + "\\TestResults_" + logFileUniqueName + ".log" :
             configurationFile.substring(0, configurationFile.lastIndexOf("/")) + "/TestResults_" + logFileUniqueName + ".log";
+    private String helpFileName = configurationFile.contains("\\") ?
+            configurationFile.substring(0, configurationFile.lastIndexOf("\\")) + "\\ConfigTester_Help.txt" :
+            configurationFile.substring(0, configurationFile.lastIndexOf("/")) + "/ConfigTester_Help.txt";
     List<String> testFiles = new ArrayList<>();
     private String chromeDriverPath = "/Users/gjackson/Downloads/chromedriver_win32/chromedriver.exe";
     private String fireFoxDriverPath = "/GeckoDriver/geckodriver-v0.23.0-win64/geckodriver.exe";
@@ -129,16 +133,21 @@ public class HomePage {
      * test.
      **************************************************************** */
     public HomePage() throws Exception {
+
         File tmp = new File(configurationFile);
-        pageHelper.UpdateTestResults("config absolute path = " + tmp.getAbsolutePath());
-        pageHelper.UpdateTestResults("logFileName = " + logFileName);
-        ConfigureTestEnvironment();
+        pageHelper.UpdateTestResults("Config File absolute path = " + tmp.getAbsolutePath());
+        pageHelper.UpdateTestResults("Log File Name = " + logFileName);
+        pageHelper.UpdateTestResults("Help File Name = " + helpFileName);
+        pageHelper.UpdateTestResults("");
 
         pageHelper.set_logFileName(logFileName);
+        pageHelper.set_helpFileName(helpFileName);
+        ConfigureTestEnvironment();
+
 
         //testSettings = pageHelper.ReadTestSettingsFile(testSettings, testFileName);
-        pageHelper.UpdateTestResults(FRAMED + ANSI_GREEN_BACKGROUND + ANSI_BLUE + ANSI_BOLD + "---------[ Beginning Configuration ]-----------------" + ANSI_RESET, testResults);
-        pageHelper.UpdateTestResults("Configured Browser Selection = " + get_selectedBrowserType(), testResults);
+        pageHelper.UpdateTestResults(FRAMED + ANSI_GREEN_BACKGROUND + ANSI_BLUE + ANSI_BOLD + pageHelper.sectionStartFormatLeft + "Beginning Configuration" + pageHelper.sectionStartFormatRight + ANSI_RESET, testResults);
+        pageHelper.UpdateTestResults("     Configured Browser Selection = " + get_selectedBrowserType(), testResults);
 
         if (!testAllBrowsers) {
             if (get_selectedBrowserType() == BrowserType.PhantomJS) {
@@ -148,7 +157,7 @@ public class HomePage {
             } else if (get_selectedBrowserType() == BrowserType.Firefox) {
                 SetFireFoxDriver();
             }
-            pageHelper.UpdateTestResults(FRAMED + ANSI_GREEN_BACKGROUND + ANSI_BLUE + ANSI_BOLD + "---------[ Ending Configuration ]-----------------" + ANSI_RESET, testResults);
+            pageHelper.UpdateTestResults(FRAMED + ANSI_GREEN_BACKGROUND + ANSI_BLUE + ANSI_BOLD + pageHelper.sectionStartFormatLeft + "Ending Configuration" + pageHelper.sectionStartFormatRight + ANSI_RESET, testResults);
         }
     }
 
@@ -188,7 +197,7 @@ public class HomePage {
      *  Calls the ReadConfigurationSettings method, to read the config file.
      *  Sets configurable variables using those values.
      *************************************************************************** */
-    private void ConfigureTestEnvironment() {
+    private void ConfigureTestEnvironment() throws Exception {
         String tmpBrowserType;
         ConfigSettings configSettings = pageHelper.ReadConfigurationSettings(configurationFile);
 
@@ -222,7 +231,7 @@ public class HomePage {
      *  Sets the WebDriver to the PhantomJs Driver
      **************************************************************************** */
     private void SetPhantomJsDriver() {
-        pageHelper.UpdateTestResults("Setting PhantomJSDriver", testResults);
+        pageHelper.UpdateTestResults("     [Setting PhantomJSDriver]", testResults);
         File src = new File(phantomJsDriverPath);
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, src.getAbsolutePath());
@@ -238,7 +247,7 @@ public class HomePage {
      *  Sets the WebDriver to the Chrome Driver
      **************************************************************************** */
     private void SetChromeDriver() {
-        pageHelper.UpdateTestResults("Setting ChromeDriver", testResults);
+        pageHelper.UpdateTestResults("     [Setting ChromeDriver]", testResults);
         System.setProperty("webdriver.chrome.driver", chromeDriverPath);
 
         if (runHeadless) {
@@ -256,11 +265,13 @@ public class HomePage {
      *  Sets the WebDriver to the FireFox Driver
      **************************************************************************** */
     private void SetFireFoxDriver() {
-        pageHelper.UpdateTestResults("Setting FireFoxDriver", testResults);
+        pageHelper.UpdateTestResults("     [Setting FireFoxDriver]", testResults);
         File gecko = new File(fireFoxDriverPath);
         System.setProperty("webdriver.gecko.driver", gecko.getAbsolutePath());
         FirefoxOptions options = new FirefoxOptions();
         //options.setCapability("marionette", false);
+        String loggingLevel = "fatal";   //"trace"
+        options.setCapability("marionette.logging", "trace");
 
         if (runHeadless) {
             FirefoxBinary firefoxBinary = new FirefoxBinary();
@@ -281,18 +292,22 @@ public class HomePage {
         int startIndex = 0;  //used for instances when you do not want to start at the first element to test
         String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
         boolean revertToParent = false;
+        //boolean isError = false;
 
         for (int fileIndex = 0; fileIndex < testFiles.size(); fileIndex++) {
             testFileName = testFiles.get(fileIndex);
             testSettings = new ArrayList<>();
             testSettings = pageHelper.ReadTestSettingsFile(testSettings, testFileName);
-            pageHelper.UpdateTestResults(FRAMED + ANSI_PURPLE_BACKGROUND + ANSI_YELLOW + "-------[ Running Test Script ]-------" + ANSI_RESET, testResults);
+            //pageHelper.UpdateTestResults(FRAMED + ANSI_PURPLE_BACKGROUND + ANSI_YELLOW + "------[ Running Test Script ]-------" + ANSI_RESET, testResults);
+            pageHelper.UpdateTestResults(FRAMED + ANSI_PURPLE_BACKGROUND + ANSI_YELLOW + pageHelper.sectionStartFormatLeft + "Running Test Script" + pageHelper.sectionStartFormatRight + ANSI_RESET, testResults);
             for (int x = startIndex; x < testSettings.size(); x++) {
                 if (revertToParent) {
                     driver.switchTo().defaultContent();
-                    pageHelper.UpdateTestResults( PageHelper.ANSI_CYAN + "-------[ Reverting back to defaultContent from iFrame ]-------" + PageHelper.ANSI_RESET);
+                    //pageHelper.UpdateTestResults( PageHelper.ANSI_CYAN + "-------[ End Switch to IFrame - Reverting to defaultContent ]-------" + PageHelper.ANSI_RESET);
+                    pageHelper.UpdateTestResults( PageHelper.ANSI_CYAN + pageHelper.sectionEndFormatLeft + "End Switch to IFrame - Reverting to defaultContent" + pageHelper.sectionEndFormatRight + PageHelper.ANSI_RESET);
                     revertToParent = false;
                 }
+                //isError = false;
                 TestSettings ts = testSettings.get(x);
                 String expected = ts.get_expectedValue();
                 String accessor = ts.get_xPath();
@@ -302,14 +317,15 @@ public class HomePage {
                 //if switching to an iframe, switch first
                 if (expected.toLowerCase().contains("switch to iframe"))
                 {
-                    String [] expectedItems = expected.split(" - ");
+                    //String [] expectedItems = expected.split(" - ");
+                    String [] expectedItems = expected.split(" ╬ ");
                     String frameName = expectedItems[0].substring(expectedItems[0].indexOf("[") + 1, expectedItems[0].indexOf("]"));
-                    pageHelper.UpdateTestResults(PageHelper.ANSI_CYAN + "-------[ Switching to iFrame: " + frameName + " for step " + fileStepIndexForLog + " ]-------" + PageHelper.ANSI_RESET);
+                    //pageHelper.UpdateTestResults(PageHelper.ANSI_CYAN + "-------[ Switching to iFrame: " + frameName + " for step " + fileStepIndexForLog + " ]-------" + PageHelper.ANSI_RESET);
+                    pageHelper.UpdateTestResults(PageHelper.ANSI_CYAN + pageHelper.sectionStartFormatLeft +  "Switching to iFrame: " + frameName + " for step " + fileStepIndexForLog + pageHelper.sectionStartFormatRight + PageHelper.ANSI_RESET);
                     driver.switchTo().frame(frameName);
                     expected = expectedItems[1];
                     revertToParent = true;
                 }
-
 
                 //get value and check against expected
                 if (!ts.getPerformWrite()) {
@@ -319,23 +335,23 @@ public class HomePage {
                     //pageHelper.UpdateTestResults("Search Type = " + ts.get_searchType());
 
                     if (ts.get_searchType().toLowerCase().equals("xpath")) {
-                        pageHelper.UpdateTestResults("Element type being checked at step " + fileStepIndexForLog +  " by xPath: " + accessor, testResults);
+                        pageHelper.UpdateTestResults("     Element type being checked at step " + fileStepIndexForLog +  " by xPath: " + accessor, testResults);
                         //actual = CheckElementWithXPath(accessor, ts, fileStepIndex);
                         actual = CheckElementWithXPath(ts, fileStepIndex);
                     } else if (ts.get_searchType().toLowerCase().equals("cssselector")) {
-                        pageHelper.UpdateTestResults("Element type being checked at step " + fileStepIndexForLog +  " by CssSelector: " + accessor, testResults);
+                        pageHelper.UpdateTestResults("     Element type being checked at step " + fileStepIndexForLog +  " by CssSelector: " + accessor, testResults);
                         //actual = CheckElementWithCssSelector(accessor, fileStepIndex);
                         actual = CheckElementWithCssSelector(ts, fileStepIndex);
                     } else if (ts.get_searchType().toLowerCase().equals("tagname")) {
-                        pageHelper.UpdateTestResults("Element type being checked at step " + fileStepIndexForLog + " by TagName: " + accessor, testResults);
+                        pageHelper.UpdateTestResults("     Element type being checked at step " + fileStepIndexForLog + " by TagName: " + accessor, testResults);
                         //actual = CheckElementWithTagName(accessor, fileStepIndex);
                         actual = CheckElementWithTagName(ts, fileStepIndex);
                     } else if (ts.get_searchType().toLowerCase().equals("classname")) {
-                        pageHelper.UpdateTestResults("Element type being checked at step " + fileStepIndexForLog + " by ClassName: " + accessor, testResults);
+                        pageHelper.UpdateTestResults("     Element type being checked at step " + fileStepIndexForLog + " by ClassName: " + accessor, testResults);
                         //actual = CheckElementWithClassName(accessor, fileStepIndex);
                         actual = CheckElementWithClassName(ts, fileStepIndex);
                     } else if (ts.get_searchType().toLowerCase().equals("id")) {
-                        pageHelper.UpdateTestResults("Element type being checked at step " + fileStepIndexForLog + " by Id: " + accessor, testResults);
+                        pageHelper.UpdateTestResults("     Element type being checked at step " + fileStepIndexForLog + " by Id: " + accessor, testResults);
                         //actual = CheckElementWithId(accessor, fileStepIndex);
                         actual = CheckElementWithId(ts, fileStepIndex);
                     }
@@ -355,21 +371,23 @@ public class HomePage {
                         pageHelper.UpdateTestResults("Failed comparison results at step " + fileStepIndexForLog + " Expected value: (" + expected + ") Actual value: (" + actual + ")", testResults);
                         if (screenShotSaveFolder != null && !screenShotSaveFolder.isEmpty()) {
                             //pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "AssertFail" + expected.replace(' ', '_'), screenShotSaveFolder);
-                            pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "Assert_Fail", screenShotSaveFolder);
+                            pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "Assert_Fail", screenShotSaveFolder, false);
                         }
                     }
                 } else {  //set a value or perform a click
                     //pageHelper.UpdateTestResults("Performing non-read action", testResults);
                     Boolean status;
-                    int dashCount = ts.get_expectedValue().contains(" - ") ? StringUtils.countMatches(ts.get_expectedValue(), " - ") : 0;
+                    //int dashCount = ts.get_expectedValue().contains(" - ") ? StringUtils.countMatches(ts.get_expectedValue(), " - ") : 0;
+                    int dashCount = ts.get_expectedValue().contains(" ╬ ") ? StringUtils.countMatches(ts.get_expectedValue(), " ╬ ") : 0;
                     //pageHelper.UpdateTestResults("dashCount = " + dashCount, testResults);
 
                     //GAJ working here perform all non read actions below that use an accessor
                     if ((ts.get_searchType().toLowerCase().indexOf("xpath") >= 0) || (ts.get_searchType().toLowerCase().indexOf("cssselector") >= 0) ||
                             (ts.get_searchType().toLowerCase().indexOf("tagname") >= 0) || (ts.get_searchType().toLowerCase().indexOf("id") >= 0) ||
                             (ts.get_searchType().toLowerCase().indexOf("classname") >= 0)){
-                        pageHelper.UpdateTestResults("Performing " + ts.get_searchType() + " " + fileStepIndexForLog + " non-read action", testResults);
-                        String [] expectedItems = ts.get_expectedValue().split(" - ");
+                        pageHelper.UpdateTestResults("     Performing " + ts.get_searchType() + " " + fileStepIndexForLog + " non-read action", testResults);
+                        //String [] expectedItems = ts.get_expectedValue().split(" - ");
+                        String [] expectedItems = ts.get_expectedValue().split(" ╬ ");
                         String subAction = null;
 
                         if (!ts.get_expectedValue().toLowerCase().contains("switch to iframe")) {
@@ -397,13 +415,17 @@ public class HomePage {
                             status = PerformClassAction(ts.get_xPath(), ts.get_expectedValue());
                         }*/
                         //endregion
-                        if (ts.get_expectedValue().toLowerCase().indexOf(" - ") >= 0 && subAction == null) {
+                        //if (ts.get_expectedValue().toLowerCase().indexOf(" - ") >= 0 && subAction == null) {
+                        if (ts.get_expectedValue().toLowerCase().indexOf(" ╬ ") >= 0 && subAction == null) {
                             //url has changed, check url against expected value
-                            String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf(" - ") + 3).trim();
+                            //String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf(" - ") + 3).trim();
+                            String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf(" ╬ ") + 3).trim();
                             if (dashCount > 1) {
-                                int delayMilliSeconds = parseInt(ts.get_expectedValue().substring(ts.get_expectedValue().lastIndexOf("-") + 1).trim());
+                                //int delayMilliSeconds = parseInt(ts.get_expectedValue().substring(ts.get_expectedValue().lastIndexOf("-") + 1).trim());
+                                int delayMilliSeconds = parseInt(ts.get_expectedValue().substring(ts.get_expectedValue().lastIndexOf(" ╬ ") + 3).trim());
                                 DelayCheck(delayMilliSeconds, fileStepIndex);
-                                expectedUrl = expectedUrl.substring(0, expectedUrl.indexOf(" - "));
+                                //expectedUrl = expectedUrl.substring(0, expectedUrl.indexOf(" - "));
+                                expectedUrl = expectedUrl.substring(0, expectedUrl.indexOf(" ╬ "));
                             }
                             String actualUrl = GetCurrentPageUrl();
                             if (ts.get_isCrucial()) {
@@ -412,13 +434,14 @@ public class HomePage {
                                 try {
                                     assertEquals(expectedUrl, actualUrl);
                                 } catch (AssertionError ae) {
+                                    //isError = true;
                                     //if the non-crucial test fails, take a screenshot and keep processing remaining tests
                                     if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
                                         //pageHelper.captureScreenShot(driver, browserUsed + ts.get_searchType() + "_Element_Not_Found", configurationFolder);
-                                        pageHelper.captureScreenShot(driver, browserUsed  + ts.get_searchType()  + fileStepIndex + "Element_Not_Found" + expected.replace(' ', '_'), configurationFolder);
+                                        pageHelper.captureScreenShot(driver, browserUsed  + ts.get_searchType()  + fileStepIndex + "Element_Not_Found" + expected.replace(' ', '_'), configurationFolder, true);
                                     } else {
                                         //pageHelper.captureScreenShot(driver, browserUsed + ts.get_searchType() + "_Element_Not_Found", screenShotSaveFolder);
-                                        pageHelper.captureScreenShot(driver, browserUsed + ts.get_searchType()  + fileStepIndex + "Element_Not_Found" + expected.replace(' ', '_'), screenShotSaveFolder);
+                                        pageHelper.captureScreenShot(driver, browserUsed + ts.get_searchType()  + fileStepIndex + "Element_Not_Found" + expected.replace(' ', '_'), screenShotSaveFolder, true);
                                     }
                                 }
                             }
@@ -432,7 +455,8 @@ public class HomePage {
                         //perform all non-read actions below that do not use an accessor
                         if (ts.get_expectedValue().toLowerCase().indexOf("navigate") >= 0) {
                             String navigateUrl = ts.get_xPath();
-                            String [] expectedItems = ts.get_expectedValue().split(" - ");
+                            //String [] expectedItems = ts.get_expectedValue().split(" - ");
+                            String [] expectedItems = ts.get_expectedValue().split(" ╬ ");
                             String expectedUrl = null;
                             int delayMilliSeconds = 0;
                             if (dashCount > 0) {
@@ -443,22 +467,25 @@ public class HomePage {
                                 }
                             }
                             this.testPage = navigateUrl;
-                            pageHelper.UpdateTestResults("----[ Start Explicit Navigation Event ]------------------", testResults);
+                            //pageHelper.UpdateTestResults("----[ Start Explicit Navigation Event ]------------------", testResults);
+                            pageHelper.UpdateTestResults(pageHelper.sectionStartFormatLeft + "Start Explicit Navigation Event" + pageHelper.sectionStartFormatRight, testResults);
                             String actualUrl = CheckPageUrl(delayMilliSeconds);
                             if (expectedUrl != null && expectedUrl.trim().length() > 0) {
                                 assertEquals(expectedUrl, actualUrl);
                                 if (expectedUrl.trim().equals(actualUrl.trim())) {
-                                    pageHelper.UpdateTestResults("Navigation and URL Check successful for step " + fileStepIndexForLog + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")", testResults);
+                                    pageHelper.UpdateTestResults("     Navigation and URL Check successful for step " + fileStepIndexForLog + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")", testResults);
                                 } else {
-                                    pageHelper.UpdateTestResults("Navigation and URL Check unsuccessful for step " + fileStepIndexForLog + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")", testResults);
+                                    pageHelper.UpdateTestResults("     Navigation and URL Check unsuccessful for step " + fileStepIndexForLog + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")", testResults);
                                 }
                             }
-                            pageHelper.UpdateTestResults("----[ Explicit Navigation Event ]------------------", testResults);
+                            //pageHelper.UpdateTestResults("----[ End Explicit Navigation Event ]------------------", testResults);
+                            pageHelper.UpdateTestResults(pageHelper.sectionEndFormatLeft + "End Explicit Navigation Event" + pageHelper.sectionEndFormatRight, testResults);
                         }
                         else if (ts.get_expectedValue().toLowerCase().indexOf("wait") >= 0 || ts.get_expectedValue().toLowerCase().indexOf("delay") >= 0) {
                             int delayMilliSeconds = 0;
-                            if (ts.get_expectedValue().indexOf("-") > 0) {
-                                delayMilliSeconds = parseInt(ts.get_expectedValue().substring(ts.get_expectedValue().lastIndexOf("-") + 1).trim());
+                            if (ts.get_expectedValue().indexOf("╬") > 0) {
+                                //delayMilliSeconds = parseInt(ts.get_expectedValue().substring(ts.get_expectedValue().lastIndexOf("-") + 1).trim());
+                                delayMilliSeconds = parseInt(ts.get_expectedValue().substring(ts.get_expectedValue().lastIndexOf(" ╬ ") + 3).trim());
                             } else {
                                 delayMilliSeconds = parseInt(ts.get_xPath());
                             }
@@ -470,7 +497,8 @@ public class HomePage {
                         }
                         else if (ts.get_expectedValue().toLowerCase().indexOf("url") >= 0) {
                             //pageHelper.UpdateTestResults("----[ URL if before call ]------------------", testResults);
-                            String [] expectedItems = ts.get_expectedValue().split(" - ");
+                            //String [] expectedItems = ts.get_expectedValue().split(" - ");
+                            String [] expectedItems = ts.get_expectedValue().split(" ╬ ");
                             String expectedUrl = null;
                             if (dashCount > 0) {
                                 expectedUrl = expectedItems[1].trim();
@@ -491,7 +519,7 @@ public class HomePage {
                     }
                 }
             }
-            pageHelper.UpdateTestResults(FRAMED + ANSI_PURPLE_BACKGROUND + ANSI_YELLOW + "-------[ End of Test Script ]-------" + ANSI_RESET, testResults);
+            pageHelper.UpdateTestResults(FRAMED + ANSI_PURPLE_BACKGROUND + ANSI_YELLOW + pageHelper.sectionEndFormatLeft + "End of Test Script" + pageHelper.sectionEndFormatRight + ANSI_RESET, testResults);
         }
         driver.quit();
 
@@ -511,7 +539,7 @@ public class HomePage {
      ************************************************************ */
     private void DelayCheck(int milliseconds, String fileStepIndex) throws InterruptedException {
         String fileStepIndexForLog = fileStepIndex.substring(1, fileStepIndex.length() - 1);
-        pageHelper.UpdateTestResults("Sleeping for " + milliseconds + " milliseconds for script " + fileStepIndexForLog, testResults);
+        pageHelper.UpdateTestResults("     Sleeping for " + milliseconds + " milliseconds for script " + fileStepIndexForLog, testResults);
         Thread.sleep(milliseconds);
     }
 
@@ -554,7 +582,7 @@ public class HomePage {
 //        }
         //endregion
         try {
-            pageHelper.UpdateTestResults("CheckElementWithXPath iframeResult in try block " + ts.get_expectedValue().toLowerCase());
+            //pageHelper.UpdateTestResults("CheckElementWithXPath iframeResult in try block " + ts.get_expectedValue().toLowerCase());
             String fileStepIndexForLog = fileStepIndex.substring(1, fileStepIndex.length() - 1);
             //actualValue = this.driver.findElement(By.xpath(accessor)).getText();
             String typeOfElement = this.driver.findElement(By.xpath(accessor)).getAttribute("type");
@@ -566,13 +594,13 @@ public class HomePage {
             else {
                 actualValue = this.driver.findElement(By.xpath(accessor)).getText();
             }
-            pageHelper.UpdateTestResults("Checking element by XPath: " + ElementTypeLookup(accessor) + " for script " + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
+            pageHelper.UpdateTestResults("     Checking element by XPath: " + ElementTypeLookup(accessor) + " for script " + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
         } catch (Exception e) {
             String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
             if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
-                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "xPath_Element_Not_Found", configurationFolder);
+                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "xPath_Element_Not_Found", configurationFolder, true);
             } else {
-                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "xPath_Element_Not_Found", screenShotSaveFolder);
+                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "xPath_Element_Not_Found", screenShotSaveFolder, true);
             }
             actualValue = null;
         }
@@ -601,13 +629,13 @@ public class HomePage {
             } else {
                 actualValue = this.driver.findElement(By.cssSelector(accessor)).getText();
             }
-            pageHelper.UpdateTestResults("Checking element by CssSelector: " + accessor + " for script " + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
+            pageHelper.UpdateTestResults("     Checking element by CssSelector: " + accessor + " for script " + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
         } catch (Exception e) {
             String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
             if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
-                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "CssSelector_Element_Not_Found", configurationFolder);
+                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "CssSelector_Element_Not_Found", configurationFolder, true);
             } else {
-                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "CssSelector_Element_Not_Found", screenShotSaveFolder);
+                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "CssSelector_Element_Not_Found", screenShotSaveFolder, true);
             }
             actualValue = null;
         }
@@ -637,14 +665,14 @@ public class HomePage {
             else {
                 actualValue = this.driver.findElement(By.tagName(accessor)).getText();
             }
-            pageHelper.UpdateTestResults("Checking element by TagName: " + ElementTypeLookup(accessor) + " for script. " + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
+            pageHelper.UpdateTestResults("     Checking element by TagName: " + ElementTypeLookup(accessor) + " for script. " + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
         } catch (Exception e) {
             String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
             if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
-                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "TagName_Element_Not_Found", configurationFolder);
+                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "TagName_Element_Not_Found", configurationFolder, true);
             }
             else {
-                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "TagName_Element_Not_Found", screenShotSaveFolder);
+                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "TagName_Element_Not_Found", screenShotSaveFolder, true);
             }
             actualValue = null;
         }
@@ -674,14 +702,14 @@ public class HomePage {
             else {
                 actualValue = this.driver.findElement(By.className(accessor)).getText();
             }
-            pageHelper.UpdateTestResults("Checking element by ClassName: " + accessor + " for script. " + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
+            pageHelper.UpdateTestResults("     Checking element by ClassName: " + accessor + " for script. " + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
         } catch (Exception e) {
             String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
             if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
-                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "ClassName_Element_Not_Found", configurationFolder);
+                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "ClassName_Element_Not_Found", configurationFolder, true);
             }
             else {
-                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "ClassName_Element_Not_Found", screenShotSaveFolder);
+                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "ClassName_Element_Not_Found", screenShotSaveFolder, true);
             }
             actualValue = null;
         }
@@ -711,14 +739,14 @@ public class HomePage {
            else {
                actualValue = this.driver.findElement(By.id(accessor)).getText();
            }
-           pageHelper.UpdateTestResults("Checking element by ID: " + accessor + " for script." + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
+           pageHelper.UpdateTestResults("     Checking element by ID: " + accessor + " for script." + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
        } catch (Exception e) {
            String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
            if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
-               pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "Id_Element_Not_Found", configurationFolder);
+               pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "Id_Element_Not_Found", configurationFolder, true);
            }
            else {
-               pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "Id_Element_Not_Found", screenShotSaveFolder);
+               pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "Id_Element_Not_Found", screenShotSaveFolder, true);
            }
            actualValue = null;
        }
@@ -815,7 +843,7 @@ public class HomePage {
     private void PerformScreenShotCapture(String value) {
         String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
         //pageHelper.captureScreenShot(driver, browserUsed + "ScreenShotAction_" + value, screenShotSaveFolder);
-        pageHelper.captureScreenShot(driver, value, screenShotSaveFolder);
+        pageHelper.captureScreenShot(driver, value, screenShotSaveFolder, false);
     }
     //endregion
 
@@ -824,7 +852,7 @@ public class HomePage {
         //NOTE: When checking string equality in Java you must use the "".Equals("") method.
         // Using the == operator checks the memory address not the value
         String elementTag = xPath.substring(xPath.lastIndexOf("/") + 1).trim();
-        pageHelper.UpdateTestResults("Looking up elementTag: (" + elementTag + ") Length = " + elementTag.length(), testResults);
+        pageHelper.UpdateTestResults("     Looking up elementTag: (" + elementTag + ") Length = " + elementTag.length(), testResults);
 
         if (elementTag.toLowerCase().indexOf("a") >= 0 && (elementTag.length() == 1 || elementTag.toLowerCase().indexOf("[") > 1)) {
             return "Anchor";
@@ -891,7 +919,7 @@ public class HomePage {
     private CharSequence GetKeyValue(String value, String fileStepIndex) {
         value = value.toLowerCase().trim();
         String fileStepIndexForLog = fileStepIndex.substring(1, fileStepIndex.length() - 1);
-        pageHelper.UpdateTestResults("Replacing (" + value + ") with corresponding Key value keyword for step " + fileStepIndexForLog);
+        pageHelper.UpdateTestResults("     Replacing (" + value + ") with corresponding Key value keyword for step " + fileStepIndexForLog);
 
         if (value.equals("keys.enter"))
         {

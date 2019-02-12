@@ -1,0 +1,32 @@
+### Comments in this file use 3 pound signs and anything following these will be ignored by the test program.
+### Add URL to navigate to, first URL is where browser navigates, second url is what the expected URL will be, in case of redirection etc...
+### Each parameter is separate by a semi-colon to prevent interference with navigation urls and colons
+### The first parameter url to navigate to, xPath, CssSelector, Tag Name
+### The second parameter action to take or expected value to retrieve for URLs both are required separated by a alt(206), 
+###     ╬   optionally add a second alt(206) delimiter to add a time delay (thread sleep value in milliseconds) to give the event time to complete.
+### The third parameter is the type of check to perform and will be ignored for performing Navigation where that is irrelevant
+###        acceptable values are xPath, CssSelector, Tag Name, ClassName, ID and n/a
+### The fourth parameter is the PeformAction boolean and true when text should be entered, a click occurs or Navigating and false when reading element values
+### The fifth parameter is the IsCrucial boolean.  When true, if the assertion fails the test stops immediately.  When false, if the assertion fails, the tests continue.
+### ╔════════════════════════════════╦═════════════════════════╦═══════════════════════╦════════════════════════════════════════╦══════════════════════════╗
+### ║[URL/XPath/CssSelector/TagName] ; [Action/Expected value] ; [Element Lookup Type] ; [Perform Action other than Read Value] ; [Critical Assertion]     ║
+### ╚════════════════════════════════╩═════════════════════════╩═══════════════════════╩════════════════════════════════════════╩══════════════════════════╝
+╠https://www.davita.com/ ; Navigate  ╬ https://www.davita.com/ ; n/a ; true ; true╣
+╠/html[1]/head[1]/title[1] ; Kidney disease and dialysis information - DaVita ; xPath ; false ; false╣
+╠/html[1]/body[1]/section[1] ; Today’s Kidney Diet Cookbooks
+                                    Get free kidney-friendly recipe collections from DaVita dietitians.
+                                    
+                                        Download Now ; xPath ; false ; false╣
+╠/html[1]/body[1]/section[1]/article[1] ; Today’s Kidney Diet Cookbooks
+                                    Get free kidney-friendly recipe collections from DaVita dietitians.
+                                    
+                                        Download Now ; xPath ; false ; false╣
+╠/html[1]/body[1]/section[1]/article[1]/div[1] ; Today’s Kidney Diet Cookbooks
+                                    Get free kidney-friendly recipe collections from DaVita dietitians.
+                                    
+                                        Download Now ; xPath ; false ; false╣
+╠/html[1]/body[1]/section[1]/article[1]/div[1]/p[1] ; Today’s Kidney Diet Cookbooks ; xPath ; false ; false╣
+╠/html[1]/body[1]/section[1]/article[1]/div[1]/p[2] ; Get free kidney-friendly recipe collections from DaVita dietitians. ; xPath ; false ; false╣
+╠/html[1]/body[1]/section[1]/article[1]/div[1]/div[1] ; Download Now ; xPath ; false ; false╣
+╠/html[1]/body[1]/section[1]/article[1]/div[1]/div[1]/button[1] ; Download Now ; xPath ; false ; false╣
+╠/html[1]/body[1]/div[7] ; Jump to Top ; xPath ; false ; false╣
