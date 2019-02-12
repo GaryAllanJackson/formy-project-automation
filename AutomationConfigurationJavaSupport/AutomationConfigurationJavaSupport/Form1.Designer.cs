@@ -89,6 +89,10 @@
             this.mnuToolsAddSendTextToTextInputById = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuToolsAddSelectItemFromHTMLDropDownSelect = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuToolsAddSelectFromDropDownByCssSelector = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuToolsAddIFrame = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuToolsAddIFrameGetTextFromElement = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuToolsAddIFramePerformAction = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuToolsGetAllPageElements = new System.Windows.Forms.ToolStripMenuItem();
             this.grpTestCommands = new System.Windows.Forms.GroupBox();
             this.btnUpdateTestCommand = new System.Windows.Forms.Button();
             this.cboCrucialAssertion = new System.Windows.Forms.ComboBox();
@@ -112,10 +116,9 @@
             this.lblURL = new System.Windows.Forms.Label();
             this.txtURL = new System.Windows.Forms.TextBox();
             this.wbTestPage = new System.Windows.Forms.WebBrowser();
-            this.mnuToolsAddIFrame = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuToolsAddIFrameGetTextFromElement = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuToolsAddIFramePerformAction = new System.Windows.Forms.ToolStripMenuItem();
             this.testCommandBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.lblActualUrl = new System.Windows.Forms.Label();
+            this.txtActualUrl = new System.Windows.Forms.TextBox();
             this.grpConfiguration.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.grpTestCommands.SuspendLayout();
@@ -268,7 +271,8 @@
             // 
             // lstTestSettingsFileName
             // 
-            this.lstTestSettingsFileName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.lstTestSettingsFileName.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lstTestSettingsFileName.FormattingEnabled = true;
             this.lstTestSettingsFileName.ItemHeight = 20;
@@ -279,7 +283,7 @@
             // 
             // btnSaveConfigurationSettings
             // 
-            this.btnSaveConfigurationSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSaveConfigurationSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSaveConfigurationSettings.Location = new System.Drawing.Point(456, 454);
             this.btnSaveConfigurationSettings.Name = "btnSaveConfigurationSettings";
             this.btnSaveConfigurationSettings.Size = new System.Drawing.Size(281, 40);
@@ -464,7 +468,7 @@
             this.mnuFileNewConfigurationFile,
             this.mnuFileNewTestSettingsCommandFile});
             this.mnuFileNew.Name = "mnuFileNew";
-            this.mnuFileNew.Size = new System.Drawing.Size(181, 26);
+            this.mnuFileNew.Size = new System.Drawing.Size(120, 26);
             this.mnuFileNew.Text = "&New";
             // 
             // mnuFileNewConfigurationFile
@@ -487,7 +491,7 @@
             this.mnuFileOpenConfigurationFile,
             this.mnuFileOpenTestSettingsCommandFile});
             this.mnuFileOpen.Name = "mnuFileOpen";
-            this.mnuFileOpen.Size = new System.Drawing.Size(181, 26);
+            this.mnuFileOpen.Size = new System.Drawing.Size(120, 26);
             this.mnuFileOpen.Text = "&Open";
             // 
             // mnuFileOpenConfigurationFile
@@ -507,7 +511,7 @@
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(178, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(117, 6);
             // 
             // mnuFileSave
             // 
@@ -515,7 +519,7 @@
             this.mnuFileSaveConfigurationFile,
             this.mnuFileSaveTestSettingsCommandsFile});
             this.mnuFileSave.Name = "mnuFileSave";
-            this.mnuFileSave.Size = new System.Drawing.Size(181, 26);
+            this.mnuFileSave.Size = new System.Drawing.Size(120, 26);
             this.mnuFileSave.Text = "&Save";
             // 
             // mnuFileSaveConfigurationFile
@@ -535,12 +539,12 @@
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(178, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(117, 6);
             // 
             // mnuFileExit
             // 
             this.mnuFileExit.Name = "mnuFileExit";
-            this.mnuFileExit.Size = new System.Drawing.Size(181, 26);
+            this.mnuFileExit.Size = new System.Drawing.Size(120, 26);
             this.mnuFileExit.Text = "E&xit";
             this.mnuFileExit.Click += new System.EventHandler(this.mnuFileExit_Click);
             // 
@@ -578,7 +582,8 @@
             // mnuTools
             // 
             this.mnuTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuToolsAdd});
+            this.mnuToolsAdd,
+            this.mnuToolsGetAllPageElements});
             this.mnuTools.Name = "mnuTools";
             this.mnuTools.Size = new System.Drawing.Size(57, 24);
             this.mnuTools.Text = "Tools";
@@ -594,7 +599,7 @@
             this.mnuToolsAddSelectItemFromHTMLDropDownSelect,
             this.mnuToolsAddIFrame});
             this.mnuToolsAdd.Name = "mnuToolsAdd";
-            this.mnuToolsAdd.Size = new System.Drawing.Size(181, 26);
+            this.mnuToolsAdd.Size = new System.Drawing.Size(230, 26);
             this.mnuToolsAdd.Text = "&Add";
             // 
             // mnuToolsAddWaitDelay
@@ -686,6 +691,36 @@
             this.mnuToolsAddSelectFromDropDownByCssSelector.Size = new System.Drawing.Size(179, 26);
             this.mnuToolsAddSelectFromDropDownByCssSelector.Text = "By CssSelector";
             this.mnuToolsAddSelectFromDropDownByCssSelector.Click += new System.EventHandler(this.mnuToolsAddSelectFromDropDownByCssSelector_Click);
+            // 
+            // mnuToolsAddIFrame
+            // 
+            this.mnuToolsAddIFrame.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuToolsAddIFrameGetTextFromElement,
+            this.mnuToolsAddIFramePerformAction});
+            this.mnuToolsAddIFrame.Name = "mnuToolsAddIFrame";
+            this.mnuToolsAddIFrame.Size = new System.Drawing.Size(356, 26);
+            this.mnuToolsAddIFrame.Text = "iFrame";
+            // 
+            // mnuToolsAddIFrameGetTextFromElement
+            // 
+            this.mnuToolsAddIFrameGetTextFromElement.Name = "mnuToolsAddIFrameGetTextFromElement";
+            this.mnuToolsAddIFrameGetTextFromElement.Size = new System.Drawing.Size(303, 26);
+            this.mnuToolsAddIFrameGetTextFromElement.Text = "Get Text from contained Element";
+            this.mnuToolsAddIFrameGetTextFromElement.Click += new System.EventHandler(this.mnuToolsAddIFrameGetTextFromElement_Click);
+            // 
+            // mnuToolsAddIFramePerformAction
+            // 
+            this.mnuToolsAddIFramePerformAction.Name = "mnuToolsAddIFramePerformAction";
+            this.mnuToolsAddIFramePerformAction.Size = new System.Drawing.Size(303, 26);
+            this.mnuToolsAddIFramePerformAction.Text = "Perform Action";
+            this.mnuToolsAddIFramePerformAction.Click += new System.EventHandler(this.mnuToolsAddIFramePerformAction_Click);
+            // 
+            // mnuToolsGetAllPageElements
+            // 
+            this.mnuToolsGetAllPageElements.Name = "mnuToolsGetAllPageElements";
+            this.mnuToolsGetAllPageElements.Size = new System.Drawing.Size(230, 26);
+            this.mnuToolsGetAllPageElements.Text = "Get All Page Elements";
+            this.mnuToolsGetAllPageElements.Click += new System.EventHandler(this.mnuToolsGetAllPageElements_Click);
             // 
             // grpTestCommands
             // 
@@ -911,6 +946,8 @@
             // 
             // grpWebPage
             // 
+            this.grpWebPage.Controls.Add(this.lblActualUrl);
+            this.grpWebPage.Controls.Add(this.txtActualUrl);
             this.grpWebPage.Controls.Add(this.lblURL);
             this.grpWebPage.Controls.Add(this.txtURL);
             this.grpWebPage.Controls.Add(this.wbTestPage);
@@ -918,7 +955,7 @@
             this.grpWebPage.ForeColor = System.Drawing.Color.Maroon;
             this.grpWebPage.Location = new System.Drawing.Point(2, 43);
             this.grpWebPage.Name = "grpWebPage";
-            this.grpWebPage.Size = new System.Drawing.Size(785, 486);
+            this.grpWebPage.Size = new System.Drawing.Size(785, 496);
             this.grpWebPage.TabIndex = 14;
             this.grpWebPage.TabStop = false;
             this.grpWebPage.Text = "Web Page:";
@@ -948,49 +985,45 @@
             this.wbTestPage.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.wbTestPage.Location = new System.Drawing.Point(24, 64);
+            this.wbTestPage.Location = new System.Drawing.Point(24, 69);
             this.wbTestPage.MinimumSize = new System.Drawing.Size(20, 20);
             this.wbTestPage.Name = "wbTestPage";
-            this.wbTestPage.Size = new System.Drawing.Size(736, 400);
+            this.wbTestPage.Size = new System.Drawing.Size(736, 361);
             this.wbTestPage.TabIndex = 0;
             this.wbTestPage.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.wbTestPage_DocumentCompleted);
-            // 
-            // mnuToolsAddIFrame
-            // 
-            this.mnuToolsAddIFrame.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuToolsAddIFrameGetTextFromElement,
-            this.mnuToolsAddIFramePerformAction});
-            this.mnuToolsAddIFrame.Name = "mnuToolsAddIFrame";
-            this.mnuToolsAddIFrame.Size = new System.Drawing.Size(356, 26);
-            this.mnuToolsAddIFrame.Text = "iFrame";
-            // 
-            // mnuToolsAddIFrameGetTextFromElement
-            // 
-            this.mnuToolsAddIFrameGetTextFromElement.Name = "mnuToolsAddIFrameGetTextFromElement";
-            this.mnuToolsAddIFrameGetTextFromElement.Size = new System.Drawing.Size(303, 26);
-            this.mnuToolsAddIFrameGetTextFromElement.Text = "Get Text from contained Element";
-            this.mnuToolsAddIFrameGetTextFromElement.Click += new System.EventHandler(this.mnuToolsAddIFrameGetTextFromElement_Click);
-            // 
-            // mnuToolsAddIFramePerformAction
-            // 
-            this.mnuToolsAddIFramePerformAction.Name = "mnuToolsAddIFramePerformAction";
-            this.mnuToolsAddIFramePerformAction.Size = new System.Drawing.Size(303, 26);
-            this.mnuToolsAddIFramePerformAction.Text = "Perform Action";
-            this.mnuToolsAddIFramePerformAction.Click += new System.EventHandler(this.mnuToolsAddIFramePerformAction_Click);
             // 
             // testCommandBindingSource
             // 
             this.testCommandBindingSource.DataSource = typeof(AutomationConfigurationJavaSupport.Entities.TestCommand);
+            // 
+            // lblActualUrl
+            // 
+            this.lblActualUrl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblActualUrl.AutoSize = true;
+            this.lblActualUrl.Location = new System.Drawing.Point(24, 455);
+            this.lblActualUrl.Name = "lblActualUrl";
+            this.lblActualUrl.Size = new System.Drawing.Size(111, 20);
+            this.lblActualUrl.TabIndex = 4;
+            this.lblActualUrl.Text = "Actual URL:";
+            // 
+            // txtActualUrl
+            // 
+            this.txtActualUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtActualUrl.Location = new System.Drawing.Point(141, 452);
+            this.txtActualUrl.Name = "txtActualUrl";
+            this.txtActualUrl.Size = new System.Drawing.Size(596, 27);
+            this.txtActualUrl.TabIndex = 3;
             // 
             // frmAutomationConfigurationJavaSupport
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(798, 549);
+            this.Controls.Add(this.grpWebPage);
             this.Controls.Add(this.grpConfiguration);
             this.Controls.Add(this.grpTestCommands);
             this.Controls.Add(this.menuStrip1);
-            this.Controls.Add(this.grpWebPage);
             this.Name = "frmAutomationConfigurationJavaSupport";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Java Automation Configuration Support Utility";
@@ -1099,6 +1132,9 @@
         private System.Windows.Forms.ToolStripMenuItem mnuToolsAddIFrame;
         private System.Windows.Forms.ToolStripMenuItem mnuToolsAddIFrameGetTextFromElement;
         private System.Windows.Forms.ToolStripMenuItem mnuToolsAddIFramePerformAction;
+        private System.Windows.Forms.ToolStripMenuItem mnuToolsGetAllPageElements;
+        private System.Windows.Forms.Label lblActualUrl;
+        private System.Windows.Forms.TextBox txtActualUrl;
     }
 }
 

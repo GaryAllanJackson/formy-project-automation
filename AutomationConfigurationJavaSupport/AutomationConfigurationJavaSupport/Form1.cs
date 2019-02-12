@@ -1,4 +1,5 @@
-﻿using AutomationConfigurationJavaSupport.Entities;
+﻿using AutomationConfigurationJavaSupport.Helpers;
+using AutomationConfigurationJavaSupport.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,6 +12,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using HtmlAgilityPack;
 
 namespace AutomationConfigurationJavaSupport
 {
@@ -53,6 +55,9 @@ namespace AutomationConfigurationJavaSupport
             LoadTrueFalse(cboPerformNonReadAction);
             LoadAccessorTypes(cboAccessorType);
             LoadTrueFalse(cboCrucialAssertion);
+
+            //testing
+            //GetXPathForAllElements("https://www.msn.com", null);
         }
 
         private void TempMethod()
@@ -310,6 +315,101 @@ namespace AutomationConfigurationJavaSupport
 
         #endregion
 
+        #region { Tools Menu -> Add menu items }
+        private void mnuToolsAddWaitDelay_Click(object sender, EventArgs e)
+        {
+            #region {AppConfig Reference}
+            /*
+             *  <add key="Wait_Accessor" value="n/a"/>
+                <add key="Wait_ExpectedValue" value="Wait - 5000"/>
+                <add key="Wait_AccessorType" value="n/a"/>
+                <add key="Wait_PerformNonReadAction" value="true"/>
+                <add key="Wait_Crucial" value="false"/>
+             * */
+            #endregion
+            /*
+            txtAccessor.Text = ConfigurationManager.AppSettings["Wait_Accessor"] != null ? ConfigurationManager.AppSettings["Wait_Accessor"] : "n/a";
+            txtExpectedValueAction.Text = ConfigurationManager.AppSettings["Wait_ExpectedValue"] != null ? ConfigurationManager.AppSettings["Wait_ExpectedValue"] : "Wait - 5000";
+            cboAccessorType.SelectedIndex = cboAccessorType.FindString(ConfigurationManager.AppSettings["Wait_AccessorType"] != null ? ConfigurationManager.AppSettings["Wait_AccessorType"] : "n/a");
+            cboPerformNonReadAction.SelectedIndex = cboPerformNonReadAction.FindString(ConfigurationManager.AppSettings["Wait_PerformNonReadAction"] != null ? ConfigurationManager.AppSettings["Wait_PerformNonReadAction"] : "true");
+            cboCrucialAssertion.SelectedIndex = cboCrucialAssertion.FindString(ConfigurationManager.AppSettings["Wait_Crucial"] != null ? ConfigurationManager.AppSettings["Wait_Crucial"] : "false");
+            */
+            string accessor = ConfigurationManager.AppSettings["Wait_Accessor"] != null ? ConfigurationManager.AppSettings["Wait_Accessor"] : "n/a";
+            //string expectedValueAction = ConfigurationManager.AppSettings["Wait_ExpectedValue"] != null ? ConfigurationManager.AppSettings["Wait_ExpectedValue"] : "Wait - 5000";
+            string expectedValueAction = ConfigurationManager.AppSettings["Wait_ExpectedValue"] != null ? ConfigurationManager.AppSettings["Wait_ExpectedValue"] : "Wait ╬ 5000";
+            string accessorType = ConfigurationManager.AppSettings["Wait_AccessorType"] != null ? ConfigurationManager.AppSettings["Wait_AccessorType"] : "n/a";
+            string performNonReadAction = ConfigurationManager.AppSettings["Wait_PerformNonReadAction"] != null ? ConfigurationManager.AppSettings["Wait_PerformNonReadAction"] : "true";
+            string crucialAssertion = ConfigurationManager.AppSettings["Wait_Crucial"] != null ? ConfigurationManager.AppSettings["Wait_Crucial"] : "false";
+            SetTestControls(accessor, expectedValueAction, accessorType, performNonReadAction, crucialAssertion);
+        }
+
+        private void mnuToolsAddScreenShot_Click(object sender, EventArgs e)
+        {
+            //n/a ; ScreenShot ; n/a ; true ; false
+            SetTestControls("n/a", "ScreenShot", "n/a", "true", "false");
+        }
+
+
+
+        private void mnuToolsAddUrlCheckWithoutNavigation_Click(object sender, EventArgs e)
+        {
+            //n/a ; URL - https://formy-project.herokuapp.com/thanks ; n/a ; true ; false
+            //SetTestControls("n/a", "URL - https://YourUrlHere.com/FillItIn", "n/a", "true", "false");
+            SetTestControls("n/a", "URL ╬ https://YourUrlHere.com/FillItIn", "n/a", "true", "false");
+        }
+
+        private void mnuToolsAddNavigationWithCheck_Click(object sender, EventArgs e)
+        {
+            //https://formy-project.herokuapp.com/form ; Navigate - https://formy-project.herokuapp.com/form ; n/a ; true ; true
+            //SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate - https://YourUrlHere.com/FillItIn/CouldBeDifferent", "n/a", "true", "true");
+            SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate ╬ https://YourUrlHere.com/FillItIn/CouldBeDifferent", "n/a", "true", "true");
+        }
+
+        private void mnuToolsAddNavigationWithoutCheck_Click(object sender, EventArgs e)
+        {
+            //https://formy-project.herokuapp.com/form ; Navigate ; n/a ; true ; true
+            SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate", "n/a", "true", "false");
+        }
+
+        private void mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime_Click(object sender, EventArgs e)
+        {
+            //https://formy-project.herokuapp.com/form ; Navigate - https://formy-project.herokuapp.com/form - 5000; n/a ; true ; true
+            //SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate - https://YourUrlHere.com/FillItIn/CouldBeDifferent - 5000", "n/a", "true", "true");
+            SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate ╬ https://YourUrlHere.com/FillItIn/CouldBeDifferent - 5000", "n/a", "true", "true");
+        }
+
+        private void mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime_Click(object sender, EventArgs e)
+        {
+            //https://formy-project.herokuapp.com/form ; Navigate - - 5000; n/a ; true ; true
+            //SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate - - 5000", "n/a", "true", "false");
+            SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate ╬ ╬ 5000", "n/a", "true", "false");
+        }
+
+        private void mnuToolsAddSendTextToTextInputById_Click(object sender, EventArgs e)
+        {
+            //first-name; John; ID; true; false
+            SetTestControls("first-name", "John", "ID", "true", "false");
+        }
+
+        private void mnuToolsAddSelectFromDropDownByCssSelector_Click(object sender, EventArgs e)
+        {
+            //option[value='1'] ; click ; CssSelector ; true ; false
+            SetTestControls("option[value='1']", "click", "CssSelector", "true", "false");
+        }
+        private void mnuToolsAddIFrameGetTextFromElement_Click(object sender, EventArgs e)
+        {
+            ////button[contains(@id,'menu1')] ; Switch to iframe [iframeResult] - Tutorials ; xPath ; false ; true
+            //SetTestControls("//button[contains(@id,'menu1')]", "Switch to iframe [iframeResult] - Tutorials", "xPath", "false", "false");
+            SetTestControls("//button[contains(@id,'menu1')]", "Switch to iframe [iframeResult] ╬ Tutorials", "xPath", "false", "false");
+        }
+
+        private void mnuToolsAddIFramePerformAction_Click(object sender, EventArgs e)
+        {
+            ////button[contains(@id,'menu1')] ; Switch to iframe [iframeResult] - click     ; xPath ; true ; true
+            //SetTestControls("//button[contains(@id,'menu1')]", "Switch to iframe [iframeResult] - click", "xPath", "true", "false");
+            SetTestControls("//button[contains(@id,'menu1')]", "Switch to iframe [iframeResult] ╬ click", "xPath", "true", "false");
+        }
+        #endregion
 
         #region { Test Settings Command Buttons }
         private void btnAddCommand_Click(object sender, EventArgs e)
@@ -395,6 +495,7 @@ namespace AutomationConfigurationJavaSupport
         {
             //add this handler after navigation
             this.wbTestPage.Document.Body.MouseDown += new HtmlElementEventHandler(Body_MouseDown);
+            txtActualUrl.Text = wbTestPage.Url.ToString();
         }
 
         void Body_MouseDown(Object sender, HtmlElementEventArgs e)
@@ -927,52 +1028,6 @@ namespace AutomationConfigurationJavaSupport
             elementClicked = true;
         }
 
-
-        //GAJ working here
-        /*
-        private void GetXPathForAllElements(string webAddress, string elementType)
-        {
-            //WebClient webClient = new WebClient();
-            //webClient.BaseAddress = webAddress;
-            //webClient.OpenRead(webAddress);
-            //HtmlElement element = elementType;
-
-            WebRequest webRequest = WebRequest.Create(webAddress);
-            var responseFromServer = string.Empty;
-
-            using (WebResponse webResponse = webRequest.GetResponse())
-            {
-                var responseDataStream = webResponse.GetResponseStream();
-                if (responseDataStream != null)
-                {
-                    var reader = new StreamReader(responseDataStream);
-
-                    responseFromServer = reader.ReadToEnd();
-
-                    reader.Close();
-                }
-            }
-
-
-            var doc = new HtmlAgilityPack.HtmlDocument();
-            //doc.LoadHtml(element.Document.GetElementsByTagName("html")[0].OuterHtml);
-            doc.LoadHtml(responseFromServer);
-            foreach (HtmlElement item in doc.)
-
-            
-
-        }
-        */
-
-        //private void LoadYesNo(ComboBox cboBx)
-        //{
-        //    cboBx.Items.Add("Yes");
-        //    cboBx.Items.Add("No");
-        //}
-        #endregion
-
-
-
         private void UpdateDataGrid()
         {
             dgvCommands.DataSource = new List<TestCommand>();
@@ -984,90 +1039,6 @@ namespace AutomationConfigurationJavaSupport
                 dgvCommands.AutoResizeColumns();
             }
         }
-
-        #region { Tools Menu -> Add menu items }
-        private void mnuToolsAddWaitDelay_Click(object sender, EventArgs e)
-        {
-            #region {AppConfig Reference}
-            /*
-             *  <add key="Wait_Accessor" value="n/a"/>
-                <add key="Wait_ExpectedValue" value="Wait - 5000"/>
-                <add key="Wait_AccessorType" value="n/a"/>
-                <add key="Wait_PerformNonReadAction" value="true"/>
-                <add key="Wait_Crucial" value="false"/>
-             * */
-            #endregion
-            /*
-            txtAccessor.Text = ConfigurationManager.AppSettings["Wait_Accessor"] != null ? ConfigurationManager.AppSettings["Wait_Accessor"] : "n/a";
-            txtExpectedValueAction.Text = ConfigurationManager.AppSettings["Wait_ExpectedValue"] != null ? ConfigurationManager.AppSettings["Wait_ExpectedValue"] : "Wait - 5000";
-            cboAccessorType.SelectedIndex = cboAccessorType.FindString(ConfigurationManager.AppSettings["Wait_AccessorType"] != null ? ConfigurationManager.AppSettings["Wait_AccessorType"] : "n/a");
-            cboPerformNonReadAction.SelectedIndex = cboPerformNonReadAction.FindString(ConfigurationManager.AppSettings["Wait_PerformNonReadAction"] != null ? ConfigurationManager.AppSettings["Wait_PerformNonReadAction"] : "true");
-            cboCrucialAssertion.SelectedIndex = cboCrucialAssertion.FindString(ConfigurationManager.AppSettings["Wait_Crucial"] != null ? ConfigurationManager.AppSettings["Wait_Crucial"] : "false");
-            */
-            string accessor = ConfigurationManager.AppSettings["Wait_Accessor"] != null ? ConfigurationManager.AppSettings["Wait_Accessor"] : "n/a";
-            //string expectedValueAction = ConfigurationManager.AppSettings["Wait_ExpectedValue"] != null ? ConfigurationManager.AppSettings["Wait_ExpectedValue"] : "Wait - 5000";
-            string expectedValueAction = ConfigurationManager.AppSettings["Wait_ExpectedValue"] != null ? ConfigurationManager.AppSettings["Wait_ExpectedValue"] : "Wait ╬ 5000";
-            string accessorType = ConfigurationManager.AppSettings["Wait_AccessorType"] != null ? ConfigurationManager.AppSettings["Wait_AccessorType"] : "n/a";
-            string performNonReadAction = ConfigurationManager.AppSettings["Wait_PerformNonReadAction"] != null ? ConfigurationManager.AppSettings["Wait_PerformNonReadAction"] : "true";
-            string crucialAssertion = ConfigurationManager.AppSettings["Wait_Crucial"] != null ? ConfigurationManager.AppSettings["Wait_Crucial"] : "false";
-            SetTestControls(accessor, expectedValueAction, accessorType, performNonReadAction, crucialAssertion);
-        }
-
-        private void mnuToolsAddScreenShot_Click(object sender, EventArgs e)
-        {
-            //n/a ; ScreenShot ; n/a ; true ; false
-            SetTestControls("n/a", "ScreenShot", "n/a", "true", "false");
-        }
-
-        
-
-        private void mnuToolsAddUrlCheckWithoutNavigation_Click(object sender, EventArgs e)
-        {
-            //n/a ; URL - https://formy-project.herokuapp.com/thanks ; n/a ; true ; false
-            //SetTestControls("n/a", "URL - https://YourUrlHere.com/FillItIn", "n/a", "true", "false");
-            SetTestControls("n/a", "URL ╬ https://YourUrlHere.com/FillItIn", "n/a", "true", "false");
-        }
-
-        private void mnuToolsAddNavigationWithCheck_Click(object sender, EventArgs e)
-        {
-            //https://formy-project.herokuapp.com/form ; Navigate - https://formy-project.herokuapp.com/form ; n/a ; true ; true
-            //SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate - https://YourUrlHere.com/FillItIn/CouldBeDifferent", "n/a", "true", "true");
-            SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate ╬ https://YourUrlHere.com/FillItIn/CouldBeDifferent", "n/a", "true", "true");
-        }
-
-        private void mnuToolsAddNavigationWithoutCheck_Click(object sender, EventArgs e)
-        {
-            //https://formy-project.herokuapp.com/form ; Navigate ; n/a ; true ; true
-            SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate", "n/a", "true", "false");
-        }
-
-        private void mnuToolsAddNavigationWithCheckIncludingAdditionalWaitTime_Click(object sender, EventArgs e)
-        {
-            //https://formy-project.herokuapp.com/form ; Navigate - https://formy-project.herokuapp.com/form - 5000; n/a ; true ; true
-            //SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate - https://YourUrlHere.com/FillItIn/CouldBeDifferent - 5000", "n/a", "true", "true");
-            SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate ╬ https://YourUrlHere.com/FillItIn/CouldBeDifferent - 5000", "n/a", "true", "true");
-        }
-
-        private void mnuToolsAddNavigationWithoutCheckIncludingAdditionalWaitTime_Click(object sender, EventArgs e)
-        {
-            //https://formy-project.herokuapp.com/form ; Navigate - - 5000; n/a ; true ; true
-            //SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate - - 5000", "n/a", "true", "false");
-            SetTestControls("https://YourUrlHere.com/FillItIn", "Navigate ╬ ╬ 5000", "n/a", "true", "false");
-        }
-
-        private void mnuToolsAddSendTextToTextInputById_Click(object sender, EventArgs e)
-        {
-            //first-name; John; ID; true; false
-            SetTestControls("first-name", "John", "ID", "true", "false");
-        }
-
-        
-        private void mnuToolsAddSelectFromDropDownByCssSelector_Click(object sender, EventArgs e)
-        {
-            //option[value='1'] ; click ; CssSelector ; true ; false
-            SetTestControls("option[value='1']", "click", "CssSelector", "true", "false");
-        }
-        #endregion
 
         private void SetTestControls(string accessor, string expectedValue, string accessorType, string performAction, string crucialAssertion)
         {
@@ -1082,18 +1053,137 @@ namespace AutomationConfigurationJavaSupport
             cboCrucialAssertion.SelectedIndex = cboCrucialAssertion.FindString(crucialAssertion);
         }
 
-        private void mnuToolsAddIFrameGetTextFromElement_Click(object sender, EventArgs e)
+        private void AutoLoadTestGrid(string accessor, string expectedValue, string accessorType, string performAction, string crucialAssertion)
         {
-            ////button[contains(@id,'menu1')] ; Switch to iframe [iframeResult] - Tutorials ; xPath ; false ; true
-            //SetTestControls("//button[contains(@id,'menu1')]", "Switch to iframe [iframeResult] - Tutorials", "xPath", "false", "false");
-            SetTestControls("//button[contains(@id,'menu1')]", "Switch to iframe [iframeResult] ╬ Tutorials", "xPath", "false", "false");
+            txtAccessor.Text = accessor;
+            txtExpectedValueAction.Text = expectedValue;
+            cboAccessorType.SelectedIndex = cboAccessorType.FindString(accessorType);
+            cboPerformNonReadAction.SelectedIndex = cboPerformNonReadAction.FindString(performAction);
+            cboCrucialAssertion.SelectedIndex = cboCrucialAssertion.FindString(crucialAssertion);
+            btnAddCommand_Click(new object(), new EventArgs());
         }
 
-        private void mnuToolsAddIFramePerformAction_Click(object sender, EventArgs e)
+        //GAJ working here
+
+        private void GetXPathForAllElements(string webAddress, string elementType)
         {
-            ////button[contains(@id,'menu1')] ; Switch to iframe [iframeResult] - click     ; xPath ; true ; true
-            //SetTestControls("//button[contains(@id,'menu1')]", "Switch to iframe [iframeResult] - click", "xPath", "true", "false");
-            SetTestControls("//button[contains(@id,'menu1')]", "Switch to iframe [iframeResult] ╬ click", "xPath", "true", "false");
+            #region {Using helper to retrieve the page content instead}
+            //WebRequest webRequest = WebRequest.Create(webAddress);
+            //var responseFromServer = string.Empty;
+
+            //using (WebResponse webResponse = webRequest.GetResponse())
+            //{
+            //    var responseDataStream = webResponse.GetResponseStream();
+            //    if (responseDataStream != null)
+            //    {
+            //        var reader = new StreamReader(responseDataStream);
+
+            //        responseFromServer = reader.ReadToEnd();
+
+            //        reader.Close();
+            //    }
+            //}
+            #endregion
+            WebRetrievalHelper webRetrievalHelper = new WebRetrievalHelper();
+
+            var htmlDoc = new HtmlAgilityPack.HtmlDocument();
+            //doc.LoadHtml(element.Document.GetElementsByTagName("html")[0].OuterHtml);
+            bool useClientId = ConfigurationManager.AppSettings["UseClientId"] != null ? bool.Parse(ConfigurationManager.AppSettings["UseClientId"].ToString()) : false;
+            string clientId = (ConfigurationManager.AppSettings["ClientId"] != null && useClientId) ? ConfigurationManager.AppSettings["ClientId"].ToString() : null;
+            string clientSecret = (ConfigurationManager.AppSettings["ClientSecret"] != null && useClientId) ? ConfigurationManager.AppSettings["ClientSecret"].ToString() : null;
+            StringBuilder sb = new StringBuilder();
+
+            htmlDoc.LoadHtml(webRetrievalHelper.GetWebSourceWithHeaderSimple(webAddress, clientId, clientSecret));
+            if (htmlDoc.ParsedText.Equals("The underlying connection was closed: An unexpected error occurred on a send."))
+            {
+                if (wbTestPage.Url == null || wbTestPage.Url.ToString().ToLower() != txtURL.Text.ToLower())
+                {
+                    MessageBox.Show("Application was unable to retrieve the html document via code, so the application is attempting to Navigate to this page.  Please click on this menu item once the page has loaded.", "Please hit enter after entering the URL.");
+                    //KeyPressEventArgs keyPressEventArgs = new KeyPressEventArgs((char)13);
+                    KeyPressEventArgs keyPressEventArgs = new KeyPressEventArgs((char)13);
+                    keyPressEventArgs.KeyChar = (char)13;
+                    txtURL_KeyPress(new object(), keyPressEventArgs);
+                    return;
+                }
+                htmlDoc.LoadHtml(wbTestPage.DocumentText);
+            }
+            if (htmlDoc.ParseErrors != null && htmlDoc.ParseErrors.Count() > 0)
+            {
+                MessageBox.Show("There was an error parsing the HTML file","HTML Parsing Error!");
+            }
+            else
+            {
+                if (htmlDoc.DocumentNode != null)
+                {                    
+                    Console.WriteLine("document node not null");
+                    HtmlAgilityPack.HtmlNode bodyNode = htmlDoc.DocumentNode.SelectSingleNode("//body");
+
+                    //foreach (HtmlNode node in htmlDoc.DocumentNode.Descendants())
+                    //foreach (HtmlNode node in htmlDoc.DocumentNode.SelectNodes("//*"))
+                    AutoLoadTestGrid("n/a", "Navigate  ╬ " + txtURL.Text, "n/a", "true", "true");
+                    foreach (HtmlNode node in bodyNode.SelectNodes("//*"))
+                    {
+                        if (string.IsNullOrEmpty(elementType))
+                        {
+                            if (node.Name == "a")
+                            {
+                                if (node.GetAttributeValue("href", false) != false)
+                                {
+                                    AutoLoadTestGrid(node.XPath, node.GetAttributeValue("href", false).ToString(), "xPath", "false", "false");
+                                }
+                            }
+                            else if (!string.IsNullOrEmpty(node.InnerText.Trim()) && node.InnerText.ToLower().IndexOf("cdata") < 0 
+                                && node.Name.ToLower().IndexOf("script") < 0 && node.Name.ToLower().IndexOf("style") < 0 
+                                && node.Name.ToLower().IndexOf("html") < 0 && node.Name.ToLower().IndexOf("head") < 0
+                                )
+                            {
+                                AutoLoadTestGrid(node.XPath, node.InnerText.Trim(), "xPath", "false", "false");
+                            }
+                        }
+                        else
+                        {
+                             if (node.Name.ToLower().Equals(elementType.ToLower()))
+                            {
+                                if (node.Name == "a")
+                                {
+                                    if (node.GetAttributeValue("href", false) != false)
+                                    {
+                                        AutoLoadTestGrid(node.XPath, node.GetAttributeValue("href", false).ToString(), "xPath", "false", "false");
+                                    }
+                                }
+                                else if (!string.IsNullOrEmpty(node.InnerText.Trim()) && node.InnerText.ToLower().IndexOf("cdata") < 0 && node.Name.ToLower().IndexOf("script") < 0)
+                                {
+                                    AutoLoadTestGrid(node.XPath, node.InnerText.Trim(), "xPath", "false", "false");
+                                }
+                            }
+                        }                       
+                    }
+                    ShowGroupBox(grpTestCommands);
+                }
+            }
+        }
+
+
+        //private void LoadYesNo(ComboBox cboBx)
+        //{
+        //    cboBx.Items.Add("Yes");
+        //    cboBx.Items.Add("No");
+        //}
+        #endregion
+
+        private void mnuToolsGetAllPageElements_Click(object sender, EventArgs e)
+        {
+            if (!grpWebPage.Visible)
+            {
+                ShowGroupBox(grpWebPage);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(txtURL.Text))
+                {
+                    GetXPathForAllElements(txtURL.Text, null);
+                }
+            }
         }
     }
 }
