@@ -1,0 +1,27 @@
+[51m[42m[34m[1m╔══════════════[ Beginning Configuration ]══════════════╗[0m
+     Configured Browser Selection = Firefox
+     [Setting FireFoxDriver]
+[51m[42m[34m[1m╔══════════════[ Ending Configuration ]══════════════╗[0m
+[51m[45m[33m╔══════════════[ Running Test Script ]══════════════╗[0m
+╔══════════════[ Start Explicit Navigation Event ]══════════════╗
+     Navigation and URL Check successful for step F0_S0 Expected: (https://formy-project.herokuapp.com/form) Actual: (https://formy-project.herokuapp.com/form)
+╚══════════════[ End Explicit Navigation Event ]══════════════╝
+     Performing ID F0_S1 non-read action
+Failed Post Action results for step F0_S1 Expected URL: (click this textbox) Actual URL: (https://formy-project.herokuapp.com/form)
+     Performing ID F0_S2 non-read action
+     Sleeping for 5000 milliseconds for script F0_S3
+     Performing ID F0_S4 non-read action
+     Performing ID F0_S5 non-read action
+     Performing ID F0_S6 non-read action
+     Performing CssSelector F0_S7 non-read action
+     Sleeping for 1000 milliseconds for script F0_S8
+     Element type being checked at step F0_S9 by Id: select-menu2
+Failed comparison results at step F0_S9 Expected value: (0-1) Actual value: (null)
+     Performing ID F0_S10 non-read action
+     Performing ID F0_S11 non-read action
+     Performing CssSelector F0_S12 non-read action
+     Sleeping for 5000 milliseconds for script F0_S13
+     Element type being checked at step F0_S14 by ClassName: alert
+     Checking element by ClassName: alert for script. F0_S14 Actual Value: "The form was successfully submitted!"
+Successful comparison results at step F0_S14 Expected value: (The form was successfully submitted!) Actual value: (The form was successfully submitted!)
+[51m[45m[33m╚══════════════[ End of Test Script ]══════════════╝[0m

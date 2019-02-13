@@ -132,8 +132,6 @@ public class PageHelper {
             else {
                 UpdateTestResults(ANSI_RED + "Screenshot taken - Error condition!" + ANSI_RESET);
             }
-
-
             //resize the browser to the original dimensions
             driver.manage().window().setSize(originalDimension);
         }
@@ -363,50 +361,56 @@ public class PageHelper {
         return configSettings;
     }
 
-    public ConfigSettings GetAllFilesInFolder(final File folder, String extension, ConfigSettings configSettings) {
-        //List<String> testFiles = new ArrayList<>();
-        for (final File fileEntry : folder.listFiles()) {
-            String temp;
-            if (fileEntry.isFile()) {
-                temp = fileEntry.getAbsoluteFile().toString(); //  fileEntry.getName();
-                if (configSettings.get_folderFileFilterType().toLowerCase().equals("ends_with")) {
-                    if (temp.toLowerCase().endsWith(configSettings.get_folderFileFilter().toLowerCase())) {
-                        configSettings.set_testSettingsFile(temp);
-                        UpdateTestResults(temp);
-                    }
-                }
-                else if (configSettings.get_folderFileFilterType().toLowerCase().equals("starts_with")) {
-                    if (temp.toLowerCase().startsWith(configSettings.get_folderFileFilter().toLowerCase())) {
-                        configSettings.set_testSettingsFile(temp);
-                        UpdateTestResults(temp);
-                    }
-                }
-                else if (configSettings.get_folderFileFilterType().toLowerCase().equals("contains")) {
-                    if (temp.toLowerCase().contains(configSettings.get_folderFileFilter().toLowerCase())) {
-                        configSettings.set_testSettingsFile(temp);
-                        UpdateTestResults(temp);
-                    }
-                }
-                //region { Recursive Directory reading not needed }
+    /* ******************************************************************
+    * Description: This method gets all files in the folder passed in
+    *              based on the the config settings allowing filtering of
+    *              files based on what the files start with, contain, or
+    *              ends with.
+    * ****************************************************************** */
+   public ConfigSettings GetAllFilesInFolder(final File folder, String extension, ConfigSettings configSettings) {
+       //List<String> testFiles = new ArrayList<>();
+       for (final File fileEntry : folder.listFiles()) {
+           String temp;
+           if (fileEntry.isFile()) {
+               temp = fileEntry.getAbsoluteFile().toString(); //  fileEntry.getName();
+               if (configSettings.get_folderFileFilterType().toLowerCase().equals("ends_with")) {
+                   if (temp.toLowerCase().endsWith(configSettings.get_folderFileFilter().toLowerCase())) {
+                       configSettings.set_testSettingsFile(temp);
+                       UpdateTestResults(temp);
+                   }
+               }
+               else if (configSettings.get_folderFileFilterType().toLowerCase().equals("starts_with")) {
+                   if (temp.toLowerCase().startsWith(configSettings.get_folderFileFilter().toLowerCase())) {
+                       configSettings.set_testSettingsFile(temp);
+                       UpdateTestResults(temp);
+                   }
+               }
+               else if (configSettings.get_folderFileFilterType().toLowerCase().equals("contains")) {
+                   if (temp.toLowerCase().contains(configSettings.get_folderFileFilter().toLowerCase())) {
+                       configSettings.set_testSettingsFile(temp);
+                       UpdateTestResults(temp);
+                   }
+               }
+               //region { Recursive Directory reading not needed }
 //            if (fileEntry.isDirectory()) {
 //                listFilesForFolder(fileEntry);
 //            } else {
 //                System.out.println(fileEntry.getName());
 //            }
-            //endregion
-            }
-        }
-        //return testFiles;
-        return configSettings;
-    }
+           //endregion
+           }
+       }
+       //return testFiles;
+       return configSettings;
+   }
 
-    /* ***************************************************************************
-     *  DESCRIPTION:
-     *  Adds a message to the List<String> testResults and writes out the current status to
-     *  the log file and then to the screen.
-     *  (testResults is not necessary and may be removed or you can write all test
-     *  results out when the program ends in the destructor.)
-     **************************************************************************** */
+   /* ***************************************************************************
+    *  DESCRIPTION:
+    *  Adds a message to the List<String> testResults and writes out the current status to
+    *  the log file and then to the screen.
+    *  (testResults is not necessary and may be removed or you can write all test
+    *  results out when the program ends in the destructor.)
+    **************************************************************************** */
     public List<String> UpdateTestResults(String testMessage, List<String> testResults) {
         if (testResults != null) {
             testResults.add(testMessage);
@@ -489,6 +493,14 @@ public class PageHelper {
             WriteToFile(get_helpFileName(), "To Navigate, assert that the URL is what follows the ╬ character and to wait 4 seconds before making the assertion to allow the page to load:");
             WriteToFile(get_helpFileName(), "╠https://formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000 ; n/a ; true ; true╣");
             WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To Navigate and Authenticate with username and password and assert that the URL is what follows the ╬ character and to wait 4 seconds before making the assertion to allow the page to load:");
+            WriteToFile(get_helpFileName(), "╠https://username:password@formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000 ; n/a ; true ; true╣");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To Navigate and Authenticate with username and password.");
+            WriteToFile(get_helpFileName(), "╠https://username:password@formy-project.herokuapp.com/form ; Navigate ; n/a ; true ; false╣");
+            WriteToFile(get_helpFileName(), "");
+
+
             WriteToFile(get_helpFileName(), "To check a URL without navigating and to make it non-curcial.  To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "╠n/a ; URL ╬ https://formy-project.herokuapp.com/thanks ; n/a ; true ; false╣");
             WriteToFile(get_helpFileName(), "");
@@ -499,6 +511,9 @@ public class PageHelper {
 
             WriteToFile(get_helpFileName(), "To fill in a field by ID and to make it non-crucial.  To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "╠first-name ; John ; ID ; true ; false╣");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To fill in a field by ID and to make it non-crucial when it contains a reserved command like click.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "╠first-name ; sendkeys ╬ click ; ID ; true ; false╣");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "Retrieving text is usually non-crucial and test execution can usually continue so the following examples are all non-crucial.  Update based on your requirements.");

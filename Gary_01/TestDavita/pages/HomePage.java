@@ -1,9 +1,6 @@
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxBinary;
@@ -12,7 +9,9 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.io.IOException;
@@ -764,7 +763,7 @@ public class HomePage {
     public Boolean PerformAction(String accesssorType, String accessor, String value, String fileStepIndex) {
         Boolean status = false;
         //if this is a click event, click it
-        if (value.toLowerCase().indexOf("click") >= 0) {
+        if (value.toLowerCase().indexOf("click") >= 0 && !value.toLowerCase().contains("sendkeys")) {
             try {
                 if (accesssorType.toLowerCase().equals("xpath")) {
                     this.driver.findElement(By.xpath(accessor)).click();
@@ -792,8 +791,13 @@ public class HomePage {
             }catch (Exception e) {
                 status = false;
             }
-        } else {  //if it is not a click, send keys
+        } else {  //if it is not a click, send keys or screenshot
             try {
+                //use sendkeys as the command when sending keywords to a form
+                if (value.contains("sendkeys")) {
+                    String [] values = value.split(" ╬ ");
+                    value = values.length > 0 ? values[1].trim() : "";
+                }
                 if (value.contains("Keys.")) {
                     if (accesssorType.toLowerCase().equals("xpath")) {
                         this.driver.findElement(By.xpath(accessor)).sendKeys(GetKeyValue(value, fileStepIndex));

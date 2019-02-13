@@ -10,29 +10,5 @@
 ### ╔════════════════════════════════╦═════════════════════════╦═══════════════════════╦════════════════════════════════════════╦══════════════════════════╗
 ###  [URL/XPath/CssSelector/TagName] ; [Action/Expected value] ; [Element Lookup Type] ; [Perform Action other than Read Value] ; [Critical Assertion]
 ### ╚════════════════════════════════╦═════════════════════════╦═══════════════════════╦════════════════════════════════════════╦══════════════════════════╝
-╠https://formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000 ; n/a ; true ; true╣
-╠first-name ; sendkeys ╬ click this textbox ; ID ; true ; false╣
-╠last-name ; Doe ; ID ; true ; false╣
+╠https://blackrock:375hudson@dlbiny.com/blackrock-intranet/ ; Navigate ; n/a ; true ; true╣
 ╠n/a ; Wait ╬ 5000 ; n/a ; true ; false╣
-╠job-title ; QA Engineer ; ID ; true ; false╣
-╠radio-button-2 ; click ; ID ; true ; false╣
-╠checkbox-2 ; click ; ID ; true ; false╣
-╠option[value='1'] ; click ; CssSelector ; true ; false╣
-╠n/a ; Wait ╬ 1000 ; n/a ; true ; false╣
-╠select-menu2 ; 0-1 ; ID ; false ; false╣
-╠datepicker ; 05/28/2019 ; ID ; true ; false╣
-╠datepicker ; Keys.RETURN ; ID ; true ; false╣
-╠.btn.btn-lg.btn-primary ; click ; CssSelector ; true ; false╣
-╠n/a ; Wait ╬ 5000 ; n/a ; true ; false╣
-╠alert ; The form was successfully submitted! ; ClassName ; false ; false╣
-###╠n/a ; ScreenShot ; n/a ; true ; false╣
-###╠n/a ; URL ╬ https://formy-project.herokuapp.com/thanks ; n/a ; true ; false╣
-###╠https://formy-project.herokuapp.com/form ; Navigate ╬  ╬ 4000 ; n/a ; true ; false╣
-###╠n/a ; URL ╬ https://formy-project.herokuapp.com/form ; n/a ; true ; false╣
-###╠https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_ref_comp_dropdown-menu&stacked=h ; 
-###Navigate ; n/a ; true ; true╣
-###╠//button[contains(@id,'menu1')] ; Switch to iframe [iframeResult] ╬ Tutorials ; xPath ; false ; true╣
-###╠//button[contains(@id,'menu1')] ; Switch to iframe [iframeResult] ╬ click ; xPath ; true ; true╣
-###╠/html/body/div/div/ul/li[1]/a ; Switch to iframe [iframeResult] ╬ click ; xPath ; true ; true╣
-###╠https://www.w3schools.com/tags/tryit.asp?filename=tryhtml_select ; Navigate ; n/a ; true ; true╣
-###╠/html/body/select ; Switch to iframe [iframeResult] ╬ Volvo ; xPath ; false ; true╣

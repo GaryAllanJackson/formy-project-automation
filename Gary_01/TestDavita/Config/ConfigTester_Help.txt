@@ -22,6 +22,12 @@ To Navigate and mark that step as crucial
 To Navigate, assert that the URL is what follows the ╬ character and to wait 4 seconds before making the assertion to allow the page to load:
 ╠https://formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000 ; n/a ; true ; true╣
 
+To Navigate and Authenticate with username and password and assert that the URL is what follows the ╬ character and to wait 4 seconds before making the assertion to allow the page to load:
+╠https://username:password@formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000 ; n/a ; true ; true╣
+
+To Navigate and Authenticate with username and password.
+╠https://username:password@formy-project.herokuapp.com/form ; Navigate ; n/a ; true ; false╣
+
 To check a URL without navigating and to make it non-curcial.  To make it crucial change the last parameter to true.
 ╠n/a ; URL ╬ https://formy-project.herokuapp.com/thanks ; n/a ; true ; false╣
 
@@ -31,6 +37,9 @@ To wait for 5 seconds before continuing onto the next step.
 
 To fill in a field by ID and to make it non-crucial.  To make it crucial change the last parameter to true.
 ╠first-name ; John ; ID ; true ; false╣
+
+To fill in a field by ID and to make it non-crucial when it contains a reserved command like click.  To make it crucial change the last parameter to true.
+╠first-name ; sendkeys ╬ click ; ID ; true ; false╣
 
 
 Retrieving text is usually non-crucial and test execution can usually continue so the following examples are all non-crucial.  Update based on your requirements.
