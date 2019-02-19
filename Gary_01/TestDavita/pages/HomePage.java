@@ -6,6 +6,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -13,6 +14,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -415,10 +418,11 @@ public class HomePage {
                         }*/
                         //endregion
                         //if (ts.get_expectedValue().toLowerCase().indexOf(" - ") >= 0 && subAction == null) {
-                        if (ts.get_expectedValue().toLowerCase().indexOf(" ╬ ") >= 0 && subAction == null) {
+                        if (ts.get_expectedValue().toLowerCase().indexOf(" ╬ ") >= 0 && subAction == null && !ts.get_expectedValue().toLowerCase().contains("right click")) {
                             //url has changed, check url against expected value
                             //String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf(" - ") + 3).trim();
                             String expectedUrl = ts.get_expectedValue().substring(ts.get_expectedValue().indexOf(" ╬ ") + 3).trim();
+
                             if (dashCount > 1) {
                                 //int delayMilliSeconds = parseInt(ts.get_expectedValue().substring(ts.get_expectedValue().lastIndexOf("-") + 1).trim());
                                 int delayMilliSeconds = parseInt(ts.get_expectedValue().substring(ts.get_expectedValue().lastIndexOf(" ╬ ") + 3).trim());
@@ -463,6 +467,27 @@ public class HomePage {
                                 //pageHelper.UpdateTestResults("----[ " + ts.get_expectedValue().toLowerCase() + "]------------------", testResults);
                                 if (dashCount > 1) {
                                     delayMilliSeconds = parseInt(expectedItems[2].trim());
+                                }
+                                if (dashCount > 2) {
+                                    String dimensions = expectedItems[3].trim();
+                                    int wStart;
+                                    int hStart;
+                                    int width;
+                                    int height;
+                                    if (dimensions.toLowerCase().contains("w=") && dimensions.toLowerCase().contains("h=")) {
+                                        wStart = dimensions.toLowerCase().indexOf("w=");
+                                        hStart = dimensions.toLowerCase().indexOf("h=");
+                                        if (wStart < hStart) {
+                                            width = parseInt(dimensions.substring(dimensions.indexOf("w=") + 2, dimensions.indexOf("h=")).trim());
+                                            height = parseInt(dimensions.substring(dimensions.indexOf("h=") + 2, dimensions.length()).trim());
+                                        }
+                                        else {
+                                            height= parseInt(dimensions.substring(dimensions.indexOf("h=") + 2, dimensions.indexOf("w=")).trim());
+                                            width = parseInt(dimensions.substring(dimensions.indexOf("w=") + 2, dimensions.length()).trim());
+                                        }
+                                        pageHelper.UpdateTestResults("     Setting browser dimensions to (Width=" + width + " Height=" + height, testResults);
+                                        pageHelper.SetWindowContentDimensions(driver, width, height);
+                                    }
                                 }
                             }
                             this.testPage = navigateUrl;
@@ -515,6 +540,17 @@ public class HomePage {
                             }
                             //pageHelper.UpdateTestResults("----[ URL if after call ]------------------", testResults);
                         }
+                        else if (ts.get_expectedValue().toLowerCase().contains("switch to tab")) {
+                            if (ts.get_expectedValue().toLowerCase().contains("0")) {
+                                SwitchToTab(false, fileStepIndex);
+                            }
+                            else {
+                                SwitchToTab(true, fileStepIndex);
+                            }
+                        }
+//                        else if (ts.get_expectedValue().toLowerCase().contains("sendkeys")) {
+//                            status = PerformAction(ts.get_searchType(), ts.get_xPath(), ts.get_expectedValue(), fileStepIndex);
+//                        }
                     }
                 }
             }
@@ -761,24 +797,86 @@ public class HomePage {
      *      navigating, waiting, taking screen shots etc...
      ************************************************************ */
     public Boolean PerformAction(String accesssorType, String accessor, String value, String fileStepIndex) {
+        //pageHelper.UpdateTestResults("In Perform action value = " + value);
         Boolean status = false;
+        final String click = "click";
+        final String sendKeys = "sendkeys";
+        final String rightClick = "right click";
+        final String keys = "keys.";
+
         //if this is a click event, click it
-        if (value.toLowerCase().indexOf("click") >= 0 && !value.toLowerCase().contains("sendkeys")) {
+        if (value.toLowerCase().contains(click) && !value.toLowerCase().contains(sendKeys)) {
             try {
                 if (accesssorType.toLowerCase().equals("xpath")) {
-                    this.driver.findElement(By.xpath(accessor)).click();
+                    if (!value.toLowerCase().contains(rightClick)) {
+                        this.driver.findElement(By.xpath(accessor)).click();
+                    }
+                    else {  //right click element
+                        Actions action = new Actions(driver);
+                        if (!value.toLowerCase().contains(keys)) {
+                            action.contextClick(driver.findElement(By.xpath(accessor))).build().perform();
+                        }
+                        else {
+                            action.contextClick(driver.findElement(By.xpath(accessor))).build().perform();
+                            SelectFromContextMenu(value, fileStepIndex);
+                        }
+                    }
                 }
                 else if (accesssorType.toLowerCase().equals("id")) {
-                    this.driver.findElement(By.id(accessor)).click();
+                    if (!value.toLowerCase().contains(rightClick)) {
+                        this.driver.findElement(By.id(accessor)).click();
+                    } else {  //right click element
+                        Actions action = new Actions(driver);
+                        if (!value.toLowerCase().contains(keys)) {
+                            action.contextClick(this.driver.findElement(By.id(accessor))).build().perform();
+                        }
+                        else {
+                            action.contextClick(driver.findElement(By.id(accessor))).build().perform();
+                            SelectFromContextMenu(value, fileStepIndex);
+                        }
+                    }
                 }
                 else if (accesssorType.toLowerCase().equals("classname")) {
-                    this.driver.findElement(By.className(accessor)).click();
+                    if (!value.toLowerCase().contains(rightClick)) {
+                        this.driver.findElement(By.className(accessor)).click();
+                    } else {  //right click element
+                        Actions action = new Actions(driver);
+                        if (!value.toLowerCase().contains(keys)) {
+                            action.contextClick(this.driver.findElement(By.className(accessor))).build().perform();
+                        }
+                        else {
+                            action.contextClick(driver.findElement(By.className(accessor))).build().perform();
+                            SelectFromContextMenu(value, fileStepIndex);
+                        }
+                    }
                 }
                 else if (accesssorType.toLowerCase().equals("cssselector")) {
-                    this.driver.findElement(By.cssSelector(accessor)).click();
+                    if (!value.toLowerCase().contains(rightClick)) {
+                        this.driver.findElement(By.cssSelector(accessor)).click();
+                    } else {  //right click element
+                        Actions action = new Actions(driver);
+                        if (!value.toLowerCase().contains(keys)) {
+                            action.contextClick(this.driver.findElement(By.cssSelector(accessor))).build().perform();
+                        }
+                        else {
+                            action.contextClick(driver.findElement(By.cssSelector(accessor))).build().perform();
+                            SelectFromContextMenu(value, fileStepIndex);
+                        }
+                    }
                 }
                 else if (accesssorType.toLowerCase().equals("tagname")) {
-                    this.driver.findElement(By.tagName(accessor)).click();
+                    if (!value.toLowerCase().contains(rightClick)) {
+                        this.driver.findElement(By.tagName(accessor)).click();
+                    } else {  //right click element
+                        Actions action = new Actions(driver);
+                        if (!value.toLowerCase().contains(keys)) {
+                            action.contextClick(this.driver.findElement(By.tagName(accessor))).build().perform();
+                        }
+                        else {
+                            action.contextClick(driver.findElement(By.tagName(accessor))).build().perform();
+                            SelectFromContextMenu(value, fileStepIndex);
+                        }
+                    }
                 }
                 status = true;
             } catch (Exception e) {
@@ -794,11 +892,11 @@ public class HomePage {
         } else {  //if it is not a click, send keys or screenshot
             try {
                 //use sendkeys as the command when sending keywords to a form
-                if (value.contains("sendkeys")) {
+                if (value.contains(sendKeys)) {
                     String [] values = value.split(" ╬ ");
                     value = values.length > 0 ? values[1].trim() : "";
                 }
-                if (value.contains("Keys.")) {
+                if (value.contains(keys) || value.toLowerCase().contains(keys)) {
                     if (accesssorType.toLowerCase().equals("xpath")) {
                         this.driver.findElement(By.xpath(accessor)).sendKeys(GetKeyValue(value, fileStepIndex));
                     }
@@ -838,6 +936,116 @@ public class HomePage {
         }
         return status;
     }
+
+    //SelectFromContextMenu(value, fileStepIndex);
+    private void SelectFromContextMenu(String value, String fileStepIndex) throws AWTException, InterruptedException {
+        String [] additionalCommands = value.split(" ╬ ");
+        int downCount = 0;
+        int upCount = 0;
+        int leftCount = 0;
+        int rightCount = 0;
+        String arrowDown = "Keys.Arrow_Down";
+        boolean switchToTab = false;
+        for (String item : additionalCommands) {
+            if (item.toLowerCase().trim().contains("keys.arrow_down"))
+            {
+                downCount++;
+            }
+            if (item.toLowerCase().trim().contains("keys.arrow_up"))
+            {
+                upCount++;
+            }
+            if (item.toLowerCase().trim().contains("keys.arrow_left"))
+            {
+                leftCount++;
+            }
+            if (item.toLowerCase().trim().contains("keys.arrow_right"))
+            {
+                rightCount++;
+            }
+            if (item.toLowerCase().trim().contains("switch to tab")) {
+                switchToTab = true;
+            }
+        }
+        /*
+        if (downCount > 0) {
+            pageHelper.UpdateTestResults("     Arrowing down " + downCount + " times.", testResults);
+        }
+        else if (upCount > 0) {
+            pageHelper.UpdateTestResults("     Arrowing up " + downCount + " times.", testResults);
+        }
+        else if (leftCount > 0) {
+            pageHelper.UpdateTestResults("     Arrowing left " + downCount + " times.", testResults);
+        }
+        else if (rightCount > 0) {
+            pageHelper.UpdateTestResults("     Arrowing right " + downCount + " times.", testResults);
+        }*/
+
+        Robot robot = new Robot();
+
+        for (int x=0;x<downCount;x++) {
+            robot.keyPress(KeyEvent.VK_DOWN);
+            pageHelper.UpdateTestResults("     Performing Key down action!", testResults);
+        }
+        for (int x=0;x<upCount;x++) {
+            robot.keyPress(KeyEvent.VK_UP);
+            pageHelper.UpdateTestResults("     Performing Key up action!", testResults);
+        }
+        for (int x=0;x<leftCount;x++) {
+            robot.keyPress(KeyEvent.VK_LEFT);
+            pageHelper.UpdateTestResults("     Performing Key left action!", testResults);
+        }
+        for (int x=0;x<rightCount;x++) {
+            robot.keyPress(KeyEvent.VK_RIGHT);
+            pageHelper.UpdateTestResults("     Performing Key right action!", testResults);
+        }
+        //it is assumed that you will always do this once you select the proper context menu item
+        robot.keyPress(KeyEvent.VK_ENTER);
+
+          //need to remove this and add a check for it in the test step
+        if (switchToTab) {
+            DelayCheck(3000, fileStepIndex);
+            SwitchToTab(true, fileStepIndex);
+            //DelayCheck(7000, fileStepIndex);
+            //SwitchToTab(false, fileStepIndex);
+            //SwitchBackToMainTab(fileStepIndex);
+        }
+    }
+
+    //private void SwitchToNewTab(boolean isChild, String fileStepIndex) {
+    private void SwitchToTab(boolean isChild, String fileStepIndex) {
+        int tab = 0;
+        ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());
+        tab = isChild ? 1 : 0;
+        //String handleName = tabs.get(1);
+        String handleName = tabs.get(tab);
+        driver.switchTo().window(handleName);
+        System.setProperty("current.window.handle", handleName);
+        pageHelper.UpdateTestResults("     Switched to New tab with url = " + driver.getCurrentUrl(), testResults);
+    }
+
+    /*
+    //alternate way of opening a new tab and navigating to it then switching to that tab
+    public String openNewTab(String url) {
+        JavascriptExecutor js = (JavascriptExecutor)driver;
+        js.executeScript("window.parent = window.open('parent');");
+        ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());
+        String handleName = tabs.get(1);
+        driver.switchTo().window(handleName);
+        System.setProperty("current.window.handle", handleName);
+        driver.get(url);
+        return handleName;
+    }
+    */
+
+/*
+    private void SwitchBackToMainTab(String fileStepIndex) {
+        pageHelper.UpdateTestResults("     Switching to the original tab", testResults);
+        //new Actions(driver).sendKeys(driver.findElement(By.tagName("html")), Keys.CONTROL).sendKeys(driver.findElement(By.tagName("html")),Keys.NUMPAD1).build().perform();
+        //new Actions(driver).sendKeys(Keys.CONTROL + "\t");
+        pageHelper.UpdateTestResults("Switched back to Main tab with url = " + driver.getCurrentUrl());
+    }
+*/
 
     /* ************************************************************
      * DESCRIPTION:

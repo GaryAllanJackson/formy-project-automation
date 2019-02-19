@@ -172,6 +172,11 @@ public class PageHelper {
         return new Dimension(contentWidth, contentHeight);
     }
 
+    public void SetWindowContentDimensions(WebDriver driver, int width, int height)
+    {
+        Dimension sessionDimension = new Dimension(width, height);
+        driver.manage().window().setSize(sessionDimension);
+    }
 
     /* *******************************************************************************************
         Description: This method reads in the test file, parsing each line and creating a new <TestSettings>
@@ -286,9 +291,13 @@ public class PageHelper {
      ****************************************************************** */
     public ConfigSettings ReadConfigurationSettings(String configurationFile) throws Exception  {
         File helpFile = new File(get_helpFileName());
-        if (!helpFile.exists()) {
-            PrintSamples();
+        if (helpFile.exists()) {
+            helpFile.delete();
         }
+
+        //if (!helpFile.exists()) {
+            PrintSamples();
+        //}
         ConfigSettings configSettings = new ConfigSettings();
         String configValue;
         //System.out.println(FRAMED + ANSI_YELLOW_BACKGROUND + ANSI_BLUE + ANSI_BOLD + "----------[ Reading Configuration file ]----------" + ANSI_RESET);
@@ -470,86 +479,133 @@ public class PageHelper {
 
         try {
             WriteToFile(get_helpFileName(), "Test File Format:");
-            WriteToFile(get_helpFileName(), "### ╔════════════════════════════════╦═════════════════════════╦═══════════════════════╦════════════════════════════════════════╦══════════════════════════╗");
-            WriteToFile(get_helpFileName(), "### ║[URL/XPath/CssSelector/TagName] ; [Action/Expected value] ; [Element Lookup Type] ; [Perform Action other than Read Value] ; [Critical Assertion]     ║");
-            WriteToFile(get_helpFileName(), "### ╚════════════════════════════════╩═════════════════════════╩═══════════════════════╩════════════════════════════════════════╩══════════════════════════╝");
-            WriteToFile(get_helpFileName(), "### Each parameter is separate by a semi-colon to prevent interference with navigation urls and colons");
-            WriteToFile(get_helpFileName(), "### The first parameter url to navigate to, xPath, CssSelector, Tag Name, ClassName, ID");
-            WriteToFile(get_helpFileName(), "### The second parameter action to take or expected value to retrieve for URLs both are required separated by a space then alt(206),");
-            WriteToFile(get_helpFileName(), "###     ╬ then space. ' ╬ '  optionally add a second space alt(206) space delimiter to add a time delay (thread sleep value in milliseconds) to give the event time to complete.");
+            WriteToFile(get_helpFileName(), "### ╔══════════════════════════════════╦═════════════════════════╦═══════════════════════╦════════════════════════════════════════╦══════════════════════════╗");
+            WriteToFile(get_helpFileName(), "### ║ ╠[URL/XPath/CssSelector/TagName] ; [Action/Expected value] ; [Element Lookup Type] ; [Perform Action other than Read Value] ; [Critical Assertion] ╣   ║");
+            WriteToFile(get_helpFileName(), "### ╚══════════════════════════════════╩═════════════════════════╩═══════════════════════╩════════════════════════════════════════╩══════════════════════════╝");
+            WriteToFile(get_helpFileName(), "### Each test script begins with ╠ (alt + 204) and ends with ╣ (alt + 185).  These delimiters allow for tests to span multiple lines.");
+            WriteToFile(get_helpFileName(), "### Each parameter is separated by a space + semi-colon + space.");
+            WriteToFile(get_helpFileName(), "### The first parameter is one of the following: url to navigate to, or Element (xPath, CssSelector, Tag Name, ClassName, ID)");
+            WriteToFile(get_helpFileName(), "### The second parameter is the action to take or expected value to retrieve.  For URLs both are required separated by a space then (alt + 206), ");
+            WriteToFile(get_helpFileName(), "###     ╬ then space. ' ╬ '  optionally add a second space + (alt + 206) + space delimiter to add a time delay (thread sleep value in milliseconds) to give the event time to complete.");
             WriteToFile(get_helpFileName(), "###     The format is: Action ╬ Expected Value ╬ Time delay before making the assertion");
+            WriteToFile(get_helpFileName(), "###     For context menu navigation the action can be a chain of up or down arrow keys as well to navigate to the desired menu item.");
             WriteToFile(get_helpFileName(), "### The third parameter is the type of check to perform and will be ignored for performing Navigation where that is irrelevant");
             WriteToFile(get_helpFileName(), "###        acceptable values are xPath, CssSelector, Tag Name, ClassName, ID and n/a");
-            WriteToFile(get_helpFileName(), "### The fourth parameter is the PerformAction boolean and true when text should be entered, a click occurs, a wait, or Navigating and false when reading element values");
-            WriteToFile(get_helpFileName(), "### The fifth parameter is the IsCrucial boolean.  When true, if the assertion fails the test stops immediately.  When false, if the assertion fails, the tests continue.");
+            WriteToFile(get_helpFileName(), "### The fourth parameter is the PerformAction boolean field.  Set this to true when performing an action other than retrieving the text value of the element.");
+            WriteToFile(get_helpFileName(), "###        Examples of when this is true: Text should be entered, a click occurs, a wait, or Navigating, switching Tabs.");
+            WriteToFile(get_helpFileName(), "### The fifth parameter is the IsCrucial boolean.  This indicates that should this step fail, all testing should stop!");
+            WriteToFile(get_helpFileName(), "###       When true, if the assertion fails all testing stops immediately.");
+            WriteToFile(get_helpFileName(), "###       When false, if the assertion fails, the tests continue and the failed results appear in red text.");
+            WriteToFile(get_helpFileName(), "###       All successful assertions will appear in green text.  All failed assertions will appear in red text.");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "The examples below are are not all inclusive but rather attempt to provide you with a basic understanding so that you can make the necessary changes to accomplish the task.");
-            WriteToFile(get_helpFileName(), "When an error occurs, usually an element not found error, a screenshot will automatically be taken.");
+            WriteToFile(get_helpFileName(), "The examples below are are not all inclusive but rather attempt to provide you with a basic understanding\r\n so that you can make the necessary changes to accomplish a testing task.");
+            WriteToFile(get_helpFileName(), "When an error occurs it is most likely due to an element not found and a screenshot will automatically be taken.");
             WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "=========[ NAVIGATION ]========================================================================================================================================");
             WriteToFile(get_helpFileName(), "All Navigation steps should be marked as crucial, as all subsequent checks require that navigation to complete successfully!!!");
             WriteToFile(get_helpFileName(), "To Navigate and mark that step as crucial");
             WriteToFile(get_helpFileName(), "╠https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_ref_comp_dropdown-menu&stacked=h ; Navigate ; n/a ; true ; true╣");
             WriteToFile(get_helpFileName(), "");
+
             WriteToFile(get_helpFileName(), "To Navigate, assert that the URL is what follows the ╬ character and to wait 4 seconds before making the assertion to allow the page to load:");
             WriteToFile(get_helpFileName(), "╠https://formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000 ; n/a ; true ; true╣");
             WriteToFile(get_helpFileName(), "");
+
             WriteToFile(get_helpFileName(), "To Navigate and Authenticate with username and password and assert that the URL is what follows the ╬ character and to wait 4 seconds before making the assertion to allow the page to load:");
             WriteToFile(get_helpFileName(), "╠https://username:password@formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000 ; n/a ; true ; true╣");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "To Navigate and Authenticate with username and password.");
+            WriteToFile(get_helpFileName(), "To Navigate and Authenticate with username and password:");
             WriteToFile(get_helpFileName(), "╠https://username:password@formy-project.herokuapp.com/form ; Navigate ; n/a ; true ; false╣");
             WriteToFile(get_helpFileName(), "");
 
+            WriteToFile(get_helpFileName(), "To Navigate, assert that the URL, add a time delay and set the browser dimensions to 800 width by 800 height:");
+            WriteToFile(get_helpFileName(), "╠https://formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000  ╬ w=800 h=800 ; n/a ; true ; true╣");
+            WriteToFile(get_helpFileName(), "===============================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "");
 
+            WriteToFile(get_helpFileName(), "=========[ CHECK URL WITHOUT NAVIGATION ]======================================================================================================================");
             WriteToFile(get_helpFileName(), "To check a URL without navigating and to make it non-curcial.  To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "╠n/a ; URL ╬ https://formy-project.herokuapp.com/thanks ; n/a ; true ; false╣");
-            WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "To wait for a specific amount of time before continuing for page loading or script completion");
-            WriteToFile(get_helpFileName(), "To wait for 5 seconds before continuing onto the next step.");
-            WriteToFile(get_helpFileName(), "╠n/a ; Wait ╬ 5000 ; n/a ; true ; false╣");
+            WriteToFile(get_helpFileName(), "===============================================================================================================================================================");
             WriteToFile(get_helpFileName(), "");
 
+            WriteToFile(get_helpFileName(), "=========[ WAITING FOR ITEMS TO BE AVAILABLE ]=================================================================================================================");
+            WriteToFile(get_helpFileName(), "To wait for a specific amount of time before continuing to allow for page loading or script completion");
+            WriteToFile(get_helpFileName(), "To wait for 5 seconds before continuing onto the next step.");
+            WriteToFile(get_helpFileName(), "╠n/a ; Wait ╬ 5000 ; n/a ; true ; false╣");
+            WriteToFile(get_helpFileName(), "===============================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "");
+
+            WriteToFile(get_helpFileName(), "=========[ FILLING IN TEXT FIELDS ]============================================================================================================================");
             WriteToFile(get_helpFileName(), "To fill in a field by ID and to make it non-crucial.  To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "╠first-name ; John ; ID ; true ; false╣");
             WriteToFile(get_helpFileName(), "");
+
             WriteToFile(get_helpFileName(), "To fill in a field by ID and to make it non-crucial when it contains a reserved command like click.  To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "╠first-name ; sendkeys ╬ click ; ID ; true ; false╣");
+            WriteToFile(get_helpFileName(), "===============================================================================================================================================================");
             WriteToFile(get_helpFileName(), "");
+
+            WriteToFile(get_helpFileName(), "=========[ CHECKING A CHECKBOX/RADIOBUTTON - CLICKING A BUTTON ]===============================================================================================");
+            WriteToFile(get_helpFileName(), "To click an element by ID");
+            WriteToFile(get_helpFileName(), "╠checkbox-2 ; click ; ID ; true ; false╣");
+            WriteToFile(get_helpFileName(), "===============================================================================================================================================================");
             WriteToFile(get_helpFileName(), "");
+
+            WriteToFile(get_helpFileName(), "=========[ CLICKING AN ELEMENT THAT FORCES NAVIGATION ]========================================================================================================");
+            WriteToFile(get_helpFileName(), "To click an element by xPath that navigates to a new page and check the url of the new page after waiting 5 seconds for the page to load.");
+            WriteToFile(get_helpFileName(), "╠/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/div[1]/h4[3] ; click ╬ https://www.davita.com/education ╬ 5000 ; xPath ; true ; false╣");
+            WriteToFile(get_helpFileName(), "===============================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "");
+
+            WriteToFile(get_helpFileName(), "=========[ RETRIEVING TEXT FROM AN ELEMENT ]===================================================================================================================");
             WriteToFile(get_helpFileName(), "Retrieving text is usually non-crucial and test execution can usually continue so the following examples are all non-crucial.  Update based on your requirements.");
             WriteToFile(get_helpFileName(), "To retrieve the text of an element by ClassName and make the assertion non-crucial");
             WriteToFile(get_helpFileName(), "╠alert ; The form was successfully submitted! ; ClassName ; false ; false╣");
             WriteToFile(get_helpFileName(), "");
+
             WriteToFile(get_helpFileName(), "To retrieve the text of an element by xPath");
             WriteToFile(get_helpFileName(), "╠/html[1]/body[1]/div[1]/div[1]/div[1]/ul[1]/li[1]/div[1]/div[1]/h1[1] ; Empower Yourself with Kidney Knowledge ; xPath ; false ; false╣");
             WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "===============================================================================================================================================================");
 
+            WriteToFile(get_helpFileName(), "=========[ RETRIEVING TEXT FROM AN ELEMENT IN AN IFRAME ]======================================================================================================");
             WriteToFile(get_helpFileName(), "When you are attempting to access an element in an iFrame, you must first switch to that iframe.");
             WriteToFile(get_helpFileName(), "The syntax for doing so is placed in the second parameter using the key phrase Switch to iframe ");
             WriteToFile(get_helpFileName(), "followed by the name in square brackets as shown in the following example.");
             WriteToFile(get_helpFileName(), "To retrieve the text of an element in an iFrame by xPath");
             WriteToFile(get_helpFileName(), "╠/html/body/select ; Switch to iframe [iframeResult] ╬ Volvo ; xPath ; false ; false╣");
+            WriteToFile(get_helpFileName(), "===============================================================================================================================================================");
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "To click an element by ID");
-            WriteToFile(get_helpFileName(), "╠checkbox-2 ; click ; ID ; true ; false╣");
-            WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "To click an element by xPath");
-            WriteToFile(get_helpFileName(), "╠/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/div[1]/h4[3] ; click ╬ https://www.davita.com/education ╬ 5000 ; xPath ; true ; false╣");
-            WriteToFile(get_helpFileName(), "");
+
+            WriteToFile(get_helpFileName(), "=========[ CLICK AN ELEMENT IN AN IFRAME ]====================================================================================================================");
             WriteToFile(get_helpFileName(), "To click an element by xPath in an iFrame");
             WriteToFile(get_helpFileName(), "╠/html/body/div/div/ul/li[1]/a ; Switch to iframe [iframeResult] ╬ click ; xPath ; true ; true╣");
             WriteToFile(get_helpFileName(), "");
+
             WriteToFile(get_helpFileName(), "To select an option from an HTML Select (drop down/list) element.");
             WriteToFile(get_helpFileName(), "╠option[value='1'] ; click ; CssSelector ; true ; false╣");
+            WriteToFile(get_helpFileName(), "==============================================================================================================================================================");
             WriteToFile(get_helpFileName(), "");
 
-
+            WriteToFile(get_helpFileName(), "=========[ TAKING SCREENSHOTS ]===============================================================================================================================");
             WriteToFile(get_helpFileName(), "To take a screen shot/print screen.  The browser will be resized automatically to capture all page content.");
             WriteToFile(get_helpFileName(), "╠n/a ; ScreenShot ; n/a ; true ; false╣");
+            WriteToFile(get_helpFileName(), "==============================================================================================================================================================");
             WriteToFile(get_helpFileName(), "");
 
+            WriteToFile(get_helpFileName(), "=========[ SWITCHING BROWSER TABS ]===========================================================================================================================");
+            WriteToFile(get_helpFileName(), "Some actions are related and to avoid unnecessary steps the enter key will be pressed after right clicking and arrowing to a particular item.");
+            WriteToFile(get_helpFileName(), "To Right click on an element, move down to the first menu item, click it to open in a new tab and switch to the new tab:");
+            WriteToFile(get_helpFileName(), "╠//*[@id=\"rso\"]/div[1]/div/div[1]/div/div/div[1]/a ; right click ╬ Keys.Arrow_Down ╬ Switch to tab ; xPath ; true ; false╣");
+            WriteToFile(get_helpFileName(), "");
 
+            WriteToFile(get_helpFileName(), "To Switch back to the first tab after switching to the second tab");
+            WriteToFile(get_helpFileName(), "╠n/a ; Switch to tab 0 ; n/a ; true ; false╣");
+            WriteToFile(get_helpFileName(), "==============================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
         }
         catch (Exception ex) {

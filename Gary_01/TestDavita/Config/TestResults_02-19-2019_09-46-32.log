@@ -1,0 +1,19 @@
+[51m[42m[34m[1m╔══════════════[ Beginning Configuration ]══════════════╗[0m
+     Configured Browser Selection = Chrome
+     [Setting ChromeDriver]
+[51m[42m[34m[1m╔══════════════[ Ending Configuration ]══════════════╗[0m
+[51m[45m[33m╔══════════════[ Running Test Script ]══════════════╗[0m
+╔══════════════[ Start Explicit Navigation Event ]══════════════╗
+╚══════════════[ End Explicit Navigation Event ]══════════════╝
+     Performing xPath F0_S1 non-read action
+     Performing xPath F0_S2 non-read action
+     Sleeping for 5000 milliseconds for script F0_S3
+     Performing xPath F0_S4 non-read action
+     Performing Key down action!
+     Sleeping for 3000 milliseconds for script F0_S4
+     Sleeping for 5000 milliseconds for script F0_S5
+     Element type being checked at step F0_S6 by xPath: /html/body/div/div/div/div/main/article/header/h1
+Failed comparison results at step F0_S6 Expected value: (How to Resize Browser Window in WebDriver) Actual value: (null)
+     Switched to New tab with url = https://www.google.com/search?source=hp&ei=0xZsXMDTHdLw_AaU9qz4Cg&q=selenium+set+viewport+size+java&btnK=Google+Search&oq=selenium+set+viewport+size+java&gs_l=psy-ab.3...4652.4918..4972...0.0..0.0.0.......0....1..gws-wiz.....0.
+     Sleeping for 10000 milliseconds for script F0_S8
+[51m[45m[33m╚══════════════[ End of Test Script ]══════════════╝[0m
