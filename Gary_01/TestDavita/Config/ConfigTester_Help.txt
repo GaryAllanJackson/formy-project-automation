@@ -38,38 +38,38 @@ To Navigate and Authenticate with username and password:
 
 To Navigate, assert that the URL, add a time delay and set the browser dimensions to 800 width by 800 height:
 ╠https://formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000  ╬ w=800 h=800 ; n/a ; true ; true╣
-===============================================================================================================================================================
+================================================================================================================================================================
 
-=========[ CHECK URL WITHOUT NAVIGATION ]======================================================================================================================
+=========[ CHECK URL WITHOUT NAVIGATION ]=======================================================================================================================
 To check a URL without navigating and to make it non-curcial.  To make it crucial change the last parameter to true.
 ╠n/a ; URL ╬ https://formy-project.herokuapp.com/thanks ; n/a ; true ; false╣
-===============================================================================================================================================================
+================================================================================================================================================================
 
-=========[ WAITING FOR ITEMS TO BE AVAILABLE ]=================================================================================================================
+=========[ WAITING FOR ITEMS TO BE AVAILABLE ]==================================================================================================================
 To wait for a specific amount of time before continuing to allow for page loading or script completion
 To wait for 5 seconds before continuing onto the next step.
 ╠n/a ; Wait ╬ 5000 ; n/a ; true ; false╣
-===============================================================================================================================================================
+================================================================================================================================================================
 
-=========[ FILLING IN TEXT FIELDS ]============================================================================================================================
+=========[ FILLING IN TEXT FIELDS ]=============================================================================================================================
 To fill in a field by ID and to make it non-crucial.  To make it crucial change the last parameter to true.
 ╠first-name ; John ; ID ; true ; false╣
 
 To fill in a field by ID and to make it non-crucial when it contains a reserved command like click.  To make it crucial change the last parameter to true.
 ╠first-name ; sendkeys ╬ click ; ID ; true ; false╣
-===============================================================================================================================================================
+================================================================================================================================================================
 
-=========[ CHECKING A CHECKBOX/RADIOBUTTON - CLICKING A BUTTON ]===============================================================================================
+=========[ CHECKING A CHECKBOX/RADIOBUTTON - CLICKING A BUTTON ]================================================================================================
 To click an element by ID
 ╠checkbox-2 ; click ; ID ; true ; false╣
-===============================================================================================================================================================
+================================================================================================================================================================
 
-=========[ CLICKING AN ELEMENT THAT FORCES NAVIGATION ]========================================================================================================
+=========[ CLICKING AN ELEMENT THAT FORCES NAVIGATION ]=========================================================================================================
 To click an element by xPath that navigates to a new page and check the url of the new page after waiting 5 seconds for the page to load.
 ╠/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/div[1]/h4[3] ; click ╬ https://www.davita.com/education ╬ 5000 ; xPath ; true ; false╣
-===============================================================================================================================================================
+================================================================================================================================================================
 
-=========[ RETRIEVING TEXT FROM AN ELEMENT ]===================================================================================================================
+=========[ RETRIEVING TEXT FROM AN ELEMENT ]====================================================================================================================
 Retrieving text is usually non-crucial and test execution can usually continue so the following examples are all non-crucial.  Update based on your requirements.
 To retrieve the text of an element by ClassName and make the assertion non-crucial
 ╠alert ; The form was successfully submitted! ; ClassName ; false ; false╣
@@ -77,36 +77,36 @@ To retrieve the text of an element by ClassName and make the assertion non-cruci
 To retrieve the text of an element by xPath
 ╠/html[1]/body[1]/div[1]/div[1]/div[1]/ul[1]/li[1]/div[1]/div[1]/h1[1] ; Empower Yourself with Kidney Knowledge ; xPath ; false ; false╣
 
-===============================================================================================================================================================
-=========[ RETRIEVING TEXT FROM AN ELEMENT IN AN IFRAME ]======================================================================================================
+================================================================================================================================================================
+=========[ RETRIEVING TEXT FROM AN ELEMENT IN AN IFRAME ]=======================================================================================================
 When you are attempting to access an element in an iFrame, you must first switch to that iframe.
 The syntax for doing so is placed in the second parameter using the key phrase Switch to iframe 
 followed by the name in square brackets as shown in the following example.
 To retrieve the text of an element in an iFrame by xPath
 ╠/html/body/select ; Switch to iframe [iframeResult] ╬ Volvo ; xPath ; false ; false╣
-===============================================================================================================================================================
+================================================================================================================================================================
 
-=========[ CLICK AN ELEMENT IN AN IFRAME ]====================================================================================================================
+=========[ CLICK AN ELEMENT IN AN IFRAME ]=====================================================================================================================
 To click an element by xPath in an iFrame
 ╠/html/body/div/div/ul/li[1]/a ; Switch to iframe [iframeResult] ╬ click ; xPath ; true ; true╣
 
 To select an option from an HTML Select (drop down/list) element.
 ╠option[value='1'] ; click ; CssSelector ; true ; false╣
-==============================================================================================================================================================
+===============================================================================================================================================================
 
-=========[ TAKING SCREENSHOTS ]===============================================================================================================================
+=========[ TAKING SCREENSHOTS ]================================================================================================================================
 To take a screen shot/print screen.  The browser will be resized automatically to capture all page content.
 ╠n/a ; ScreenShot ; n/a ; true ; false╣
-==============================================================================================================================================================
+===============================================================================================================================================================
 
-=========[ SWITCHING BROWSER TABS ]===========================================================================================================================
+=========[ SWITCHING BROWSER TABS ]============================================================================================================================
 Some actions are related and to avoid unnecessary steps the enter key will be pressed after right clicking and arrowing to a particular item.
 To Right click on an element, move down to the first menu item, click it to open in a new tab and switch to the new tab:
 ╠//*[@id="rso"]/div[1]/div/div[1]/div/div/div[1]/a ; right click ╬ Keys.Arrow_Down ╬ Switch to tab ; xPath ; true ; false╣
 
 To Switch back to the first tab after switching to the second tab
 ╠n/a ; Switch to tab 0 ; n/a ; true ; false╣
-==============================================================================================================================================================
+===============================================================================================================================================================
 
 
 

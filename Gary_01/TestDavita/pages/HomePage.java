@@ -85,6 +85,7 @@ public class HomePage {
     private String fireFoxDriverPath = "/GeckoDriver/geckodriver-v0.23.0-win64/geckodriver.exe";
     private String phantomJsDriverPath = "/Gary/PhantomJS/phantomjs-2.1.1-windows/bin/phantomjs.exe";
     //private String internetExplorerDriverPath;
+    private boolean _executedFromMain = false;
 
     public BrowserType get_selectedBrowserType() {
         return _selectedBrowserType;
@@ -117,6 +118,15 @@ public class HomePage {
     private static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
     //endregion
 
+    //region { Properties }
+    public boolean is_executedFromMain() {
+        return _executedFromMain;
+    }
+
+    public void set_executedFromMain(boolean _executedFromMain) {
+        this._executedFromMain = _executedFromMain;
+    }
+    //endregion
 
     public void set_selectedBrowserType(BrowserType newValue) {
         if (newValue == BrowserType.Chrome) {
@@ -134,7 +144,8 @@ public class HomePage {
      * using all browsers, it sets the browser that will be used for the
      * test.
      **************************************************************** */
-    public HomePage() throws Exception {
+    public void HomePageStart(boolean isStartedFromMain) throws Exception {
+        this.set_executedFromMain(isStartedFromMain);
 
         File tmp = new File(configurationFile);
         pageHelper.UpdateTestResults("Config File absolute path = " + tmp.getAbsolutePath());
@@ -144,8 +155,10 @@ public class HomePage {
 
         pageHelper.set_logFileName(logFileName);
         pageHelper.set_helpFileName(helpFileName);
-        ConfigureTestEnvironment();
-
+        boolean status = ConfigureTestEnvironment();
+        if (!status) {
+            return;
+        }
 
         //testSettings = pageHelper.ReadTestSettingsFile(testSettings, testFileName);
         pageHelper.UpdateTestResults(FRAMED + ANSI_GREEN_BACKGROUND + ANSI_BLUE + ANSI_BOLD + pageHelper.sectionStartFormatLeft + "Beginning Configuration" + pageHelper.sectionStartFormatRight + ANSI_RESET, testResults);
@@ -163,6 +176,12 @@ public class HomePage {
         }
     }
 
+    public HomePage() throws Exception {
+        //created this default constructor so that this could function as an application
+        //and run from the main method in Form.java so that if the configuration file is
+        // not in the proper location, the correct path can be specified as input.
+    }
+
 
     /* ***************************************************************************
      *  DESCRIPTION:
@@ -170,6 +189,7 @@ public class HomePage {
      **************************************************************************** */
     @Test   //xpath lookup in this method does not work with headless phantomJS
     public void TestHomePage() throws Exception {
+        HomePageStart(is_executedFromMain());
         if (testAllBrowsers) {
             for (int b = 0; b < maxBrowsers; b++) {
                 switch (b) {
@@ -199,9 +219,11 @@ public class HomePage {
      *  Calls the ReadConfigurationSettings method, to read the config file.
      *  Sets configurable variables using those values.
      *************************************************************************** */
-    private void ConfigureTestEnvironment() throws Exception {
+//    private void ConfigureTestEnvironment() throws Exception {
+    private boolean ConfigureTestEnvironment() throws Exception {
         String tmpBrowserType;
-        ConfigSettings configSettings = pageHelper.ReadConfigurationSettings(configurationFile);
+        pageHelper.UpdateTestResults("is_executedFromMain() = " + is_executedFromMain());
+        ConfigSettings configSettings = pageHelper.ReadConfigurationSettings(configurationFile, is_executedFromMain());
 
         if (configSettings != null) {
             tmpBrowserType = configSettings.get_browserType().toLowerCase();
@@ -223,8 +245,10 @@ public class HomePage {
             } else {
                 this.testFileName = configSettings.get_testSettingsFile();
             }
+            return true;
         } else {
             pageHelper.UpdateTestResults("configSettings is null!!!", testResults);
+            return false;
         }
     }
 
@@ -291,6 +315,9 @@ public class HomePage {
      *    Runs all tests read in from the test settings file.
      **************************************************************************** */
     public void TestPageElements() throws Exception {
+        if (this.driver == null) {
+            return;
+        }
         int startIndex = 0;  //used for instances when you do not want to start at the first element to test
         String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
         boolean revertToParent = false;
@@ -493,6 +520,7 @@ public class HomePage {
                             this.testPage = navigateUrl;
                             //pageHelper.UpdateTestResults("----[ Start Explicit Navigation Event ]------------------", testResults);
                             pageHelper.UpdateTestResults(pageHelper.sectionStartFormatLeft + "Start Explicit Navigation Event" + pageHelper.sectionStartFormatRight, testResults);
+                            pageHelper.UpdateTestResults("Navigating to " + navigateUrl);
                             String actualUrl = CheckPageUrl(delayMilliSeconds);
                             if (expectedUrl != null && expectedUrl.trim().length() > 0) {
                                 assertEquals(expectedUrl, actualUrl);
@@ -1200,6 +1228,8 @@ public class HomePage {
             pageHelper.UpdateTestResults("The following error occurred while trying to shut down ChromeDriver: " + e.getMessage(), testResults);
         }
     }
+
+
 
     //region { Refactored Methods soon to be removed }
     /*public Boolean PerformXPathAction(String accessor, String value) {

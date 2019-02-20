@@ -11,22 +11,90 @@
 ### ╔════════════════════════════════╦═════════════════════════╦═══════════════════════╦════════════════════════════════════════╦══════════════════════════╗
 ### ║[URL/XPath/CssSelector/TagName] ; [Action/Expected value] ; [Element Lookup Type] ; [Perform Action other than Read Value] ; [Critical Assertion]     ║
 ### ╚════════════════════════════════╩═════════════════════════╩═══════════════════════╩════════════════════════════════════════╩══════════════════════════╝
-╠https://www.davita.com/ ; Navigate  ╬ https://www.davita.com/ ; n/a ; true ; true╣
+╠https://www.davita.com/ ; Navigate ╬ https://www.davita.com/ ; n/a ; true ; true╣
 ╠/html[1]/head[1]/title[1] ; Kidney disease and dialysis information - DaVita ; xPath ; false ; false╣
-╠/html[1]/body[1]/section[1] ; Today’s Kidney Diet Cookbooks
-                                    Get free kidney-friendly recipe collections from DaVita dietitians.
-                                    
-                                        Download Now ; xPath ; false ; false╣
-╠/html[1]/body[1]/section[1]/article[1] ; Today’s Kidney Diet Cookbooks
-                                    Get free kidney-friendly recipe collections from DaVita dietitians.
-                                    
-                                        Download Now ; xPath ; false ; false╣
-╠/html[1]/body[1]/section[1]/article[1]/div[1] ; Today’s Kidney Diet Cookbooks
-                                    Get free kidney-friendly recipe collections from DaVita dietitians.
-                                    
-                                        Download Now ; xPath ; false ; false╣
 ╠/html[1]/body[1]/section[1]/article[1]/div[1]/p[1] ; Today’s Kidney Diet Cookbooks ; xPath ; false ; false╣
 ╠/html[1]/body[1]/section[1]/article[1]/div[1]/p[2] ; Get free kidney-friendly recipe collections from DaVita dietitians. ; xPath ; false ; false╣
-╠/html[1]/body[1]/section[1]/article[1]/div[1]/div[1] ; Download Now ; xPath ; false ; false╣
 ╠/html[1]/body[1]/section[1]/article[1]/div[1]/div[1]/button[1] ; Download Now ; xPath ; false ; false╣
-╠/html[1]/body[1]/div[7] ; Jump to Top ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[1]/a[1]/span[1] ; International ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[2]/a[1]/span[1] ; Careers ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[3]/a[1]/span[1] ; About DaVita ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[3]/div[1]/div[1]/ul[1]/li[1] ; Overview ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[3]/div[1]/div[1]/ul[1]/li[2] ; Businesses ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[3]/div[1]/div[1]/ul[1]/li[3] ; History &amp; Culture ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[3]/div[1]/div[1]/ul[1]/li[4] ; Corporate Governance ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[3]/div[1]/div[1]/ul[1]/li[5] ; Investors ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[3]/div[1]/div[1]/ul[1]/li[6] ; News &amp; Press ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[4]/a[1]/span[1] ; Physicians ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[4]/div[1]/div[1]/ul[1]/li[1] ; Overview ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[4]/div[1]/div[1]/ul[1]/li[2] ; Clinical Excellence ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[4]/div[1]/div[1]/ul[1]/li[3] ; Career Growth ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[4]/div[1]/div[1]/ul[1]/li[4] ; Integrated Kidney Care ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[4]/div[1]/div[1]/ul[1]/li[5] ; Technology ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[5]/a[1]/span[1] ; Partners ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[5]/div[1]/div[1]/ul[1]/li[1] ; Hospitals ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[5]/div[1]/div[1]/ul[1]/li[2] ; Health Plans ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[6]/a[1]/span[1] ; Español ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[7]/a[1]/span[1] ; myDaVita Sign In ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[7]/span[1] ; OR ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[7]/a[2]/span[1] ; Register for Free ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[2]/ul[1]/li[1] ; Education ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[2]/ul[1]/li[2] ; Diet &amp; Nutrition ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[2]/ul[1]/li[3] ; Treatment &amp; Services ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[2]/ul[1]/li[4] ; Tools ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[2]/ul[1]/li[5] ; Find a Center ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[3]/ul[1]/li[1]/a[1]/span[1] ; myDaVita Sign In ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[3]/ul[1]/li[1]/span[1] ; OR ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[3]/ul[1]/li[1]/a[2]/span[1] ; Register for Free ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[2]/div[1]/div[1]/label[1]/span[1] ; Type to search in the page ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[2]/div[1]/button[1] ; Search ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[2]/div[1]/button[2] ; Cancel ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[1]/p[1] ; Kidney Disease ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[1]/ul[1]/li[1] ; Kidney Disease Basics ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[1]/ul[1]/li[2] ; Symptoms &amp; Diagnosis ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[1]/ul[1]/li[3] ; Risk Factors ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[1]/ul[1]/li[4] ; Stages of Kidney Disease ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[1]/ul[1]/li[5] ; Early Stage Kidney Disease ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[1]/ul[1]/li[6] ; Late Stage Kidney Disease ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[1]/ul[1]/li[7] ; Pediatric Care ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[1]/ul[1]/li[8] ; Related Diseases ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[2]/p[1] ; Life with CKD ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[2]/ul[1]/li[1] ; Lifestyle Changes ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[2]/ul[1]/li[2] ; Employment ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[2]/ul[1]/li[3] ; Travel ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[2]/ul[1]/li[4] ; Emotional Support ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[2]/ul[1]/li[5] ; Caregiver ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[2]/ul[1]/li[6] ; Choosing a Doctor ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[3]/p[1] ; Kidney Smart Classes ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[3]/p[2] ; Education Videos ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[3]/p[3] ; Kidney Care Vocabulary ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[3]/p[4] ; Additional Resources ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[4]/div[1]/div[1]/div[1]/h3[1] ; Kidney Smart® ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[4]/div[1]/div[2]/div[1]/p[1] ; Learn more and get your questions answered in a no-cost kidney education class. ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[4]/div[1]/div[2]/div[1]/div[1] ; FIND A CLASS ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[1]/p[1] ; Recipes ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[1]/ul[1]/li[1] ; Appetizers &amp; Snacks ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[1]/ul[1]/li[2] ; Beef, Lamb &amp; Pork ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[1]/ul[1]/li[3] ; Beverages ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[1]/ul[1]/li[4] ; Breads ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[1]/ul[1]/li[5] ; Breakfast &amp; Brunch ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[1]/ul[1]/li[6] ; Chicken &amp; Turkey ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[1]/ul[1]/li[7] ; Desserts ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[2]/ul[1]/li[1] ; Pasta, Rice &amp; Grains ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[2]/ul[1]/li[2] ; Pizza &amp; Sandwiches ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[2]/ul[1]/li[3] ; Salads &amp; Dressings ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[2]/ul[1]/li[4] ; Sauces &amp; Seasonings ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[2]/ul[1]/li[5] ; Seafood ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[2]/ul[1]/li[6] ; Soups &amp; Stews ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[2]/ul[1]/li[7] ; Vegetables ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[3]/p[1] ; Recipe Collections ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[3]/p[2] ; Kidney-Friendly Cookbooks ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[3]/p[3] ; Kidney Diet Tips Blog ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[3]/p[4] ; Articles ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[3]/p[5] ; Videos ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[4]/div[1]/div[1]/h4[1] ; Get Free Kidney-Friendly Cookbooks ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[4]/div[1]/div[1]/div[1]/span[1]/span[1] ; 539,947 Enjoyed So Far! ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[3]/div[1]/p[1] ; Dialysis Treatments ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[3]/div[1]/ul[1]/li[1] ; Preparing for Dialysis ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[3]/div[1]/ul[1]/li[2] ; On Dialysis ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[3]/div[1]/ul[1]/li[3] ; In-Center Hemodialysis ; xPath ; false ; false╣

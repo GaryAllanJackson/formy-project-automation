@@ -19,7 +19,7 @@
 TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\Gary_01\TestFiles\Tests\DavitaHomePageNotFull_TestSettings.txt
 //TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\Gary_01\TestFiles\Tests\Blackrock.txt
 ScreenShotSaveFolder=C:\Gary\ScreenShots\Mashup
-MaxScreenShotsToTake=-1
+MaxScreenShotsToTake=0
 BrowserType=Chrome
 RunHeadless=false
 TestAllBrowsers=false

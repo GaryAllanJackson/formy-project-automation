@@ -13,6 +13,7 @@ public class ConfigSettings {
     private String _testFolderName;
     private String _folderFileFilterType;
     private String _folderFileFilter;
+    private int _maxScreenShots;
 
     public ConfigSettings() {
         _testFiles = new ArrayList<>();
@@ -107,5 +108,13 @@ public class ConfigSettings {
 
     public void set_folderFileFilter(String _folderFileFilter) {
         this._folderFileFilter = _folderFileFilter;
+    }
+
+    public int get_maxScreenShots() {
+        return _maxScreenShots;
+    }
+
+    public void set_maxScreenShots(int _maxScreenShots) {
+        this._maxScreenShots = _maxScreenShots;
     }
 }

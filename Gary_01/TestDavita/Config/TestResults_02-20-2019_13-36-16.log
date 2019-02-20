@@ -1,0 +1,351 @@
+[51m[42m[34m[1m╔══════════════[ Beginning Configuration ]══════════════╗[0m
+     Configured Browser Selection = Chrome
+     [Setting ChromeDriver]
+[51m[42m[34m[1m╔══════════════[ Ending Configuration ]══════════════╗[0m
+[51m[45m[33m╔══════════════[ Running Test Script ]══════════════╗[0m
+╔══════════════[ Start Explicit Navigation Event ]══════════════╗
+     Navigation and URL Check successful for step F0_S0 Expected: (https://www.davita.com/) Actual: (https://www.davita.com/)
+╚══════════════[ End Explicit Navigation Event ]══════════════╝
+     Element type being checked at step F0_S1 by xPath: /html[1]/head[1]/title[1]
+     Looking up elementTag: (title[1]) Length = 8
+     Checking element by XPath: Indeterminate for script F0_S1 Actual Value: ""
+Failed comparison results at step F0_S1 Expected value: (Kidney disease and dialysis information - DaVita) Actual value: ()
+     Element type being checked at step F0_S2 by xPath: /html[1]/body[1]/section[1]/article[1]/div[1]/p[1]
+     Looking up elementTag: (p[1]) Length = 4
+     Checking element by XPath: Paragraph for script F0_S2 Actual Value: ""
+Failed comparison results at step F0_S2 Expected value: (Today’s Kidney Diet Cookbooks) Actual value: ()
+     Element type being checked at step F0_S3 by xPath: /html[1]/body[1]/section[1]/article[1]/div[1]/p[2]
+     Looking up elementTag: (p[2]) Length = 4
+     Checking element by XPath: Paragraph for script F0_S3 Actual Value: ""
+Failed comparison results at step F0_S3 Expected value: (Get free kidney-friendly recipe collections from DaVita dietitians.) Actual value: ()
+     Element type being checked at step F0_S4 by xPath: /html[1]/body[1]/section[1]/article[1]/div[1]/div[1]/button[1]
+     Looking up elementTag: (button[1]) Length = 9
+     Checking element by XPath: Indeterminate for script F0_S4 Actual Value: ""
+Failed comparison results at step F0_S4 Expected value: (Download Now) Actual value: ()
+     Element type being checked at step F0_S5 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[1]/a[1]/span[1]
+     Looking up elementTag: (span[1]) Length = 7
+     Checking element by XPath: Anchor for script F0_S5 Actual Value: "International"
+Successful comparison results at step F0_S5 Expected value: (International) Actual value: (International)
+     Element type being checked at step F0_S6 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[2]/a[1]/span[1]
+     Looking up elementTag: (span[1]) Length = 7
+     Checking element by XPath: Anchor for script F0_S6 Actual Value: "Careers"
+Successful comparison results at step F0_S6 Expected value: (Careers) Actual value: (Careers)
+     Element type being checked at step F0_S7 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[3]/a[1]/span[1]
+     Looking up elementTag: (span[1]) Length = 7
+     Checking element by XPath: Anchor for script F0_S7 Actual Value: "About DaVita"
+Successful comparison results at step F0_S7 Expected value: (About DaVita) Actual value: (About DaVita)
+     Element type being checked at step F0_S8 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[3]/div[1]/div[1]/ul[1]/li[1]
+     Looking up elementTag: (li[1]) Length = 5
+     Checking element by XPath: List Item for script F0_S8 Actual Value: ""
+Failed comparison results at step F0_S8 Expected value: (Overview) Actual value: ()
+     Element type being checked at step F0_S9 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[3]/div[1]/div[1]/ul[1]/li[2]
+     Looking up elementTag: (li[2]) Length = 5
+     Checking element by XPath: List Item for script F0_S9 Actual Value: ""
+Failed comparison results at step F0_S9 Expected value: (Businesses) Actual value: ()
+     Element type being checked at step F0_S10 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[3]/div[1]/div[1]/ul[1]/li[3]
+     Looking up elementTag: (li[3]) Length = 5
+     Checking element by XPath: List Item for script F0_S10 Actual Value: ""
+Failed comparison results at step F0_S10 Expected value: (History &amp; Culture) Actual value: ()
+     Element type being checked at step F0_S11 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[3]/div[1]/div[1]/ul[1]/li[4]
+     Looking up elementTag: (li[4]) Length = 5
+     Checking element by XPath: List Item for script F0_S11 Actual Value: ""
+Failed comparison results at step F0_S11 Expected value: (Corporate Governance) Actual value: ()
+     Element type being checked at step F0_S12 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[3]/div[1]/div[1]/ul[1]/li[5]
+     Looking up elementTag: (li[5]) Length = 5
+     Checking element by XPath: List Item for script F0_S12 Actual Value: ""
+Failed comparison results at step F0_S12 Expected value: (Investors) Actual value: ()
+     Element type being checked at step F0_S13 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[3]/div[1]/div[1]/ul[1]/li[6]
+     Looking up elementTag: (li[6]) Length = 5
+     Checking element by XPath: List Item for script F0_S13 Actual Value: ""
+Failed comparison results at step F0_S13 Expected value: (News &amp; Press) Actual value: ()
+     Element type being checked at step F0_S14 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[4]/a[1]/span[1]
+     Looking up elementTag: (span[1]) Length = 7
+     Checking element by XPath: Anchor for script F0_S14 Actual Value: "Physicians"
+Successful comparison results at step F0_S14 Expected value: (Physicians) Actual value: (Physicians)
+     Element type being checked at step F0_S15 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[4]/div[1]/div[1]/ul[1]/li[1]
+     Looking up elementTag: (li[1]) Length = 5
+     Checking element by XPath: List Item for script F0_S15 Actual Value: ""
+Failed comparison results at step F0_S15 Expected value: (Overview) Actual value: ()
+     Element type being checked at step F0_S16 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[4]/div[1]/div[1]/ul[1]/li[2]
+     Looking up elementTag: (li[2]) Length = 5
+     Checking element by XPath: List Item for script F0_S16 Actual Value: ""
+Failed comparison results at step F0_S16 Expected value: (Clinical Excellence) Actual value: ()
+     Element type being checked at step F0_S17 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[4]/div[1]/div[1]/ul[1]/li[3]
+     Looking up elementTag: (li[3]) Length = 5
+     Checking element by XPath: List Item for script F0_S17 Actual Value: ""
+Failed comparison results at step F0_S17 Expected value: (Career Growth) Actual value: ()
+     Element type being checked at step F0_S18 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[4]/div[1]/div[1]/ul[1]/li[4]
+     Looking up elementTag: (li[4]) Length = 5
+     Checking element by XPath: List Item for script F0_S18 Actual Value: ""
+Failed comparison results at step F0_S18 Expected value: (Integrated Kidney Care) Actual value: ()
+     Element type being checked at step F0_S19 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[4]/div[1]/div[1]/ul[1]/li[5]
+     Looking up elementTag: (li[5]) Length = 5
+     Checking element by XPath: List Item for script F0_S19 Actual Value: ""
+Failed comparison results at step F0_S19 Expected value: (Technology) Actual value: ()
+     Element type being checked at step F0_S20 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[5]/a[1]/span[1]
+     Looking up elementTag: (span[1]) Length = 7
+     Checking element by XPath: Anchor for script F0_S20 Actual Value: "Partners"
+Successful comparison results at step F0_S20 Expected value: (Partners) Actual value: (Partners)
+     Element type being checked at step F0_S21 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[5]/div[1]/div[1]/ul[1]/li[1]
+     Looking up elementTag: (li[1]) Length = 5
+     Checking element by XPath: List Item for script F0_S21 Actual Value: ""
+Failed comparison results at step F0_S21 Expected value: (Hospitals) Actual value: ()
+     Element type being checked at step F0_S22 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[5]/div[1]/div[1]/ul[1]/li[2]
+     Looking up elementTag: (li[2]) Length = 5
+     Checking element by XPath: List Item for script F0_S22 Actual Value: ""
+Failed comparison results at step F0_S22 Expected value: (Health Plans) Actual value: ()
+     Element type being checked at step F0_S23 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[6]/a[1]/span[1]
+     Looking up elementTag: (span[1]) Length = 7
+     Checking element by XPath: Anchor for script F0_S23 Actual Value: "Español"
+Successful comparison results at step F0_S23 Expected value: (Español) Actual value: (Español)
+     Element type being checked at step F0_S24 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[7]/a[1]/span[1]
+     Looking up elementTag: (span[1]) Length = 7
+     Checking element by XPath: Anchor for script F0_S24 Actual Value: "myDaVita Sign In"
+Successful comparison results at step F0_S24 Expected value: (myDaVita Sign In) Actual value: (myDaVita Sign In)
+     Element type being checked at step F0_S25 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[7]/span[1]
+     Looking up elementTag: (span[1]) Length = 7
+     Checking element by XPath: Anchor for script F0_S25 Actual Value: "OR"
+Successful comparison results at step F0_S25 Expected value: (OR) Actual value: (OR)
+     Element type being checked at step F0_S26 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[7]/a[2]/span[1]
+     Looking up elementTag: (span[1]) Length = 7
+     Checking element by XPath: Anchor for script F0_S26 Actual Value: "Register for Free"
+Successful comparison results at step F0_S26 Expected value: (Register for Free) Actual value: (Register for Free)
+     Element type being checked at step F0_S27 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[2]/ul[1]/li[1]
+     Looking up elementTag: (li[1]) Length = 5
+     Checking element by XPath: List Item for script F0_S27 Actual Value: "Education"
+Successful comparison results at step F0_S27 Expected value: (Education) Actual value: (Education)
+     Element type being checked at step F0_S28 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[2]/ul[1]/li[2]
+     Looking up elementTag: (li[2]) Length = 5
+     Checking element by XPath: List Item for script F0_S28 Actual Value: "Diet & Nutrition"
+Failed comparison results at step F0_S28 Expected value: (Diet &amp; Nutrition) Actual value: (Diet & Nutrition)
+     Element type being checked at step F0_S29 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[2]/ul[1]/li[3]
+     Looking up elementTag: (li[3]) Length = 5
+     Checking element by XPath: List Item for script F0_S29 Actual Value: "Treatment & Services"
+Failed comparison results at step F0_S29 Expected value: (Treatment &amp; Services) Actual value: (Treatment & Services)
+     Element type being checked at step F0_S30 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[2]/ul[1]/li[4]
+     Looking up elementTag: (li[4]) Length = 5
+     Checking element by XPath: List Item for script F0_S30 Actual Value: "Tools"
+Successful comparison results at step F0_S30 Expected value: (Tools) Actual value: (Tools)
+     Element type being checked at step F0_S31 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[2]/ul[1]/li[5]
+     Looking up elementTag: (li[5]) Length = 5
+     Checking element by XPath: List Item for script F0_S31 Actual Value: "FIND A CENTER"
+Failed comparison results at step F0_S31 Expected value: (Find a Center) Actual value: (FIND A CENTER)
+     Element type being checked at step F0_S32 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[3]/ul[1]/li[1]/a[1]/span[1]
+     Looking up elementTag: (span[1]) Length = 7
+     Checking element by XPath: Anchor for script F0_S32 Actual Value: ""
+Failed comparison results at step F0_S32 Expected value: (myDaVita Sign In) Actual value: ()
+     Element type being checked at step F0_S33 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[3]/ul[1]/li[1]/span[1]
+     Looking up elementTag: (span[1]) Length = 7
+     Checking element by XPath: Anchor for script F0_S33 Actual Value: ""
+Failed comparison results at step F0_S33 Expected value: (OR) Actual value: ()
+     Element type being checked at step F0_S34 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[3]/ul[1]/li[1]/a[2]/span[1]
+     Looking up elementTag: (span[1]) Length = 7
+     Checking element by XPath: Anchor for script F0_S34 Actual Value: ""
+Failed comparison results at step F0_S34 Expected value: (Register for Free) Actual value: ()
+     Element type being checked at step F0_S35 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[2]/div[1]/div[1]/label[1]/span[1]
+     Looking up elementTag: (span[1]) Length = 7
+     Checking element by XPath: Anchor for script F0_S35 Actual Value: ""
+Failed comparison results at step F0_S35 Expected value: (Type to search in the page) Actual value: ()
+     Element type being checked at step F0_S36 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[2]/div[1]/button[1]
+     Looking up elementTag: (button[1]) Length = 9
+     Checking element by XPath: Indeterminate for script F0_S36 Actual Value: ""
+Failed comparison results at step F0_S36 Expected value: (Search) Actual value: ()
+     Element type being checked at step F0_S37 by xPath: /html[1]/body[1]/header[1]/div[1]/div[1]/div[2]/div[1]/button[2]
+     Looking up elementTag: (button[2]) Length = 9
+     Checking element by XPath: Indeterminate for script F0_S37 Actual Value: ""
+Failed comparison results at step F0_S37 Expected value: (Cancel) Actual value: ()
+     Element type being checked at step F0_S38 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[1]/p[1]
+     Looking up elementTag: (p[1]) Length = 4
+     Checking element by XPath: Paragraph for script F0_S38 Actual Value: ""
+Failed comparison results at step F0_S38 Expected value: (Kidney Disease) Actual value: ()
+     Element type being checked at step F0_S39 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[1]/ul[1]/li[1]
+     Looking up elementTag: (li[1]) Length = 5
+     Checking element by XPath: List Item for script F0_S39 Actual Value: ""
+Failed comparison results at step F0_S39 Expected value: (Kidney Disease Basics) Actual value: ()
+     Element type being checked at step F0_S40 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[1]/ul[1]/li[2]
+     Looking up elementTag: (li[2]) Length = 5
+     Checking element by XPath: List Item for script F0_S40 Actual Value: ""
+Failed comparison results at step F0_S40 Expected value: (Symptoms &amp; Diagnosis) Actual value: ()
+     Element type being checked at step F0_S41 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[1]/ul[1]/li[3]
+     Looking up elementTag: (li[3]) Length = 5
+     Checking element by XPath: List Item for script F0_S41 Actual Value: ""
+Failed comparison results at step F0_S41 Expected value: (Risk Factors) Actual value: ()
+     Element type being checked at step F0_S42 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[1]/ul[1]/li[4]
+     Looking up elementTag: (li[4]) Length = 5
+     Checking element by XPath: List Item for script F0_S42 Actual Value: ""
+Failed comparison results at step F0_S42 Expected value: (Stages of Kidney Disease) Actual value: ()
+     Element type being checked at step F0_S43 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[1]/ul[1]/li[5]
+     Looking up elementTag: (li[5]) Length = 5
+     Checking element by XPath: List Item for script F0_S43 Actual Value: ""
+Failed comparison results at step F0_S43 Expected value: (Early Stage Kidney Disease) Actual value: ()
+     Element type being checked at step F0_S44 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[1]/ul[1]/li[6]
+     Looking up elementTag: (li[6]) Length = 5
+     Checking element by XPath: List Item for script F0_S44 Actual Value: ""
+Failed comparison results at step F0_S44 Expected value: (Late Stage Kidney Disease) Actual value: ()
+     Element type being checked at step F0_S45 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[1]/ul[1]/li[7]
+     Looking up elementTag: (li[7]) Length = 5
+     Checking element by XPath: List Item for script F0_S45 Actual Value: ""
+Failed comparison results at step F0_S45 Expected value: (Pediatric Care) Actual value: ()
+     Element type being checked at step F0_S46 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[1]/ul[1]/li[8]
+     Looking up elementTag: (li[8]) Length = 5
+     Checking element by XPath: List Item for script F0_S46 Actual Value: ""
+Failed comparison results at step F0_S46 Expected value: (Related Diseases) Actual value: ()
+     Element type being checked at step F0_S47 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[2]/p[1]
+     Looking up elementTag: (p[1]) Length = 4
+     Checking element by XPath: Paragraph for script F0_S47 Actual Value: ""
+Failed comparison results at step F0_S47 Expected value: (Life with CKD) Actual value: ()
+     Element type being checked at step F0_S48 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[2]/ul[1]/li[1]
+     Looking up elementTag: (li[1]) Length = 5
+     Checking element by XPath: List Item for script F0_S48 Actual Value: ""
+Failed comparison results at step F0_S48 Expected value: (Lifestyle Changes) Actual value: ()
+     Element type being checked at step F0_S49 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[2]/ul[1]/li[2]
+     Looking up elementTag: (li[2]) Length = 5
+     Checking element by XPath: List Item for script F0_S49 Actual Value: ""
+Failed comparison results at step F0_S49 Expected value: (Employment) Actual value: ()
+     Element type being checked at step F0_S50 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[2]/ul[1]/li[3]
+     Looking up elementTag: (li[3]) Length = 5
+     Checking element by XPath: List Item for script F0_S50 Actual Value: ""
+Failed comparison results at step F0_S50 Expected value: (Travel) Actual value: ()
+     Element type being checked at step F0_S51 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[2]/ul[1]/li[4]
+     Looking up elementTag: (li[4]) Length = 5
+     Checking element by XPath: List Item for script F0_S51 Actual Value: ""
+Failed comparison results at step F0_S51 Expected value: (Emotional Support) Actual value: ()
+     Element type being checked at step F0_S52 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[2]/ul[1]/li[5]
+     Looking up elementTag: (li[5]) Length = 5
+     Checking element by XPath: List Item for script F0_S52 Actual Value: ""
+Failed comparison results at step F0_S52 Expected value: (Caregiver) Actual value: ()
+     Element type being checked at step F0_S53 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[2]/ul[1]/li[6]
+     Looking up elementTag: (li[6]) Length = 5
+     Checking element by XPath: List Item for script F0_S53 Actual Value: ""
+Failed comparison results at step F0_S53 Expected value: (Choosing a Doctor) Actual value: ()
+     Element type being checked at step F0_S54 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[3]/p[1]
+     Looking up elementTag: (p[1]) Length = 4
+     Checking element by XPath: Paragraph for script F0_S54 Actual Value: ""
+Failed comparison results at step F0_S54 Expected value: (Kidney Smart Classes) Actual value: ()
+     Element type being checked at step F0_S55 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[3]/p[2]
+     Looking up elementTag: (p[2]) Length = 4
+     Checking element by XPath: Paragraph for script F0_S55 Actual Value: ""
+Failed comparison results at step F0_S55 Expected value: (Education Videos) Actual value: ()
+     Element type being checked at step F0_S56 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[3]/p[3]
+     Looking up elementTag: (p[3]) Length = 4
+     Checking element by XPath: Paragraph for script F0_S56 Actual Value: ""
+Failed comparison results at step F0_S56 Expected value: (Kidney Care Vocabulary) Actual value: ()
+     Element type being checked at step F0_S57 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[3]/p[4]
+     Looking up elementTag: (p[4]) Length = 4
+     Checking element by XPath: Paragraph for script F0_S57 Actual Value: ""
+Failed comparison results at step F0_S57 Expected value: (Additional Resources) Actual value: ()
+     Element type being checked at step F0_S58 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[4]/div[1]/div[1]/div[1]/h3[1]
+     Looking up elementTag: (h3[1]) Length = 5
+     Checking element by XPath: Heading for script F0_S58 Actual Value: ""
+Failed comparison results at step F0_S58 Expected value: (Kidney Smart®) Actual value: ()
+     Element type being checked at step F0_S59 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[4]/div[1]/div[2]/div[1]/p[1]
+     Looking up elementTag: (p[1]) Length = 4
+     Checking element by XPath: Paragraph for script F0_S59 Actual Value: ""
+Failed comparison results at step F0_S59 Expected value: (Learn more and get your questions answered in a no-cost kidney education class.) Actual value: ()
+     Element type being checked at step F0_S60 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[1]/div[4]/div[1]/div[2]/div[1]/div[1]
+     Looking up elementTag: (div[1]) Length = 6
+     Checking element by XPath: Div for script F0_S60 Actual Value: ""
+Failed comparison results at step F0_S60 Expected value: (FIND A CLASS) Actual value: ()
+     Element type being checked at step F0_S61 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[1]/p[1]
+     Looking up elementTag: (p[1]) Length = 4
+     Checking element by XPath: Paragraph for script F0_S61 Actual Value: ""
+Failed comparison results at step F0_S61 Expected value: (Recipes) Actual value: ()
+     Element type being checked at step F0_S62 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[1]/ul[1]/li[1]
+     Looking up elementTag: (li[1]) Length = 5
+     Checking element by XPath: List Item for script F0_S62 Actual Value: ""
+Failed comparison results at step F0_S62 Expected value: (Appetizers &amp; Snacks) Actual value: ()
+     Element type being checked at step F0_S63 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[1]/ul[1]/li[2]
+     Looking up elementTag: (li[2]) Length = 5
+     Checking element by XPath: List Item for script F0_S63 Actual Value: ""
+Failed comparison results at step F0_S63 Expected value: (Beef, Lamb &amp; Pork) Actual value: ()
+     Element type being checked at step F0_S64 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[1]/ul[1]/li[3]
+     Looking up elementTag: (li[3]) Length = 5
+     Checking element by XPath: List Item for script F0_S64 Actual Value: ""
+Failed comparison results at step F0_S64 Expected value: (Beverages) Actual value: ()
+     Element type being checked at step F0_S65 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[1]/ul[1]/li[4]
+     Looking up elementTag: (li[4]) Length = 5
+     Checking element by XPath: List Item for script F0_S65 Actual Value: ""
+Failed comparison results at step F0_S65 Expected value: (Breads) Actual value: ()
+     Element type being checked at step F0_S66 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[1]/ul[1]/li[5]
+     Looking up elementTag: (li[5]) Length = 5
+     Checking element by XPath: List Item for script F0_S66 Actual Value: ""
+Failed comparison results at step F0_S66 Expected value: (Breakfast &amp; Brunch) Actual value: ()
+     Element type being checked at step F0_S67 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[1]/ul[1]/li[6]
+     Looking up elementTag: (li[6]) Length = 5
+     Checking element by XPath: List Item for script F0_S67 Actual Value: ""
+Failed comparison results at step F0_S67 Expected value: (Chicken &amp; Turkey) Actual value: ()
+     Element type being checked at step F0_S68 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[1]/ul[1]/li[7]
+     Looking up elementTag: (li[7]) Length = 5
+     Checking element by XPath: List Item for script F0_S68 Actual Value: ""
+Failed comparison results at step F0_S68 Expected value: (Desserts) Actual value: ()
+     Element type being checked at step F0_S69 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[2]/ul[1]/li[1]
+     Looking up elementTag: (li[1]) Length = 5
+     Checking element by XPath: List Item for script F0_S69 Actual Value: ""
+Failed comparison results at step F0_S69 Expected value: (Pasta, Rice &amp; Grains) Actual value: ()
+     Element type being checked at step F0_S70 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[2]/ul[1]/li[2]
+     Looking up elementTag: (li[2]) Length = 5
+     Checking element by XPath: List Item for script F0_S70 Actual Value: ""
+Failed comparison results at step F0_S70 Expected value: (Pizza &amp; Sandwiches) Actual value: ()
+     Element type being checked at step F0_S71 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[2]/ul[1]/li[3]
+     Looking up elementTag: (li[3]) Length = 5
+     Checking element by XPath: List Item for script F0_S71 Actual Value: ""
+Failed comparison results at step F0_S71 Expected value: (Salads &amp; Dressings) Actual value: ()
+     Element type being checked at step F0_S72 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[2]/ul[1]/li[4]
+     Looking up elementTag: (li[4]) Length = 5
+     Checking element by XPath: List Item for script F0_S72 Actual Value: ""
+Failed comparison results at step F0_S72 Expected value: (Sauces &amp; Seasonings) Actual value: ()
+     Element type being checked at step F0_S73 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[2]/ul[1]/li[5]
+     Looking up elementTag: (li[5]) Length = 5
+     Checking element by XPath: List Item for script F0_S73 Actual Value: ""
+Failed comparison results at step F0_S73 Expected value: (Seafood) Actual value: ()
+     Element type being checked at step F0_S74 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[2]/ul[1]/li[6]
+     Looking up elementTag: (li[6]) Length = 5
+     Checking element by XPath: List Item for script F0_S74 Actual Value: ""
+Failed comparison results at step F0_S74 Expected value: (Soups &amp; Stews) Actual value: ()
+     Element type being checked at step F0_S75 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[2]/ul[1]/li[7]
+     Looking up elementTag: (li[7]) Length = 5
+     Checking element by XPath: List Item for script F0_S75 Actual Value: ""
+Failed comparison results at step F0_S75 Expected value: (Vegetables) Actual value: ()
+     Element type being checked at step F0_S76 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[3]/p[1]
+     Looking up elementTag: (p[1]) Length = 4
+     Checking element by XPath: Paragraph for script F0_S76 Actual Value: ""
+Failed comparison results at step F0_S76 Expected value: (Recipe Collections) Actual value: ()
+     Element type being checked at step F0_S77 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[3]/p[2]
+     Looking up elementTag: (p[2]) Length = 4
+     Checking element by XPath: Paragraph for script F0_S77 Actual Value: ""
+Failed comparison results at step F0_S77 Expected value: (Kidney-Friendly Cookbooks) Actual value: ()
+     Element type being checked at step F0_S78 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[3]/p[3]
+     Looking up elementTag: (p[3]) Length = 4
+     Checking element by XPath: Paragraph for script F0_S78 Actual Value: ""
+Failed comparison results at step F0_S78 Expected value: (Kidney Diet Tips Blog) Actual value: ()
+     Element type being checked at step F0_S79 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[3]/p[4]
+     Looking up elementTag: (p[4]) Length = 4
+     Checking element by XPath: Paragraph for script F0_S79 Actual Value: ""
+Failed comparison results at step F0_S79 Expected value: (Articles) Actual value: ()
+     Element type being checked at step F0_S80 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[3]/p[5]
+     Looking up elementTag: (p[5]) Length = 4
+     Checking element by XPath: Paragraph for script F0_S80 Actual Value: ""
+Failed comparison results at step F0_S80 Expected value: (Videos) Actual value: ()
+     Element type being checked at step F0_S81 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[4]/div[1]/div[1]/h4[1]
+     Looking up elementTag: (h4[1]) Length = 5
+     Checking element by XPath: Heading for script F0_S81 Actual Value: ""
+Failed comparison results at step F0_S81 Expected value: (Get Free Kidney-Friendly Cookbooks) Actual value: ()
+     Element type being checked at step F0_S82 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[2]/div[4]/div[1]/div[1]/div[1]/span[1]/span[1]
+Failed comparison results at step F0_S82 Expected value: (539,947 Enjoyed So Far!) Actual value: (null)
+     Element type being checked at step F0_S83 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[3]/div[1]/p[1]
+     Looking up elementTag: (p[1]) Length = 4
+     Checking element by XPath: Paragraph for script F0_S83 Actual Value: ""
+Failed comparison results at step F0_S83 Expected value: (Dialysis Treatments) Actual value: ()
+     Element type being checked at step F0_S84 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[3]/div[1]/ul[1]/li[1]
+     Looking up elementTag: (li[1]) Length = 5
+     Checking element by XPath: List Item for script F0_S84 Actual Value: ""
+Failed comparison results at step F0_S84 Expected value: (Preparing for Dialysis) Actual value: ()
+     Element type being checked at step F0_S85 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[3]/div[1]/ul[1]/li[2]
+     Looking up elementTag: (li[2]) Length = 5
+     Checking element by XPath: List Item for script F0_S85 Actual Value: ""
+Failed comparison results at step F0_S85 Expected value: (On Dialysis) Actual value: ()
+     Element type being checked at step F0_S86 by xPath: /html[1]/body[1]/header[1]/div[1]/div[2]/div[1]/div[3]/div[1]/ul[1]/li[3]
+     Looking up elementTag: (li[3]) Length = 5
+     Checking element by XPath: List Item for script F0_S86 Actual Value: ""
+Failed comparison results at step F0_S86 Expected value: (In-Center Hemodialysis) Actual value: ()
+[51m[45m[33m╚══════════════[ End of Test Script ]══════════════╝[0m
