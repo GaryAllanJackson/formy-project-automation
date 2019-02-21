@@ -140,7 +140,10 @@ public class PageHelper {
                 }
                 //resize the browser to the original dimensions
                 driver.manage().window().setSize(originalDimension);
-                screenShotsTaken++;
+                //increment the counter only for non-error conditions
+                if (!isError) {
+                    screenShotsTaken++;
+                }
             } catch (Exception e) {
                 //System.out.println(ANSI_RED + "Exception while taking screenshot (" + screenShotName + "): " + e.getMessage() + ANSI_RESET);
                 UpdateTestResults(ANSI_RED + "Exception while taking screenshot (" + screenShotName + "): " + e.getMessage() + ANSI_RESET);
@@ -459,7 +462,55 @@ public class PageHelper {
             if (helpFile.exists()) {
                 helpFile.delete();
             }
-            WriteToFile(get_helpFileName(), "Test File Format:");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+            WriteToFile(get_helpFileName(), "║                                              CONFIGURATION FILE FORMAT                                                                                                 ║");
+            WriteToFile(get_helpFileName(), "╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+            WriteToFile(get_helpFileName(), "// NOTES: Lines beginning with double slashes denote comments and will be ignored by the configuration reader.");
+            WriteToFile(get_helpFileName(), "// Configuration files are key=value pairs where you are setting a configurable value using the equal assignment operator");
+            WriteToFile(get_helpFileName(), "// TestFileName - names beginning with this are used to point to the file/files containing the test setting commands.");
+            WriteToFile(get_helpFileName(), "//    -   The Test Setting Commands file is a described in detail below under the Test File Format Section");
+            WriteToFile(get_helpFileName(), "// ScreenShotSaveFolder - folder where screenshots should be saved - Must already exist");
+            WriteToFile(get_helpFileName(), "// BrowserType values: Firefox, Chrome, PhantomJS");
+            WriteToFile(get_helpFileName(), "// RunHeadless - can be true to run headless or false to show the browser, but PhantomJs is always headless");
+            WriteToFile(get_helpFileName(), "// TestAllBrowsers - can be true or false.  If false, BrowserType must be set.  If true, BrowserType is ignored and the program will cycle through all browsers.");
+            WriteToFile(get_helpFileName(), "// SpecifyTestFiles - Can be true to specifiy each file and the order that files are run, or false to select a folder of files that will be ordered alphabetically.");
+            WriteToFile(get_helpFileName(), "// TestFolderName - will contain the folder where test files exist when SpecifyTestFiles is false.");
+            WriteToFile(get_helpFileName(), "// FolderFileFilterType - type of filtering you want to use to select similarly named files within a folder options are: ");
+            WriteToFile(get_helpFileName(), "//    -   [Starts With], [Contains] and [Ends With] ");
+            WriteToFile(get_helpFileName(), "//    -   [Starts With] - will select only the test files starting with the filter entered");
+            WriteToFile(get_helpFileName(), "//    -   [Contains] - will select only test files containing the filter entered");
+            WriteToFile(get_helpFileName(), "//    -   [Ends With] - will select only test files ending with the filter entered");
+            WriteToFile(get_helpFileName(), "// FolderFileFilter - the filter used to select only matching files within the Test Folder.");
+            WriteToFile(get_helpFileName(), "// MaxScreenShotsToTake - the maximum number of screen non-error shots to take.");
+            WriteToFile(get_helpFileName(), "//    -   When -1, only errors will create screen shots.");
+            WriteToFile(get_helpFileName(), "//    -   When 0, there is no limit and all screenshots will be taken.");
+            WriteToFile(get_helpFileName(), "//    -   When any other number, that number of screenshots or less will be taken depending upon the test and the max set.");
+            WriteToFile(get_helpFileName(), "//    -   Errors like, Element not found, will create a screenshot to allow you to see the page the application was on when the error occurred.");
+            WriteToFile(get_helpFileName(), "// In the example configuration file provided below, a single specific test file is being tested, the screen shot folder is specified, ");
+            WriteToFile(get_helpFileName(), "// but only errors will create screenshots, only the test Chrome browser will be used and will be visible, the TestFolderName specified, ");
+            WriteToFile(get_helpFileName(),"//  FolderFileFilterType specified, and FolderFileFilter specified  are all disregarded because SpecifiyTestFiles is true, meaning only files specifically specified will be used.");
+            WriteToFile(get_helpFileName(), "// The commented test file lines were included so that you can see that duplicate TestFileName0 keys can be used as well as uniquely ");
+            WriteToFile(get_helpFileName(), "// named incremental TestFileNames like TestFileName1, TestFileName2 etc.. can be used.  Just ensure that they are not preceded by comment characters, if intended to run.");
+            WriteToFile(get_helpFileName(), "//TestFileName0=C:\\TestSettings2.txt");
+            WriteToFile(get_helpFileName(), "//TestFileName1=C:\\TestSettings2.txt");
+            WriteToFile(get_helpFileName(), "TestFileName0=C:\\TestSettings.txt");
+            WriteToFile(get_helpFileName(), "ScreenShotSaveFolder=C:\\ScreenShots\\MySite");
+            WriteToFile(get_helpFileName(), "MaxScreenShotsToTake=-1");
+            WriteToFile(get_helpFileName(), "BrowserType=Chrome");
+            WriteToFile(get_helpFileName(), "RunHeadless=false");
+            WriteToFile(get_helpFileName(), "TestAllBrowsers=false");
+            WriteToFile(get_helpFileName(), "SpecifyTestFiles=true");
+            WriteToFile(get_helpFileName(), "TestFolderName=C:\\MyTestFolder\\");
+            WriteToFile(get_helpFileName(), "FolderFileFilterType=Starts_With");
+            WriteToFile(get_helpFileName(), "FolderFileFilter=MyPhrase");
+
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+            WriteToFile(get_helpFileName(), "║                                              TEST FILE FORMAT                                                                                                          ║");
+            WriteToFile(get_helpFileName(), "╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+            WriteToFile(get_helpFileName(), "### All lines beginning with ### are comments and are disregarded by the test application");
             WriteToFile(get_helpFileName(), "### ╔══════════════════════════════════╦═════════════════════════╦═══════════════════════╦════════════════════════════════════════╦══════════════════════════╗");
             WriteToFile(get_helpFileName(), "### ║ ╠[URL/XPath/CssSelector/TagName] ; [Action/Expected value] ; [Element Lookup Type] ; [Perform Action other than Read Value] ; [Critical Assertion] ╣   ║");
             WriteToFile(get_helpFileName(), "### ╚══════════════════════════════════╩═════════════════════════╩═══════════════════════╩════════════════════════════════════════╩══════════════════════════╝");
