@@ -14,13 +14,15 @@
 //    -   [Contains] - will select only test files containing the filter entered
 //    -   [Ends With] - will select only test files ending with the filter entered
 // FolderFileFilter - the filter used to select only matching files within the Test Folder.
-//TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\Gary_01\TestFiles\Tests\Formy-FormTest_new.txt
 //TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\Gary_01\TestFiles\Tests\AutomatedDavitaTestSettings_New.txt
-TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\Gary_01\TestFiles\Tests\DavitaHomePageNotFull_TestSettings.txt
+//TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\Gary_01\TestFiles\Tests\DavitaHomePageNotFull_TestSettings.txt
 //TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\Gary_01\TestFiles\Tests\Blackrock.txt
+//TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\Gary_01\TestFiles\Tests\Formy-FormTest_new2.txt
+TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\Gary_01\TestFiles\Tests\DavitaHomePageNotFull_TestSettings2.txt
 ScreenShotSaveFolder=C:\Gary\ScreenShots\Mashup
-MaxScreenShotsToTake=-1
-BrowserType=Chrome
+MaxScreenShotsToTake=1
+BrowserType=Internet Explorer
+//BrowserType=Chrome
 RunHeadless=false
 TestAllBrowsers=false
 SpecifyTestFiles=true

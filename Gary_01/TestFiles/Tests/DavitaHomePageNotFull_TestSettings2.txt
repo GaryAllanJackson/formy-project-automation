@@ -5,34 +5,24 @@
 ### The second parameter action to take or expected value to retrieve for URLs both are required separated by a alt(206), 
 ###     ╬   optionally add a second alt(206) delimiter to add a time delay (thread sleep value in milliseconds) to give the event time to complete.
 ### The third parameter is the type of check to perform and will be ignored for performing Navigation where that is irrelevant
+###        acceptable values are xPath, CssSelector, Tag Name, ClassName, ID and n/a
 ### The fourth parameter is the PeformAction boolean and true when text should be entered, a click occurs or Navigating and false when reading element values
 ### The fifth parameter is the IsCrucial boolean.  When true, if the assertion fails the test stops immediately.  When false, if the assertion fails, the tests continue.
 ### ╔════════════════════════════════╦═════════════════════════╦═══════════════════════╦════════════════════════════════════════╦══════════════════════════╗
 ### ║[URL/XPath/CssSelector/TagName] ; [Action/Expected value] ; [Element Lookup Type] ; [Perform Action other than Read Value] ; [Critical Assertion]     ║
 ### ╚════════════════════════════════╩═════════════════════════╩═══════════════════════╩════════════════════════════════════════╩══════════════════════════╝
-╠https://formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000 ; n/a ; true ; true╣
-╠first-name ; John ; ID ; true ; false╣
-╠first-name ; doubleclick ; ID ; true ; false╣
-╠n/a ; Wait ╬ 3000 ; n/a ; true ; false╣
-╠last-name ; Doe ; ID ; true ; false╣
-╠job-title ; QA Engineer ; ID ; true ; false╣
-╠radio-button-2 ; click ; ID ; true ; false╣
-╠checkbox-2 ; click ; ID ; true ; false╣
-╠option[value='1'] ; click ; CssSelector ; true ; false╣
-╠n/a ; Wait ╬ 1000 ; n/a ; true ; false╣
-╠select-menu2 ; 0-1 ; ID ; false ; false╣
-╠datepicker ; 05/28/2019 ; ID ; true ; false╣
-╠datepicker ; Keys.RETURN ; ID ; true ; false╣
-╠.btn.btn-lg.btn-primary ; click ; CssSelector ; true ; false╣
-╠n/a ; Wait ╬ 5000 ; n/a ; true ; false╣
-╠alert ; The form was successfully submitted! ; ClassName ; false ; false╣
-╠n/a ; ScreenShot ; n/a ; true ; false╣
-╠n/a ; URL ╬ https://formy-project.herokuapp.com/thanks ; n/a ; true ; false╣
-╠https://formy-project.herokuapp.com/form ; Navigate ╬  ╬ 4000 ; n/a ; true ; false╣
-╠n/a ; URL ╬ https://formy-project.herokuapp.com/form ; n/a ; true ; false╣
-╠https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_ref_comp_dropdown-menu&stacked=h ; Navigate ; n/a ; true ; true╣
-╠//button[contains(@id,'menu1')] ; Switch to iframe [iframeResult] ╬ Tutorials ; xPath ; false ; true╣
-╠//button[contains(@id,'menu1')] ; Switch to iframe [iframeResult] ╬ click ; xPath ; true ; true╣
-╠/html/body/div/div/ul/li[1]/a ; Switch to iframe [iframeResult] ╬ click ; xPath ; true ; true╣
-╠https://www.w3schools.com/tags/tryit.asp?filename=tryhtml_select ; Navigate ; n/a ; true ; true╣
-╠/html/body/select ; Switch to iframe [iframeResult] ╬ Volvo ; xPath ; false ; true╣
+╠https://www.davita.com/ ; Navigate ╬ https://www.davita.com/ ; n/a ; true ; true╣
+###╠/html[1]/head[1]/titled[1] ; Kidney disease and dialysis information - DaVita ; xPath ; false ; false╣
+###╠/html[1]/head[1]/titles[1] ; Kidney disease and dialysis information - DaVita ; xPath ; false ; false╣
+###╠/html[1]/head[1]/titleds[1] ; Kidney disease and dialysis information - DaVita ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[1]/a[1]/span[1] ; International ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[2]/a[1]/span[1] ; Careers ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[3]/a[1]/span[1] ; About DaVita ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[4]/a[1]/span[1] ; Physicians ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[5]/a[1]/span[1] ; Partners ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[6]/a[1]/span[1] ; Español ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[7]/a[1]/span[1] ; myDaVita Sign In ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[7]/span[1] ; OR ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[7]/a[2]/span[1] ; Register for Free ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[2]/ul[1]/li[1] ; Education ; xPath ; false ; false╣
+╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[2]/ul[1]/li[4] ; Tools ; xPath ; false ; false╣

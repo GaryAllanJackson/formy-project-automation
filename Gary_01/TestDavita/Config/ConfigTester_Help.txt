@@ -2,7 +2,7 @@
 ╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 ║                                              CONFIGURATION FILE FORMAT                                                                                                 ║
 ╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
-// NOTES: Lines beginning with double slashes denote comments and will be ignored by the configuration reader.
+// NOTES: Lines beginning with double slashes denote comments, in the configuration file, and will be ignored by the configuration reader.
 // Configuration files are key=value pairs where you are setting a configurable value using the equal assignment operator
 // TestFileName - names beginning with this are used to point to the file/files containing the test setting commands.
 //    -   The Test Setting Commands file is a described in detail below under the Test File Format Section
@@ -18,14 +18,14 @@
 //    -   [Contains] - will select only test files containing the filter entered
 //    -   [Ends With] - will select only test files ending with the filter entered
 // FolderFileFilter - the filter used to select only matching files within the Test Folder.
-// MaxScreenShotsToTake - the maximum number of screen non-error shots to take.
+// MaxScreenShotsToTake - the maximum number of screen shots to take including any unscheduled screenshots taken due to an error.
 //    -   When -1, only errors will create screen shots.
 //    -   When 0, there is no limit and all screenshots will be taken.
 //    -   When any other number, that number of screenshots or less will be taken depending upon the test and the max set.
 //    -   Errors like, Element not found, will create a screenshot to allow you to see the page the application was on when the error occurred.
 // In the example configuration file provided below, a single specific test file is being tested, the screen shot folder is specified, 
-// but only errors will create screenshots, only the test Chrome browser will be used and will be visible, the TestFolderName specified, 
-//  FolderFileFilterType specified, and FolderFileFilter specified  are all disregarded because SpecifiyTestFiles is true, meaning only files specifically specified will be used.
+// but no screenshots will be taken, only the test Chrome browser will be used and will be visible, the TestFolderName specified, 
+// FolderFileFilterType specified, and FolderFileFilter specified  are all disregarded because SpecifiyTestFiles is true, meaning only files specifically specified will be used.
 // The commented test file lines were included so that you can see that duplicate TestFileName0 keys can be used as well as uniquely 
 // named incremental TestFileNames like TestFileName1, TestFileName2 etc.. can be used.  Just ensure that they are not preceded by comment characters, if intended to run.
 //TestFileName0=C:\TestSettings2.txt
@@ -45,7 +45,7 @@ FolderFileFilter=MyPhrase
 ╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 ║                                              TEST FILE FORMAT                                                                                                          ║
 ╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
-### All lines beginning with ### are comments and are disregarded by the test application
+### All lines beginning with ### are comments, in the Test File, and are disregarded by the Test Application.
 ### ╔══════════════════════════════════╦═════════════════════════╦═══════════════════════╦════════════════════════════════════════╦══════════════════════════╗
 ### ║ ╠[URL/XPath/CssSelector/TagName] ; [Action/Expected value] ; [Element Lookup Type] ; [Perform Action other than Read Value] ; [Critical Assertion] ╣   ║
 ### ╚══════════════════════════════════╩═════════════════════════╩═══════════════════════╩════════════════════════════════════════╩══════════════════════════╝
@@ -65,30 +65,30 @@ FolderFileFilter=MyPhrase
 ###       When false, if the assertion fails, the tests continue and the failed results appear in red text.
 ###       All successful assertions will appear in green text.  All failed assertions will appear in red text.
 
-The examples below are are not all inclusive but rather attempt to provide you with a basic understanding
+###  The examples below are are not all inclusive but rather attempt to provide you with a basic understanding
  so that you can make the necessary changes to accomplish a testing task.
-When an error occurs it is most likely due to an element not found and a screenshot will automatically be taken.
+###  When an error occurs it is most likely due to an element not found and a screenshot will automatically be taken.
 
-=========[ NAVIGATION ]========================================================================================================================================
-All Navigation steps should be marked as crucial, as all subsequent checks require that navigation to complete successfully!!!
-To Navigate and mark that step as crucial
+###  =========[ NAVIGATION ]========================================================================================================================================
+###  All Navigation steps should be marked as crucial, as all subsequent checks require that navigation to complete successfully!!!
+###  To Navigate and mark that step as crucial
 ╠https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_ref_comp_dropdown-menu&stacked=h ; Navigate ; n/a ; true ; true╣
 
-To Navigate, assert that the URL is what follows the ╬ character and to wait 4 seconds before making the assertion to allow the page to load:
+###  To Navigate, assert that the URL is what follows the ╬ character and to wait 4 seconds before making the assertion to allow the page to load:
 ╠https://formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000 ; n/a ; true ; true╣
 
-To Navigate and Authenticate with username and password and assert that the URL is what follows the ╬ character and to wait 4 seconds before making the assertion to allow the page to load:
+###  To Navigate and Authenticate with username and password and assert that the URL is what follows the ╬ character and to wait 4 seconds before making the assertion to allow the page to load:
 ╠https://username:password@formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000 ; n/a ; true ; true╣
 
-To Navigate and Authenticate with username and password:
+###  To Navigate and Authenticate with username and password:
 ╠https://username:password@formy-project.herokuapp.com/form ; Navigate ; n/a ; true ; false╣
 
-To Navigate, assert that the URL, add a time delay and set the browser dimensions to 800 width by 800 height:
+###  To Navigate, assert that the URL, add a time delay and set the browser dimensions to 800 width by 800 height:
 ╠https://formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000  ╬ w=800 h=800 ; n/a ; true ; true╣
 ================================================================================================================================================================
 
-=========[ CHECK URL WITHOUT NAVIGATION ]=======================================================================================================================
-To check a URL without navigating and to make it non-curcial.  To make it crucial change the last parameter to true.
+###  =========[ CHECK URL WITHOUT NAVIGATION ]=======================================================================================================================
+###  To check a URL without navigating and to make it non-curcial.  To make it crucial change the last parameter to true.
 ╠n/a ; URL ╬ https://formy-project.herokuapp.com/thanks ; n/a ; true ; false╣
 ================================================================================================================================================================
 
@@ -114,6 +114,11 @@ To click an element by ID
 =========[ CLICKING AN ELEMENT THAT FORCES NAVIGATION ]=========================================================================================================
 To click an element by xPath that navigates to a new page and check the url of the new page after waiting 5 seconds for the page to load.
 ╠/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/div[1]/h4[3] ; click ╬ https://www.davita.com/education ╬ 5000 ; xPath ; true ; false╣
+================================================================================================================================================================
+
+=========[ DOUBLE CLICKING AN ELEMENT ]=========================================================================================================
+To double click an element by ID.  If this is a text field, double clicking it will select the first word.
+╠first-name ; doubleclick ; ID ; true ; false╣
 ================================================================================================================================================================
 
 =========[ RETRIEVING TEXT FROM AN ELEMENT ]====================================================================================================================
