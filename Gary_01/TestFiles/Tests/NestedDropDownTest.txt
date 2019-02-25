@@ -1,0 +1,40 @@
+### Comments in this file use 3 pound signs and anything following these will be ignored by the test program.
+### Add URL to navigate to, first URL is where browser navigates, second url is what the expected URL will be, in case of redirection etc...
+### Each parameter is separate by a semi-colon to prevent interference with navigation urls and colons
+### The first parameter url to navigate to, xPath, CssSelector, Tag Name
+### The second parameter action to take or expected value to retrieve for URLs both are required separated by a alt(206), 
+###     ╬   optionally add a second alt(206) delimiter to add a time delay (thread sleep value in milliseconds) to give the event time to complete.
+### The third parameter is the type of check to perform and will be ignored for performing Navigation where that is irrelevant
+###        acceptable values are xPath, CssSelector, Tag Name, ClassName, ID and n/a
+### The fourth parameter is the PeformAction boolean and true when text should be entered, a click occurs or Navigating and false when reading element values
+### The fifth parameter is the IsCrucial boolean.  When true, if the assertion fails the test stops immediately.  When false, if the assertion fails, the tests continue.
+### ╔════════════════════════════════╦═════════════════════════╦═══════════════════════╦════════════════════════════════════════╦══════════════════════════╗
+### ║[URL/XPath/CssSelector/TagName] ; [Action/Expected value] ; [Element Lookup Type] ; [Perform Action other than Read Value] ; [Critical Assertion]     ║
+### ╚════════════════════════════════╩═════════════════════════╩═══════════════════════╩════════════════════════════════════════╩══════════════════════════╝
+╠https://semantic-ui.com/modules/dropdown.html ; Navigate ; n/a ; true ; false╣
+╠//*[@id="example"]/div[4]/div/div[2]/div[4]/div[1]/div[2]/div/div[1] ; click ; xPath ; true ; false╣
+### The following line did not work 
+###╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; sendkeys ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.ARROW_RIGHT ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Return ; xPath ; true ; true╣
+###╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; sendkeys ╬ Keys.Arrow_Right ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Return ; xPath ; true ; false╣
+###testing this
+### ╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; sendkeys ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ; xPath ; true ; true╣
+### ╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; sendkeys ╬ Keys.Arrow_Right ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Return ; xPath ; true ; true╣
+### Testing this
+╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; sendkeys 600 ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Right ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Return ; xPath ; true ; true╣
+###╠//*[@id="example"]/div[4]/div/div[2]/div[4]/div[1]/div[2]/div/div[2]/div[10]/div/div[3] ; dropit ; xPath ; false ; true╣
+### The following 3 lines worked
+### //*[@id="example"]/div[4]/div/div[2]/div[4]/div[1]/div[2]/div/div[2]/div[10]/div/div[3]
+###╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; sendkeys ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ; xPath ; true ; false╣
+###╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; sendkeys ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ; xPath ; true ; false╣
+###╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; sendkeys ╬ Keys.ARROW_RIGHT ╬ Keys.ARROW_DOWN ╬ Keys.ARROW_DOWN ╬ Keys.RETURN ; xPath ; true ; true ╣
+### The following lines worked with the first 2 of the upper 3 lines
+###╠ /html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; Keys.ARROW_RIGHT ; xPath ; true ; false ╣
+###╠ n/a ; Wait ╬ 400 ; n/a ; true ; false ╣
+###╠ /html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; Keys.ARROW_DOWN ; xPath ; true ; true ╣
+###╠ n/a ; Wait ╬ 400 ; n/a ; true ; false ╣
+###╠ /html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; Keys.ARROW_DOWN ; xPath ; true ; true ╣
+###╠ n/a ; Wait ╬ 400 ; n/a ; true ; false ╣
+###╠ /html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; Keys.RETURN ; xPath ; true ; true ╣
+╠n/a ; Wait ╬ 5000 ; n/a ; true ; false╣
+
+

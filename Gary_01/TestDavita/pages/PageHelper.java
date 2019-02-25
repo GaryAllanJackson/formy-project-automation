@@ -628,7 +628,7 @@ public class PageHelper {
             WriteToFile(get_helpFileName(), "###       When false, if the assertion fails, the tests continue and the failed results appear in red text.");
             WriteToFile(get_helpFileName(), "###       All successful assertions will appear in green text.  All failed assertions will appear in red text.");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "###  The examples below are are not all inclusive but rather attempt to provide you with a basic understanding\r\n so that you can make the necessary changes to accomplish a testing task.");
+            WriteToFile(get_helpFileName(), "###  The examples below are are not all inclusive but rather attempt to provide you with a basic understanding\r\n###  so that you can make the necessary changes to accomplish a testing task.");
             WriteToFile(get_helpFileName(), "###  When an error occurs it is most likely due to an element not found and a screenshot will automatically be taken.");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "###  =========[ NAVIGATION ]========================================================================================================================================");
@@ -650,96 +650,106 @@ public class PageHelper {
 
             WriteToFile(get_helpFileName(), "###  To Navigate, assert that the URL, add a time delay and set the browser dimensions to 800 width by 800 height:");
             WriteToFile(get_helpFileName(), "╠https://formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000  ╬ w=800 h=800 ; n/a ; true ; true╣");
-            WriteToFile(get_helpFileName(), "================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
             WriteToFile(get_helpFileName(), "");
 
             WriteToFile(get_helpFileName(), "###  =========[ CHECK URL WITHOUT NAVIGATION ]=======================================================================================================================");
             WriteToFile(get_helpFileName(), "###  To check a URL without navigating and to make it non-curcial.  To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "╠n/a ; URL ╬ https://formy-project.herokuapp.com/thanks ; n/a ; true ; false╣");
-            WriteToFile(get_helpFileName(), "================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "=========[ WAITING FOR ITEMS TO BE AVAILABLE ]==================================================================================================================");
-            WriteToFile(get_helpFileName(), "To wait for a specific amount of time before continuing to allow for page loading or script completion");
-            WriteToFile(get_helpFileName(), "To wait for 5 seconds before continuing onto the next step.");
+            WriteToFile(get_helpFileName(), "###  =========[ WAITING FOR ITEMS TO BE AVAILABLE ]==================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  To wait for a specific amount of time before continuing to allow for page loading or script completion");
+            WriteToFile(get_helpFileName(), "###  To wait for 5 seconds before continuing onto the next step.");
             WriteToFile(get_helpFileName(), "╠n/a ; Wait ╬ 5000 ; n/a ; true ; false╣");
-            WriteToFile(get_helpFileName(), "================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "=========[ FILLING IN TEXT FIELDS ]=============================================================================================================================");
-            WriteToFile(get_helpFileName(), "To fill in a field by ID and to make it non-crucial.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "###  =========[ FILLING IN TEXT FIELDS ]=============================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  To fill in a field by ID and to make it non-crucial.  To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "╠first-name ; John ; ID ; true ; false╣");
             WriteToFile(get_helpFileName(), "");
 
             WriteToFile(get_helpFileName(), "To fill in a field by ID and to make it non-crucial when it contains a reserved command like click.  To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "╠first-name ; sendkeys ╬ click ; ID ; true ; false╣");
-            WriteToFile(get_helpFileName(), "================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "=========[ CHECKING A CHECKBOX/RADIOBUTTON - CLICKING A BUTTON ]================================================================================================");
-            WriteToFile(get_helpFileName(), "To click an element by ID");
+            WriteToFile(get_helpFileName(), "###  =========[ CHECKING A CHECKBOX/RADIOBUTTON - CLICKING A BUTTON ]================================================================================================");
+            WriteToFile(get_helpFileName(), "###  To click an element by ID");
             WriteToFile(get_helpFileName(), "╠checkbox-2 ; click ; ID ; true ; false╣");
-            WriteToFile(get_helpFileName(), "================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "=========[ CLICKING AN ELEMENT THAT FORCES NAVIGATION ]=========================================================================================================");
-            WriteToFile(get_helpFileName(), "To click an element by xPath that navigates to a new page and check the url of the new page after waiting 5 seconds for the page to load.");
+            WriteToFile(get_helpFileName(), "###  =========[ CLICKING AN ELEMENT THAT FORCES NAVIGATION ]=========================================================================================================");
+            WriteToFile(get_helpFileName(), "###  To click an element by xPath that navigates to a new page and check the url of the new page after waiting 5 seconds for the page to load.");
             WriteToFile(get_helpFileName(), "╠/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/div[1]/h4[3] ; click ╬ https://www.davita.com/education ╬ 5000 ; xPath ; true ; false╣");
-            WriteToFile(get_helpFileName(), "================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "=========[ DOUBLE CLICKING AN ELEMENT ]=========================================================================================================");
-            WriteToFile(get_helpFileName(), "To double click an element by ID.  If this is a text field, double clicking it will select the first word.");
+            WriteToFile(get_helpFileName(), "###  =========[ DOUBLE CLICKING AN ELEMENT ]=========================================================================================================");
+            WriteToFile(get_helpFileName(), "###  To double click an element by ID.  If this is a text field, double clicking it will select the first word.");
             WriteToFile(get_helpFileName(), "╠first-name ; doubleclick ; ID ; true ; false╣");
-            WriteToFile(get_helpFileName(), "================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "=========[ RETRIEVING TEXT FROM AN ELEMENT ]====================================================================================================================");
-            WriteToFile(get_helpFileName(), "Retrieving text is usually non-crucial and test execution can usually continue so the following examples are all non-crucial.  Update based on your requirements.");
-            WriteToFile(get_helpFileName(), "To retrieve the text of an element by ClassName and make the assertion non-crucial");
+            WriteToFile(get_helpFileName(), "###  =========[ SELECTING A MENU ITEM ELEMENT ]=========================================================================================================");
+            WriteToFile(get_helpFileName(), "###  When sending up, down, right and left arrows as a list of keystrokes, you can use the sendkeys action with a space afterward and an optional time between sending,");
+            WriteToFile(get_helpFileName(), "###  along with a list of keys to send, to mimic human typing.  The default interval is 400 miliseconds but in the example below 600 miliseconds is used.");
+            WriteToFile(get_helpFileName(), "╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; sendkeys 600 ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Right ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Return ; xPath ; true ; true╣");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "###  You can send these as individual commands ");
+            WriteToFile(get_helpFileName(), "╠ /html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; Keys.ARROW_RIGHT ; xPath ; true ; false ╣");
+            WriteToFile(get_helpFileName(), "╠ n/a ; Wait ╬ 400 ; n/a ; true ; false ╣");
+            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+
+            WriteToFile(get_helpFileName(), "###  =========[ RETRIEVING TEXT FROM AN ELEMENT ]====================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  Retrieving text is usually non-crucial and test execution can usually continue so the following examples are all non-crucial.  Update based on your requirements.");
+            WriteToFile(get_helpFileName(), "###  To retrieve the text of an element by ClassName and make the assertion non-crucial");
             WriteToFile(get_helpFileName(), "╠alert ; The form was successfully submitted! ; ClassName ; false ; false╣");
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "To retrieve the text of an element by xPath");
+            WriteToFile(get_helpFileName(), "###  To retrieve the text of an element by xPath");
             WriteToFile(get_helpFileName(), "╠/html[1]/body[1]/div[1]/div[1]/div[1]/ul[1]/li[1]/div[1]/div[1]/h1[1] ; Empower Yourself with Kidney Knowledge ; xPath ; false ; false╣");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
 
-            WriteToFile(get_helpFileName(), "=========[ RETRIEVING TEXT FROM AN ELEMENT IN AN IFRAME ]=======================================================================================================");
-            WriteToFile(get_helpFileName(), "When you are attempting to access an element in an iFrame, you must first switch to that iframe.");
-            WriteToFile(get_helpFileName(), "The syntax for doing so is placed in the second parameter using the key phrase Switch to iframe ");
-            WriteToFile(get_helpFileName(), "followed by the name in square brackets as shown in the following example.");
-            WriteToFile(get_helpFileName(), "To retrieve the text of an element in an iFrame by xPath");
+            WriteToFile(get_helpFileName(), "###  =========[ RETRIEVING TEXT FROM AN ELEMENT IN AN IFRAME ]=======================================================================================================");
+            WriteToFile(get_helpFileName(), "###  When you are attempting to access an element in an iFrame, you must first switch to that iframe.");
+            WriteToFile(get_helpFileName(), "###  The syntax for doing so is placed in the second parameter using the key phrase Switch to iframe ");
+            WriteToFile(get_helpFileName(), "###  followed by the name in square brackets as shown in the following example.");
+            WriteToFile(get_helpFileName(), "###  To retrieve the text of an element in an iFrame by xPath");
             WriteToFile(get_helpFileName(), "╠/html/body/select ; Switch to iframe [iframeResult] ╬ Volvo ; xPath ; false ; false╣");
-            WriteToFile(get_helpFileName(), "================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
             WriteToFile(get_helpFileName(), "");
 
 
-            WriteToFile(get_helpFileName(), "=========[ CLICK AN ELEMENT IN AN IFRAME ]=====================================================================================================================");
-            WriteToFile(get_helpFileName(), "To click an element by xPath in an iFrame");
+            WriteToFile(get_helpFileName(), "###  =========[ CLICK AN ELEMENT IN AN IFRAME ]=====================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  To click an element by xPath in an iFrame");
             WriteToFile(get_helpFileName(), "╠/html/body/div/div/ul/li[1]/a ; Switch to iframe [iframeResult] ╬ click ; xPath ; true ; true╣");
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "To select an option from an HTML Select (drop down/list) element.");
+            WriteToFile(get_helpFileName(), "###  To select an option from an HTML Select (drop down/list) element.");
             WriteToFile(get_helpFileName(), "╠option[value='1'] ; click ; CssSelector ; true ; false╣");
-            WriteToFile(get_helpFileName(), "===============================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  ===============================================================================================================================================================");
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "=========[ TAKING SCREENSHOTS ]================================================================================================================================");
-            WriteToFile(get_helpFileName(), "To take a screen shot/print screen.  The browser will be resized automatically to capture all page content.");
+            WriteToFile(get_helpFileName(), "###  =========[ TAKING SCREENSHOTS ]================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  To take a screen shot/print screen.  The browser will be resized automatically to capture all page content.");
             WriteToFile(get_helpFileName(), "╠n/a ; ScreenShot ; n/a ; true ; false╣");
-            WriteToFile(get_helpFileName(), "===============================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  ===============================================================================================================================================================");
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "=========[ SWITCHING BROWSER TABS ]============================================================================================================================");
-            WriteToFile(get_helpFileName(), "Some actions are related and to avoid unnecessary steps the enter key will be pressed after right clicking and arrowing to a particular item.");
-            WriteToFile(get_helpFileName(), "To Right click on an element, move down to the first menu item, click it to open in a new tab and switch to the new tab:");
+            WriteToFile(get_helpFileName(), "###  =========[ SWITCHING BROWSER TABS ]============================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  Some actions are related and to avoid unnecessary steps the enter key will be pressed after right clicking and arrowing to a particular item.");
+            WriteToFile(get_helpFileName(), "###  To Right click on an element, move down to the first menu item, click it to open in a new tab and switch to the new tab:");
             WriteToFile(get_helpFileName(), "╠//*[@id=\"rso\"]/div[1]/div/div[1]/div/div/div[1]/a ; right click ╬ Keys.Arrow_Down ╬ Switch to tab ; xPath ; true ; false╣");
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "To Switch back to the first tab after switching to the second tab");
+            WriteToFile(get_helpFileName(), "###  To Switch back to the first tab after switching to the second tab");
             WriteToFile(get_helpFileName(), "╠n/a ; Switch to tab 0 ; n/a ; true ; false╣");
-            WriteToFile(get_helpFileName(), "===============================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  ===============================================================================================================================================================");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");

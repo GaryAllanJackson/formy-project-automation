@@ -26,3 +26,6 @@
 ╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[1]/ul[1]/li[7]/a[2]/span[1] ; Register for Free ; xPath ; false ; false╣
 ╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[2]/ul[1]/li[1] ; Education ; xPath ; false ; false╣
 ╠/html[1]/body[1]/header[1]/div[1]/div[1]/div[1]/div[2]/ul[1]/li[4] ; Tools ; xPath ; false ; false╣
+╠https://semantic-ui.com/modules/dropdown.html ; Navigate ; n/a ; true ; false╣
+╠//*[@id="example"]/div[4]/div/div[2]/div[4]/div[1]/div[2]/div/div[1] ; click ╬ Keys.Down ╬ Keys.Down ; xPath ; true ; false╣
+

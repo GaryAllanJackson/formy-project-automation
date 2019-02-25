@@ -18,11 +18,14 @@
 //TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\Gary_01\TestFiles\Tests\DavitaHomePageNotFull_TestSettings.txt
 //TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\Gary_01\TestFiles\Tests\Blackrock.txt
 //TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\Gary_01\TestFiles\Tests\Formy-FormTest_new2.txt
-TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\Gary_01\TestFiles\Tests\DavitaHomePageNotFull_TestSettings2.txt
+//TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\Gary_01\TestFiles\Tests\DavitaHomePageNotFull_TestSettings2.txt
+TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\Gary_01\TestFiles\Tests\NestedDropDownTest.txt
+//TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\Gary_01\TestFiles\Tests\NestedDropDownForSmartyPants.txt
 ScreenShotSaveFolder=C:\Gary\ScreenShots\Mashup
 MaxScreenShotsToTake=1
-BrowserType=Internet Explorer
-//BrowserType=Chrome
+//BrowserType=Edge
+//BrowserType=Internet Explorer
+BrowserType=Chrome
 RunHeadless=false
 TestAllBrowsers=false
 SpecifyTestFiles=true

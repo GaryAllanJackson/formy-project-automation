@@ -1,0 +1,29 @@
+╠ https://semantic-ui.com/modules/dropdown.html ; Navigate - https://semantic-ui.com/modules/dropdown.html ╬  ╬ 2000 ; n/a ; true ; true ╣
+╠ /html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; click ; xPath ; true ; false ╣
+╠ n/a ; Wait ╬ 400 ; n/a ; true ; false ╣
+╠ /html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; Keys.ARROW_DOWN ; xPath ; true ; false ╣
+╠ n/a ; Wait ╬ 400 ; n/a ; true ; false ╣
+╠ /html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; Keys.ARROW_DOWN ; xPath ; true ; false ╣
+╠ n/a ; Wait ╬ 400 ; n/a ; true ; false ╣
+╠ /html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; Keys.ARROW_DOWN ; xPath ; true ; false ╣
+╠ n/a ; Wait ╬ 400 ; n/a ; true ; false ╣
+╠ /html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; Keys.ARROW_DOWN ; xPath ; true ; false ╣
+╠ n/a ; Wait ╬ 400 ; n/a ; true ; false ╣
+╠ /html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; Keys.ARROW_DOWN ; xPath ; true ; false ╣
+╠ n/a ; Wait ╬ 400 ; n/a ; true ; false ╣
+╠ /html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; Keys.ARROW_DOWN ; xPath ; true ; false ╣
+╠ n/a ; Wait ╬ 400 ; n/a ; true ; false ╣
+╠ /html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; Keys.ARROW_DOWN ; xPath ; true ; false ╣
+╠ n/a ; Wait ╬ 400 ; n/a ; true ; false ╣
+╠ /html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; Keys.ARROW_DOWN ; xPath ; true ; false ╣
+╠ n/a ; Wait ╬ 400 ; n/a ; true ; false ╣
+╠ /html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; Keys.ARROW_DOWN ; xPath ; true ; false ╣
+╠ n/a ; Wait ╬ 400 ; n/a ; true ; false ╣
+╠ /html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; Keys.ARROW_RIGHT ; xPath ; true ; false ╣
+╠ n/a ; Wait ╬ 400 ; n/a ; true ; false ╣
+╠ /html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; Keys.ARROW_DOWN ; xPath ; true ; true ╣
+╠ n/a ; Wait ╬ 400 ; n/a ; true ; false ╣
+╠ /html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; Keys.ARROW_DOWN ; xPath ; true ; true ╣
+╠ n/a ; Wait ╬ 400 ; n/a ; true ; false ╣
+╠ /html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; Keys.RETURN ; xPath ; true ; true ╣
+╠ n/a ; Wait ╬ 4000 ; n/a ; true ; false ╣
