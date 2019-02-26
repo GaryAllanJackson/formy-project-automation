@@ -612,12 +612,12 @@ public class PageHelper {
             WriteToFile(get_helpFileName(), "### ╔══════════════════════════════════╦═════════════════════════╦═══════════════════════╦════════════════════════════════════════╦══════════════════════════╗");
             WriteToFile(get_helpFileName(), "### ║ ╠[URL/XPath/CssSelector/TagName] ; [Action/Expected value] ; [Element Lookup Type] ; [Perform Action other than Read Value] ; [Critical Assertion] ╣   ║");
             WriteToFile(get_helpFileName(), "### ╚══════════════════════════════════╩═════════════════════════╩═══════════════════════╩════════════════════════════════════════╩══════════════════════════╝");
-            WriteToFile(get_helpFileName(), "### Each test script begins with ╠ (alt + 204) and ends with ╣ (alt + 185).  These delimiters allow for tests to span multiple lines.");
+            WriteToFile(get_helpFileName(), "### Each test script begins with ╠ (alt + 204) and ends with ╣ (alt + 185).  These line delimiters allow for tests to span multiple lines.");
             WriteToFile(get_helpFileName(), "### Each parameter is separated by a space + semi-colon + space.");
             WriteToFile(get_helpFileName(), "### The first parameter is one of the following: url to navigate to, or Element (xPath, CssSelector, Tag Name, ClassName, ID)");
             WriteToFile(get_helpFileName(), "### The second parameter is the action to take or expected value to retrieve.  For URLs both are required separated by a space then (alt + 206), ");
-            WriteToFile(get_helpFileName(), "###     ╬ then space. ' ╬ '  optionally add a second space + (alt + 206) + space delimiter to add a time delay (thread sleep value in milliseconds) to give the event time to complete.");
-            WriteToFile(get_helpFileName(), "###     The format is: Action ╬ Expected Value ╬ Time delay before making the assertion");
+            WriteToFile(get_helpFileName(), "###     ╬ then space. ' ╬ '  optionally add a second space + (alt + 206) + space delimiter to add a time delay (thread sleep value in milli-seconds) to give the event time to complete.");
+            WriteToFile(get_helpFileName(), "###     The format is: Action ╬ Expected Value ╬ Time delay before making the assertion.  Some commands allow for many delimited values in this field.");
             WriteToFile(get_helpFileName(), "###     For context menu navigation the action can be a chain of up or down arrow keys as well to navigate to the desired menu item.");
             WriteToFile(get_helpFileName(), "### The third parameter is the type of check to perform and will be ignored for performing Navigation where that is irrelevant");
             WriteToFile(get_helpFileName(), "###        acceptable values are xPath, CssSelector, Tag Name, ClassName, ID and n/a");
@@ -629,7 +629,7 @@ public class PageHelper {
             WriteToFile(get_helpFileName(), "###       All successful assertions will appear in green text.  All failed assertions will appear in red text.");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "###  The examples below are are not all inclusive but rather attempt to provide you with a basic understanding\r\n###  so that you can make the necessary changes to accomplish a testing task.");
-            WriteToFile(get_helpFileName(), "###  When an error occurs it is most likely due to an element not found and a screenshot will automatically be taken.");
+            WriteToFile(get_helpFileName(), "###  When an error occurs it is most likely due to an element not found and a screenshot will automatically be taken,\r\n### if you haven't set or reached the maximum number of screenshots allowed.");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "###  =========[ NAVIGATION ]========================================================================================================================================");
             WriteToFile(get_helpFileName(), "###  All Navigation steps should be marked as crucial, as all subsequent checks require that navigation to complete successfully!!!");
@@ -637,11 +637,11 @@ public class PageHelper {
             WriteToFile(get_helpFileName(), "╠https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_ref_comp_dropdown-menu&stacked=h ; Navigate ; n/a ; true ; true╣");
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "###  To Navigate, assert that the URL is what follows the ╬ character and to wait 4 seconds before making the assertion to allow the page to load:");
+            WriteToFile(get_helpFileName(), "###  To Navigate, assert that the URL is what follows the ╬ character and to wait 4 thousand milli-seconds before making the assertion to allow the page to load:");
             WriteToFile(get_helpFileName(), "╠https://formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000 ; n/a ; true ; true╣");
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "###  To Navigate and Authenticate with username and password and assert that the URL is what follows the ╬ character and to wait 4 seconds before making the assertion to allow the page to load:");
+            WriteToFile(get_helpFileName(), "###  To Navigate and Authenticate with username and password and assert that the URL is what follows the ╬ character and to wait 4 thousand milli-seconds before making the assertion to allow the page to load:");
             WriteToFile(get_helpFileName(), "╠https://username:password@formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000 ; n/a ; true ; true╣");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "###  To Navigate and Authenticate with username and password:");
@@ -654,15 +654,38 @@ public class PageHelper {
             WriteToFile(get_helpFileName(), "");
 
             WriteToFile(get_helpFileName(), "###  =========[ CHECK URL WITHOUT NAVIGATION ]=======================================================================================================================");
-            WriteToFile(get_helpFileName(), "###  To check a URL without navigating and to make it non-curcial.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "###  To check a URL without navigating and to make it non-crucial.  To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "╠n/a ; URL ╬ https://formy-project.herokuapp.com/thanks ; n/a ; true ; false╣");
             WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "###  =========[ WAITING FOR ITEMS TO BE AVAILABLE ]==================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  =========[ CHECK GET REQUEST STATUS WITHOUT NAVIGATION ]=======================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  To check the Get Requests status of a URL without navigating and to make it crucial.  To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "###  The Space between check and get is optional as shown below.");
+            WriteToFile(get_helpFileName(), "╠https://semantic-ui.com/modules/dropdown.html ; checkget ╬ 200 ; n/a ; false ; true╣");
+            WriteToFile(get_helpFileName(), "╠https://semantic-ui.com/modules/dropdown.html ; check get ╬ 200 ; n/a ; false ; true╣");
+            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "");
+
+            WriteToFile(get_helpFileName(), "###  =========[ CHECK POST REQUEST STATUS WITHOUT NAVIGATION ]=======================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  To check the Post Requests status of a URL without navigating and to make it crucial.  To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "###  The Space between check and get is optional as shown below.");
+            WriteToFile(get_helpFileName(), "╠https://semantic-ui.com/modules/dropdown.html ; checkpost ╬ 200 ; n/a ; false ; true╣");
+            WriteToFile(get_helpFileName(), "╠https://semantic-ui.com/modules/dropdown.html ; check post ╬ 200 ; n/a ; false ; true╣");
+            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "");
+
+            WriteToFile(get_helpFileName(), "###  =========[ WAITING A SPECIFIC AMOUNT OF TIME FOR ITEMS TO BE AVAILABLE ]==================================================================================================================");
             WriteToFile(get_helpFileName(), "###  To wait for a specific amount of time before continuing to allow for page loading or script completion");
-            WriteToFile(get_helpFileName(), "###  To wait for 5 seconds before continuing onto the next step.");
+            WriteToFile(get_helpFileName(), "###  To wait for 5 thousand milli-seconds before continuing onto the next step.");
             WriteToFile(get_helpFileName(), "╠n/a ; Wait ╬ 5000 ; n/a ; true ; false╣");
+            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "");
+
+            WriteToFile(get_helpFileName(), "###  =========[ WAITING FOR THE PRESENCE OF AN ELEMENT ]==================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  To wait for an element to be present, requires checking for the element using an accessor unlike waiting a specific amount of time.");
+            WriteToFile(get_helpFileName(), "###  To wait for for a maximum of 15 seconds for an element to be present and making this check crucial, use the following.  To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; wait ╬ 15 ; xPath ; true ; true╣");
             WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
             WriteToFile(get_helpFileName(), "");
 
@@ -683,7 +706,7 @@ public class PageHelper {
             WriteToFile(get_helpFileName(), "");
 
             WriteToFile(get_helpFileName(), "###  =========[ CLICKING AN ELEMENT THAT FORCES NAVIGATION ]=========================================================================================================");
-            WriteToFile(get_helpFileName(), "###  To click an element by xPath that navigates to a new page and check the url of the new page after waiting 5 seconds for the page to load.");
+            WriteToFile(get_helpFileName(), "###  To click an element by xPath that navigates to a new page and check the url of the new page after waiting 5 thousand milli-seconds for the page to load.");
             WriteToFile(get_helpFileName(), "╠/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/div[1]/h4[3] ; click ╬ https://www.davita.com/education ╬ 5000 ; xPath ; true ; false╣");
             WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
             WriteToFile(get_helpFileName(), "");
@@ -696,10 +719,10 @@ public class PageHelper {
 
             WriteToFile(get_helpFileName(), "###  =========[ SELECTING A MENU ITEM ELEMENT ]=========================================================================================================");
             WriteToFile(get_helpFileName(), "###  When sending up, down, right and left arrows as a list of keystrokes, you can use the sendkeys action with a space afterward and an optional time between sending,");
-            WriteToFile(get_helpFileName(), "###  along with a list of keys to send, to mimic human typing.  The default interval is 400 miliseconds but in the example below 600 miliseconds is used.");
+            WriteToFile(get_helpFileName(), "###  along with a list of keys to send, to mimic human typing.  The default interval is 400 milli-seconds but in the example below 600 milli-seconds is used.");
             WriteToFile(get_helpFileName(), "╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; sendkeys 600 ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Right ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Return ; xPath ; true ; true╣");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "###  You can send these as individual commands ");
+            WriteToFile(get_helpFileName(), "###  You can send these as individual commands as shown below if you need to change the time between commands or to track a particular issue when sending commands.");
             WriteToFile(get_helpFileName(), "╠ /html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; Keys.ARROW_RIGHT ; xPath ; true ; false ╣");
             WriteToFile(get_helpFileName(), "╠ n/a ; Wait ╬ 400 ; n/a ; true ; false ╣");
             WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");

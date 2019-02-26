@@ -11,6 +11,8 @@
 ### ╔════════════════════════════════╦═════════════════════════╦═══════════════════════╦════════════════════════════════════════╦══════════════════════════╗
 ### ║[URL/XPath/CssSelector/TagName] ; [Action/Expected value] ; [Element Lookup Type] ; [Perform Action other than Read Value] ; [Critical Assertion]     ║
 ### ╚════════════════════════════════╩═════════════════════════╩═══════════════════════╩════════════════════════════════════════╩══════════════════════════╝
+###╠https://semantic-ui.com/modules/dropdown.html ; check get ╬ 200 ; n/a ; false ; true╣
+╠http://digitalthinkingworks.com ; check get ╬ 403 ; n/a ; false ; false╣
 ╠https://semantic-ui.com/modules/dropdown.html ; Navigate ; n/a ; true ; false╣
 ╠//*[@id="example"]/div[4]/div/div[2]/div[4]/div[1]/div[2]/div/div[1] ; click ; xPath ; true ; false╣
 ### The following line did not work 
@@ -20,6 +22,7 @@
 ### ╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; sendkeys ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ; xPath ; true ; true╣
 ### ╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; sendkeys ╬ Keys.Arrow_Right ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Return ; xPath ; true ; true╣
 ### Testing this
+╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; wait ╬ 15 ; xPath ; true ; true╣
 ╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; sendkeys 600 ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Right ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Return ; xPath ; true ; true╣
 ###╠//*[@id="example"]/div[4]/div/div[2]/div[4]/div[1]/div[2]/div/div[2]/div[10]/div/div[3] ; dropit ; xPath ; false ; true╣
 ### The following 3 lines worked

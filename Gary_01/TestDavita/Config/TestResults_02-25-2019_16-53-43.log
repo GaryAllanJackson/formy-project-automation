@@ -1,0 +1,10 @@
+╔══════════════[ Beginning Configuration ]═══════════════════════════════════════════════════════════════════════════════════════╗
+     Configured Browser Selection = Chrome
+     [Setting ChromeDriver]
+╚══════════════[ Ending Configuration ]══════════════════════════════════════════════════════════════════════════════════════════╝
+
+╔══════════════[ Running Test Script ]═══════════════════════════════════════════════════════════════════════════════════════════╗
+     «══════════════[ Start Explicit Navigation Event ]══════════════════════════════════════════»
+     «══════════════[  End Explicit Navigation Event  ]══════════════════════════════════════════»
+     Performing xPath F0_S1 non-read action
+     Waiting a maximum of 15 seconds for step F0_S2

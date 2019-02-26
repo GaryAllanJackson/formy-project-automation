@@ -11,8 +11,11 @@
 ### ║[URL/XPath/CssSelector/TagName] ; [Action/Expected value] ; [Element Lookup Type] ; [Perform Action other than Read Value] ; [Critical Assertion]     ║
 ### ╚════════════════════════════════╩═════════════════════════╩═══════════════════════╩════════════════════════════════════════╩══════════════════════════╝
 ╠https://formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000 ; n/a ; true ; true╣
+╠https://formy-project.herokuapp.com/form ; checkget ╬ 200 ; n/a ; true ; true╣
+╠first-name ; wait ╬ 10 ; ID ; true ; false╣
 ╠first-name ; John ; ID ; true ; false╣
 ╠first-name ; doubleclick ; ID ; true ; false╣
+###╠n/a ; Wait ╬ 1000 ; n/a ; true ; false╣
 ╠n/a ; Wait ╬ 3000 ; n/a ; true ; false╣
 ╠last-name ; Doe ; ID ; true ; false╣
 ╠job-title ; QA Engineer ; ID ; true ; false╣
