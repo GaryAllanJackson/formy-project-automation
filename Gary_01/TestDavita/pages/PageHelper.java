@@ -675,6 +675,32 @@ public class PageHelper {
             WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
             WriteToFile(get_helpFileName(), "");
 
+            WriteToFile(get_helpFileName(), "###  =========[ CHECK DOCUMENT READY STATE COMPLETE WITHOUT NAVIGATION AS A POST NAVIGATION STEP]=======================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  To check that the document ready state is complete after previously navigating to a new page and to make it crucial.  To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "###  Use page as the accessor.  This will be most useful for triggered navigation.");
+            WriteToFile(get_helpFileName(), "╠page ; wait ╬ 15 ; xPath ; true ; true╣");
+            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "");
+
+            //check document ready complete
+            WriteToFile(get_helpFileName(), "###  =========[ CHECK DOCUMENT READY STATE COMPLETE WITH NAVIGATION ]=======================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  To check that the document ready state is complete with navigation and to make it crucial.  To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "###  Use page along with the URL as the accessor separated by a space.  This is useful for explicit navigation.");
+            WriteToFile(get_helpFileName(), "╠page https://semantic-ui.com/modules/dropdown.html ; wait ╬ 15 ; xPath ; true ; true╣");
+            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "");
+
+
+            WriteToFile(get_helpFileName(), "###  =========[ CHECK ALL PAGE LINKS ]=======================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  To check all page links and to make it crucial.  To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "###  The Space between check and get is optional as shown below.");
+            WriteToFile(get_helpFileName(), "╠https://semantic-ui.com/modules/dropdown.html ; check links ; n/a ; false ; false╣");
+            WriteToFile(get_helpFileName(), "╠https://semantic-ui.com/modules/dropdown.html ; check post ╬ 200 ; n/a ; false ; true╣");
+            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "");
+
+
+
             WriteToFile(get_helpFileName(), "###  =========[ WAITING A SPECIFIC AMOUNT OF TIME FOR ITEMS TO BE AVAILABLE ]==================================================================================================================");
             WriteToFile(get_helpFileName(), "###  To wait for a specific amount of time before continuing to allow for page loading or script completion");
             WriteToFile(get_helpFileName(), "###  To wait for 5 thousand milli-seconds before continuing onto the next step.");
@@ -686,6 +712,15 @@ public class PageHelper {
             WriteToFile(get_helpFileName(), "###  To wait for an element to be present, requires checking for the element using an accessor unlike waiting a specific amount of time.");
             WriteToFile(get_helpFileName(), "###  To wait for for a maximum of 15 seconds for an element to be present and making this check crucial, use the following.  To make it non-crucial change the last parameter to false.");
             WriteToFile(get_helpFileName(), "╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; wait ╬ 15 ; xPath ; true ; true╣");
+            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "");
+
+            WriteToFile(get_helpFileName(), "###  =========[ WAITING FOR DOCUMENT READY STATE COMPLETE ]==================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  To wait for the page to fully load and document state to be complete, use the following command.");
+            WriteToFile(get_helpFileName(), "###  Please note that the accessor is set to page and that an accessor type is present.  Any Accessor Type must be present, although it is not used,");
+            WriteToFile(get_helpFileName(), "###  to distinguish this document ready state complete wait from a time interval wait.");
+            WriteToFile(get_helpFileName(), "###  To wait for for a maximum of 15 seconds for document state complete and to make this check crucial, use the following.  To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "//╠page ; wait ╬ 15 ; xPath ; true ; true╣");
             WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
             WriteToFile(get_helpFileName(), "");
 

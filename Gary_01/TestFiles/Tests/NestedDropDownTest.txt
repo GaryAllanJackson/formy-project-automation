@@ -13,7 +13,8 @@
 ### ╚════════════════════════════════╩═════════════════════════╩═══════════════════════╩════════════════════════════════════════╩══════════════════════════╝
 ###╠https://semantic-ui.com/modules/dropdown.html ; check get ╬ 200 ; n/a ; false ; true╣
 ╠http://digitalthinkingworks.com ; check get ╬ 403 ; n/a ; false ; false╣
-╠https://semantic-ui.com/modules/dropdown.html ; Navigate ; n/a ; true ; false╣
+╠https://semantic-ui.com/modules/dropdown.html ; check links ; n/a ; false ; false╣
+###╠https://semantic-ui.com/modules/dropdown.html ; Navigate ; n/a ; true ; false╣
 ╠//*[@id="example"]/div[4]/div/div[2]/div[4]/div[1]/div[2]/div/div[1] ; click ; xPath ; true ; false╣
 ### The following line did not work 
 ###╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; sendkeys ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.ARROW_RIGHT ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Return ; xPath ; true ; true╣
@@ -22,6 +23,7 @@
 ### ╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; sendkeys ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ; xPath ; true ; true╣
 ### ╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; sendkeys ╬ Keys.Arrow_Right ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Return ; xPath ; true ; true╣
 ### Testing this
+╠page https://semantic-ui.com/modules/dropdown.html ; wait ╬ 15 ; xPath ; true ; false╣
 ╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; wait ╬ 15 ; xPath ; true ; true╣
 ╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; sendkeys 600 ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Right ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Return ; xPath ; true ; true╣
 ###╠//*[@id="example"]/div[4]/div/div[2]/div[4]/div[1]/div[2]/div/div[2]/div[10]/div/div[3] ; dropit ; xPath ; false ; true╣

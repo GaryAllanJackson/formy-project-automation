@@ -36,6 +36,7 @@
 ###╠/html/body/div/div/ul/li[1]/a ; Switch to iframe [iframeResult] ╬ click ; xPath ; true ; true╣
 ###╠https://www.w3schools.com/tags/tryit.asp?filename=tryhtml_select ; Navigate ; n/a ; true ; true╣
 ###╠/html/body/select ; Switch to iframe [iframeResult] ╬ Volvo ; xPath ; false ; true╣
+╠https://semantic-ui.com/modules/dropdown.html ; check get ╬ 200 ; n/a ; false ; true╣
 ╠http://www.google.com ; Navigate ╬  ╬ 4000 ; n/a ; true ; false╣
 ### enter google search term
 ╠//*[@id="tsf"]/div[2]/div/div[1]/div/div[1]/input ; selenium set viewport size java ; xPath ; true ; false╣

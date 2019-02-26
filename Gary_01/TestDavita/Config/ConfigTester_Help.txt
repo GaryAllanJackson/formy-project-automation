@@ -107,6 +107,25 @@ FolderFileFilter=MyPhrase
 ╠https://semantic-ui.com/modules/dropdown.html ; check post ╬ 200 ; n/a ; false ; true╣
 ###  ================================================================================================================================================================
 
+###  =========[ CHECK DOCUMENT READY STATE COMPLETE WITHOUT NAVIGATION AS A POST NAVIGATION STEP]=======================================================================================================================
+###  To check that the document ready state is complete after previously navigating to a new page and to make it crucial.  To make it non-crucial change the last parameter to false.
+###  Use page as the accessor.  This will be most useful for triggered navigation.
+╠page ; wait ╬ 15 ; xPath ; true ; true╣
+###  ================================================================================================================================================================
+
+###  =========[ CHECK DOCUMENT READY STATE COMPLETE WITH NAVIGATION ]=======================================================================================================================
+###  To check that the document ready state is complete with navigation and to make it crucial.  To make it non-crucial change the last parameter to false.
+###  Use page along with the URL as the accessor separated by a space.  This is useful for explicit navigation.
+╠page https://semantic-ui.com/modules/dropdown.html ; wait ╬ 15 ; xPath ; true ; true╣
+###  ================================================================================================================================================================
+
+###  =========[ CHECK ALL PAGE LINKS ]=======================================================================================================================
+###  To check all page links and to make it crucial.  To make it non-crucial change the last parameter to false.
+###  The Space between check and get is optional as shown below.
+╠https://semantic-ui.com/modules/dropdown.html ; check links ; n/a ; false ; false╣
+╠https://semantic-ui.com/modules/dropdown.html ; check post ╬ 200 ; n/a ; false ; true╣
+###  ================================================================================================================================================================
+
 ###  =========[ WAITING A SPECIFIC AMOUNT OF TIME FOR ITEMS TO BE AVAILABLE ]==================================================================================================================
 ###  To wait for a specific amount of time before continuing to allow for page loading or script completion
 ###  To wait for 5 thousand milli-seconds before continuing onto the next step.
@@ -117,6 +136,14 @@ FolderFileFilter=MyPhrase
 ###  To wait for an element to be present, requires checking for the element using an accessor unlike waiting a specific amount of time.
 ###  To wait for for a maximum of 15 seconds for an element to be present and making this check crucial, use the following.  To make it non-crucial change the last parameter to false.
 ╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; wait ╬ 15 ; xPath ; true ; true╣
+###  ================================================================================================================================================================
+
+###  =========[ WAITING FOR DOCUMENT READY STATE COMPLETE ]==================================================================================================================
+###  To wait for the page to fully load and document state to be complete, use the following command.
+###  Please note that the accessor is set to page and that an accessor type is present.  Any Accessor Type must be present, although it is not used,
+###  to distinguish this document ready state complete wait from a time interval wait.
+###  To wait for for a maximum of 15 seconds for document state complete and to make this check crucial, use the following.  To make it non-crucial change the last parameter to false.
+//╠page ; wait ╬ 15 ; xPath ; true ; true╣
 ###  ================================================================================================================================================================
 
 ###  =========[ FILLING IN TEXT FIELDS ]=============================================================================================================================

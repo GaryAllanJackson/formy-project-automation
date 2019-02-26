@@ -109,6 +109,7 @@ public class HomePage {
     private String edgeDriverPath = "/Users/gjackson/Downloads/EdgeDriver/MicrosoftWebDriver.exe";
 
     private boolean _executedFromMain = false;
+    private int brokenLinksStatusCode;
 
 
 
@@ -406,91 +407,18 @@ public class HomePage {
                 //get value and check against expected
                 if (!ts.getPerformWrite()) {
                     if (!ts.get_searchType().toLowerCase().equals("n/a")) {
-                        //pageHelper.UpdateTestResults("Element type being checked is <" + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
-
-                        String actual = "";
-                        //pageHelper.UpdateTestResults("Search Type = " + ts.get_searchType());
-
-                        if (ts.get_searchType().toLowerCase().equals("xpath")) {
-                            pageHelper.UpdateTestResults(pageHelper.indent5 + "Element type being checked at step " + fileStepIndexForLog + " by xPath: " + accessor, testResults);
-                            //actual = CheckElementWithXPath(accessor, ts, fileStepIndex);
-                            actual = CheckElementWithXPath(ts, fileStepIndex);
-                        } else if (ts.get_searchType().toLowerCase().equals("cssselector")) {
-                            pageHelper.UpdateTestResults(pageHelper.indent5 + "Element type being checked at step " + fileStepIndexForLog + " by CssSelector: " + accessor, testResults);
-                            //actual = CheckElementWithCssSelector(accessor, fileStepIndex);
-                            actual = CheckElementWithCssSelector(ts, fileStepIndex);
-                        } else if (ts.get_searchType().toLowerCase().equals("tagname")) {
-                            pageHelper.UpdateTestResults(pageHelper.indent5 + "Element type being checked at step " + fileStepIndexForLog + " by TagName: " + accessor, testResults);
-                            //actual = CheckElementWithTagName(accessor, fileStepIndex);
-                            actual = CheckElementWithTagName(ts, fileStepIndex);
-                        } else if (ts.get_searchType().toLowerCase().equals("classname")) {
-                            pageHelper.UpdateTestResults(pageHelper.indent5 + "Element type being checked at step " + fileStepIndexForLog + " by ClassName: " + accessor, testResults);
-                            //actual = CheckElementWithClassName(accessor, fileStepIndex);
-                            actual = CheckElementWithClassName(ts, fileStepIndex);
-                        } else if (ts.get_searchType().toLowerCase().equals("id")) {
-                            pageHelper.UpdateTestResults(pageHelper.indent5 + "Element type being checked at step " + fileStepIndexForLog + " by Id: " + accessor, testResults);
-                            //actual = CheckElementWithId(accessor, fileStepIndex);
-                            actual = CheckElementWithId(ts, fileStepIndex);
-                        }
-
-                        if (ts.get_isCrucial()) {
-                            assertEquals(expected, actual);
-                        } else {
-                            try {
-                                assertEquals(expected, actual);
-                            } catch (AssertionError ae) {
-                                // do not capture screen shot here, if element not found, check methods will capture screen shot
-                            }
-                        }
-                        if (expected.equals(actual)) {
-                            pageHelper.UpdateTestResults("Successful comparison results at step " + fileStepIndexForLog + " Expected value: (" + expected + ") Actual value: (" + actual + ")", testResults);
-                        } else if (!expected.equals(actual)) {
-                            pageHelper.UpdateTestResults("Failed comparison results at step " + fileStepIndexForLog + " Expected value: (" + expected + ") Actual value: (" + actual + ")", testResults);
-                            if (screenShotSaveFolder != null && !screenShotSaveFolder.isEmpty()) {
-                                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "Assert_Fail", screenShotSaveFolder, false);
-                            }
-                        }
+                        //refactored and moved to separate method
+                        CheckElementText(browserUsed, ts, expected, accessor, fileStepIndex, fileStepIndexForLog);
                     }
                     else {
-                        //pageHelper.UpdateTestResults("In the correct else!");
-                        if (ts.get_expectedValue().toLowerCase().contains("check") && (ts.get_expectedValue().toLowerCase().contains("post") || ts.get_expectedValue().toLowerCase().contains("get"))) {
-                            int expectedStatus = 200;
-                            int actualStatus;
-                            //pageHelper.UpdateTestResults("In the correct else!");
-                            if (ts.get_expectedValue().contains(parameterDelimiter)) {
-                                expectedStatus = parseInt(ts.get_expectedValue().split(parameterDelimiter)[1]);
-                            }
-                            if (ts.get_expectedValue().toLowerCase().contains("post")) {
-                                pageHelper.UpdateTestResults(pageHelper.indent5 + "Checking Post status of " + ts.get_xPath());
-                                actualStatus = httpResponseCodeViaPost(ts.get_xPath());
-                            }
-                            else if (ts.get_expectedValue().toLowerCase().contains("get")) {
-                                pageHelper.UpdateTestResults(pageHelper.indent5 + "Checking Get status of " + ts.get_xPath());
-                                actualStatus = httpResponseCodeViaGet(ts.get_xPath());
-                            }
-                            else {
-                                ImproperlyFormedTest(fileStepIndexForLog);
-                                actualStatus = -1;
-                            }
-                            if (actualStatus != -1) {
-                                if (ts.get_isCrucial()) {
-                                    assertEquals(expectedStatus, actualStatus);
-                                } else {
-                                    try {
-                                        assertEquals(expectedStatus, actualStatus);
-                                    } catch (AssertionError ae) {
-                                        // do not capture screen shot here, if element not found, check methods will capture screen shot
-                                    }
-                                }
-                            }
-                            if (expectedStatus == actualStatus) {
-                                pageHelper.UpdateTestResults("Successful comparison results at step " + fileStepIndexForLog + " Expected value: (" + expectedStatus + ") Actual value: (" + actualStatus + ")", testResults);
-                            } else if (expectedStatus != actualStatus) {
-                                pageHelper.UpdateTestResults("Failed comparison results at step " + fileStepIndexForLog + " Expected value: (" + expectedStatus + ") Actual value: (" + actualStatus + ")", testResults);
-//                                if (screenShotSaveFolder != null && !screenShotSaveFolder.isEmpty()) {
-//                                    pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "Assert_Fail", screenShotSaveFolder, false);
-//                                }
-                            }
+                        if (ts.get_expectedValue().toLowerCase().contains("check") && (ts.get_expectedValue().toLowerCase().contains("post") ||
+                                ts.get_expectedValue().toLowerCase().contains("get"))) {
+                            //refactored and moved to separate method
+                            CheckGetPostStatus(ts, fileStepIndexForLog);
+                        }
+                        else if (ts.get_expectedValue().toLowerCase().contains("check") && ts.get_expectedValue().toLowerCase().contains("links")) {
+                            pageHelper.UpdateTestResults(pageHelper.indent5 + "Checking page links for " + ts.get_xPath());
+                            checkBrokenLinks(ts.get_xPath());
                         }
                     }
                 } else {  //set a value or perform a click
@@ -673,6 +601,100 @@ public class HomePage {
     }
 
     /* ************************************************************
+     * DESCRIPTION: (Refactored and extracted as separate method)
+     *      Checks the status of the Get or Post against the
+     *      expected value.
+     ************************************************************ */
+    private void CheckGetPostStatus(TestSettings ts, String fileStepIndexForLog) {
+        int expectedStatus = 200;
+        int actualStatus;
+
+        if (ts.get_expectedValue().contains(parameterDelimiter)) {
+            expectedStatus = parseInt(ts.get_expectedValue().split(parameterDelimiter)[1]);
+        }
+        if (ts.get_expectedValue().toLowerCase().contains("post")) {
+            pageHelper.UpdateTestResults(pageHelper.indent5 + "Checking Post status of " + ts.get_xPath());
+            actualStatus = httpResponseCodeViaPost(ts.get_xPath());
+        }
+        else if (ts.get_expectedValue().toLowerCase().contains("get")) {
+            pageHelper.UpdateTestResults(pageHelper.indent5 + "Checking Get status of " + ts.get_xPath());
+            actualStatus = httpResponseCodeViaGet(ts.get_xPath());
+        }
+        else {
+            ImproperlyFormedTest(fileStepIndexForLog);
+            actualStatus = -1;
+        }
+        if (actualStatus != -1) {
+            if (ts.get_isCrucial()) {
+                assertEquals(expectedStatus, actualStatus);
+            } else {
+                try {
+                    assertEquals(expectedStatus, actualStatus);
+                } catch (AssertionError ae) {
+                    // do not capture screen shot here, if element not found, check methods will capture screen shot
+                }
+            }
+        }
+        if (expectedStatus == actualStatus) {
+            pageHelper.UpdateTestResults("Successful comparison results at step " + fileStepIndexForLog + " Expected value: (" + expectedStatus + ") Actual value: (" + actualStatus + ")", testResults);
+        } else if (expectedStatus != actualStatus) {
+            pageHelper.UpdateTestResults("Failed comparison results at step " + fileStepIndexForLog + " Expected value: (" + expectedStatus + ") Actual value: (" + actualStatus + ")", testResults);
+        }
+    }
+
+
+    /* ************************************************************
+     * DESCRIPTION: (Refactored and extracted as separate method)
+     *      Checks the text of the element against the expected value.
+     ************************************************************ */
+    private void CheckElementText(String browserUsed, TestSettings ts, String expected, String accessor, String fileStepIndex, String fileStepIndexForLog) throws Exception {
+        //pageHelper.UpdateTestResults("Element type being checked is <" + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
+
+        String actual = "";
+        //pageHelper.UpdateTestResults("Search Type = " + ts.get_searchType());
+
+        if (ts.get_searchType().toLowerCase().equals("xpath")) {
+            pageHelper.UpdateTestResults(pageHelper.indent5 + "Element type being checked at step " + fileStepIndexForLog + " by xPath: " + accessor, testResults);
+            //actual = CheckElementWithXPath(accessor, ts, fileStepIndex);
+            actual = CheckElementWithXPath(ts, fileStepIndex);
+        } else if (ts.get_searchType().toLowerCase().equals("cssselector")) {
+            pageHelper.UpdateTestResults(pageHelper.indent5 + "Element type being checked at step " + fileStepIndexForLog + " by CssSelector: " + accessor, testResults);
+            //actual = CheckElementWithCssSelector(accessor, fileStepIndex);
+            actual = CheckElementWithCssSelector(ts, fileStepIndex);
+        } else if (ts.get_searchType().toLowerCase().equals("tagname")) {
+            pageHelper.UpdateTestResults(pageHelper.indent5 + "Element type being checked at step " + fileStepIndexForLog + " by TagName: " + accessor, testResults);
+            //actual = CheckElementWithTagName(accessor, fileStepIndex);
+            actual = CheckElementWithTagName(ts, fileStepIndex);
+        } else if (ts.get_searchType().toLowerCase().equals("classname")) {
+            pageHelper.UpdateTestResults(pageHelper.indent5 + "Element type being checked at step " + fileStepIndexForLog + " by ClassName: " + accessor, testResults);
+            //actual = CheckElementWithClassName(accessor, fileStepIndex);
+            actual = CheckElementWithClassName(ts, fileStepIndex);
+        } else if (ts.get_searchType().toLowerCase().equals("id")) {
+            pageHelper.UpdateTestResults(pageHelper.indent5 + "Element type being checked at step " + fileStepIndexForLog + " by Id: " + accessor, testResults);
+            //actual = CheckElementWithId(accessor, fileStepIndex);
+            actual = CheckElementWithId(ts, fileStepIndex);
+        }
+
+        if (ts.get_isCrucial()) {
+            assertEquals(expected, actual);
+        } else {
+            try {
+                assertEquals(expected, actual);
+            } catch (AssertionError ae) {
+                // do not capture screen shot here, if element not found, check methods will capture screen shot
+            }
+        }
+        if (expected.equals(actual)) {
+            pageHelper.UpdateTestResults("Successful comparison results at step " + fileStepIndexForLog + " Expected value: (" + expected + ") Actual value: (" + actual + ")", testResults);
+        } else if (!expected.equals(actual)) {
+            pageHelper.UpdateTestResults("Failed comparison results at step " + fileStepIndexForLog + " Expected value: (" + expected + ") Actual value: (" + actual + ")", testResults);
+            if (screenShotSaveFolder != null && !screenShotSaveFolder.isEmpty()) {
+                pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "Assert_Fail", screenShotSaveFolder, false);
+            }
+        }
+    }
+
+    /* ************************************************************
      * DESCRIPTION:
      *      Method reports improperly formatted tests to the
      *      user with the test step so that it can be fixed.
@@ -695,14 +717,30 @@ public class HomePage {
         Thread.sleep(milliseconds);
     }
 
+    /* ************************************************************
+     * DESCRIPTION:
+     *      Waits a maximum of maxTimeInSeconds, which can come from
+     *      the test command or default to 10 seconds, for the presence
+     *      of the element or page.
+     *      Reports if the element or page was present within the
+     *      maxTimeInSeconds time limit.
+     ************************************************************ */
     private void WaitForElement(TestSettings ts, String fileStepIndexForLog) {
-
+        Boolean pageLoadComplete = false;
         String accessorType = ts.get_searchType().toLowerCase().trim();
         String accessor = ts.get_xPath().trim();
         int maxTimeInSeconds = ts.get_expectedValue().trim().contains(" ╬ ") ? parseInt(ts.get_expectedValue().split(" ╬ ")[1]) : 10;
-        pageHelper.UpdateTestResults(pageHelper.indent5 + "Waiting a maximum of " + maxTimeInSeconds + " seconds for presence of element " + accessor + " at step " + fileStepIndexForLog, testResults);
+        if (ts.get_xPath().toLowerCase().trim().contains("page"))
+        {
+            accessorType = "page";
+            pageHelper.UpdateTestResults(pageHelper.indent5 + "Waiting a maximum of " + maxTimeInSeconds + " seconds for page load to complete at step " + fileStepIndexForLog, testResults);
+        }
+        else {
+            pageHelper.UpdateTestResults(pageHelper.indent5 + "Waiting a maximum of " + maxTimeInSeconds + " seconds for presence of element " + accessor + " at step " + fileStepIndexForLog, testResults);
+        }
         //pageHelper.UpdateTestResults("Waiting for element: accessor = " + accessor);
-        WebElement element;
+        WebElement element = null;
+
         switch (accessorType) {
             case "xpath":
                 element = new WebDriverWait(driver, maxTimeInSeconds).until(ExpectedConditions.presenceOfElementLocated(By.xpath(accessor)));
@@ -719,10 +757,40 @@ public class HomePage {
             case "cssselector":
                 element = new WebDriverWait(driver, maxTimeInSeconds).until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(accessor)));
                 break;
+            case "page":  //wait for page load
+                if (ts.get_xPath().trim().contains(" ")) {
+                    try {
+                        pageHelper.NavigateToPage(driver, ts.get_xPath().trim().split(" ")[1]);
+
+                    } catch (Exception ex) {
+                        pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed to navigate error: " + ex.getMessage());
+                    }
+                }
+                pageLoadComplete = new WebDriverWait(driver, maxTimeInSeconds).until(
+                        webDriver -> ((JavascriptExecutor) webDriver).executeScript("return document.readyState").equals("complete"));
+                break;
             default:  //default to xpath if missing
                 element = new WebDriverWait(driver, maxTimeInSeconds).until(ExpectedConditions.presenceOfElementLocated(By.xpath(accessor)));
                 break;
         }
+
+        if (!ts.get_xPath().toLowerCase().trim().contains("page")) {
+            if (element != null) {
+                pageHelper.UpdateTestResults(pageHelper.ANSI_GREEN + "Successful load of element " + accessor + " within max time setting of " + maxTimeInSeconds + " at step " + fileStepIndexForLog, testResults);
+            }
+            else {
+                pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed to load element " + accessor + " within max time setting of " + maxTimeInSeconds + " at step " + fileStepIndexForLog, testResults);
+            }
+        }
+        else {
+            if (pageLoadComplete) {
+                pageHelper.UpdateTestResults(pageHelper.ANSI_GREEN + "Successful load of page " + GetCurrentPageUrl() + " within max time setting of " + maxTimeInSeconds + " at step " + fileStepIndexForLog, testResults);
+            }
+            else {
+                pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed to load element " + GetCurrentPageUrl() + " within max time setting of " + maxTimeInSeconds + " at step " + fileStepIndexForLog, testResults);
+            }
+        }
+
     }
 
     /* ************************************************************
@@ -765,6 +833,56 @@ public class HomePage {
         return RestAssured.post(url).statusCode();
     }
 
+
+    /* ************************************************************
+     * DESCRIPTION:
+     *      Retrieves all anchor tags in a page and reports the
+     *      status of all anchor tags that have an href attribute.
+     ************************************************************ */
+    public void checkBrokenLinks(String url) {
+        driver.get(url);
+        int linkCount = 0;
+
+        //Get all the links on the page
+        List<WebElement> links = driver.findElements(By.cssSelector("a"));
+
+        String href;
+        //region { variables for retrieving attributes currently not in use}
+//        String text;
+//        String name;
+//        String id;
+        //endregion
+
+        pageHelper.UpdateTestResults(pageHelper.indent5 + "Retrieved " + links.size() + " anchor tags");
+        for(WebElement link : links) {
+            href = link.getAttribute("href");
+            //region { Other attributes not being used }
+//            text = link.getText();
+//            name = link.getAttribute("name");
+//            id = link.getAttribute("id");
+            //pageHelper.UpdateTestResults("Testing...TagName = " + name + " Tag id = " + id);
+            //endregion
+
+            if (href != null) {
+                linkCount++;
+                brokenLinksStatusCode = httpResponseCodeViaGet(href);
+
+                if (200 != brokenLinksStatusCode) {
+                    pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed link test " + href + " gave a response code of " + brokenLinksStatusCode + pageHelper.ANSI_RESET);
+                } else {
+                    pageHelper.UpdateTestResults(pageHelper.ANSI_GREEN + "Successful link test " + href + " gave a response code of " + brokenLinksStatusCode + pageHelper.ANSI_RESET);
+                }
+            }
+            // region { Removed code for reporting on anchor tags with no href attribute }
+//            else {
+//                pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "href is null for link with text: " + text  + pageHelper.ANSI_RESET);
+//            }
+            //endregion
+        }
+        pageHelper.UpdateTestResults(pageHelper.indent5 + "Discovered " + linkCount + " links amongst " + links.size() + " anchor tags.");
+    }
+
+
     /* ************************************************************
      * DESCRIPTION:
      *      Returns the text of an element using its xPath accessor.
@@ -786,12 +904,14 @@ public class HomePage {
             String typeOfElement = this.driver.findElement(By.xpath(accessor)).getAttribute("type");
             if (typeOfElement!= null && (typeOfElement.contains("select-one") || typeOfElement.contains("select-many"))) {
                 Select select = new Select(this.driver.findElement(By.xpath(accessor)));
+                //wait until element is present commented out and functionality pushed to separate stand-alone action
                 //Select select = new Select((new WebDriverWait(driver,10)).until(ExpectedConditions.presenceOfElementLocated(By.xpath(accessor))));
                 WebElement option = select.getFirstSelectedOption();
                 actualValue = option.getText();
             }
             else {
                 actualValue = this.driver.findElement(By.xpath(accessor)).getText();
+                //wait until element is present commented out and functionality pushed to separate  stand-alone action
                 //actualValue = (new WebDriverWait(driver,10)).until(ExpectedConditions.presenceOfElementLocated(By.xpath(accessor))).getText();
             }
             pageHelper.UpdateTestResults(pageHelper.indent5 + "Checking element by XPath: " + ElementTypeLookup(accessor) + " for script " + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
@@ -1115,7 +1235,7 @@ public class HomePage {
                         this.driver.findElement(By.tagName(accessor)).sendKeys(GetKeyValue(value, fileStepIndex));
                     }
                 } else {
-                    pageHelper.UpdateTestResults("Not sending reserved Key strokes.");
+                    //pageHelper.UpdateTestResults("Not sending reserved Key strokes.");
                     if (accesssorType.toLowerCase().equals("xpath")) {
                         this.driver.findElement(By.xpath(accessor)).sendKeys(value);
                     }
