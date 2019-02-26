@@ -120,10 +120,21 @@ FolderFileFilter=MyPhrase
 ###  ================================================================================================================================================================
 
 ###  =========[ CHECK ALL PAGE LINKS ]=======================================================================================================================
-###  To check all page links and to make it crucial.  To make it non-crucial change the last parameter to false.
-###  The Space between check and get is optional as shown below.
+###  To check all page links and to make it non-crucial.  To make it crucial change the last parameter to true.
+###  This will check for a status code of 200 for all links on the page but will report the status code for all links.
 ╠https://semantic-ui.com/modules/dropdown.html ; check links ; n/a ; false ; false╣
-╠https://semantic-ui.com/modules/dropdown.html ; check post ╬ 200 ; n/a ; false ; true╣
+###  ================================================================================================================================================================
+
+###  =========[ CHECK ALL PAGE IMAGE SRC TAGS ]=======================================================================================================================
+###  To check all page image src tags, to ensure a source exists and to make it non-crucial.  To make it crucial change the last parameter to true.
+###  The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sources but will report the status of all image sources.
+╠https://semantic-ui.com/modules/dropdown.html ; check images src ; n/a ; false ; false╣
+###  ================================================================================================================================================================
+
+###  =========[ CHECK ALL PAGE IMAGE ALT TAGS ]=======================================================================================================================
+###  To check all page image alt tags, for ADA compliance and to make it crucial.  To make it non-crucial change the last parameter to false.
+###  The alt tag will checked to see if it exists and is not empty.  Empty tags will be flagged as failed.
+╠https://semantic-ui.com/modules/dropdown.html ; check images alt ; n/a ; false ; false╣
 ###  ================================================================================================================================================================
 
 ###  =========[ WAITING A SPECIFIC AMOUNT OF TIME FOR ITEMS TO BE AVAILABLE ]==================================================================================================================

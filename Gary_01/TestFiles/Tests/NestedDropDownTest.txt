@@ -13,7 +13,9 @@
 ### ╚════════════════════════════════╩═════════════════════════╩═══════════════════════╩════════════════════════════════════════╩══════════════════════════╝
 ###╠https://semantic-ui.com/modules/dropdown.html ; check get ╬ 200 ; n/a ; false ; true╣
 ╠http://digitalthinkingworks.com ; check get ╬ 403 ; n/a ; false ; false╣
-╠https://semantic-ui.com/modules/dropdown.html ; check links ; n/a ; false ; false╣
+###╠https://semantic-ui.com/modules/dropdown.html ; check links ; n/a ; false ; false╣
+╠https://semantic-ui.com/modules/dropdown.html ; check images alt ; n/a ; false ; false╣
+╠https://semantic-ui.com/modules/dropdown.html ; check images src ; n/a ; false ; false╣
 ###╠https://semantic-ui.com/modules/dropdown.html ; Navigate ; n/a ; true ; false╣
 ╠//*[@id="example"]/div[4]/div/div[2]/div[4]/div[1]/div[2]/div/div[1] ; click ; xPath ; true ; false╣
 ### The following line did not work 

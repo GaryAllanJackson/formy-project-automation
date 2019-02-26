@@ -420,6 +420,15 @@ public class HomePage {
                             pageHelper.UpdateTestResults(pageHelper.indent5 + "Checking page links for " + ts.get_xPath());
                             checkBrokenLinks(ts.get_xPath());
                         }
+                        else if (ts.get_expectedValue().toLowerCase().contains("check") && ts.get_expectedValue().toLowerCase().contains("image"))
+                        {
+                            if (ts.get_expectedValue().toLowerCase().contains("alt")) {
+                                checkADAImages(ts.get_xPath(), "alt");
+                            }
+                            else if (ts.get_expectedValue().toLowerCase().contains("src")) {
+                                checkADAImages(ts.get_xPath(), "src");
+                            }
+                        }
                     }
                 } else {  //set a value or perform a click
                     Boolean status;
@@ -485,8 +494,6 @@ public class HomePage {
                         }
                         for (String item: keysToSend) {
                             if (!item.toLowerCase().contains("sendkeys")) {
-                                //pageHelper.UpdateTestResults("In the for loop item = " + item);
-                                //pageHelper.UpdateTestResults("In the for loop timeDelay = " + timeDelay);
                                 status = PerformAction(ts.get_searchType(), ts.get_xPath(), "sendkeys" + parameterDelimiter + item, fileStepIndex);
                                 DelayCheck(timeDelay, fileStepIndex);
                             }
@@ -498,54 +505,7 @@ public class HomePage {
                     else if (ts.get_searchType().toLowerCase().indexOf("n/a") >= 0) {
                         //perform all non-read actions below that do not use an accessor
                         if (ts.get_expectedValue().toLowerCase().indexOf("navigate") >= 0) {
-                            String navigateUrl = ts.get_xPath();
-
-                            String [] expectedItems = ts.get_expectedValue().split(parameterDelimiter);
-                            String expectedUrl = null;
-                            int delayMilliSeconds = 0;
-                            if (dashCount > 0) {
-                                expectedUrl = expectedItems[1].trim();
-
-                                if (dashCount > 1) {
-                                    delayMilliSeconds = parseInt(expectedItems[2].trim());
-                                }
-                                if (dashCount > 2) {
-                                    String dimensions = expectedItems[3].trim();
-                                    int wStart;
-                                    int hStart;
-                                    int width;
-                                    int height;
-                                    if (dimensions.toLowerCase().contains("w=") && dimensions.toLowerCase().contains("h=")) {
-                                        wStart = dimensions.toLowerCase().indexOf("w=");
-                                        hStart = dimensions.toLowerCase().indexOf("h=");
-                                        if (wStart < hStart) {
-                                            width = parseInt(dimensions.substring(dimensions.indexOf("w=") + 2, dimensions.indexOf("h=")).trim());
-                                            height = parseInt(dimensions.substring(dimensions.indexOf("h=") + 2, dimensions.length()).trim());
-                                        }
-                                        else {
-                                            height= parseInt(dimensions.substring(dimensions.indexOf("h=") + 2, dimensions.indexOf("w=")).trim());
-                                            width = parseInt(dimensions.substring(dimensions.indexOf("w=") + 2, dimensions.length()).trim());
-                                        }
-                                        pageHelper.UpdateTestResults(pageHelper.indent5 + "Setting browser dimensions to (Width=" + width + " Height=" + height, testResults);
-                                        pageHelper.SetWindowContentDimensions(driver, width, height);
-                                    }
-                                }
-                            }
-                            this.testPage = navigateUrl;
-                            //Explicit Navigation Event
-                            pageHelper.UpdateTestResults( pageHelper.subsectionLeft + "Start Explicit Navigation Event" + pageHelper.subsectionRight, testResults);
-                            pageHelper.UpdateTestResults(pageHelper.indent8 + "Navigating to " + navigateUrl);
-                            String actualUrl = CheckPageUrl(delayMilliSeconds);
-                            if (expectedUrl != null && expectedUrl.trim().length() > 0) {
-                                assertEquals(expectedUrl, actualUrl);
-                                if (expectedUrl.trim().equals(actualUrl.trim())) {
-                                    pageHelper.UpdateTestResults(pageHelper.indent8 + "Navigation and URL Check successful for step " + fileStepIndexForLog + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")", testResults);
-                                } else {
-                                    pageHelper.UpdateTestResults(pageHelper.indent8 + "Navigation and URL Check unsuccessful for step " + fileStepIndexForLog + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")", testResults);
-                                }
-                            }
-                            //[ End Explicit Navigation Event
-                            pageHelper.UpdateTestResults(pageHelper.subsectionLeft + " End Explicit Navigation Event " + pageHelper.subsectionRight, testResults);
+                            PerformExplicitNavigation(ts, fileStepIndexForLog, dashCount);
                         }
                         else if (ts.get_expectedValue().toLowerCase().indexOf("wait") >= 0 || ts.get_expectedValue().toLowerCase().indexOf("delay") >= 0) {
                             int delayMilliSeconds = 0;
@@ -600,6 +560,63 @@ public class HomePage {
         }
     }
 
+
+    /* ************************************************************
+     * DESCRIPTION: (Refactored and extracted as separate method)
+     *      Checks the status of the Get or Post against the
+     *      expected value.
+     ************************************************************ */
+    private void PerformExplicitNavigation(TestSettings ts, String fileStepIndexForLog, int dashCount) throws Exception {
+        String navigateUrl = ts.get_xPath();
+
+        String [] expectedItems = ts.get_expectedValue().split(parameterDelimiter);
+        String expectedUrl = null;
+        int delayMilliSeconds = 0;
+        if (dashCount > 0) {
+            expectedUrl = expectedItems[1].trim();
+
+            if (dashCount > 1) {
+                delayMilliSeconds = parseInt(expectedItems[2].trim());
+            }
+            if (dashCount > 2) {
+                String dimensions = expectedItems[3].trim();
+                int wStart;
+                int hStart;
+                int width;
+                int height;
+                if (dimensions.toLowerCase().contains("w=") && dimensions.toLowerCase().contains("h=")) {
+                    wStart = dimensions.toLowerCase().indexOf("w=");
+                    hStart = dimensions.toLowerCase().indexOf("h=");
+                    if (wStart < hStart) {
+                        width = parseInt(dimensions.substring(dimensions.indexOf("w=") + 2, dimensions.indexOf("h=")).trim());
+                        height = parseInt(dimensions.substring(dimensions.indexOf("h=") + 2, dimensions.length()).trim());
+                    }
+                    else {
+                        height= parseInt(dimensions.substring(dimensions.indexOf("h=") + 2, dimensions.indexOf("w=")).trim());
+                        width = parseInt(dimensions.substring(dimensions.indexOf("w=") + 2, dimensions.length()).trim());
+                    }
+                    pageHelper.UpdateTestResults(pageHelper.indent5 + "Setting browser dimensions to (Width=" + width + " Height=" + height, testResults);
+                    pageHelper.SetWindowContentDimensions(driver, width, height);
+                }
+            }
+        }
+        this.testPage = navigateUrl;
+        //Explicit Navigation Event
+        pageHelper.UpdateTestResults( pageHelper.subsectionLeft + "Start Explicit Navigation Event" + pageHelper.subsectionRight, testResults);
+        pageHelper.UpdateTestResults(pageHelper.indent8 + "Navigating to " + navigateUrl);
+        String actualUrl = CheckPageUrl(delayMilliSeconds);
+        if (expectedUrl != null && expectedUrl.trim().length() > 0) {
+            assertEquals(expectedUrl, actualUrl);
+            if (expectedUrl.trim().equals(actualUrl.trim())) {
+                pageHelper.UpdateTestResults(pageHelper.indent8 + "Navigation and URL Check successful for step " + fileStepIndexForLog + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")", testResults);
+            } else {
+                pageHelper.UpdateTestResults(pageHelper.indent8 + "Navigation and URL Check unsuccessful for step " + fileStepIndexForLog + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")", testResults);
+            }
+        }
+        //[ End Explicit Navigation Event
+        pageHelper.UpdateTestResults(pageHelper.subsectionLeft + " End Explicit Navigation Event " + pageHelper.subsectionRight, testResults);
+    }
+
     /* ************************************************************
      * DESCRIPTION: (Refactored and extracted as separate method)
      *      Checks the status of the Get or Post against the
@@ -636,9 +653,9 @@ public class HomePage {
             }
         }
         if (expectedStatus == actualStatus) {
-            pageHelper.UpdateTestResults("Successful comparison results at step " + fileStepIndexForLog + " Expected value: (" + expectedStatus + ") Actual value: (" + actualStatus + ")", testResults);
+            pageHelper.UpdateTestResults("Successful comparison results at step " + fileStepIndexForLog + " Expected value: (" + expectedStatus + ") Actual value: (" + actualStatus + ")\r\n", testResults);
         } else if (expectedStatus != actualStatus) {
-            pageHelper.UpdateTestResults("Failed comparison results at step " + fileStepIndexForLog + " Expected value: (" + expectedStatus + ") Actual value: (" + actualStatus + ")", testResults);
+            pageHelper.UpdateTestResults("Failed comparison results at step " + fileStepIndexForLog + " Expected value: (" + expectedStatus + ") Actual value: (" + actualStatus + ")\r\n", testResults);
         }
     }
 
@@ -648,30 +665,22 @@ public class HomePage {
      *      Checks the text of the element against the expected value.
      ************************************************************ */
     private void CheckElementText(String browserUsed, TestSettings ts, String expected, String accessor, String fileStepIndex, String fileStepIndexForLog) throws Exception {
-        //pageHelper.UpdateTestResults("Element type being checked is <" + accessor.substring(accessor.lastIndexOf("/") + 1).trim(), testResults);
-
         String actual = "";
-        //pageHelper.UpdateTestResults("Search Type = " + ts.get_searchType());
 
         if (ts.get_searchType().toLowerCase().equals("xpath")) {
             pageHelper.UpdateTestResults(pageHelper.indent5 + "Element type being checked at step " + fileStepIndexForLog + " by xPath: " + accessor, testResults);
-            //actual = CheckElementWithXPath(accessor, ts, fileStepIndex);
             actual = CheckElementWithXPath(ts, fileStepIndex);
         } else if (ts.get_searchType().toLowerCase().equals("cssselector")) {
             pageHelper.UpdateTestResults(pageHelper.indent5 + "Element type being checked at step " + fileStepIndexForLog + " by CssSelector: " + accessor, testResults);
-            //actual = CheckElementWithCssSelector(accessor, fileStepIndex);
             actual = CheckElementWithCssSelector(ts, fileStepIndex);
         } else if (ts.get_searchType().toLowerCase().equals("tagname")) {
             pageHelper.UpdateTestResults(pageHelper.indent5 + "Element type being checked at step " + fileStepIndexForLog + " by TagName: " + accessor, testResults);
-            //actual = CheckElementWithTagName(accessor, fileStepIndex);
             actual = CheckElementWithTagName(ts, fileStepIndex);
         } else if (ts.get_searchType().toLowerCase().equals("classname")) {
             pageHelper.UpdateTestResults(pageHelper.indent5 + "Element type being checked at step " + fileStepIndexForLog + " by ClassName: " + accessor, testResults);
-            //actual = CheckElementWithClassName(accessor, fileStepIndex);
             actual = CheckElementWithClassName(ts, fileStepIndex);
         } else if (ts.get_searchType().toLowerCase().equals("id")) {
             pageHelper.UpdateTestResults(pageHelper.indent5 + "Element type being checked at step " + fileStepIndexForLog + " by Id: " + accessor, testResults);
-            //actual = CheckElementWithId(accessor, fileStepIndex);
             actual = CheckElementWithId(ts, fileStepIndex);
         }
 
@@ -685,9 +694,9 @@ public class HomePage {
             }
         }
         if (expected.equals(actual)) {
-            pageHelper.UpdateTestResults("Successful comparison results at step " + fileStepIndexForLog + " Expected value: (" + expected + ") Actual value: (" + actual + ")", testResults);
+            pageHelper.UpdateTestResults("Successful comparison results at step " + fileStepIndexForLog + " Expected value: (" + expected + ") Actual value: (" + actual + ")\r\n", testResults);
         } else if (!expected.equals(actual)) {
-            pageHelper.UpdateTestResults("Failed comparison results at step " + fileStepIndexForLog + " Expected value: (" + expected + ") Actual value: (" + actual + ")", testResults);
+            pageHelper.UpdateTestResults("Failed comparison results at step " + fileStepIndexForLog + " Expected value: (" + expected + ") Actual value: (" + actual + ")\r\n", testResults);
             if (screenShotSaveFolder != null && !screenShotSaveFolder.isEmpty()) {
                 pageHelper.captureScreenShot(driver, browserUsed + fileStepIndex + "Assert_Fail", screenShotSaveFolder, false);
             }
@@ -790,7 +799,6 @@ public class HomePage {
                 pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed to load element " + GetCurrentPageUrl() + " within max time setting of " + maxTimeInSeconds + " at step " + fileStepIndexForLog, testResults);
             }
         }
-
     }
 
     /* ************************************************************
@@ -879,8 +887,78 @@ public class HomePage {
 //            }
             //endregion
         }
-        pageHelper.UpdateTestResults(pageHelper.indent5 + "Discovered " + linkCount + " links amongst " + links.size() + " anchor tags.");
+        pageHelper.UpdateTestResults(pageHelper.indent5 + "Discovered " + linkCount + " links amongst " + links.size() + " anchor tags.\r\n");
     }
+
+    public void checkADAImages(String url, String checkType) {
+        if (url != null && !url.isEmpty() && !url.toLowerCase().trim().equals("n/a")) {
+            driver.get(url);
+        }
+        List<WebElement> images = driver.findElements(By.cssSelector("img"));
+        String altTag;
+        String imgSrc;
+        int altTagCount = 0;
+        int brokenImageSrcStatusCode = 0;
+
+        pageHelper.UpdateTestResults(pageHelper.indent5 + "Retrieved " + images.size() + " image tags");
+        for(WebElement link : images) {
+            altTag = link.getAttribute("alt");
+            imgSrc = link.getAttribute("src");
+            if (checkType.toLowerCase().trim().equals("alt")) {
+                if (altTag != null && !altTag.trim().isEmpty()) {
+                    altTagCount++;
+                    pageHelper.UpdateTestResults(pageHelper.ANSI_GREEN + "Successful image alt tag found: " + altTag + " for img src: " + imgSrc + pageHelper.ANSI_RESET);
+                } else {
+                    pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed image alt tag missing for img src: " + imgSrc + pageHelper.ANSI_RESET);
+                }
+            }else if (checkType.toLowerCase().trim().equals("src")) {
+                if (imgSrc != null && !imgSrc.trim().isEmpty()) {
+                    altTagCount++;
+                    try {
+                        brokenImageSrcStatusCode = httpResponseCodeViaGet(imgSrc);
+                    }
+                    catch (Exception ex) {
+                        pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed Error when attempting to validate image src " + imgSrc + " Error: " + ex.getMessage() + pageHelper.ANSI_RESET);
+                    }
+                    if (200 != brokenImageSrcStatusCode) {
+                        pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed image src test " + imgSrc + " gave a response code of " + brokenImageSrcStatusCode + pageHelper.ANSI_RESET);
+                    } else {
+                        pageHelper.UpdateTestResults(pageHelper.ANSI_GREEN + "Successful image src test " + imgSrc + " gave a response code of " + brokenImageSrcStatusCode + pageHelper.ANSI_RESET);
+                    }
+                }
+                else {
+                    if (altTag != null) {
+                        pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed image src tag missing for image with alt tag: " + altTag + pageHelper.ANSI_RESET);
+                    } else {
+                        pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed image src tag missing." + pageHelper.ANSI_RESET);
+                    }
+                }
+
+//                if (imgSrc != null) {
+//                    altTagCount++;
+//                    pageHelper.UpdateTestResults(pageHelper.ANSI_GREEN + "Successful image src tag found: " + imgSrc + pageHelper.ANSI_RESET);
+//                } else {
+//                    if (altTag != null) {
+//                        pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed image src tag missing for image with alt tag: " + altTag + pageHelper.ANSI_RESET);
+//                    } else {
+//                        pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed image src tag missing." + pageHelper.ANSI_RESET);
+//                    }
+//                }
+            }
+        }
+
+
+//        if (checkType.toLowerCase().trim().equals("alt")) {
+//
+//        }
+//        else if checkType.toLowerCase().trim().equals("src") {
+//
+//        }
+        pageHelper.UpdateTestResults(pageHelper.indent5 + "Discovered " + altTagCount + " image " + checkType.toLowerCase().trim()  + " attributes  amongst " + images.size() + " image tags.\r\n");
+
+
+    }
+
 
 
     /* ************************************************************

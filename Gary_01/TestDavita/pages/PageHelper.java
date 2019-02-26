@@ -692,14 +692,26 @@ public class PageHelper {
 
 
             WriteToFile(get_helpFileName(), "###  =========[ CHECK ALL PAGE LINKS ]=======================================================================================================================");
-            WriteToFile(get_helpFileName(), "###  To check all page links and to make it crucial.  To make it non-crucial change the last parameter to false.");
-            WriteToFile(get_helpFileName(), "###  The Space between check and get is optional as shown below.");
+            WriteToFile(get_helpFileName(), "###  To check all page links and to make it non-crucial.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "###  This will check for a status code of 200 for all links on the page but will report the status code for all links.");
             WriteToFile(get_helpFileName(), "╠https://semantic-ui.com/modules/dropdown.html ; check links ; n/a ; false ; false╣");
-            WriteToFile(get_helpFileName(), "╠https://semantic-ui.com/modules/dropdown.html ; check post ╬ 200 ; n/a ; false ; true╣");
+            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "");
+
+            WriteToFile(get_helpFileName(), "###  =========[ CHECK ALL PAGE IMAGE SRC TAGS ]=======================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  To check all page image src tags, to ensure a source exists and to make it non-crucial.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "###  The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sources but will report the status of all image sources.");
+            WriteToFile(get_helpFileName(), "╠https://semantic-ui.com/modules/dropdown.html ; check images src ; n/a ; false ; false╣");
             WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
             WriteToFile(get_helpFileName(), "");
 
 
+            WriteToFile(get_helpFileName(), "###  =========[ CHECK ALL PAGE IMAGE ALT TAGS ]=======================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  To check all page image alt tags, for ADA compliance and to make it crucial.  To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "###  The alt tag will checked to see if it exists and is not empty.  Empty tags will be flagged as failed.");
+            WriteToFile(get_helpFileName(), "╠https://semantic-ui.com/modules/dropdown.html ; check images alt ; n/a ; false ; false╣");
+            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "");
 
             WriteToFile(get_helpFileName(), "###  =========[ WAITING A SPECIFIC AMOUNT OF TIME FOR ITEMS TO BE AVAILABLE ]==================================================================================================================");
             WriteToFile(get_helpFileName(), "###  To wait for a specific amount of time before continuing to allow for page loading or script completion");
