@@ -14,8 +14,14 @@
 ###╠https://semantic-ui.com/modules/dropdown.html ; check get ╬ 200 ; n/a ; false ; true╣
 ╠http://digitalthinkingworks.com ; check get ╬ 403 ; n/a ; false ; false╣
 ###╠https://semantic-ui.com/modules/dropdown.html ; check links ; n/a ; false ; false╣
-╠https://semantic-ui.com/modules/dropdown.html ; check images alt ; n/a ; false ; false╣
-╠https://semantic-ui.com/modules/dropdown.html ; check images src ; n/a ; false ; false╣
+###╠https://semantic-ui.com/modules/dropdown.html ; check images alt ; n/a ; false ; false╣
+###╠https://semantic-ui.com/modules/dropdown.html ; check images src ; n/a ; false ; false╣
+###╠https://semantic-ui.com/modules/dropdown.html ; check count a ╬ 280 ; n/a ; false ; false╣
+###╠https://semantic-ui.com/modules/dropdown.html ; check count span ╬ 82 ; n/a ; false ; false╣
+###╠https://semantic-ui.com/modules/dropdown.html ; check count div ╬ 2647 ; n/a ; false ; false╣
+###╠https://semantic-ui.com/modules/dropdown.html ; check count p ╬ 75 ; n/a ; false ; false╣
+╠https://semantic-ui.com/modules/dropdown.html ; navigate ; n/a ; true ; false╣
+╠https://semantic-ui.com/modules/dropdown.html ; check contrast p ╬ b=86 d=450 ; n/a ; false ; false╣
 ###╠https://semantic-ui.com/modules/dropdown.html ; Navigate ; n/a ; true ; false╣
 ╠//*[@id="example"]/div[4]/div/div[2]/div[4]/div[1]/div[2]/div/div[1] ; click ; xPath ; true ; false╣
 ### The following line did not work 
@@ -27,7 +33,7 @@
 ### Testing this
 ╠page https://semantic-ui.com/modules/dropdown.html ; wait ╬ 15 ; xPath ; true ; false╣
 ╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; wait ╬ 15 ; xPath ; true ; true╣
-╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; sendkeys 600 ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Right ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Return ; xPath ; true ; true╣
+╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; sendkeys 300 ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Right ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Return ; xPath ; true ; true╣
 ###╠//*[@id="example"]/div[4]/div/div[2]/div[4]/div[1]/div[2]/div/div[2]/div[10]/div/div[3] ; dropit ; xPath ; false ; true╣
 ### The following 3 lines worked
 ### //*[@id="example"]/div[4]/div/div[2]/div[4]/div[1]/div[2]/div/div[2]/div[10]/div/div[3]
@@ -42,6 +48,3 @@
 ###╠ /html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; Keys.ARROW_DOWN ; xPath ; true ; true ╣
 ###╠ n/a ; Wait ╬ 400 ; n/a ; true ; false ╣
 ###╠ /html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; Keys.RETURN ; xPath ; true ; true ╣
-╠n/a ; Wait ╬ 5000 ; n/a ; true ; false╣
-
-

@@ -11,6 +11,7 @@ public class Form {
         //to allow for inputting a path to the correct config file if the config file
         //is not in the default location
         HomePage homePage = new HomePage();
+//        homePage.StupidUtility();
         homePage.set_executedFromMain(true);
         homePage.TestHomePage();
     }

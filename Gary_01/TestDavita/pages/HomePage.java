@@ -19,6 +19,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.edge.*;
 import org.openqa.selenium.ie.*;
 import io.restassured.RestAssured;
+import org.openqa.selenium.support.Color;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -28,8 +29,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 
 import static java.lang.Integer.parseInt;
+import static java.util.stream.LongStream.range;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 enum BrowserType {
@@ -142,6 +145,50 @@ public class HomePage {
         }
     }
     //endregion
+
+
+    public void StupidUtility() {
+
+        //String template = "╠//*[@id=\"bp-page-2\"]/div[2]/div[2] ; Test ; xPath ; false ; false╣";
+        //String template = "╠//*[@id=\"bp-page-2\"]/div[2]/div[number] ; Test ; xPath ; false ; false╣";
+
+        Scanner scanner = new Scanner(System.in);
+        pageHelper.UpdateTestResults("Configuration File not found (" + configurationFile + ")");
+        pageHelper.UpdateTestResults("Enter the template that you want to replicate, place the word number in brackets [number] for the item to be replaced: ");
+        String template = scanner.nextLine();
+        pageHelper.UpdateTestResults("Enter the low number that you want to start with:");
+        int startNumber = parseInt(scanner.nextLine());
+        pageHelper.UpdateTestResults("Enter the high number that you want to end with:");
+        int endNumber = parseInt(scanner.nextLine());
+        pageHelper.UpdateTestResults("Enter the value that you want to increment by (default is 1):");
+        int incrementNumber = parseInt(scanner.nextLine());
+
+        for (int x=startNumber;x<endNumber;x+=incrementNumber) {
+            pageHelper.UpdateTestResults(template.replace("[number]", "[" + x + "]"));
+        }
+
+
+//region { old}
+//        for (int x=2;x<173;x+=5) {
+//            pageHelper.UpdateTestResults(template.replace("[number]", "[" + x + "]"));
+//            pageHelper.UpdateTestResults(template.replace("[number]", "[" + (x + 1) + "]"));
+//        }
+        //endregion
+    }
+
+    public void ColorUtility() {
+//        for i in range(0, 16):
+//        for j in range(0, 16):
+        String code;
+        for (int i=0;i<=16;i++) {
+            for (int j = 0; j <= 16; j++) {
+                code = Integer.toString((i * 16 + j));
+//            pageHelper.UpdateTestResults("\u001b[48;5;" + code + "m " + code.ljust(4));
+                //sys.stdout.write(u"\u001b[48;5;" + code + "m " + code.ljust(4))
+                //print u "\u001b[0m"
+            }
+        }
+    }
 
     /* ****************************************************************
      * Description: Default Constructor.  Reads the configuration file
@@ -332,7 +379,10 @@ public class HomePage {
         }
     }
 
-
+    /* ***************************************************************************
+     *  DESCRIPTION:
+     *  Sets the WebDriver to the Internet Explorer Driver
+     **************************************************************************** */
     private void SetInternetExplorerDriver() {
         //internetExplorerDriverPath
         pageHelper.UpdateTestResults( pageHelper.indent5 + "[" + pageHelper.ANSI_GREEN + "Setting " + pageHelper.ANSI_RESET + "InternetExplorerDriver]" + pageHelper.ANSI_RESET , testResults);
@@ -347,7 +397,10 @@ public class HomePage {
         driver = new InternetExplorerDriver(capab);
     }
 
-
+    /* ***************************************************************************
+     *  DESCRIPTION:
+     *  Not working yet: (Sets the WebDriver to the FireFox Driver)
+     **************************************************************************** */
     private void SetEdgeDriver() {
         pageHelper.UpdateTestResults( pageHelper.indent5 + "[" + pageHelper.ANSI_GREEN + "Setting " + pageHelper.ANSI_RESET + "EdgeDriver]" + pageHelper.ANSI_RESET , testResults);
         File edge = new File(edgeDriverPath);
@@ -429,6 +482,32 @@ public class HomePage {
                                 checkADAImages(ts.get_xPath(), "src");
                             }
                         }
+                        else if (ts.get_expectedValue().toLowerCase().contains("check") && ts.get_expectedValue().toLowerCase().contains("count")) {
+                            String [] expectedItems = ts.get_expectedValue().split(parameterDelimiter);
+                            String [] checkItems = expectedItems[0].split(" ");
+                            String page = ts.get_xPath().toLowerCase().equals("n/a") ? driver.getCurrentUrl() : ts.get_xPath().trim();
+                            pageHelper.UpdateTestResults(pageHelper.indent5 + "Checking count of " + checkItems[2] + " on page " + page);
+                            int expectedCount = parseInt(expectedItems[1]);
+//                            pageHelper.UpdateTestResults("Sending values ts.get_xPath() = " + ts.get_xPath() + " checkItems[2].trim() = " + checkItems[2].trim());
+//                            pageHelper.UpdateTestResults(" - expectedCount = " + expectedCount + " fileStepIndexForLog = " + fileStepIndexForLog);
+//                            pageHelper.UpdateTestResults(" - ts.get_isCrucial() = " + ts.get_isCrucial());
+                            checkElementCount(ts.get_xPath(), checkItems[2].trim(), expectedCount, fileStepIndexForLog, ts.get_isCrucial());
+                        }
+                        else if (ts.get_expectedValue().toLowerCase().contains("check") && ts.get_expectedValue().toLowerCase().contains("contrast")) {
+                            //checkColorContrast
+                            String [] expectedItems = ts.get_expectedValue().split(parameterDelimiter);
+                            String [] checkItems = expectedItems[0].split(" ");
+                            //String [] acceptibleRanges = expectedItems.length > 1 ? expectedItems[1].split(" ") : null;
+                            String acceptibleRanges = expectedItems.length > 1 ? expectedItems[1] : null;
+                            String page = ts.get_xPath().toLowerCase().equals("n/a") ? driver.getCurrentUrl() : ts.get_xPath().trim();
+                            pageHelper.UpdateTestResults(pageHelper.indent5 + "Checking color contrast of " + checkItems[2] + " on page " + page);
+                            checkColorContrast(ts.get_xPath(), checkItems[2].trim(), fileStepIndexForLog, ts.get_isCrucial(), acceptibleRanges);
+                        }
+                        //add in check all elements for a particular text, src, alt value
+//                        else if (ts.get_expectedValue().toLowerCase().contains("check") && ts.get_expectedValue().toLowerCase().contains("all")) {
+//                            String [] expectedItems = ts.get_expectedValue().split(parameterDelimiter);
+//                            String [] checkItems = expectedItems[0].split(" ");
+//                        }
                     }
                 } else {  //set a value or perform a click
                     Boolean status;
@@ -547,6 +626,12 @@ public class HomePage {
                                 SwitchToTab(true, fileStepIndex);
                             }
                         }
+                        else if (ts.get_expectedValue().toLowerCase().contains("login")) {
+                            pageHelper.UpdateTestResults(pageHelper.indent5 + "Peforming login for step " + fileStepIndexForLog, testResults);
+                            String [] loginItems = ts.get_expectedValue().split(" ");
+                            login(ts.get_xPath(), loginItems[1], loginItems[2], fileStepIndexForLog);
+                            pageHelper.UpdateTestResults(pageHelper.indent5 + "Login complete for step " + fileStepIndexForLog, testResults);
+                        }
                     }
                 }
             }
@@ -558,6 +643,35 @@ public class HomePage {
         if (this.driver.toString().indexOf("Chrome") >= 0) {
             ShutDownChromeDriver();
         }
+    }
+
+
+
+    public void login(String url, String email, String password, String fileStepIndexForLog) throws Exception {
+        if (url != null && !url.isEmpty() && !url.toLowerCase().trim().equals("n/a")) {
+            driver.get(url);
+        }
+        try {
+            driver.switchTo().alert();
+            //Selenium-WebDriver Java Code for entering Username & Password as below:
+            driver.findElement(By.id("userID")).sendKeys(email);
+            driver.findElement(By.id("password")).sendKeys(password);
+            driver.switchTo().alert().accept();
+            driver.switchTo().defaultContent();
+        }
+        catch (Exception ex)
+        {
+            //if the alert doesn't show up, you already have context and are logged in
+        }
+        //region { Unfinished version }
+//        driver.get(url);
+//        //Passing the AutoIt Script here
+//        //Runtime.getRuntime().exec("D:\\Selenium\\workspace\\AutoItFiles\\ExecutableFiles\\FirefoxBrowser.exe");
+//        driver.findElement
+//        loginpage.setEmail(email);
+//        loginpage.setPassword(password);
+//        loginpage.clickOnLogin();
+        //endregion
     }
 
 
@@ -603,14 +717,25 @@ public class HomePage {
         this.testPage = navigateUrl;
         //Explicit Navigation Event
         pageHelper.UpdateTestResults( pageHelper.subsectionLeft + "Start Explicit Navigation Event" + pageHelper.subsectionRight, testResults);
-        pageHelper.UpdateTestResults(pageHelper.indent8 + "Navigating to " + navigateUrl);
+        pageHelper.UpdateTestResults(pageHelper.indent8 + "Navigating to " + navigateUrl + " for step " + fileStepIndexForLog);
         String actualUrl = CheckPageUrl(delayMilliSeconds);
         if (expectedUrl != null && expectedUrl.trim().length() > 0) {
-            assertEquals(expectedUrl, actualUrl);
+            if (ts.get_isCrucial()) {
+                assertEquals(expectedUrl, actualUrl);
+            }
+            else {
+                try
+                {
+                    assertEquals(expectedUrl, actualUrl);
+                }
+                catch (AssertionError ae) {
+                    //do nothing, this just traps the assertion error so that processing can continue
+                }
+            }
             if (expectedUrl.trim().equals(actualUrl.trim())) {
-                pageHelper.UpdateTestResults(pageHelper.indent8 + "Navigation and URL Check successful for step " + fileStepIndexForLog + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")", testResults);
+                pageHelper.UpdateTestResults(pageHelper.indent8 + "Successful Navigation and URL Check for step " + fileStepIndexForLog + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")", testResults);
             } else {
-                pageHelper.UpdateTestResults(pageHelper.indent8 + "Navigation and URL Check unsuccessful for step " + fileStepIndexForLog + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")", testResults);
+                pageHelper.UpdateTestResults(pageHelper.indent8 + "Failed Navigation and URL Check for step " + fileStepIndexForLog + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")", testResults);
             }
         }
         //[ End Explicit Navigation Event
@@ -890,6 +1015,16 @@ public class HomePage {
         pageHelper.UpdateTestResults(pageHelper.indent5 + "Discovered " + linkCount + " links amongst " + links.size() + " anchor tags.\r\n");
     }
 
+    /* ************************************************************
+     * DESCRIPTION:
+     *      Checks all image tags for the presence of the checkType
+     *      property passed in (alt, src).
+     *      For alt property, it checks that the alt tag is present
+     *      and that it contains information and displays a
+     *      success or fail message accorgingly.
+     *      For src property, it checks that the src tag is present
+     *      and that it resolves to a 200 response status.
+     ************************************************************ */
     public void checkADAImages(String url, String checkType) {
         if (url != null && !url.isEmpty() && !url.toLowerCase().trim().equals("n/a")) {
             driver.get(url);
@@ -900,16 +1035,16 @@ public class HomePage {
         int altTagCount = 0;
         int brokenImageSrcStatusCode = 0;
 
-        pageHelper.UpdateTestResults(pageHelper.indent5 + "Retrieved " + images.size() + " image tags");
+        pageHelper.UpdateTestResults(pageHelper.indent5 + "Retrieved " + images.size() + " image tags", testResults);
         for(WebElement link : images) {
             altTag = link.getAttribute("alt");
             imgSrc = link.getAttribute("src");
             if (checkType.toLowerCase().trim().equals("alt")) {
                 if (altTag != null && !altTag.trim().isEmpty()) {
                     altTagCount++;
-                    pageHelper.UpdateTestResults(pageHelper.ANSI_GREEN + "Successful image alt tag found: " + altTag + " for img src: " + imgSrc + pageHelper.ANSI_RESET);
+                    pageHelper.UpdateTestResults(pageHelper.ANSI_GREEN + "Successful image alt tag found: " + altTag + " for img src: " + imgSrc + pageHelper.ANSI_RESET, testResults);
                 } else {
-                    pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed image alt tag missing for img src: " + imgSrc + pageHelper.ANSI_RESET);
+                    pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed image alt tag missing for img src: " + imgSrc + pageHelper.ANSI_RESET, testResults);
                 }
             }else if (checkType.toLowerCase().trim().equals("src")) {
                 if (imgSrc != null && !imgSrc.trim().isEmpty()) {
@@ -918,46 +1053,207 @@ public class HomePage {
                         brokenImageSrcStatusCode = httpResponseCodeViaGet(imgSrc);
                     }
                     catch (Exception ex) {
-                        pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed Error when attempting to validate image src " + imgSrc + " Error: " + ex.getMessage() + pageHelper.ANSI_RESET);
+                        pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed Error when attempting to validate image src " + imgSrc + " Error: " + ex.getMessage() + pageHelper.ANSI_RESET, testResults);
                     }
                     if (200 != brokenImageSrcStatusCode) {
-                        pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed image src test " + imgSrc + " gave a response code of " + brokenImageSrcStatusCode + pageHelper.ANSI_RESET);
+                        pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed image src test " + imgSrc + " gave a response code of " + brokenImageSrcStatusCode + pageHelper.ANSI_RESET, testResults);
                     } else {
-                        pageHelper.UpdateTestResults(pageHelper.ANSI_GREEN + "Successful image src test " + imgSrc + " gave a response code of " + brokenImageSrcStatusCode + pageHelper.ANSI_RESET);
+                        pageHelper.UpdateTestResults(pageHelper.ANSI_GREEN + "Successful image src test " + imgSrc + " gave a response code of " + brokenImageSrcStatusCode + pageHelper.ANSI_RESET, testResults);
                     }
                 }
                 else {
                     if (altTag != null) {
-                        pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed image src tag missing for image with alt tag: " + altTag + pageHelper.ANSI_RESET);
+                        pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed image src tag missing for image with alt tag: " + altTag + pageHelper.ANSI_RESET, testResults);
                     } else {
-                        pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed image src tag missing." + pageHelper.ANSI_RESET);
+                        pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed image src tag missing." + pageHelper.ANSI_RESET, testResults);
                     }
                 }
-
-//                if (imgSrc != null) {
-//                    altTagCount++;
-//                    pageHelper.UpdateTestResults(pageHelper.ANSI_GREEN + "Successful image src tag found: " + imgSrc + pageHelper.ANSI_RESET);
-//                } else {
-//                    if (altTag != null) {
-//                        pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed image src tag missing for image with alt tag: " + altTag + pageHelper.ANSI_RESET);
-//                    } else {
-//                        pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed image src tag missing." + pageHelper.ANSI_RESET);
-//                    }
-//                }
             }
+        }
+        pageHelper.UpdateTestResults(pageHelper.indent5 + "Discovered " + altTagCount + " image " + checkType.toLowerCase().trim()  + " attributes  amongst " + images.size() + " image tags.\r\n", testResults);
+    }
+
+    public void checkColorContrast(String url, String checkElement, String fileStepIndex, boolean isCrucial, String acceptibleRanges)
+    {
+        //useful links for this functionality
+        //https://stackoverflow.com/questions/23220575/how-to-get-element-color-with-selenium
+        //https://stackoverflow.com/questions/24669787/how-to-verify-text-color-in-selenium-webdriver
+        String color;
+        String backColor;
+        String color_hex[];
+        String backColor_hex[];
+        String actual_hex;
+        String backActual_hex;
+        String cHex;
+        String bHex;
+        int treeClimb = 0;
+        String [] rangeVariables = acceptibleRanges != null ? acceptibleRanges.split(" ") : null;
+        int brightnessStandard = 125;
+        int contrastStandard = 500;
+        List<WebElement> elements = driver.findElements(By.cssSelector(checkElement));
+        String overRideMessage = "";
+
+        if (rangeVariables != null) {
+            if (rangeVariables[0].toLowerCase().contains("b=")) {
+                brightnessStandard = parseInt(rangeVariables[0].split("=")[1]);
+                overRideMessage = "Brightness value overridden to: " + brightnessStandard;
+                if (rangeVariables.length > 1) {
+                    if (rangeVariables[1].toLowerCase().contains("d=")) {
+                        contrastStandard = parseInt(rangeVariables[1].split("=")[1]);
+                        overRideMessage += "\r\nDifference value overridden to: " + contrastStandard;
+                    }
+                }
+            }
+            else if (rangeVariables[0].toLowerCase().contains("d=")) {
+                contrastStandard = parseInt(rangeVariables[0].split("=")[1]);
+                overRideMessage = "Difference value overridden to: " + contrastStandard;
+                if (rangeVariables.length > 1) {
+                    if (rangeVariables[1].toLowerCase().contains("b=")) {
+                        brightnessStandard = parseInt(rangeVariables[1].split("=")[1]);
+                        overRideMessage += "\r\nBrightness value overridden to: " + brightnessStandard;
+                    }
+                }
+            }
+            pageHelper.UpdateTestResults(overRideMessage, testResults);
         }
 
 
-//        if (checkType.toLowerCase().trim().equals("alt")) {
-//
-//        }
-//        else if checkType.toLowerCase().trim().equals("src") {
-//
-//        }
-        pageHelper.UpdateTestResults(pageHelper.indent5 + "Discovered " + altTagCount + " image " + checkType.toLowerCase().trim()  + " attributes  amongst " + images.size() + " image tags.\r\n");
 
+        pageHelper.UpdateTestResults(pageHelper.indent5 + "Retrieved " + elements.size() + " " + checkElement + " tags.", testResults);
+        for(WebElement element : elements) {
+            treeClimb = 0;
+            color = element.getCssValue("color").trim();
+            backColor = element.getCssValue("background-color").trim();
+//            pageHelper.UpdateTestResults("color = " + color);
+
+//            pageHelper.UpdateTestResults("backColor missing: " + (backColor.isEmpty() || backColor == null));
+            color_hex = color.replace("rgba(", "").split(",");
+            backColor_hex = backColor.replace("rgba(", "").split(",");
+            cHex = Color.fromString(color).asHex();
+            bHex = Color.fromString(backColor).asHex();
+            WebElement parent = null;
+//            pageHelper.UpdateTestResults("color_hex = " + color_hex);
+
+            while (cHex.equals(bHex)) {
+                try {
+                    //pageHelper.UpdateTestResults("Font color and background-color match!!!!");
+                    treeClimb++;
+                    if (parent == null) {
+                        parent = (WebElement) ((JavascriptExecutor) driver).executeScript(
+                                "return arguments[0].parentNode;", element);
+                    } else {
+                        parent = (WebElement) ((JavascriptExecutor) driver).executeScript(
+                                "return arguments[0].parentNode;", parent);
+                    }
+                    backColor = parent.getCssValue("background-color").trim();
+                    backColor_hex = backColor.replace("rgba(", "").split(",");
+                    bHex = Color.fromString(backColor).asHex();
+                } catch (Exception ex) {
+                    //in case you walk the entire tree and no difference is found
+                    break;
+                }
+            }
+            actual_hex = String.format("#%02x%02x%02x", Integer.parseInt(color_hex[0].trim()), Integer.parseInt(color_hex[1].trim()), Integer.parseInt(color_hex[2].trim()));
+            backActual_hex = String.format("#%02x%02x%02x", Integer.parseInt(backColor_hex[0].trim()), Integer.parseInt(backColor_hex[1].trim()), Integer.parseInt(backColor_hex[2].trim()));
+
+            // reference: https://www.w3.org/TR/AERT/#color-contrast
+            //color brightness The rage for color brightness difference is 125.
+            //brightness = (299*R + 587*G + 114*B) / 1000
+            String [] foreColors = color.substring(color.indexOf("(") + 1, color.indexOf(")")).split(",");
+            String [] backColors = backColor.substring(backColor.indexOf("(") + 1, backColor.indexOf(")")).split(",");
+            double foreColorBrightness = ((parseInt(foreColors[0].trim()) * 299) + (parseInt(foreColors[1].trim()) * 587) + (parseInt(foreColors[2].trim()) * 114)) / 1000;
+            double backColorBrightness = ((parseInt(backColors[0].trim()) * 299) + (parseInt(backColors[1].trim()) * 587) + (parseInt(backColors[2].trim()) * 114)) / 1000;
+            double brightness;
+            double contrast;
+
+            //color difference The range for color difference is 500.
+            //(maximum (Red value 1, Red value 2) - minimum (Red value 1, Red value 2)) + (maximum (Green value 1, Green value 2) - minimum (Green value 1, Green value 2)) + (maximum (Blue value 1, Blue value 2) - minimum (Blue value 1, Blue value 2))
+            int maxRed = parseInt(foreColors[0].trim()) > (parseInt(backColors[0].trim())) ? parseInt(foreColors[0].trim()) : (parseInt(backColors[0].trim()));
+            int minRed= parseInt(foreColors[0].trim()) > (parseInt(backColors[0].trim())) ? (parseInt(backColors[0].trim())) :  parseInt(foreColors[0].trim());
+            int maxGreen = parseInt(foreColors[1].trim()) > (parseInt(backColors[1].trim())) ? parseInt(foreColors[1].trim()) : (parseInt(backColors[1].trim()));
+            int minGreen = parseInt(foreColors[1].trim()) > (parseInt(backColors[1].trim())) ? (parseInt(backColors[1].trim())) :  parseInt(foreColors[1].trim());
+            int maxBlue = parseInt(foreColors[2].trim()) > (parseInt(backColors[2].trim())) ? parseInt(foreColors[2].trim()) : (parseInt(backColors[2].trim()));
+            int minBlue = parseInt(foreColors[2].trim()) > (parseInt(backColors[2].trim())) ? (parseInt(backColors[2].trim())) :  parseInt(foreColors[2].trim());
+
+            contrast = (maxRed - minRed) + (maxGreen - minGreen) + (maxBlue - minBlue);
+
+
+
+            if (foreColorBrightness > backColorBrightness) {
+                brightness = foreColorBrightness - backColorBrightness;
+            } else {
+                brightness = backColorBrightness - foreColorBrightness;
+            }
+
+            String backColorAncestor = treeClimb > 0 ? "^" + treeClimb : "";
+
+            //if (brightness > 123 && ) {
+            if (brightness >= brightnessStandard && contrast >= contrastStandard) {
+                pageHelper.UpdateTestResults(pageHelper.ANSI_GREEN + "Good brightness and Good contrast forecolor(" + color + ") Fore-Color Brightness: " + foreColorBrightness + " backcolor(" + backColor + ")" + backColorAncestor + " Back-Color Brightness: " + backColorBrightness + " Brightness Difference: " + brightness + " Color Difference: " + contrast + pageHelper.ANSI_RESET);
+            } else if (brightness >= brightnessStandard && contrast < contrastStandard) {
+                pageHelper.UpdateTestResults(pageHelper.ANSI_WHITE_BACKGROUND + pageHelper.ANSI_RED + "Good brightness Warning contrast forecolor(" + color + ") brightness: " + foreColorBrightness + " backcolor(" + backColor + ")" + backColorAncestor + " brightness: " + backColorBrightness + " Contrast: " + brightness + " Color Difference: " + contrast + pageHelper.ANSI_RESET);
+            } else if (brightness < brightnessStandard && contrast >= contrastStandard) {
+                pageHelper.UpdateTestResults(pageHelper.ANSI_WHITE_BACKGROUND + pageHelper.ANSI_RED + "Warning brightness and Good contrast forecolor(" + color + ") brightness: " + foreColorBrightness + " backcolor(" + backColor + ")" + backColorAncestor + " brightness: " + backColorBrightness + " Contrast: " + brightness + " Color Difference: " + contrast + pageHelper.ANSI_RESET);
+            } else {
+                pageHelper.UpdateTestResults( pageHelper.ANSI_RED + "Warning brightness and Warning contrast forecolor(" + color + ") brightness: " + foreColorBrightness + " backcolor(" + backColor + ")" + backColorAncestor + " brightness: " + backColorBrightness + " Contrast: " + brightness + " Color Difference: " + contrast +   pageHelper.ANSI_RESET);
+            }
+
+
+            //region { testing }
+//            String colorString = element.getAttribute("class");
+//            String[] arrColor = colorString.split("#");
+            //assertTrue(arrColor[1].equals("008000"));
+            //end testing
+//            pageHelper.UpdateTestResults(pageHelper.indent5 + element + " font color = " + color + "(" + actual_hex + ") and background color = " + backColor + "(" + backActual_hex + ")");
+//            pageHelper.UpdateTestResults(pageHelper.indent5 + " font color = " + color + "(" + actual_hex + ") and background color = " + backColor + "(" + backActual_hex + ")");
+//            pageHelper.UpdateTestResults("cHex = " + cHex + " bHex = " + bHex);
+//            pageHelper.UpdateTestResults("cHex = " + cHex + " bHex = " + bHex + " arrColor[1] = " + (colorString.isEmpty() || arrColor.length < 2 ? "n/a" : arrColor[1]));
+//            for (int x=0;x<arrColor.length;x++) {
+//                pageHelper.UpdateTestResults( "Style Class settings arrColor[" + x + "] = " + arrColor[x]);
+//            }
+            //endregion
+        }
 
     }
+
+
+    /* ************************************************************
+     * DESCRIPTION:
+     *      Performs a count of all checkElement tags for the url
+     *      passed in or the current url, if not passed in, and
+     *      compares that count to the expectedCount passed in.
+     *      If this test is marked as crucial, all testing stops
+     *      if the counts do not match.
+     *      If this test is not marked as crucial, testing
+     *      continues and the status is reported.
+     ************************************************************ */
+    private void checkElementCount(String url, String checkElement, int expectedCount, String fileStepIndex, boolean isCrucial) {
+        int actualCount;
+        if (url != null && !url.isEmpty() && !url.toLowerCase().trim().equals("n/a")) {
+            driver.get(url);
+        }
+        List<WebElement> elements = driver.findElements(By.cssSelector(checkElement));
+        actualCount = elements.size();
+
+        if (isCrucial) {
+            assertEquals(expectedCount, actualCount);
+        }
+        else {
+            try {
+                assertEquals(expectedCount, actualCount);
+            }
+            catch (AssertionError ae) {
+                //do nothing, just trap the error so that testing can continue
+            }
+
+            if (actualCount != expectedCount) {
+                pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed count of " + checkElement + " tags do not match.  Expected: " + expectedCount + "  Actual: " + actualCount + pageHelper.ANSI_RESET);
+            } else {
+                pageHelper.UpdateTestResults(pageHelper.ANSI_GREEN + "Successful count of " + checkElement + " tags match.  Expected: " + expectedCount + "  Actual: " + actualCount + pageHelper.ANSI_RESET);
+            }
+        }
+    }
+
 
 
 
@@ -970,11 +1266,6 @@ public class HomePage {
         String actualValue = null;
         String accessor = ts.get_xPath();
 
-          //region { Removed but was initially here to ensure app was on the correct page }
-//        if (this.driver.getCurrentUrl() != testPage) {
-//            pageHelper.NavigateToPage(this.driver, testPage);
-//        }
-        //endregion
         try {
             //pageHelper.UpdateTestResults("CheckElementWithXPath iframeResult in try block " + ts.get_expectedValue().toLowerCase());
             String fileStepIndexForLog = fileStepIndex.substring(1, fileStepIndex.length() - 1);

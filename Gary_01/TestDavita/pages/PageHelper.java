@@ -638,6 +638,7 @@ public class PageHelper {
             WriteToFile(get_helpFileName(), "");
 
             WriteToFile(get_helpFileName(), "###  To Navigate, assert that the URL is what follows the ╬ character and to wait 4 thousand milli-seconds before making the assertion to allow the page to load:");
+            WriteToFile(get_helpFileName(), "###  PLEASE NOTE: Asserting that the URL is correct does not mean that a server transfer didn't redirect the URL to a different page but leave the URL untouched.");
             WriteToFile(get_helpFileName(), "╠https://formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000 ; n/a ; true ; true╣");
             WriteToFile(get_helpFileName(), "");
 

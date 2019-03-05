@@ -76,6 +76,7 @@ FolderFileFilter=MyPhrase
 ╠https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_ref_comp_dropdown-menu&stacked=h ; Navigate ; n/a ; true ; true╣
 
 ###  To Navigate, assert that the URL is what follows the ╬ character and to wait 4 thousand milli-seconds before making the assertion to allow the page to load:
+###  PLEASE NOTE: Asserting that the URL is correct does not mean that a server transfer didn't redirect the URL to a different page but leave the URL untouched.
 ╠https://formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000 ; n/a ; true ; true╣
 
 ###  To Navigate and Authenticate with username and password and assert that the URL is what follows the ╬ character and to wait 4 thousand milli-seconds before making the assertion to allow the page to load:
