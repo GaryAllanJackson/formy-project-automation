@@ -654,6 +654,13 @@ public class PageHelper {
             WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
             WriteToFile(get_helpFileName(), "");
 
+            WriteToFile(get_helpFileName(), "###  =========[ ALERT POPUP LOGIN  ]=================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  To login when presented with an alert style popup which could happen upon landing on the site or after the site redirects you, and to make this crucial.");
+            WriteToFile(get_helpFileName(), "###  Please note this is for normal passwords which cannot contain spaces or characters that require escaping.");
+            WriteToFile(get_helpFileName(),"╠n/a ; login username password ; n/a ; true ; true╣");
+            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "");
+
             WriteToFile(get_helpFileName(), "###  =========[ CHECK URL WITHOUT NAVIGATION ]=======================================================================================================================");
             WriteToFile(get_helpFileName(), "###  To check a URL without navigating and to make it non-crucial.  To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "╠n/a ; URL ╬ https://formy-project.herokuapp.com/thanks ; n/a ; true ; false╣");

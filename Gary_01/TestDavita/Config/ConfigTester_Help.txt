@@ -89,6 +89,12 @@ FolderFileFilter=MyPhrase
 ╠https://formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000  ╬ w=800 h=800 ; n/a ; true ; true╣
 ###  ================================================================================================================================================================
 
+###  =========[ ALERT POPUP LOGIN  ]=================================================================================================================================
+###  To login when presented with an alert style popup which could happen upon landing on the site or after the site redirects you, and to make this crucial.
+###  Please note this is for normal passwords which cannot contain spaces or characters that require escaping.
+╠n/a ; login username password ; n/a ; true ; true╣
+###  ================================================================================================================================================================
+
 ###  =========[ CHECK URL WITHOUT NAVIGATION ]=======================================================================================================================
 ###  To check a URL without navigating and to make it non-crucial.  To make it crucial change the last parameter to true.
 ╠n/a ; URL ╬ https://formy-project.herokuapp.com/thanks ; n/a ; true ; false╣
