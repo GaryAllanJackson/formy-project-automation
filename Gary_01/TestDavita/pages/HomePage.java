@@ -1,5 +1,10 @@
+import com.mongodb.*;
+import com.mongodb.client.*;
 import com.sun.javafx.geom.Edge;
 import org.apache.commons.lang3.StringUtils;
+import org.bson.BSONObject;
+import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -21,15 +26,15 @@ import org.openqa.selenium.ie.*;
 import io.restassured.RestAssured;
 import org.openqa.selenium.support.Color;
 
+//import javax.swing.text.Document;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.beans.ExceptionListener;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
-import java.util.Scanner;
 
 import static java.lang.Integer.parseInt;
 import static java.util.stream.LongStream.range;
@@ -113,8 +118,9 @@ public class HomePage {
 
     private boolean _executedFromMain = false;
     private int brokenLinksStatusCode;
-
-
+//    private String mongoDbConnectionString;
+    private MongoClient mongoClient = null;
+    private MongoClientURI mongoClientUri = null;
 
 
     //region { Properties }
@@ -182,8 +188,9 @@ public class HomePage {
         String code;
         for (int i=0;i<=16;i++) {
             for (int j = 0; j <= 16; j++) {
+                //public static final String ANSI_BOLD = "\u001B[1m";
                 code = Integer.toString((i * 16 + j));
-//            pageHelper.UpdateTestResults("\u001b[48;5;" + code + "m " + code.ljust(4));
+                pageHelper.UpdateTestResults(  "Code u001b[" + code + "m = " + "\u001b[" + code + "m");
                 //sys.stdout.write(u"\u001b[48;5;" + code + "m " + code.ljust(4))
                 //print u "\u001b[0m"
             }
@@ -235,6 +242,7 @@ public class HomePage {
 
 
     public HomePage() throws Exception {
+//        ColorUtility();
         //created this default constructor so that this could function as an application
         //and run from the main method in Form.java so that if the configuration file is
         // not in the proper location, the correct path can be specified as input.
@@ -502,6 +510,21 @@ public class HomePage {
                             String page = ts.get_xPath().toLowerCase().equals("n/a") ? driver.getCurrentUrl() : ts.get_xPath().trim();
                             pageHelper.UpdateTestResults(pageHelper.indent5 + "Checking color contrast of " + checkItems[2] + " on page " + page);
                             checkColorContrast(ts.get_xPath(), checkItems[2].trim(), fileStepIndexForLog, ts.get_isCrucial(), acceptibleRanges);
+                        } //perform a database query
+                        else if (ts.get_xPath().toLowerCase().contains("query")) {
+                            pageHelper.UpdateTestResults("Found query....");
+                            if (ts.get_xPath().toLowerCase().contains("mongo")) {
+                                pageHelper.UpdateTestResults("Found query then mongo....");
+                                //make sure that this connection has been established
+                                if (mongoClient != null) {
+                                    pageHelper.UpdateTestResults("Found query, and mongo and in the if before RunQuery....");
+                                    RunQuery(ts, fileStepIndexForLog);
+                                } else {
+                                    pageHelper.UpdateTestResults("Connection is not available!!!");
+                                }
+                                pageHelper.UpdateTestResults("Found query, and mongo after the if before RunQuery....");
+
+                            }
                         }
                         //add in check all elements for a particular text, src, alt value
 //                        else if (ts.get_expectedValue().toLowerCase().contains("check") && ts.get_expectedValue().toLowerCase().contains("all")) {
@@ -580,6 +603,15 @@ public class HomePage {
                     } else if (ts.get_expectedValue().toLowerCase().contains("wait") && ts.get_searchType().toLowerCase().indexOf("n/a") < 0) {
                         //wait for a speficic element to load
                         WaitForElement(ts, fileStepIndexForLog);
+                    } else if (ts.get_xPath().toLowerCase().contains("connection")) {
+                        //gaj working here can have different connection types if we go for the connection keyword here
+                        if (ts.get_xPath().toLowerCase().contains("mongodb")) {
+                            String mongoDbConnectionString = ts.get_expectedValue().trim();
+                            //connect to mongo db or close an open mongo db connection
+                            SetMongoClient(mongoDbConnectionString, ts);
+                        } else if (ts.get_xPath().toLowerCase().contains("sql server")) {
+                            pageHelper.UpdateTestResults("This feature is not implemented yet!");
+                        }
                     }
                     else if (ts.get_searchType().toLowerCase().indexOf("n/a") >= 0) {
                         //perform all non-read actions below that do not use an accessor
@@ -632,6 +664,27 @@ public class HomePage {
                             login(ts.get_xPath(), loginItems[1], loginItems[2], fileStepIndexForLog);
                             pageHelper.UpdateTestResults(pageHelper.indent5 + "Login complete for step " + fileStepIndexForLog, testResults);
                         }
+                        else if (ts.get_expectedValue().toLowerCase().contains("find")) {
+                            String [] expectedItems = ts.get_expectedValue().split(parameterDelimiter);
+                            String message;
+                            if (!expectedItems[1].trim().isEmpty() ) {
+                                if (!expectedItems[0].toLowerCase().contains("contains")) {
+                                    message = "Performing find searching all " + expectedItems[1].trim() + " elements for " + expectedItems[2].trim();
+                                }
+                                else {
+                                    message = "Performing find searching all " + expectedItems[1].trim() + " elements containing " + expectedItems[2].trim();
+                                }
+                            }
+                            else {
+                                if (!expectedItems[0].toLowerCase().contains("contains")) {
+                                    message = "Performing find searching all elements for " + expectedItems[2].trim();
+                                } else {
+                                    message = "Performing find searching all elements containing " + expectedItems[2].trim();
+                                }
+                            }
+                            pageHelper.UpdateTestResults(pageHelper.indent5 + message + " for step " + fileStepIndexForLog, testResults);
+                            FindPhrase(ts, fileStepIndexForLog);
+                        }
                     }
                 }
             }
@@ -647,12 +700,282 @@ public class HomePage {
 
 
 
+
+    /* ********************************************************************
+     * DESCRIPTION:
+     *      Creates a new MongoDb Client Connection or closes an open
+     *      connection.
+     ******************************************************************** */
+    private void SetMongoClient(String mongoDbConnection, TestSettings ts) {
+
+        //determine the type of mongo connection that needs to be used
+//        if (ts.get_xPath().toLowerCase().trim().contains("uri") && !mongoDbConnection.toLowerCase().contains("close connection")) {
+        if (ts.get_xPath().toLowerCase().trim().contains("uri") && !mongoDbConnection.toLowerCase().contains("close")) {
+            //mongoClientUri = new MongoClientURI(mongoDbConnection);
+            mongoClient = new MongoClient(new MongoClientURI(mongoDbConnection));
+        } else if (!mongoDbConnection.toLowerCase().contains("close")) {
+            //local connection?
+            mongoClient = new MongoClient(mongoDbConnection);
+        } else {
+            mongoClient.close();  //close the connection
+        }
+
+        MongoCursor<String> dbsCursor = mongoClient.listDatabaseNames().iterator();
+        while (dbsCursor.hasNext()) {
+            try {
+                pageHelper.UpdateTestResults(dbsCursor.next());
+                MongoDatabase db = mongoClient.getDatabase(dbsCursor.next());
+
+                pageHelper.UpdateTestResults("--[Tables - Start]----");
+                MongoIterable<String> col = db.listCollectionNames();
+
+
+                for (String table : col) {
+                    pageHelper.UpdateTestResults(pageHelper.indent5 + "Table = " + table);
+                    FindIterable<Document> fields = db.getCollection(table).find();
+                    pageHelper.UpdateTestResults(pageHelper.indent5 + "--[Fields - Start]----");
+                    /*
+                    try {
+                        int maxRecords = 1;
+                        int recordCount = 0;
+                        if (dbsCursor.next().equals("project-tracker-dev")) {
+                            pageHelper.UpdateTestResults("db." + table + ".find() = " + db.getCollection(table).find());
+                            for (Document field : fields) {
+                                pageHelper.UpdateTestResults(pageHelper.indent8 + "Field = " + field.toString().replace("Document{{id=", "\r\nDocument{{id="));
+//                                recordCount++;
+//                                if (recordCount > maxRecords) {
+                                    break;
+//                                }
+                            }
+                        }
+                    } catch (MongoQueryException qx) {
+                        pageHelper.UpdateTestResults("Field Retrieval MongoDb error occurred: " + qx.getErrorMessage());
+                    } catch (Exception ex) {
+                        pageHelper.UpdateTestResults("Field Retrieval error occurred: " + ex.getMessage());
+                    }*/
+                    pageHelper.UpdateTestResults(pageHelper.indent5 + "--[Fields - End]----");
+                }
+
+                pageHelper.UpdateTestResults("--[Tables - End]----");
+                //col.forEach(String table : col)
+                pageHelper.UpdateTestResults("");
+            } catch(Exception ex) {
+                pageHelper.UpdateTestResults("MongoDB error occurred: " + ex.getMessage());
+            }
+        }
+    }
+
+    private void CloseConnection() {
+    }
+
+    private void RunQuery(TestSettings ts, String fileStepIndexForLog) {
+
+        pageHelper.UpdateTestResults("In RunQuery method");
+        if (ts.get_xPath().toLowerCase().contains("mongo")) {
+            pageHelper.UpdateTestResults("RunQuery....in first If Statement");
+            String [] expectedItems = ts.get_expectedValue().split(parameterDelimiter);
+            String [] queryParameters = expectedItems[0].split(" ");
+            pageHelper.UpdateTestResults("RunQuery: queryParameters.length = " + queryParameters.length);
+            if (queryParameters.length > 5) {  //need to work through this
+                pageHelper.UpdateTestResults("RunQuery: queryParameters[0].toLowerCase().trim() = " + queryParameters[0].toLowerCase().trim());
+                if (queryParameters[0].toLowerCase().trim().equals("query")) {
+                    pageHelper.UpdateTestResults("RunQuery: ts.get_expectedValue().toLowerCase() = " + ts.get_expectedValue().toLowerCase());
+                    if (ts.get_expectedValue().toLowerCase().contains("where")) {
+                        String wherePhrase = expectedItems[0].substring(expectedItems[0].indexOf("where"));
+                        pageHelper.UpdateTestResults("wherePhrase = " + wherePhrase);
+                        pageHelper.UpdateTestResults("queryParameters[1] = " + queryParameters[1]);
+                        pageHelper.UpdateTestResults("queryParameters[2] = " + queryParameters[2]);
+                        MongoDatabase db = mongoClient.getDatabase(queryParameters[1]);
+                        MongoCollection<Document> col = db.getCollection(queryParameters[2]);
+
+                        List<Document> documents = (List<Document>) col.find().into(
+                                new ArrayList<Document>());
+
+                        if (documents.size() > 0) {
+                            for (Document document : documents) {
+                                pageHelper.UpdateTestResults("document = " + document);
+                            }
+                        }
+                        else {
+                            pageHelper.UpdateTestResults("No matching items found");
+                        }
+                        //region {Commented for now}
+                        /*
+                        BasicDBObject whereQuery = new BasicDBObject();
+                        pageHelper.UpdateTestResults("queryParameters[4] = " + queryParameters[4]);
+                        pageHelper.UpdateTestResults("queryParameters[5] = " + queryParameters[5].replace(",", ""));
+                        if (!queryParameters[6].contains("\"")) {
+                            whereQuery.put(queryParameters[4].replace("\"", "") + " " + queryParameters[5].replace(",", "").replace("\"", ""), parseInt(queryParameters[6]));
+                        } else {
+                            whereQuery.put(queryParameters[4].replace("\"", "") + " " + queryParameters[5].replace(",", "").replace("\"", ""), queryParameters[6]);
+                        }
+                        FindIterable<Document> iterableString = col.find(whereQuery);
+                        pageHelper.UpdateTestResults("iterableString = " + iterableString);
+                        if (iterableString != null) {
+                            for (Document item : iterableString) {
+                                pageHelper.UpdateTestResults("item = " + item);
+                            }
+                        }
+                        else {
+                            pageHelper.UpdateTestResults("No matching items found");
+                        }*/
+                        //endregion
+                    }
+                }
+            } else {  //get the entire table of data if no where clause exists
+                MongoDatabase db = mongoClient.getDatabase(queryParameters[1]);
+                MongoCollection<Document> col = db.getCollection(queryParameters[2]);
+                //List<Document> documents;
+                FindIterable<Document> documents = null;
+                Document doc = null;
+                if (queryParameters.length > 2) {
+
+//                    documents = (List<Document>) col.find("{" + queryParameters[3].toString() + ":" + queryParameters[4].toString() + "}").into(
+//                            new ArrayList<Document>());
+//                    documents = db.getCollection(queryParameters[2]).find("{ " +  queryParameters[3].toString() + ":" + queryParameters[4].toString() + " }"));
+                    BSONObject bsonObj = BasicDBObject.parse("{" + queryParameters[3].toString() + ":" + queryParameters[4].toString() + "}");
+//                    documents = db.getCollection(queryParameters[2]).find(((BasicDBObject) bsonObj)).first();
+                    doc = db.getCollection(queryParameters[2]).find(((BasicDBObject) bsonObj)).first();
+
+                    //NOTE: { Everything remaining in this if statement is for formatting and not necessary for the testing application }
+                    //code used below for troubleshooting not necessarily testing
+                    pageHelper.UpdateTestResults("Doc = " + doc.toString());
+//                    pageHelper.UpdateTestResults("Doc = " + doc.toString()
+//                            .replace("{{","\r\n" + pageHelper.indent5 + "{{\r\n " + pageHelper.indent5)
+//                            .replace("}},","\r\n" + pageHelper.indent5 + "}},\r\n")
+//                            .replace(",",",\r\n" + pageHelper.indent5));
+                    String[] docString = doc.toString().split(", ");
+                    int indent = 0;
+                    int padSize = 2;
+                    String tempItem = "";
+                    String tempItem2 = "";
+                    for (String item: docString) {
+                        tempItem = "";
+                        tempItem2 = "";
+                        pageHelper.UpdateTestResults("[indent set to: " + indent + "]");
+                        //pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) + item.trim() + " - (Unformatted)");
+                        if ((item.contains("{{") || item.contains("[")) && !item.contains("[]")) {
+
+                            while (item.indexOf("{{") > 0 || item.indexOf("[") > 0)
+                            {
+                                tempItem += pageHelper.PadIndent(padSize, indent) + item.substring(0, item.indexOf("{{") + 2).trim().replace("{{", "\r\n" + pageHelper.PadIndent(padSize, indent) + "{{\r\n");
+                                pageHelper.UpdateTestResults("tempItem = " + tempItem);
+                                item = item.substring(item.indexOf("{{") + 2).trim();
+                                pageHelper.UpdateTestResults("item = " + item);
+                                indent++;
+                                pageHelper.UpdateTestResults("[indent now set to: " + indent + "]");
+                            }
+                            if (item.length() > 0) {
+                                tempItem += pageHelper.PadIndent(padSize, indent) +  item.trim();
+                            }
+
+
+                            pageHelper.UpdateTestResults(pageHelper.ANSI_YELLOW + tempItem + pageHelper.ANSI_RESET);
+//                            while (tempItem.indexOf("[") > 0) {
+//                                tempItem2 += pageHelper.PadIndent(padSize, indent) + tempItem.substring(0, tempItem.indexOf("[") + 1).trim().replace("[", "\r\n" + pageHelper.PadIndent(padSize, indent) + "[\r\n");
+//                                tempItem = tempItem.substring(tempItem.indexOf("[") + 1).trim();
+//                                indent++;
+//                            }
+//                            if (tempItem.length() > 0) {
+//                                tempItem2 += pageHelper.PadIndent(padSize, indent) + tempItem.trim();
+//                            }
+//
+//
+//
+//                            pageHelper.UpdateTestResults(pageHelper.ANSI_BLUE + tempItem2 + pageHelper.ANSI_RESET);
+//                            pageHelper.UpdateTestResults(color + tempItem + pageHelper.ANSI_RESET);
+                        }
+                        else if ((item.contains("}}") || item.contains("]")) && !item.contains("[]")) {
+                            while (item.indexOf("}}") > 0)
+                            {
+                                tempItem += pageHelper.PadIndent(padSize, indent) + item.substring(0, item.indexOf("}}") + 2).replace("}}", "\r\n" + pageHelper.PadIndent(padSize, indent - 1) + "}}");
+//                                tempItem += pageHelper.PadIndent(padSize, indent) + item.substring(0, item.indexOf("}}") + 2).replace("}}", "\r\n" + pageHelper.PadIndent(padSize, indent - 1) + "}}\r\n");
+                                item = item.substring(item.indexOf("}}") + 2).trim();
+                                indent--;
+                            }
+                            if (item.length() > 0) {
+                                tempItem += pageHelper.PadIndent(padSize, indent) +  item;
+//                                tempItem += pageHelper.PadIndent(padSize, indent) +  item + " - (also left over)";
+                            }
+//                            if (tempItem.contains("]")) {
+//                                indent--;
+//                            }
+                            pageHelper.UpdateTestResults(tempItem);
+                            //pageHelper.UpdateTestResults(item);
+                            //indent--;
+                        }
+                        else {
+                            pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) +  item.trim() + " - (No delimiters)");
+                        }
+                       /*
+                        if (item.contains("{{") || item.contains("[")) {
+                            if (item.contains("{{")) {
+                                if (item.contains("=") && (item.indexOf("=") < item.indexOf("{{"))) {
+                                    pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) + item.replace("{{", pageHelper.PadIndent(padSize, indent)) + "\r\n" + pageHelper.PadIndent(padSize, indent) + "{{ ");
+                                } else {
+                                    pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) + item.replace("{{", pageHelper.PadIndent(padSize, indent)) + "{{\r\n " + pageHelper.PadIndent(padSize, indent + 1));
+                                    //pageHelper.UpdateTestResults(item.replace("{{", "\r\n" + pageHelper.PadIndent(4, indent)) + "{{\r\n " + pageHelper.PadIndent(4, indent + 1));
+                                }
+                            }
+                            if (item.contains("["))  {
+                                if (item.contains("]")) {
+                                    String temp = pageHelper.PadIndent(padSize, indent) + item.replace("[", "\r\n" + pageHelper.PadIndent(padSize, indent) + "[\r\n" + pageHelper.PadIndent(padSize, indent + 1));
+                                    temp += pageHelper.PadIndent(padSize, indent) + temp.replace("]", "\r\n" + pageHelper.PadIndent(padSize, indent - 1) + "]\r\n");
+
+                                } else {
+                                    pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) + item.replace("[", "\r\n" + pageHelper.PadIndent(padSize, indent) + "[\r\n" + pageHelper.PadIndent(padSize, indent + 1)));
+                                }
+                            }
+//                            pageHelper.UpdateTestResults("--[ Indent = " + indent + "]------");
+                            indent++;
+                        } else if (item.contains("}}") || item.contains("]")) {
+                            if (item.contains("}}")) {
+                                pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) + item.replace("}}", "\r\n" + pageHelper.PadIndent(padSize, indent - 1) + "}}") + ",");
+                            }
+                            if (item.contains("]")) {
+                                pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) + item.replace("]", "\r\n" + pageHelper.PadIndent(padSize, indent - 1) + "]\r\n"));
+                            }
+//                            pageHelper.UpdateTestResults(item.replace("}}", pageHelper.PadIndent(4, indent) + "\r\n" + pageHelper.PadIndent(4, indent - 1) + "}}") + ",");
+//                            pageHelper.UpdateTestResults("--[ Indent = " + indent + "]------");
+                            indent--;
+                        } else {
+                            pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) + item  + ",");
+//                            pageHelper.UpdateTestResults("--[ Indent = " + indent + "]------");
+                        } */
+                       // pageHelper.UpdateTestResults("--[ Indent = " + indent + "]------");
+                    }
+                } else {
+                    List<Document> documents2;
+                    documents2 = (List<Document>) col.find().into(
+                            new ArrayList<Document>());
+                }
+
+                /*
+                if (documents != null) {
+                    for (Document document : documents) {
+//                        pageHelper.UpdateTestResults("document = " + document.replace(",", ",\r\n"));
+                        pageHelper.UpdateTestResults("document = " + document.toString().replace(",",",\r\n"));
+                    }
+                }
+                else {
+                    pageHelper.UpdateTestResults("No matching items found");
+                } */
+            }
+        }
+    }
+
+
+
     public void login(String url, String email, String password, String fileStepIndexForLog) throws Exception {
         if (url != null && !url.isEmpty() && !url.toLowerCase().trim().equals("n/a")) {
             driver.get(url);
         }
         try {
             driver.switchTo().alert();
+            List<WebElement> elements = driver.findElements(By.cssSelector("input"));
+            for (WebElement element : elements) {
+                pageHelper.UpdateTestResults("element = " + element.toString());
+            }
             //Selenium-WebDriver Java Code for entering Username & Password as below:
             driver.findElement(By.id("userID")).sendKeys(email);
             driver.findElement(By.id("password")).sendKeys(password);
@@ -661,17 +984,10 @@ public class HomePage {
         }
         catch (Exception ex)
         {
+            String newUrl = url.replace("://", "://" + email + ":" + password + "@");
+            driver.get(newUrl);
             //if the alert doesn't show up, you already have context and are logged in
         }
-        //region { Unfinished version }
-//        driver.get(url);
-//        //Passing the AutoIt Script here
-//        //Runtime.getRuntime().exec("D:\\Selenium\\workspace\\AutoItFiles\\ExecutableFiles\\FirefoxBrowser.exe");
-//        driver.findElement
-//        loginpage.setEmail(email);
-//        loginpage.setPassword(password);
-//        loginpage.clickOnLogin();
-        //endregion
     }
 
 
@@ -1073,9 +1389,117 @@ public class HomePage {
         pageHelper.UpdateTestResults(pageHelper.indent5 + "Discovered " + altTagCount + " image " + checkType.toLowerCase().trim()  + " attributes  amongst " + images.size() + " image tags.\r\n", testResults);
     }
 
+    /* *************************************************************************
+     * DESCRIPTION:
+     *     If a Tag is passed in as part of the Expected values, search the text
+     *     of all tags of that type for the phrase, but if no tag is passed in,
+     *     search the text of all page elements for the phrase.
+     *
+     ************************************************************************* */
+    private void FindPhrase(TestSettings ts, String fileStepIndex) {
+        String cssSelector = "*";
+        String [] expectedItems = ts.get_expectedValue().split(parameterDelimiter);
+        if (!expectedItems[1].trim().isEmpty()) {
+            cssSelector = expectedItems[1].trim();
+        }
+        Boolean wasFound = false;
+
+        List<WebElement> elements = driver.findElements(By.cssSelector(cssSelector));
+        List<String> foundElements = new ArrayList<>();
+
+        //region {Future implementation NOTE}
+        // When searching a specific tag type for the phrase,
+        // iterate through all child elements to see if one of them contains the text.
+        // if a child or grandchild contains the text, eliminate the element as containing the text
+        //endregion
+
+        if (expectedItems[0].toLowerCase().contains("contains")) {
+            for (WebElement element : elements) {
+                if (element.getText().contains(expectedItems[2].trim())) {
+                    wasFound = true;
+                    foundElements.add(generateXPATH(element, ""));
+//                    pageHelper.UpdateTestResults(pageHelper.ANSI_GREEN + "Successful found (" + expectedItems[2].trim() + ") in element: " + generateXPATH(element, "") + " for step " + fileStepIndex + pageHelper.ANSI_RESET, testResults);
+                    //break;
+                }
+            }
+        }
+        else {
+            for (WebElement element : elements) {
+                if (element.getText().equals(expectedItems[2].trim())) {
+                    wasFound = true;
+                    foundElements.add(generateXPATH(element, ""));
+//                    pageHelper.UpdateTestResults(pageHelper.ANSI_GREEN + "Successful found (" + expectedItems[2].trim() + ") in element: " + generateXPATH(element, "") + " for step " + fileStepIndex + pageHelper.ANSI_RESET, testResults);
+                    //break;
+                }
+            }
+        }
+
+        if (!wasFound) {
+            String message = "Failed to find (" + expectedItems[2].trim() + ") searching all elements.";
+            if (!cssSelector.trim().isEmpty()) {
+                message = "Failed to find (" + expectedItems[2].trim() + ") searching all " + cssSelector + " elements.";
+            }
+            pageHelper.UpdateTestResults(pageHelper.ANSI_RED + message + pageHelper.ANSI_RESET, testResults);
+        }
+        else {
+            //eliminate any hierarchical elements that don't actually contain the text
+            for (int y = foundElements.size() -1;y>= 0;y--) {
+                for (int x = foundElements.size() - 1;x>=0;x--) {
+                    if (y != x) {
+                        try {
+                            if (foundElements.get(y).contains(foundElements.get(x))) {
+                                foundElements.remove(x);
+                            } else if (foundElements.get(x).contains(foundElements.get(y))) {
+                                foundElements.remove(y);
+                            }
+                        }
+                        catch(IndexOutOfBoundsException io) {
+                            //try moving on to the next item doing nothing here
+                            //pageHelper.UpdateTestResults("Error y = " + y + " and x = " + x + " - " + io.getMessage());
+                        }
+                    }
+                }
+            }
+            for (int z=0;z<foundElements.size();z++) {
+                pageHelper.UpdateTestResults(pageHelper.ANSI_GREEN + "Successful found (" + expectedItems[2].trim() + ") in element: " + foundElements.get(z) + " for step " + fileStepIndex + pageHelper.ANSI_RESET, testResults);
+            }
+
+
+        }
+    }
+
+    private String generateXPATH(WebElement childElement, String current) {
+        String childTag = childElement.getTagName();
+        if(childTag.equals("html")) {
+            return "/html[1]"+current;
+        }
+        WebElement parentElement = childElement.findElement(By.xpath(".."));
+        List<WebElement> childrenElements = parentElement.findElements(By.xpath("*"));
+        int count = 0;
+        for(int i=0;i<childrenElements.size(); i++) {
+            WebElement childrenElement = childrenElements.get(i);
+            String childrenElementTag = childrenElement.getTagName();
+            if(childTag.equals(childrenElementTag)) {
+                count++;
+            }
+            if(childElement.equals(childrenElement)) {
+                return generateXPATH(parentElement, "/" + childTag + "[" + count + "]"+current);
+            }
+        }
+        return null;
+    }
+
+    /* *************************************************************************
+     * DESCRIPTION:
+     *    Partially implemented!
+     *    Currently only checks brightness and degree of difference in color.
+     *    Intended to and will eventually check the color contrast of
+     *    fonts against the background they are used upon.
+     ************************************************************************* */
     public void checkColorContrast(String url, String checkElement, String fileStepIndex, boolean isCrucial, String acceptibleRanges)
     {
         //useful links for this functionality
+        //https://www.w3.org/TR/WCAG20-TECHS/G17.html - ( look here for actual color contrast calculations recommended 7:1 ratio )
         //https://stackoverflow.com/questions/23220575/how-to-get-element-color-with-selenium
         //https://stackoverflow.com/questions/24669787/how-to-verify-text-color-in-selenium-webdriver
         String color;
@@ -1191,9 +1615,9 @@ public class HomePage {
             if (brightness >= brightnessStandard && contrast >= contrastStandard) {
                 pageHelper.UpdateTestResults(pageHelper.ANSI_GREEN + "Good brightness and Good contrast forecolor(" + color + ") Fore-Color Brightness: " + foreColorBrightness + " backcolor(" + backColor + ")" + backColorAncestor + " Back-Color Brightness: " + backColorBrightness + " Brightness Difference: " + brightness + " Color Difference: " + contrast + pageHelper.ANSI_RESET);
             } else if (brightness >= brightnessStandard && contrast < contrastStandard) {
-                pageHelper.UpdateTestResults(pageHelper.ANSI_WHITE_BACKGROUND + pageHelper.ANSI_RED + "Good brightness Warning contrast forecolor(" + color + ") brightness: " + foreColorBrightness + " backcolor(" + backColor + ")" + backColorAncestor + " brightness: " + backColorBrightness + " Contrast: " + brightness + " Color Difference: " + contrast + pageHelper.ANSI_RESET);
+                pageHelper.UpdateTestResults(pageHelper.ANSI_BRIGHTWHITE + pageHelper.ANSI_RED + "Good brightness Warning contrast forecolor(" + color + ") brightness: " + foreColorBrightness + " backcolor(" + backColor + ")" + backColorAncestor + " brightness: " + backColorBrightness + " Contrast: " + brightness + " Color Difference: " + contrast + pageHelper.ANSI_RESET);
             } else if (brightness < brightnessStandard && contrast >= contrastStandard) {
-                pageHelper.UpdateTestResults(pageHelper.ANSI_WHITE_BACKGROUND + pageHelper.ANSI_RED + "Warning brightness and Good contrast forecolor(" + color + ") brightness: " + foreColorBrightness + " backcolor(" + backColor + ")" + backColorAncestor + " brightness: " + backColorBrightness + " Contrast: " + brightness + " Color Difference: " + contrast + pageHelper.ANSI_RESET);
+                pageHelper.UpdateTestResults(pageHelper.ANSI_BRIGHTWHITE + pageHelper.ANSI_RED + "Warning brightness and Good contrast forecolor(" + color + ") brightness: " + foreColorBrightness + " backcolor(" + backColor + ")" + backColorAncestor + " brightness: " + backColorBrightness + " Contrast: " + brightness + " Color Difference: " + contrast + pageHelper.ANSI_RESET);
             } else {
                 pageHelper.UpdateTestResults( pageHelper.ANSI_RED + "Warning brightness and Warning contrast forecolor(" + color + ") brightness: " + foreColorBrightness + " backcolor(" + backColor + ")" + backColorAncestor + " brightness: " + backColorBrightness + " Contrast: " + brightness + " Color Difference: " + contrast +   pageHelper.ANSI_RESET);
             }

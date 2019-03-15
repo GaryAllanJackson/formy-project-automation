@@ -1,10 +1,10 @@
 public class TestSettings {
 
-    private String _xPath;
-    private String _expectedValue;
-    private String _searchType;
-    private Boolean performWrite;
-    private Boolean _isCrucial;
+    private String _xPath;              //this is the accessor that is going to be used to find the element
+    private String _expectedValue;      //the value to check or action to perform (contains its own parameters)
+    private String _searchType;         //accessor type
+    private Boolean performWrite;       //True to perform an action, false to read text
+    private Boolean _isCrucial;         //True if test should stop upon failed test step, false if test should continue
 
 
     public String get_xPath() {

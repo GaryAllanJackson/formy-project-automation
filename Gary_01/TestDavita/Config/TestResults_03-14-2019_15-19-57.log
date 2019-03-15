@@ -1,0 +1,26 @@
+╔══════════════[ Beginning Configuration ]═══════════════════════════════════════════════════════════════════════════════════════╗
+     Configured Browser Selection = Chrome
+     [Setting ChromeDriver]
+╚══════════════[ Ending Configuration ]══════════════════════════════════════════════════════════════════════════════════════════╝
+
+╔══════════════[ Running Test Script ]═══════════════════════════════════════════════════════════════════════════════════════════╗
+     «══════════════[ Start Explicit Navigation Event ]══════════════════════════════════════════»
+        Successful Navigation and URL Check for step F0_S0 Expected: (https://formy-project.herokuapp.com/form) Actual: (https://formy-project.herokuapp.com/form)
+     «══════════════[  End Explicit Navigation Event  ]══════════════════════════════════════════»
+     Performing find searching all elements for Highest level of education for step F0_S2
+Successful found (Highest level of education) in element: /html[1]/body[1]/div[1]/form[1]/div[1]/div[4]/div[1]/strong[1]/label[1] for step F0_S2
+     Performing find searching all div elements for Highest level of education for step F0_S3
+Successful found (Highest level of education) in element: /html[1]/body[1]/div[1]/form[1]/div[1]/div[4]/div[1] for step F0_S3
+     Performing find searching all label elements for Highest level of education for step F0_S4
+Successful found (Highest level of education) in element: /html[1]/body[1]/div[1]/form[1]/div[1]/div[4]/div[1]/strong[1]/label[1] for step F0_S4
+     Performing find searching all div elements for Highest level of education for step F0_S5
+Successful found (Highest level of education) in element: /html[1]/body[1]/div[1]/form[1]/div[1]/div[4]/div[1] for step F0_S5
+     Element type being checked at step F0_S6 by xPath: /html[1]/body[1]/div[1]/form[1]/div[1]/div[4]/div[1]
+     Checking element by XPath: Div for script F0_S6 Actual Value: "Highest level of education"
+Successful comparison results at step F0_S6 Expected value: (Highest level of education) Actual value: (Highest level of education)
+
+
+     Waiting a maximum of 10 seconds for presence of element first-name at step F0_S7
+Successful load of element first-name within max time setting of 10 at step F0_S7
+╚══════════════[ End of Test Script ]════════════════════════════════════════════════════════════════════════════════════════════╝
+

@@ -23,12 +23,15 @@ public class PageHelper {
     public static final String ANSI_BLACK = "\u001B[30m";
     //public static final String ANSI_BLACK_ALT = "\033[30m";
     public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_BRIGHTWHITETEXT = "\u001b[31m";
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_YELLOW = "\u001B[33m";
     public static final String ANSI_BLUE = "\u001B[34m";
     public static final String ANSI_PURPLE = "\u001B[35m";
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
+    public static final String ANSI_BRIGHTWHITE = "\u001B[40m";
+    public static final String ANSI_BRIGHTYELLOW = "\u001b[94m";
     //endregion
 
     //region {System out background colors }
@@ -505,6 +508,14 @@ public class PageHelper {
             sectionTitle = sectionTitle.replace("╗", sRepeated + "╗").replace("╝", sRepeated + "╝");
         }
         return sectionTitle;
+    }
+
+    public String PadIndent(int padSize, int multiplier) {
+        String s = " ";
+        int n = padSize * multiplier;
+        String sRepeated = IntStream.range(0, n).mapToObj(i -> s).collect(Collectors.joining(""));
+
+        return sRepeated;
     }
 
     /* ****************************************************************
