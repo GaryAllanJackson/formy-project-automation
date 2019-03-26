@@ -18,7 +18,6 @@
 //TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\DavitaHomePageNotFull_TestSettings.txt
 //TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\Blackrock.txt
 //TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\Formy-FormTest_new2.txt
-//TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\Formy-FormTest_new.txt
 //TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\DavitaHomePageNotFull_TestSettings2.txt
 //TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\NestedDropDownTest.txt
 //TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\NestedDropDownForSmartyPants.txt
@@ -26,16 +25,29 @@
 //TestFileName=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\SmuckersSiteFoldersTest.txt
 //TestFileName=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\SmuckersSitemapContactUsTest.txt
 //TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\MLabTest.txt
+//TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\MLabTest_Al.txt
 //TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\MongoDbTest.txt
-TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\Find-Phrase-Test.txt
+//TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\NutrishLinks.txt
+//TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\Formy-FormTest_new2.txt
+//
+//Testing numeric TestFileName sort below
+//TestFileName2=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\Formy-FormTest_new.txt
+//TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\Find-Phrase-Test.txt
+//TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\TestStatusAndValue_sortTest.txt
+//TestFileName10=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\TestStatusAndValue_sortTest2.txt
+//
+//persistence testing
+TestFileName2=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\PersistenceTest1.txt
 ScreenShotSaveFolder=C:\Gary\ScreenShots\Mashup
 MaxScreenShotsToTake=1
 //BrowserType=Edge
 //BrowserType=Internet Explorer
-BrowserType=Chrome
+//BrowserType=Chrome
+BrowserType=Firefox
 RunHeadless=false
 TestAllBrowsers=false
 SpecifyTestFiles=true
+SortSpecifiedTestFiles=true
 TestFolderName=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\Gary_01\TestFiles\Tests\Formy-FormTest.txt
 FolderFileFilterType=Starts_With
 FolderFileFilter=Fis

@@ -4,6 +4,8 @@ import org.openqa.selenium.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -14,6 +16,10 @@ import static java.lang.Integer.parseInt;
 public class PageHelper {
 
     //private String testFileName = "C:\\Users\\gjackson\\Downloads\\Ex_Files_Selenium_EssT\\Ex_Files_Selenium_EssT\\Exercise Files\\Gary_01\\TestFiles\\TestSettingsFile.txt";
+
+    //a better way to read a file line by line in Java
+    //List<String> allLines = Files.readAllLines(Paths.get("/Users/pankaj/Downloads/myfile.txt"));
+
 
     //bold
     public static final String ANSI_BOLD = "\u001B[1m";
@@ -130,13 +136,13 @@ public class PageHelper {
                 Dimension originalDimension = driver.manage().window().getSize();
                 int height = originalDimension.height;
                 int width = originalDimension.width;
-                UpdateTestResults("==================[gaj debugging]=========================================");
-                UpdateTestResults("Original Browser Dimensions height: " + height + " Width: " + width);
+//                UpdateTestResults("==================[gaj debugging]=========================================");
+//                UpdateTestResults("Original Browser Dimensions height: " + height + " Width: " + width);
                 //reset the browser dimensions to capture all content
                 Dimension dimension = GetWindowContentDimensions(driver);
                 driver.manage().window().setSize(dimension);
-                UpdateTestResults("Resized Browser Dimensions height: " + dimension.height + " Width: " + dimension.width);
-                UpdateTestResults("==================[gaj debugging]=========================================");
+//                UpdateTestResults("Resized Browser Dimensions height: " + dimension.height + " Width: " + dimension.width);
+//                UpdateTestResults("==================[gaj debugging]=========================================");
 
                 screenShotName = MakeValidFileName(screenShotName);
 
@@ -290,6 +296,7 @@ public class PageHelper {
         PrintSamples();
         ConfigSettings configSettings = new ConfigSettings();
         String configValue;
+        ArrayList<String> tempFiles = new ArrayList<>();
 
         File configFile = new File(configurationFile);
         if (!configFile.exists() && isExecutedFromMain) {
@@ -324,6 +331,11 @@ public class PageHelper {
                         configSettings.set_runHeadless(Boolean.parseBoolean(configValue));
                         UpdateTestResults(ANSI_YELLOW + indent5 + "runHeadless = "  + ANSI_RESET + configSettings.get_runHeadless().toString());
                     }
+                    else if (line.toLowerCase().indexOf("sortspecifiedtestfiles") >= 0) {
+                        //UpdateTestResults("SortSpecifiedTestFiles - line = " + line);
+                        configSettings.set_sortSpecifiedTestFiles(Boolean.parseBoolean(configValue));
+                        UpdateTestResults(ANSI_YELLOW + indent5 + "SortSpecifiedTestFiles = "  + ANSI_RESET + configSettings.get_sortSpecifiedTestFiles().toString());
+                    }
                     else if (line.toLowerCase().indexOf("screenshotsavefolder") >= 0) {
                         configSettings .set_screenShotSaveFolder(configValue);
                         UpdateTestResults(ANSI_YELLOW + indent5 + "screenShotSaveFolder = "  + ANSI_RESET + configSettings.get_screenShotSaveFolder());
@@ -333,6 +345,7 @@ public class PageHelper {
                         UpdateTestResults(ANSI_YELLOW + indent5 + "testAllBrowsers = "  + ANSI_RESET + configSettings.get_testAllBrowsers().toString());
                     }
                     else if (line.toLowerCase().indexOf("testfilename") >= 0) {
+                        tempFiles.add(line);
                         configSettings.set_testSettingsFile(configValue);
                         UpdateTestResults(ANSI_YELLOW + indent5 + "testFileName = "  + ANSI_RESET + configSettings.get_testSettingsFile());
                     }
@@ -376,8 +389,61 @@ public class PageHelper {
         catch (Exception e) {
             UpdateTestResults(ANSI_RED + "The following error occurred while attempting to read the configuration file:" + configurationFile + "\\r\\n" + e.getMessage() + ANSI_RESET);
         }
+
+        if (tempFiles.size() > 0 && configSettings.get_specifyFileNames() && configSettings.get_sortSpecifiedTestFiles()) {
+            SortTestFiles(tempFiles, configSettings);
+        }
+
         UpdateTestResults(FRAMED + ANSI_YELLOW_BACKGROUND + ANSI_BLUE + ANSI_BOLD + sectionEndFormatLeft + "End of Reading Configuration File" + sectionEndFormatRight + ANSI_RESET);
         return configSettings;
+    }
+
+
+    /* ******************************************************************
+     * Description: This method sorts the test files based on number.
+     * First, this method does a text based sort, which will sort files
+     * below double digits but it them performs a numeric sort based on the
+     * number following TestFileName and orders files based on that number.
+     ****************************************************************** */
+    private void SortTestFiles(ArrayList<String> tempFiles, ConfigSettings configSettings) {
+        configSettings.reset_testSettingsFile();
+        Collections.sort(tempFiles);
+        String configValue;
+        int num1;
+        int num2;
+        String temp1;
+        String temp2;
+
+        for (int y=0;y<tempFiles.size();y++) {
+            num1 = parseInt(tempFiles.get(y).substring(12, tempFiles.get(y).indexOf("=")));
+//            UpdateTestResults("In outer y loop num1 = " + num1);
+            for (int x = 0; x < tempFiles.size(); x++) {
+                num2 = parseInt(tempFiles.get(x).substring(12, tempFiles.get(x).indexOf("=")));
+//                UpdateTestResults("In inner x loop num2 = " + num2);
+                if (x > y && num2 < num1) {
+                    //UpdateTestResults("In inner x loop if (x = " + x + " y = " + y + "num1 = " + num1 + " num2 = " + num2);
+                    temp1 = tempFiles.get(y);
+                    temp2 = tempFiles.get(x);
+                    tempFiles.remove(x);
+                    tempFiles.remove(y);
+                    tempFiles.add(y, temp2);
+                    tempFiles.add(x, temp1);
+                } else if (x < y && num2 > num1) {
+                    //UpdateTestResults("In inner x loop if else (x = " + x + " y = " + y + "num1 = " + num1 + " num2 = " + num2);
+                    temp1 = tempFiles.get(y);
+                    temp2 = tempFiles.get(x);
+                    tempFiles.remove(x);
+                    tempFiles.remove(y);
+                    tempFiles.add(x, temp1);
+                    tempFiles.add(y, temp2);
+                }
+            }
+        }
+
+        for (int x=0;x<tempFiles.size();x++) {
+            configValue = tempFiles.get(x).substring(tempFiles.get(x).indexOf("=") + 1);
+            configSettings.set_testSettingsFile(configValue, x);
+        }
     }
 
     /* ******************************************************************
@@ -518,6 +584,40 @@ public class PageHelper {
         return sRepeated;
     }
 
+    public String PadIndent(String chr, int padSize, String value) {
+        //String s = " ";
+        if (chr.isEmpty()) {
+            chr = " ";
+        }
+        StringBuilder sb = new StringBuilder();
+
+        int n = padSize > value.length() ? padSize - value.length() : 0;
+        for (int x=1;x<= n;x++) {
+            sb.append(chr);
+        }
+        return sb.toString();
+    }
+
+    public String PrePostPad(String value, String chr, int prePad, int totalSize) {
+        if (chr.isEmpty()) {
+            chr = " ";
+        }
+        StringBuilder sb = new StringBuilder();
+
+        int remainingTotal = totalSize > value.length() ? totalSize - value.length() : 0;
+
+        //int n = padSize > value.length() ? padSize - value.length() : 0;
+        if (remainingTotal > 0)
+            for (int x=1;x<= remainingTotal;x++) {
+                sb.append(chr);
+                if (x == prePad) {
+                    sb.append(value);
+                }
+            }
+        return sb.toString();
+    }
+
+
     /* ****************************************************************
      *   DESCRIPTION:
      *   This overloaded method writes to the standard output but not
@@ -574,6 +674,7 @@ public class PageHelper {
             WriteToFile(get_helpFileName(), "║                                              CONFIGURATION FILE FORMAT                                                                                                 ║");
             WriteToFile(get_helpFileName(), "╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
             WriteToFile(get_helpFileName(), "// NOTES: Lines beginning with double slashes denote comments, in the configuration file, and will be ignored by the configuration reader.");
+            WriteToFile(get_helpFileName(), "// BLANK LINES ARE NOT PERMITTED!!!  If you need visual space, start the blank line with double slashes and that is acceptable.");
             WriteToFile(get_helpFileName(), "// Configuration files are key=value pairs where you are setting a configurable value using the equal assignment operator");
             WriteToFile(get_helpFileName(), "// TestFileName - names beginning with this are used to point to the file/files containing the test setting commands.");
             WriteToFile(get_helpFileName(), "//    -   The Test Setting Commands file is a described in detail below under the Test File Format Section");
@@ -582,6 +683,12 @@ public class PageHelper {
             WriteToFile(get_helpFileName(), "// RunHeadless - can be true to run headless or false to show the browser, but PhantomJs is always headless");
             WriteToFile(get_helpFileName(), "// TestAllBrowsers - can be true or false.  If false, BrowserType must be set.  If true, BrowserType is ignored and the program will cycle through all browsers.");
             WriteToFile(get_helpFileName(), "// SpecifyTestFiles - Can be true to specifiy each file and the order that files are run, or false to select a folder of files that will be ordered alphabetically.");
+            WriteToFile(get_helpFileName(), "// SortSpecifiedTestFiles - This setting depends upon SpecifyTestFiles being true.");
+            WriteToFile(get_helpFileName(), "//    -   Can be set to false to manually place the files in the order that you want them to be executed. (Default)");
+            WriteToFile(get_helpFileName(), "//    -   Can be true to sort the files by the alphabetically and numerically using the number following the word TestFileName.");
+            WriteToFile(get_helpFileName(), "//       -   An example of the sorted order follows: (TestFileName0, TestFileName1, TestFileName2 etc..)");
+            WriteToFile(get_helpFileName(), "//       -   This forces a sort to be performed on the names so these will sort numerically.");
+            WriteToFile(get_helpFileName(), "//       -   If multiple entries have the same number, like (TestFileName0, TestFileName0) those entries will also be sorted alphabetically.");
             WriteToFile(get_helpFileName(), "// TestFolderName - will contain the folder where test files exist when SpecifyTestFiles is false.");
             WriteToFile(get_helpFileName(), "// FolderFileFilterType - type of filtering you want to use to select similarly named files within a folder options are: ");
             WriteToFile(get_helpFileName(), "//    -   [Starts With], [Contains] and [Ends With] ");
@@ -610,6 +717,7 @@ public class PageHelper {
             WriteToFile(get_helpFileName(), "RunHeadless=false");
             WriteToFile(get_helpFileName(), "TestAllBrowsers=false");
             WriteToFile(get_helpFileName(), "SpecifyTestFiles=true");
+            WriteToFile(get_helpFileName(), "SortSpecifiedTestFiles=false");
             WriteToFile(get_helpFileName(), "TestFolderName=C:\\MyTestFolder\\");
             WriteToFile(get_helpFileName(), "FolderFileFilterType=Starts_With");
             WriteToFile(get_helpFileName(), "FolderFileFilter=MyPhrase");
@@ -627,9 +735,12 @@ public class PageHelper {
             WriteToFile(get_helpFileName(), "### Each parameter is separated by a space + semi-colon + space.");
             WriteToFile(get_helpFileName(), "### The first parameter is one of the following: url to navigate to, or Element (xPath, CssSelector, Tag Name, ClassName, ID)");
             WriteToFile(get_helpFileName(), "### The second parameter is the action to take or expected value to retrieve.  For URLs both are required separated by a space then (alt + 206), ");
-            WriteToFile(get_helpFileName(), "###     ╬ then space. ' ╬ '  optionally add a second space + (alt + 206) + space delimiter to add a time delay (thread sleep value in milli-seconds) to give the event time to complete.");
+            WriteToFile(get_helpFileName(), "###     ╬ then space. ' ╬ '  optionally add a second space + (alt + 206) + space delimiter to add a time delay (thread sleep value in milli-seconds)");
+            WriteToFile(get_helpFileName(), "###     to give the event time to complete.");
             WriteToFile(get_helpFileName(), "###     The format is: Action ╬ Expected Value ╬ Time delay before making the assertion.  Some commands allow for many delimited values in this field.");
             WriteToFile(get_helpFileName(), "###     For context menu navigation the action can be a chain of up or down arrow keys as well to navigate to the desired menu item.");
+            WriteToFile(get_helpFileName(), "###     IMPORTANT: If performing context menu navigation or using arrow keys in general, do not move your mouse or change focus from the browser running the test.");
+            WriteToFile(get_helpFileName(), "###     Changing the focus will interupt the test and cause inaccurate results.");
             WriteToFile(get_helpFileName(), "### The third parameter is the type of check to perform and will be ignored for performing Navigation where that is irrelevant");
             WriteToFile(get_helpFileName(), "###        acceptable values are xPath, CssSelector, Tag Name, ClassName, ID and n/a");
             WriteToFile(get_helpFileName(), "### The fourth parameter is the PerformAction boolean field.  Set this to true when performing an action other than retrieving the text value of the element.");
@@ -640,9 +751,9 @@ public class PageHelper {
             WriteToFile(get_helpFileName(), "###       All successful assertions will appear in green text.  All failed assertions will appear in red text.");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "###  The examples below are are not all inclusive but rather attempt to provide you with a basic understanding\r\n###  so that you can make the necessary changes to accomplish a testing task.");
-            WriteToFile(get_helpFileName(), "###  When an error occurs it is most likely due to an element not found and a screenshot will automatically be taken,\r\n### if you haven't set or reached the maximum number of screenshots allowed.");
+            WriteToFile(get_helpFileName(), "###  When an error occurs it is most likely due to an element not found and a screenshot will automatically be taken,\r\n###  if you haven't set or reached the maximum number of screenshots allowed.");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "###  =========[ NAVIGATION ]========================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ NAVIGATION ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "###  All Navigation steps should be marked as crucial, as all subsequent checks require that navigation to complete successfully!!!");
             WriteToFile(get_helpFileName(), "###  To Navigate and mark that step as crucial");
             WriteToFile(get_helpFileName(), "╠https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_ref_comp_dropdown-menu&stacked=h ; Navigate ; n/a ; true ; true╣");
@@ -653,7 +764,8 @@ public class PageHelper {
             WriteToFile(get_helpFileName(), "╠https://formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000 ; n/a ; true ; true╣");
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "###  To Navigate and Authenticate with username and password and assert that the URL is what follows the ╬ character and to wait 4 thousand milli-seconds before making the assertion to allow the page to load:");
+            WriteToFile(get_helpFileName(), "###  To Navigate and Authenticate with username and password and assert that the URL is what follows the ╬ character and to wait 4 thousand milli-seconds ");
+            WriteToFile(get_helpFileName(), "###        before making the assertion to allow the page to load:");
             WriteToFile(get_helpFileName(), "╠https://username:password@formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000 ; n/a ; true ; true╣");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "###  To Navigate and Authenticate with username and password:");
@@ -662,138 +774,181 @@ public class PageHelper {
 
             WriteToFile(get_helpFileName(), "###  To Navigate, assert that the URL, add a time delay and set the browser dimensions to 800 width by 800 height:");
             WriteToFile(get_helpFileName(), "╠https://formy-project.herokuapp.com/form ; Navigate ╬ https://formy-project.herokuapp.com/form ╬ 4000  ╬ w=800 h=800 ; n/a ; true ; true╣");
-            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            //WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "###  =========[ ALERT POPUP LOGIN  ]=================================================================================================================================");
+            //WriteToFile(get_helpFileName(), "###  =========[ ALERT POPUP LOGIN  ]=================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ ALERT POPUP LOGIN ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "###  To login when presented with an alert style popup which could happen upon landing on the site or after the site redirects you, and to make this crucial.");
             WriteToFile(get_helpFileName(), "###  Please note this is for normal passwords which cannot contain spaces or characters that require escaping.");
             WriteToFile(get_helpFileName(),"╠n/a ; login username password ; n/a ; true ; true╣");
-            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            //WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "###  =========[ CHECK URL WITHOUT NAVIGATION ]=======================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  =========[ CHECK URL WITHOUT NAVIGATION ]=======================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ CHECK URL WITHOUT NAVIGATION ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "###  To check a URL without navigating and to make it non-crucial.  To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "╠n/a ; URL ╬ https://formy-project.herokuapp.com/thanks ; n/a ; true ; false╣");
-            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "###  =========[ CHECK GET REQUEST STATUS WITHOUT NAVIGATION ]=======================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  =========[ CHECK GET REQUEST STATUS WITHOUT NAVIGATION ]=======================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ CHECK GET REQUEST STATUS WITHOUT NAVIGATION ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "###  To check the Get Requests status of a URL without navigating and to make it crucial.  To make it non-crucial change the last parameter to false.");
             WriteToFile(get_helpFileName(), "###  The Space between check and get is optional as shown below.");
             WriteToFile(get_helpFileName(), "╠https://semantic-ui.com/modules/dropdown.html ; checkget ╬ 200 ; n/a ; false ; true╣");
             WriteToFile(get_helpFileName(), "╠https://semantic-ui.com/modules/dropdown.html ; check get ╬ 200 ; n/a ; false ; true╣");
-            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "###  =========[ CHECK POST REQUEST STATUS WITHOUT NAVIGATION ]=======================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  =========[ CHECK POST REQUEST STATUS WITHOUT NAVIGATION ]=======================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ CHECK POST REQUEST STATUS WITHOUT NAVIGATION ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "###  To check the Post Requests status of a URL without navigating and to make it crucial.  To make it non-crucial change the last parameter to false.");
             WriteToFile(get_helpFileName(), "###  The Space between check and get is optional as shown below.");
             WriteToFile(get_helpFileName(), "╠https://semantic-ui.com/modules/dropdown.html ; checkpost ╬ 200 ; n/a ; false ; true╣");
             WriteToFile(get_helpFileName(), "╠https://semantic-ui.com/modules/dropdown.html ; check post ╬ 200 ; n/a ; false ; true╣");
-            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "###  =========[ CHECK DOCUMENT READY STATE COMPLETE WITHOUT NAVIGATION AS A POST NAVIGATION STEP]=======================================================================================================================");
-            WriteToFile(get_helpFileName(), "###  To check that the document ready state is complete after previously navigating to a new page and to make it crucial.  To make it non-crucial change the last parameter to false.");
+//            WriteToFile(get_helpFileName(), "###  =========[ CHECK DOCUMENT READY STATE COMPLETE WITHOUT NAVIGATION AS A POST NAVIGATION STEP]=======================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ CHECK DOCUMENT READY STATE COMPLETE WITHOUT NAVIGATION AS A POST NAVIGATION STEP]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "###  To check that the document ready state is complete after previously navigating to a new page and to make it crucial. ");
+            WriteToFile(get_helpFileName(), "###  To make it non-crucial change the last parameter to false.");
             WriteToFile(get_helpFileName(), "###  Use page as the accessor.  This will be most useful for triggered navigation.");
             WriteToFile(get_helpFileName(), "╠page ; wait ╬ 15 ; xPath ; true ; true╣");
-            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
             //check document ready complete
-            WriteToFile(get_helpFileName(), "###  =========[ CHECK DOCUMENT READY STATE COMPLETE WITH NAVIGATION ]=======================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  =========[ CHECK DOCUMENT READY STATE COMPLETE WITH NAVIGATION ]=======================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ CHECK DOCUMENT READY STATE COMPLETE WITH NAVIGATION ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "###  To check that the document ready state is complete with navigation and to make it crucial.  To make it non-crucial change the last parameter to false.");
             WriteToFile(get_helpFileName(), "###  Use page along with the URL as the accessor separated by a space.  This is useful for explicit navigation.");
             WriteToFile(get_helpFileName(), "╠page https://semantic-ui.com/modules/dropdown.html ; wait ╬ 15 ; xPath ; true ; true╣");
-            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
 
-            WriteToFile(get_helpFileName(), "###  =========[ CHECK ALL PAGE LINKS ]=======================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  =========[ CHECK ALL PAGE LINKS ]=======================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ CHECK ALL PAGE LINKS ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "###  To check all page links and to make it non-crucial.  To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "###  This will check for a status code of 200 for all links on the page but will report the status code for all links.");
             WriteToFile(get_helpFileName(), "╠https://semantic-ui.com/modules/dropdown.html ; check links ; n/a ; false ; false╣");
-            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "###  =========[ CHECK ALL PAGE IMAGE SRC TAGS ]=======================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  =========[ CHECK ALL PAGE IMAGE SRC TAGS ]=======================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ CHECK ALL PAGE IMAGE SRC TAGS ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "###  To check all page image src tags, to ensure a source exists and to make it non-crucial.  To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "###  The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sources but will report the status of all image sources.");
             WriteToFile(get_helpFileName(), "╠https://semantic-ui.com/modules/dropdown.html ; check images src ; n/a ; false ; false╣");
-            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
 
-            WriteToFile(get_helpFileName(), "###  =========[ CHECK ALL PAGE IMAGE ALT TAGS ]=======================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  =========[ CHECK ALL PAGE IMAGE ALT TAGS ]=======================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ CHECK ALL PAGE IMAGE ALT TAGS ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "###  To check all page image alt tags, for ADA compliance and to make it crucial.  To make it non-crucial change the last parameter to false.");
             WriteToFile(get_helpFileName(), "###  The alt tag will checked to see if it exists and is not empty.  Empty tags will be flagged as failed.");
             WriteToFile(get_helpFileName(), "╠https://semantic-ui.com/modules/dropdown.html ; check images alt ; n/a ; false ; false╣");
-            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "###  =========[ WAITING A SPECIFIC AMOUNT OF TIME FOR ITEMS TO BE AVAILABLE ]==================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  =========[ WAITING A SPECIFIC AMOUNT OF TIME FOR ITEMS TO BE AVAILABLE ]==================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ WAITING A SPECIFIC AMOUNT OF TIME FOR ITEMS TO BE AVAILABLE ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "###  To wait for a specific amount of time before continuing to allow for page loading or script completion");
             WriteToFile(get_helpFileName(), "###  To wait for 5 thousand milli-seconds before continuing onto the next step.");
             WriteToFile(get_helpFileName(), "╠n/a ; Wait ╬ 5000 ; n/a ; true ; false╣");
-            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "###  =========[ WAITING FOR THE PRESENCE OF AN ELEMENT ]==================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  =========[ WAITING FOR THE PRESENCE OF AN ELEMENT ]==================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ WAITING FOR THE PRESENCE OF AN ELEMENT ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "###  To wait for an element to be present, requires checking for the element using an accessor unlike waiting a specific amount of time.");
-            WriteToFile(get_helpFileName(), "###  To wait for for a maximum of 15 seconds for an element to be present and making this check crucial, use the following.  To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "###  To wait for for a maximum of 15 seconds for an element to be present and making this check crucial, use the following.");
+            WriteToFile(get_helpFileName(), "###  To make it non-crucial change the last parameter to false.");
             WriteToFile(get_helpFileName(), "╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; wait ╬ 15 ; xPath ; true ; true╣");
-            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "###  =========[ WAITING FOR DOCUMENT READY STATE COMPLETE ]==================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  =========[ WAITING FOR DOCUMENT READY STATE COMPLETE ]==================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ WAITING FOR DOCUMENT READY STATE COMPLETE ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "###  To wait for the page to fully load and document state to be complete, use the following command.");
             WriteToFile(get_helpFileName(), "###  Please note that the accessor is set to page and that an accessor type is present.  Any Accessor Type must be present, although it is not used,");
             WriteToFile(get_helpFileName(), "###  to distinguish this document ready state complete wait from a time interval wait.");
-            WriteToFile(get_helpFileName(), "###  To wait for for a maximum of 15 seconds for document state complete and to make this check crucial, use the following.  To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "###  To wait for for a maximum of 15 seconds for document state complete and to make this check crucial, use the following.");
+            WriteToFile(get_helpFileName(), "###  To make it non-crucial change the last parameter to false.");
             WriteToFile(get_helpFileName(), "//╠page ; wait ╬ 15 ; xPath ; true ; true╣");
-            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "###  =========[ FILLING IN TEXT FIELDS ]=============================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  =========[ FILLING IN TEXT FIELDS ]=============================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ FILLING IN TEXT FIELDS ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "###  To fill in a field by ID and to make it non-crucial.  To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "╠first-name ; John ; ID ; true ; false╣");
             WriteToFile(get_helpFileName(), "");
 
             WriteToFile(get_helpFileName(), "To fill in a field by ID and to make it non-crucial when it contains a reserved command like click.  To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "╠first-name ; sendkeys ╬ click ; ID ; true ; false╣");
-            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To fill in a field using the value you persisted in an earlier step use the following.");
+            WriteToFile(get_helpFileName(), "╠first-name ; Sendkeys ╬ PersistedString ; ID ; true ; false╣");
+//            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "###  =========[ CHECKING A CHECKBOX/RADIOBUTTON - CLICKING A BUTTON ]================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  =========[ CHECKING A CHECKBOX/RADIOBUTTON - CLICKING A BUTTON ]================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ CHECKING A CHECKBOX/RADIOBUTTON - CLICKING A BUTTON ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "###  To click an element by ID");
             WriteToFile(get_helpFileName(), "╠checkbox-2 ; click ; ID ; true ; false╣");
-            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "###  =========[ CLICKING AN ELEMENT THAT FORCES NAVIGATION ]=========================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  =========[ CLICKING AN ELEMENT THAT FORCES NAVIGATION ]=========================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ CLICKING AN ELEMENT THAT FORCES NAVIGATION ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "###  To click an element by xPath that navigates to a new page and check the url of the new page after waiting 5 thousand milli-seconds for the page to load.");
             WriteToFile(get_helpFileName(), "╠/html[1]/body[1]/div[1]/div[2]/div[1]/div[1]/div[1]/h4[3] ; click ╬ https://www.davita.com/education ╬ 5000 ; xPath ; true ; false╣");
-            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "###  =========[ DOUBLE CLICKING AN ELEMENT ]=========================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  =========[ DOUBLE CLICKING AN ELEMENT ]=========================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ DOUBLE CLICKING AN ELEMENT ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "###  To double click an element by ID.  If this is a text field, double clicking it will select the first word.");
             WriteToFile(get_helpFileName(), "╠first-name ; doubleclick ; ID ; true ; false╣");
-            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "###  =========[ SELECTING A MENU ITEM ELEMENT ]=========================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  =========[ SELECTING A MENU ITEM ELEMENT ]=========================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ SELECTING A MENU ITEM ELEMENT ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "###  When sending up, down, right and left arrows as a list of keystrokes, you can use the sendkeys action with a space afterward and an optional time between sending,");
             WriteToFile(get_helpFileName(), "###  along with a list of keys to send, to mimic human typing.  The default interval is 400 milli-seconds but in the example below 600 milli-seconds is used.");
-            WriteToFile(get_helpFileName(), "╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; sendkeys 600 ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Right ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Return ; xPath ; true ; true╣");
+            WriteToFile(get_helpFileName(), "╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; sendkeys 600 ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down\r\n ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Arrow_Right ╬ Keys.Arrow_Down ╬ Keys.Arrow_Down ╬ Keys.Return\r\n ; xPath ; true ; true╣");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "###  You can send these as individual commands as shown below if you need to change the time between commands or to track a particular issue when sending commands.");
             WriteToFile(get_helpFileName(), "╠ /html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; Keys.ARROW_RIGHT ; xPath ; true ; false ╣");
             WriteToFile(get_helpFileName(), "╠ n/a ; Wait ╬ 400 ; n/a ; true ; false ╣");
-            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "###  =========[ RETRIEVING TEXT FROM AN ELEMENT ]====================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  =========[ RETRIEVING TEXT FROM AN ELEMENT ]====================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ RETRIEVING TEXT FROM AN ELEMENT AND MAKING AN EQUALS ASSERTION ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "###  Retrieving text is usually non-crucial and test execution can usually continue so the following examples are all non-crucial.  Update based on your requirements.");
             WriteToFile(get_helpFileName(), "###  To retrieve the text of an element by ClassName and make the assertion non-crucial");
             WriteToFile(get_helpFileName(), "╠alert ; The form was successfully submitted! ; ClassName ; false ; false╣");
@@ -801,44 +956,116 @@ public class PageHelper {
 
             WriteToFile(get_helpFileName(), "###  To retrieve the text of an element by xPath");
             WriteToFile(get_helpFileName(), "╠/html[1]/body[1]/div[1]/div[1]/div[1]/ul[1]/li[1]/div[1]/div[1]/h1[1] ; Empower Yourself with Kidney Knowledge ; xPath ; false ; false╣");
+//            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
 
-            WriteToFile(get_helpFileName(), "###  =========[ RETRIEVING TEXT FROM AN ELEMENT IN AN IFRAME ]=======================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ RETRIEVING TEXT FROM AN ELEMENT AND MAKING A NOT EQUAL ASSERTION ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "###  Just as there are times when you need to ensure an element's text equals a value, there are times ");
+            WriteToFile(get_helpFileName(), "###  when you need to ensure that an element's text does not equal a specific value.");
+            WriteToFile(get_helpFileName(), "###  To retrieve the text of an element by xPath and make the not equal assertion non-crucial.");
+            WriteToFile(get_helpFileName(), "╠/html[1]/body[1]/div[1]/form[1]/div[1]/div[4]/div[1] ; != ╬ Highest levl of education ; xPath ; false ; false╣");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "###  To retrieve the text of an element by xPath and compare it to the persisted value and assert that it is not equal.");
+            WriteToFile(get_helpFileName(), "╠/html[1]/body[1]/div[1]/form[1]/div[1]/div[4]/div[1] ; != ╬ PersistedString ; xPath ; false ; false╣");
+            WriteToFile(get_helpFileName(), "");
+
+//            WriteToFile(get_helpFileName(), "###  =========[ RETRIEVING TEXT FROM AN ELEMENT IN AN IFRAME ]=======================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ RETRIEVING TEXT FROM AN ELEMENT IN AN IFRAME ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "###  When you are attempting to access an element in an iFrame, you must first switch to that iframe.");
             WriteToFile(get_helpFileName(), "###  The syntax for doing so is placed in the second parameter using the key phrase Switch to iframe ");
             WriteToFile(get_helpFileName(), "###  followed by the name in square brackets as shown in the following example.");
             WriteToFile(get_helpFileName(), "###  To retrieve the text of an element in an iFrame by xPath");
             WriteToFile(get_helpFileName(), "╠/html/body/select ; Switch to iframe [iframeResult] ╬ Volvo ; xPath ; false ; false╣");
-            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ PERSISTING RETRIEVED TEXT IN A VARIABLE FOR LATER USE ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "###  There may be a time when you want to compare the value retrieved from one element with the value of another.");
+            WriteToFile(get_helpFileName(), "###  Unfortunately, you cannot do this directly, but what you can do is persist the value from one element and compare that ");
+            WriteToFile(get_helpFileName(), "###  persisted value with the value of the other element, which accomplishes comparing one element value with another.");
+            WriteToFile(get_helpFileName(), "###  To persist the value of an element, use the following:");
+            WriteToFile(get_helpFileName(), "╠/html[1]/body[1]/div[1]/form[1]/div[1]/div[4]/div[1] ; PersistString ; xPath ; true ; false╣");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "###  To compare the persisted value to an element, use the following:");
+            WriteToFile(get_helpFileName(), "╠/html[1]/body[1]/div[1]/form[1]/div[1]/div[4]/div[1] ; PersistedString ; xPath ; false ; false╣");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "###  To retrieve the text of an element by xPath and compare it to the persisted value and assert that it is not equal.");
+            WriteToFile(get_helpFileName(), "╠/html[1]/body[1]/div[1]/form[1]/div[1]/div[4]/div[1] ; != ╬ PersistedString ; xPath ; false ; false╣");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "###  Although the following can be found in the sendkeys section, in an effort to group all persistence in one ");
+            WriteToFile(get_helpFileName(), "###  location it is duplicated here");
+            WriteToFile(get_helpFileName(), "###  To send the persisted value to a textbox or textarea form control, use the following:");
+            WriteToFile(get_helpFileName(), "╠first-name ; Sendkeys ╬ PersistedString ; ID ; true ; false╣");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "###  =========[ CLICK AN ELEMENT IN AN IFRAME ]=====================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  =========[ CLICK AN ELEMENT IN AN IFRAME ]=====================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ CLICK AN ELEMENT IN AN IFRAME ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "###  To click an element by xPath in an iFrame");
             WriteToFile(get_helpFileName(), "╠/html/body/div/div/ul/li[1]/a ; Switch to iframe [iframeResult] ╬ click ; xPath ; true ; true╣");
             WriteToFile(get_helpFileName(), "");
 
             WriteToFile(get_helpFileName(), "###  To select an option from an HTML Select (drop down/list) element.");
             WriteToFile(get_helpFileName(), "╠option[value='1'] ; click ; CssSelector ; true ; false╣");
-            WriteToFile(get_helpFileName(), "###  ===============================================================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  ===============================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "###  =========[ TAKING SCREENSHOTS ]================================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  =========[ TAKING SCREENSHOTS ]================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ TAKING SCREENSHOTS ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "###  To take a screen shot/print screen.  The browser will be resized automatically to capture all page content.");
             WriteToFile(get_helpFileName(), "╠n/a ; ScreenShot ; n/a ; true ; false╣");
-            WriteToFile(get_helpFileName(), "###  ===============================================================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  ===============================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "###  =========[ SWITCHING BROWSER TABS ]============================================================================================================================");
+            //WriteToFile(get_helpFileName(), "###  =========[ SWITCHING BROWSER TABS ]============================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ SWITCHING BROWSER TABS ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "###  Some actions are related and to avoid unnecessary steps the enter key will be pressed after right clicking and arrowing to a particular item.");
             WriteToFile(get_helpFileName(), "###  To Right click on an element, move down to the first menu item, click it to open in a new tab and switch to the new tab:");
             WriteToFile(get_helpFileName(), "╠//*[@id=\"rso\"]/div[1]/div/div[1]/div/div/div[1]/a ; right click ╬ Keys.Arrow_Down ╬ Switch to tab ; xPath ; true ; false╣");
             WriteToFile(get_helpFileName(), "");
-
             WriteToFile(get_helpFileName(), "###  To Switch back to the first tab after switching to the second tab");
             WriteToFile(get_helpFileName(), "╠n/a ; Switch to tab 0 ; n/a ; true ; false╣");
-            WriteToFile(get_helpFileName(), "###  ===============================================================================================================================================================");
+//            WriteToFile(get_helpFileName(), "###  ===============================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+
+//            WriteToFile(get_helpFileName(), "###  =========[ FIND ELEMENTS THAT HAVE SPECIFIC TEXT ]=============================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ FIND ELEMENTS THAT HAVE SPECIFIC TEXT ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "###  There are times when you may need to search for text but do not know the accessor necessary to find that text.");
+            WriteToFile(get_helpFileName(), "###  The Find functionality allows you search all elements regardless of type or just all tags of a specific type.");
+            WriteToFile(get_helpFileName(), "###  Additionally, the Find functionality returns the xPath of all elements where the text is found but when searching ");
+            WriteToFile(get_helpFileName(), "###  for text without specifying a tag, only the actual tag containing the text is returned, not elements in the upper ");
+            WriteToFile(get_helpFileName(), "###  hierarchy; however, when using a specific tag, if a child tag of that tag contains the text, the searched tag will be returned ");
+            WriteToFile(get_helpFileName(), "###  as successfully containing that text. ");
+            WriteToFile(get_helpFileName(), "###  To Find text searching all elements and make this non-crucial, use the following.");
+            WriteToFile(get_helpFileName(), "╠n/a ; find  ╬  ╬ Highest level of education ; n/a ; false ; false╣");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "###  To Find text searching all div elements and make this non-crucial, use the following.");
+            WriteToFile(get_helpFileName(), "╠n/a ; find  ╬ div ╬ Highest level of education ; n/a ; false ; false╣");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "###  To Find text searching all label elements and make this non-crucial, use the following.");
+            WriteToFile(get_helpFileName(), "╠n/a ; find  ╬ label ╬ Highest level of education ; n/a ; false ; false╣");
+//            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+
+//            WriteToFile(get_helpFileName(), "###  =========[ FIND ELEMENTS THAT CONTAIN TEXT ]=============================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ FIND ELEMENTS THAT CONTAIN TEXT ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "###  There are times when you may need to search for a portion of text but do not know the accessor necessary to find that text.");
+            WriteToFile(get_helpFileName(), "###  A specific instance might be when searching for text that would be in a paragraph.  You wouldn't want to add the entire paragraph when you can add a ");
+            WriteToFile(get_helpFileName(), "###  snippet to verify that part of it is there. ");
+            WriteToFile(get_helpFileName(), "###  Additionally, the Find functionality returns the xPath of all elements where the text is found.");
+            WriteToFile(get_helpFileName(), "###  To Find element containing text searching all div elements and make this non-crucial, use the following.");
+            WriteToFile(get_helpFileName(), "╠n/a ; find contains  ╬ div ╬ Highest level ; n/a ; false ; false╣");
+//            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");

@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ConfigSettings {
@@ -8,12 +9,14 @@ public class ConfigSettings {
     private String _screenShotSaveFolder;
     private Boolean _testAllBrowsers;
     private String _testSettingsFile;
-    private List<String> _testFiles;
+//    private List<String> _testFiles;
+    private ArrayList<String> _testFiles;
     private Boolean _specifyFileNames;
     private String _testFolderName;
     private String _folderFileFilterType;
     private String _folderFileFilter;
     private int _maxScreenShots;
+    private Boolean _sortSpecifiedTestFiles;
 
     public ConfigSettings() {
         _testFiles = new ArrayList<>();
@@ -67,6 +70,22 @@ public class ConfigSettings {
     public void set_testSettingsFile(String _testSettingsFile) {
         this._testSettingsFile = _testSettingsFile;
         _testFiles.add(_testSettingsFile);
+        //Collections.sort(_testFiles);  //testing this
+    }
+
+    public void set_testSettingsFile(String _testSettingsFile, int position) {
+        this._testSettingsFile = _testSettingsFile;
+        if (position < 0 || _testFiles.size() <= 0) {
+            _testFiles.add(_testSettingsFile);
+        }
+        else {
+            _testFiles.add(position, _testSettingsFile);
+        }
+        //Collections.sort(_testFiles);  //testing this
+    }
+
+    public void reset_testSettingsFile() {
+        _testFiles = new ArrayList<>();
     }
 
     public List<String> get_testFiles() {
@@ -116,5 +135,13 @@ public class ConfigSettings {
 
     public void set_maxScreenShots(int _maxScreenShots) {
         this._maxScreenShots = _maxScreenShots;
+    }
+
+    public Boolean get_sortSpecifiedTestFiles() {
+        return _sortSpecifiedTestFiles;
+    }
+
+    public void set_sortSpecifiedTestFiles(Boolean _sortSpecifiedTestFiles) {
+        this._sortSpecifiedTestFiles = _sortSpecifiedTestFiles;
     }
 }
