@@ -32,6 +32,8 @@ import java.awt.event.KeyEvent;
 import java.beans.ExceptionListener;
 import java.io.File;
 import java.io.IOException;
+//import java.security.Timestamp;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
@@ -94,7 +96,14 @@ public class HomePage {
 
     //region { constants }
     private final String parameterDelimiter = " ╬ ";  //made parameter delimiter a constant
-
+    private final String uidReplacementChars = "**_uid_**"; //made the timestamp/unique id replacement string a constant
+    private final String persistStringCheckValue = "persiststring";
+    private final String persistedStringCheckValue = "persistedstring";
+    private final String xpathCheckValue = "xpath";
+    private final String cssSelectorCheckValue = "cssselector";
+    private final String tagNameCheckValue = "tagname";
+    private final String idCheckValue = "id";
+    private final String classNameCheckValue = "classname";
     //endregion
 
     //region { Configuration Variables }
@@ -135,6 +144,7 @@ public class HomePage {
     private MongoClient mongoClient = null;
     private MongoClientURI mongoClientUri = null;
     private String persistedString = null;
+    private String uniqueId = null;
 
 
     //region { Properties }
@@ -371,6 +381,10 @@ public class HomePage {
             ChromeOptions options = new ChromeOptions();
             options.addArguments("window-size=1400,800");
             options.addArguments("headless");
+            options.addArguments("--dns-prefetch-disable");
+            //options.addArguments("acceptInsecureCerts=true");
+            options.setAcceptInsecureCerts(true);
+            options.setPageLoadStrategy(PageLoadStrategy.NONE);
             driver = new ChromeDriver(options);
         } else {
             driver = new ChromeDriver();
@@ -447,6 +461,8 @@ public class HomePage {
         int startIndex = 0;  //used for instances when you do not want to start at the first element to test
         String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
         boolean revertToParent = false;
+
+        uniqueId = GetUniqueIdentifier();
         //boolean isError = false;
 
         for (int fileIndex = 0; fileIndex < testFiles.size(); fileIndex++) {
@@ -513,13 +529,10 @@ public class HomePage {
                             String page = ts.get_xPath().toLowerCase().equals("n/a") ? driver.getCurrentUrl() : ts.get_xPath().trim();
                             pageHelper.UpdateTestResults(pageHelper.indent5 + "Checking count of " + checkItems[2] + " on page " + page);
                             int expectedCount = parseInt(expectedItems[1]);
-//                            pageHelper.UpdateTestResults("Sending values ts.get_xPath() = " + ts.get_xPath() + " checkItems[2].trim() = " + checkItems[2].trim());
-//                            pageHelper.UpdateTestResults(" - expectedCount = " + expectedCount + " fileStepIndexForLog = " + fileStepIndexForLog);
-//                            pageHelper.UpdateTestResults(" - ts.get_isCrucial() = " + ts.get_isCrucial());
                             checkElementCount(ts.get_xPath(), checkItems[2].trim(), expectedCount, fileStepIndexForLog, ts.get_isCrucial());
                         }
                         else if (ts.get_expectedValue().toLowerCase().contains("check") && ts.get_expectedValue().toLowerCase().contains("contrast")) {
-                            //checkColorContrast
+                            //checkColorContrast - the method is not fully implemented.  Need to figure out the color ratio formula.  Notes in method.
                             String [] expectedItems = ts.get_expectedValue().split(parameterDelimiter);
                             String [] checkItems = expectedItems[0].split(" ");
                             //String [] acceptibleRanges = expectedItems.length > 1 ? expectedItems[1].split(" ") : null;
@@ -540,7 +553,6 @@ public class HomePage {
                                     pageHelper.UpdateTestResults("Connection is not available!!!");
                                 }
                                 pageHelper.UpdateTestResults("Found query, and mongo after the if before RunQuery....");
-
                             }
                         }
                         else if (ts.get_expectedValue().toLowerCase().contains("find")) {
@@ -574,14 +586,13 @@ public class HomePage {
                 } else {  //Perform an action like setting a value or performing a click
                     Boolean status;
                     int dashCount = ts.get_expectedValue().contains(parameterDelimiter) ? StringUtils.countMatches(ts.get_expectedValue(), parameterDelimiter) : 0;
-                    //pageHelper.UpdateTestResults("ts.get_expectedValue() = " + ts.get_expectedValue());
-                    //GAJ working here perform all non read actions below that use an accessor
-                    if (((ts.get_searchType().toLowerCase().indexOf("xpath") >= 0) || (ts.get_searchType().toLowerCase().indexOf("cssselector") >= 0) ||
-                            (ts.get_searchType().toLowerCase().indexOf("tagname") >= 0) || (ts.get_searchType().toLowerCase().indexOf("id") >= 0) ||
-                            (ts.get_searchType().toLowerCase().indexOf("classname") >= 0))
+                    //Perform all non read actions below that use an accessor
+                    if (((ts.get_searchType().toLowerCase().indexOf(xpathCheckValue) >= 0) || (ts.get_searchType().toLowerCase().indexOf(cssSelectorCheckValue) >= 0) ||
+                            (ts.get_searchType().toLowerCase().indexOf(tagNameCheckValue) >= 0) || (ts.get_searchType().toLowerCase().indexOf(idCheckValue) >= 0) ||
+                            (ts.get_searchType().toLowerCase().indexOf(classNameCheckValue) >= 0))
                             && (!ts.get_expectedValue().toLowerCase().contains("sendkeys") && !ts.get_expectedValue().toLowerCase().contains("wait")
-                            && !ts.get_expectedValue().toLowerCase().contains("persiststring"))){
-                        pageHelper.UpdateTestResults(pageHelper.indent5 + "Performing " + ts.get_searchType() + " " + fileStepIndexForLog + " non-read action", testResults);
+                            && !ts.get_expectedValue().toLowerCase().contains(persistStringCheckValue))){
+                        pageHelper.UpdateTestResults(pageHelper.indent5 + "Performing action using " + ts.get_searchType() + " " + fileStepIndexForLog + " non-read action", testResults);
                         String [] expectedItems = ts.get_expectedValue().split(parameterDelimiter);
                         String subAction = null;
 
@@ -651,7 +662,7 @@ public class HomePage {
                         } else if (ts.get_xPath().toLowerCase().contains("sql server")) {
                             pageHelper.UpdateTestResults("This feature is not implemented yet!");
                         }
-                    } else if (ts.get_expectedValue().toLowerCase().contains("persiststring")) {
+                    } else if (ts.get_expectedValue().toLowerCase().contains(persistStringCheckValue)) {
                         //PrePostPad("[ NAVIGATION ]", "═", 9, 159));
                         pageHelper.UpdateTestResults(pageHelper.indent5 + pageHelper.ANSI_CYAN + pageHelper.PrePostPad("[ Persisting value found by: " + ts.get_searchType() + " accessor: " + ts.get_xPath() + " ]", "═", 9, 154) + pageHelper.ANSI_RESET);
                         pageHelper.UpdateTestResults(pageHelper.indent8 + "Persisting value found by: " + ts.get_searchType() + " accessor: " + ts.get_xPath(), testResults);
@@ -707,23 +718,45 @@ public class HomePage {
         }
     }
 
+    /* ********************************************************************
+     * DESCRIPTION:
+     *      Creates a new timestamp to act as a unique id so that
+     *      the same test can be used over and over and append this value
+     *      to create a new value.
+     ******************************************************************** */
+    private String GetUniqueIdentifier() {
+        Date date = new Date();
+        long time = date.getTime();
+        Timestamp ts = new Timestamp(time);
+        String tsString = ts.toString().replace("-","").replace(" ","").replace(":","").replace(".","");
 
+        //return ts.toString();
+        return tsString;
+    }
+
+
+    /* ********************************************************************
+     * DESCRIPTION:
+     *      Retrieves the value of the element using the configured accessor
+     *      and returns it to the calling method where it will be
+     *      persisted in a string variable.
+     ******************************************************************** */
     private String PersistValue(TestSettings ts, String accessor, String fileStepIndex, String fileStepIndexForLog, int dashCount) throws Exception
     {
         String actual = null;
-        if (ts.get_searchType().toLowerCase().equals("xpath")) {
+        if (ts.get_searchType().toLowerCase().equals(xpathCheckValue)) {
             pageHelper.UpdateTestResults(pageHelper.indent8 + "Element text being retrieved at step " + fileStepIndexForLog + " by xPath: " + accessor, testResults);
             actual = CheckElementWithXPath(ts, fileStepIndex);
-        } else if (ts.get_searchType().toLowerCase().equals("cssselector")) {
+        } else if (ts.get_searchType().toLowerCase().equals(cssSelectorCheckValue)) {
             pageHelper.UpdateTestResults(pageHelper.indent8 + "Element text being retrieved at step " + fileStepIndexForLog + " by CssSelector: " + accessor, testResults);
             actual = CheckElementWithCssSelector(ts, fileStepIndex);
-        } else if (ts.get_searchType().toLowerCase().equals("tagname")) {
+        } else if (ts.get_searchType().toLowerCase().equals(tagNameCheckValue)) {
             pageHelper.UpdateTestResults(pageHelper.indent8 + "Element text being retrieved at step " + fileStepIndexForLog + " by TagName: " + accessor, testResults);
             actual = CheckElementWithTagName(ts, fileStepIndex);
-        } else if (ts.get_searchType().toLowerCase().equals("classname")) {
+        } else if (ts.get_searchType().toLowerCase().equals(classNameCheckValue)) {
             pageHelper.UpdateTestResults(pageHelper.indent8 + "Element text being retrieved at step " + fileStepIndexForLog + " by ClassName: " + accessor, testResults);
             actual = CheckElementWithClassName(ts, fileStepIndex);
-        } else if (ts.get_searchType().toLowerCase().equals("id")) {
+        } else if (ts.get_searchType().toLowerCase().equals(idCheckValue)) {
             pageHelper.UpdateTestResults(pageHelper.indent8 + "Element text being retrieved at step " + fileStepIndexForLog + " by Id: " + accessor, testResults);
             actual = CheckElementWithId(ts, fileStepIndex);
         }
@@ -1024,22 +1057,24 @@ public class HomePage {
 
 
     public void login(String url, String email, String password, String fileStepIndexForLog) throws Exception {
+        pageHelper.UpdateTestResults("Login method reached start before any code.");
         if (url != null && !url.isEmpty() && !url.toLowerCase().trim().equals("n/a")) {
             driver.get(url);
         }
         pageHelper.UpdateTestResults("Login method reached");
         try {
             try {
+                pageHelper.UpdateTestResults("Switched to Alert second try");
+                //driver.switchTo().alert();
+                //driver.switchTo().alert().sendKeys(email + Keys.TAB + password + Keys.RETURN);
+                pageHelper.UpdateTestResults("Switched to Alert second try after");
+            }
+            catch(Exception ex) {
+                if (!isAlertPresent()) {
+                    driver.get(testPage);
+                }
                 driver.switchTo().alert();
                 pageHelper.UpdateTestResults("Switched to Alert #1");
-                //region { debugging was looking for element selectors for credentials }
-//            List<WebElement> elements = driver.findElements(By.cssSelector("input"));
-//            for (WebElement element : elements) {
-//                pageHelper.UpdateTestResults("element = " + element.toString());
-//            }
-                //endregion
-                //Selenium-WebDriver Java Code for entering Username & Password as below:
-                //driver.findElement(By.id("userID")).sendKeys(email);
                 driver.findElement(By.id("username")).sendKeys(email);
                 driver.findElement(By.id("password")).sendKeys(password);
                 pageHelper.UpdateTestResults("Sent Credentials email: " + email + " Password: " + password);
@@ -1048,13 +1083,14 @@ public class HomePage {
                 driver.switchTo().defaultContent();
                 pageHelper.UpdateTestResults("Switched to default context");
             }
-            catch(Exception ex) {
-                driver.switchTo().alert();
-                driver.switchTo().alert().sendKeys(email + Keys.TAB + password + Keys.RETURN);
-            }
         }
         catch (Exception ex)
         {
+            pageHelper.UpdateTestResults("Exception " + ex.getMessage());
+            if (url == null || url.isEmpty() || !url.toLowerCase().trim().equals("n/a")) {
+                url = testPage;
+            }
+            pageHelper.UpdateTestResults("Switched to Alert Second catch");
             String newUrl = url.replace("://", "://" + email + ":" + password + "@");
             driver.get(newUrl);
             //if the alert doesn't show up, you already have context and are logged in
@@ -1181,19 +1217,19 @@ public class HomePage {
         String actual = "";
         Boolean notEqual = false;
 
-        if (ts.get_searchType().toLowerCase().equals("xpath")) {
+        if (ts.get_searchType().toLowerCase().equals(xpathCheckValue)) {
             pageHelper.UpdateTestResults(pageHelper.indent5 + "Element type being checked at step " + fileStepIndexForLog + " by xPath: " + accessor, testResults);
             actual = CheckElementWithXPath(ts, fileStepIndex);
-        } else if (ts.get_searchType().toLowerCase().equals("cssselector")) {
+        } else if (ts.get_searchType().toLowerCase().equals(cssSelectorCheckValue)) {
             pageHelper.UpdateTestResults(pageHelper.indent5 + "Element type being checked at step " + fileStepIndexForLog + " by CssSelector: " + accessor, testResults);
             actual = CheckElementWithCssSelector(ts, fileStepIndex);
-        } else if (ts.get_searchType().toLowerCase().equals("tagname")) {
+        } else if (ts.get_searchType().toLowerCase().equals(tagNameCheckValue)) {
             pageHelper.UpdateTestResults(pageHelper.indent5 + "Element type being checked at step " + fileStepIndexForLog + " by TagName: " + accessor, testResults);
             actual = CheckElementWithTagName(ts, fileStepIndex);
-        } else if (ts.get_searchType().toLowerCase().equals("classname")) {
+        } else if (ts.get_searchType().toLowerCase().equals(classNameCheckValue)) {
             pageHelper.UpdateTestResults(pageHelper.indent5 + "Element type being checked at step " + fileStepIndexForLog + " by ClassName: " + accessor, testResults);
             actual = CheckElementWithClassName(ts, fileStepIndex);
-        } else if (ts.get_searchType().toLowerCase().equals("id")) {
+        } else if (ts.get_searchType().toLowerCase().equals(idCheckValue)) {
             pageHelper.UpdateTestResults(pageHelper.indent5 + "Element type being checked at step " + fileStepIndexForLog + " by Id: " + accessor, testResults);
             actual = CheckElementWithId(ts, fileStepIndex);
         }
@@ -1203,10 +1239,11 @@ public class HomePage {
             expected = expected.split(parameterDelimiter)[1].trim();
         }
 
-        if (expected.toLowerCase().contains("persistedstring")) {
+        if (expected.toLowerCase().contains(persistedStringCheckValue)) {
             pageHelper.UpdateTestResults("Grabbing persisted value: (" + persistedString + ") for comparison.");
             expected = persistedString;
         }
+
 
         if (ts.get_isCrucial()) {
             if (!notEqual) {
@@ -1286,6 +1323,76 @@ public class HomePage {
         //pageHelper.UpdateTestResults("Waiting for element: accessor = " + accessor);
         WebElement element = null;
 
+        try {
+            switch (accessorType) {
+                case xpathCheckValue:
+                    element = new WebDriverWait(driver, maxTimeInSeconds).until(ExpectedConditions.presenceOfElementLocated(By.xpath(accessor)));
+                    break;
+                case idCheckValue:
+                    element = new WebDriverWait(driver, maxTimeInSeconds).until(ExpectedConditions.presenceOfElementLocated(By.id(accessor)));
+                    break;
+                case tagNameCheckValue:
+                    element = new WebDriverWait(driver, maxTimeInSeconds).until(ExpectedConditions.presenceOfElementLocated(By.tagName(accessor)));
+                    break;
+                case classNameCheckValue:
+                    element = new WebDriverWait(driver, maxTimeInSeconds).until(ExpectedConditions.presenceOfElementLocated(By.className(accessor)));
+                    break;
+                case cssSelectorCheckValue:
+                    element = new WebDriverWait(driver, maxTimeInSeconds).until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(accessor)));
+                    break;
+                case "page":  //wait for page load
+                    if (ts.get_xPath().trim().contains(" ")) {
+                        try {
+                            pageHelper.NavigateToPage(driver, ts.get_xPath().trim().split(" ")[1]);
+
+                        } catch (Exception ex) {
+                            pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed to navigate error: " + ex.getMessage());
+                        }
+                    }
+                    pageLoadComplete = new WebDriverWait(driver, maxTimeInSeconds).until(
+                            webDriver -> ((JavascriptExecutor) webDriver).executeScript("return document.readyState").equals("complete"));
+                    break;
+                default:  //default to xpath if missing
+                    element = new WebDriverWait(driver, maxTimeInSeconds).until(ExpectedConditions.presenceOfElementLocated(By.xpath(accessor)));
+                    break;
+            }
+            if (!ts.get_xPath().toLowerCase().trim().contains("page")) {
+                if (element != null) {
+                    pageHelper.UpdateTestResults(pageHelper.ANSI_GREEN + "Successful load of element " + accessor + " within max time setting of " + maxTimeInSeconds + " at step " + fileStepIndexForLog, testResults);
+                }
+            } else {
+                if (pageLoadComplete) {
+                    pageHelper.UpdateTestResults(pageHelper.ANSI_GREEN + "Successful load of page " + GetCurrentPageUrl() + " within max time setting of " + maxTimeInSeconds + " at step " + fileStepIndexForLog, testResults);
+                }
+            }
+        } catch (TimeoutException ae) {
+            if (ts.get_xPath().toLowerCase().trim().contains("page")) {
+                pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed to find the element " + GetCurrentPageUrl() + " within the set max time of " + maxTimeInSeconds + " at step " + fileStepIndexForLog + " AL+", testResults);
+            } else {
+                pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed to load element " + accessor + " within max time setting of " + maxTimeInSeconds + " at step " + fileStepIndexForLog, testResults);
+            }
+            if (ts.get_isCrucial()){
+                throw (ae);
+            }
+        }
+    }
+    //region { Original WaitForElement code }
+    /*private void WaitForElement(TestSettings ts, String fileStepIndexForLog) {
+        Boolean pageLoadComplete = false;
+        String accessorType = ts.get_searchType().toLowerCase().trim();
+        String accessor = ts.get_xPath().trim();
+        int maxTimeInSeconds = ts.get_expectedValue().trim().contains(" ╬ ") ? parseInt(ts.get_expectedValue().split(" ╬ ")[1]) : 10;
+        if (ts.get_xPath().toLowerCase().trim().contains("page"))
+        {
+            accessorType = "page";
+            pageHelper.UpdateTestResults(pageHelper.indent5 + "Waiting a maximum of " + maxTimeInSeconds + " seconds for page load to complete at step " + fileStepIndexForLog, testResults);
+        }
+        else {
+            pageHelper.UpdateTestResults(pageHelper.indent5 + "Waiting a maximum of " + maxTimeInSeconds + " seconds for presence of element " + accessor + " at step " + fileStepIndexForLog, testResults);
+        }
+        //pageHelper.UpdateTestResults("Waiting for element: accessor = " + accessor);
+        WebElement element = null;
+
         switch (accessorType) {
             case "xpath":
                 element = new WebDriverWait(driver, maxTimeInSeconds).until(ExpectedConditions.presenceOfElementLocated(By.xpath(accessor)));
@@ -1296,7 +1403,7 @@ public class HomePage {
             case "tagname":
                 element = new WebDriverWait(driver, maxTimeInSeconds).until(ExpectedConditions.presenceOfElementLocated(By.tagName(accessor)));
                 break;
-            case "classname":
+            case classNameCheckValue:
                 element = new WebDriverWait(driver, maxTimeInSeconds).until(ExpectedConditions.presenceOfElementLocated(By.className(accessor)));
                 break;
             case "cssselector":
@@ -1335,7 +1442,8 @@ public class HomePage {
                 pageHelper.UpdateTestResults(pageHelper.ANSI_RED + "Failed to load element " + GetCurrentPageUrl() + " within max time setting of " + maxTimeInSeconds + " at step " + fileStepIndexForLog, testResults);
             }
         }
-    }
+    }*/
+    //endregion
 
     /* ************************************************************
      * DESCRIPTION:
@@ -1345,10 +1453,26 @@ public class HomePage {
      *      and then returns the current URL
      ************************************************************ */
     public String CheckPageUrl(int delayMilliSeconds) throws Exception {
-        //pageHelper.UpdateTestResults("In CheckPageUrl method.  Driver = " + this.driver.toString(), testResults);
+        pageHelper.UpdateTestResults("In CheckPageUrl method.  Driver = " + this.driver.toString(), testResults);
         pageHelper.NavigateToPage(this.driver, testPage, delayMilliSeconds);
+        pageHelper.UpdateTestResults("In CheckPageUrl method #2.  Driver = " + this.driver.toString(), testResults);
 
-        return this.driver.getCurrentUrl();
+        if (!isAlertPresent()) {
+            return this.driver.getCurrentUrl();
+        } else {
+            return null;
+        }
+    }
+
+
+    public boolean isAlertPresent() {
+        try {
+            driver.switchTo().alert();
+            return true;
+        } // try
+        catch (Exception e) {
+            return false;
+        } // catch
     }
 
     /* ************************************************************
@@ -1816,7 +1940,7 @@ public class HomePage {
                 //wait until element is present commented out and functionality pushed to separate  stand-alone action
                 //actualValue = (new WebDriverWait(driver,10)).until(ExpectedConditions.presenceOfElementLocated(By.xpath(accessor))).getText();
             }
-            if (!ts.get_expectedValue().toLowerCase().contains("persiststring")) {
+            if (!ts.get_expectedValue().toLowerCase().contains(persistStringCheckValue)) {
                 pageHelper.UpdateTestResults(pageHelper.indent5 + "Checking element by XPath: " + ElementTypeLookup(accessor) + " for script " + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
             }
             else {
@@ -1856,7 +1980,7 @@ public class HomePage {
             } else {
                 actualValue = this.driver.findElement(By.cssSelector(accessor)).getText();
             }
-            if (!ts.get_expectedValue().toLowerCase().contains("persiststring")) {
+            if (!ts.get_expectedValue().toLowerCase().contains(persistStringCheckValue)) {
                 pageHelper.UpdateTestResults(pageHelper.indent5 + "Checking element by CssSelector: " + accessor + " for script " + fileStepIndexForLog + " Actual Value: " + actualValue, testResults);
             } else {
                 pageHelper.UpdateTestResults(pageHelper.indent8 + "Retrieving element text by CssSelector: " + ElementTypeLookup(accessor) + " for script " + fileStepIndexForLog + " Actual Value: " + actualValue, testResults);
@@ -1896,7 +2020,7 @@ public class HomePage {
             else {
                 actualValue = this.driver.findElement(By.tagName(accessor)).getText();
             }
-            if (!ts.get_expectedValue().toLowerCase().contains("persiststring")) {
+            if (!ts.get_expectedValue().toLowerCase().contains(persistStringCheckValue)) {
                 pageHelper.UpdateTestResults(pageHelper.indent5 + "Checking element by TagName: " + ElementTypeLookup(accessor) + " for script. " + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
             } else {
                 pageHelper.UpdateTestResults(pageHelper.indent8 + "Retrieving element text by TagName: " + ElementTypeLookup(accessor) + " for script " + fileStepIndexForLog + " Actual Value: " + actualValue, testResults);
@@ -1937,7 +2061,7 @@ public class HomePage {
             else {
                 actualValue = this.driver.findElement(By.className(accessor)).getText();
             }
-            if (!ts.get_expectedValue().toLowerCase().contains("persiststring")) {
+            if (!ts.get_expectedValue().toLowerCase().contains(persistStringCheckValue)) {
                 pageHelper.UpdateTestResults(pageHelper.indent5 + "Checking element by ClassName: " + accessor + " for script. " + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
             }  else {
                 pageHelper.UpdateTestResults(pageHelper.indent8 + "Retrieving element text by ClassName: " + accessor + " for script " + fileStepIndexForLog + " Actual Value: " + actualValue, testResults);
@@ -1978,7 +2102,7 @@ public class HomePage {
            else {
                actualValue = this.driver.findElement(By.id(accessor)).getText();
            }
-            if (!ts.get_expectedValue().toLowerCase().contains("persiststring")) {
+            if (!ts.get_expectedValue().toLowerCase().contains(persistStringCheckValue)) {
                 pageHelper.UpdateTestResults(pageHelper.indent5 + "Checking element by ID: " + accessor + " for script." + fileStepIndexForLog + " Actual Value: \"" + actualValue + "\"", testResults);
             } else {
                 pageHelper.UpdateTestResults(pageHelper.indent8 + "Retrieving element text by ID: " + accessor + " for script " + fileStepIndexForLog + " Actual Value: " + actualValue, testResults);
@@ -2014,11 +2138,17 @@ public class HomePage {
 
         //if this is a click event, click it
         if (value.toLowerCase().contains(click) && !value.toLowerCase().contains(sendKeys)) {
+            if (value.toLowerCase().contains(doubleClick)) {
+                pageHelper.UpdateTestResults("Performing double click on " + accessor + " using " + accesssorType + " for step " + fileStepIndex, testResults);
+            } else if (value.toLowerCase().contains(rightClick)) {
+                pageHelper.UpdateTestResults("Performing right click on " + accessor + " using " + accesssorType + " for step " + fileStepIndex, testResults);
+            } else {
+                pageHelper.UpdateTestResults("Performing click on " + accessor + " using " + accesssorType + " for step " + fileStepIndex, testResults);
+            }
             try {
-                if (accesssorType.toLowerCase().equals("xpath")) {
+                if (accesssorType.toLowerCase().equals(xpathCheckValue)) {
                     if (!value.toLowerCase().contains(rightClick)) {
                         if (!value.toLowerCase().contains(doubleClick)) {
-                            //click
                             this.driver.findElement(By.xpath(accessor)).click();
                         }
                         else {
@@ -2038,7 +2168,7 @@ public class HomePage {
                         }
                     }
                 }
-                else if (accesssorType.toLowerCase().equals("id")) {
+                else if (accesssorType.toLowerCase().equals(idCheckValue)) {
                     if (!value.toLowerCase().contains(rightClick)) {
                         if (!value.toLowerCase().contains(doubleClick)) {
                             //click
@@ -2059,7 +2189,7 @@ public class HomePage {
                         }
                     }
                 }
-                else if (accesssorType.toLowerCase().equals("classname")) {
+                else if (accesssorType.toLowerCase().equals(classNameCheckValue)) {
                     if (!value.toLowerCase().contains(rightClick)) {
                         if (!value.toLowerCase().contains(doubleClick)) {
                             //click
@@ -2080,7 +2210,7 @@ public class HomePage {
                         }
                     }
                 }
-                else if (accesssorType.toLowerCase().equals("cssselector")) {
+                else if (accesssorType.toLowerCase().equals(cssSelectorCheckValue)) {
                     if (!value.toLowerCase().contains(rightClick)) {
                         if (!value.toLowerCase().contains(doubleClick)) {
                             //click
@@ -2102,7 +2232,7 @@ public class HomePage {
                         }
                     }
                 }
-                else if (accesssorType.toLowerCase().equals("tagname")) {
+                else if (accesssorType.toLowerCase().equals(tagNameCheckValue)) {
                     if (!value.toLowerCase().contains(rightClick)) {
                         if (!value.toLowerCase().contains(doubleClick)) {
                             //click
@@ -2140,43 +2270,69 @@ public class HomePage {
                 if (value.contains(sendKeys)) {
                     String [] values = value.split(parameterDelimiter);
                     value = values.length > 0 ? values[1].trim() : "";
-                    pageHelper.UpdateTestResults("value = " + value);
-                    if (value.toLowerCase().contains("persistedstring")) {
+                    value = value.replace(uidReplacementChars, uniqueId);
+                    //pageHelper.UpdateTestResults("value = " + value);
+                    //added the below structure so that the unique identifier could be used with the persisted string.
+                    if (value.toLowerCase().contains(persistedStringCheckValue) && !values[1].trim().contains(uidReplacementChars)) {
                         value = persistedString;
                     }
-                    pageHelper.UpdateTestResults("value = " + value);
+                    else {
+                        if (values[1].trim().toLowerCase().contains(persistedStringCheckValue) && values[1].trim().contains(uidReplacementChars)) {
+                            if (values[1].trim().indexOf(persistedStringCheckValue) < values[1].trim().indexOf(uidReplacementChars)) {
+                                if (values[1].trim().indexOf(" ") > values[1].trim().indexOf(persistedStringCheckValue))
+                                {
+                                    value = persistedString + " " + uniqueId;
+                                }
+                                else {
+                                    value = persistedString + uniqueId;
+                                }
+                            } else {
+                                if (values[1].trim().indexOf(" ") > values[1].trim().indexOf(uidReplacementChars))
+                                {
+                                    value = uniqueId + " " + persistedString;
+                                }
+                                else {
+                                    value =  uniqueId + persistedString;
+                                }
+                            }
+                        }
+                    }
+//                    pageHelper.UpdateTestResults("value = " + value);
+                    pageHelper.UpdateTestResults(pageHelper.indent5 + "Performing SendKeys value = " + value + " for step " + fileStepIndex, testResults);
                 }
                 if (value.contains(keys) || value.toLowerCase().contains(keys)) {
-                    if (accesssorType.toLowerCase().equals("xpath")) {
+                    if (accesssorType.toLowerCase().equals(xpathCheckValue)) {
                         this.driver.findElement(By.xpath(accessor)).sendKeys(GetKeyValue(value, fileStepIndex));
                     }
-                    else if (accesssorType.toLowerCase().equals("id")) {
+                    else if (accesssorType.toLowerCase().equals(idCheckValue)) {
                         this.driver.findElement(By.id(accessor)).sendKeys(GetKeyValue(value, fileStepIndex));
                     }
-                    else if (accesssorType.toLowerCase().equals("classname")) {
+                    else if (accesssorType.toLowerCase().equals(classNameCheckValue)) {
                         this.driver.findElement(By.className(accessor)).sendKeys(GetKeyValue(value, fileStepIndex));
                     }
-                    else if (accesssorType.toLowerCase().equals("cssselector")) {
+                    else if (accesssorType.toLowerCase().equals(cssSelectorCheckValue)) {
                         this.driver.findElement(By.cssSelector(accessor)).sendKeys(GetKeyValue(value, fileStepIndex));
                     }
-                    else if (accesssorType.toLowerCase().equals("tagname")) {
+                    else if (accesssorType.toLowerCase().equals(tagNameCheckValue)) {
                         this.driver.findElement(By.tagName(accessor)).sendKeys(GetKeyValue(value, fileStepIndex));
                     }
                 } else {
+                    value = value.replace(uidReplacementChars, uniqueId);
                     //pageHelper.UpdateTestResults("Not sending reserved Key strokes.");
-                    if (accesssorType.toLowerCase().equals("xpath")) {
+                    pageHelper.UpdateTestResults(pageHelper.indent5 + "Performing default SendKeys value = " + value + " for step " + fileStepIndex, testResults);
+                    if (accesssorType.toLowerCase().equals(xpathCheckValue)) {
                         this.driver.findElement(By.xpath(accessor)).sendKeys(value);
                     }
-                    else if (accesssorType.toLowerCase().equals("id")) {
+                    else if (accesssorType.toLowerCase().equals(idCheckValue)) {
                         this.driver.findElement(By.id(accessor)).sendKeys(value);
                     }
-                    else if (accesssorType.toLowerCase().equals("classname")) {
+                    else if (accesssorType.toLowerCase().equals(classNameCheckValue)) {
                         this.driver.findElement(By.className(accessor)).sendKeys(value);
                     }
-                    else if (accesssorType.toLowerCase().equals("cssselector")) {
+                    else if (accesssorType.toLowerCase().equals(cssSelectorCheckValue)) {
                         this.driver.findElement(By.cssSelector(accessor)).sendKeys(value);
                     }
-                    else if (accesssorType.toLowerCase().equals("tagname")) {
+                    else if (accesssorType.toLowerCase().equals(tagNameCheckValue)) {
                         this.driver.findElement(By.tagName(accessor)).sendKeys(value);
                     }
                 }
@@ -2188,7 +2344,7 @@ public class HomePage {
         return status;
     }
 
-    //SelectFromContextMenu(value, fileStepIndex);
+
     private void SelectFromContextMenu(String value, String fileStepIndex) throws AWTException, InterruptedException {
         String [] additionalCommands = value.split(parameterDelimiter);
         int downCount = 0;
@@ -2250,7 +2406,11 @@ public class HomePage {
         }
     }
 
-    //private void SwitchToNewTab(boolean isChild, String fileStepIndex) {
+    /* ************************************************************
+     * DESCRIPTION:
+     *      Switches to a different tab either the child or
+     *      the parent tab.
+     ************************************************************ */
     private void SwitchToTab(boolean isChild, String fileStepIndex) {
         int tab = 0;
         ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());

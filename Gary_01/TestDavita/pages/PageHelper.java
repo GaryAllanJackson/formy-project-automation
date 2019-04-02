@@ -93,16 +93,20 @@ public class PageHelper {
      *  Navigates to the web address passed in
      **************************************************************** */
     public void NavigateToPage(WebDriver driver, String webAddress) throws InterruptedException{
+        UpdateTestResults("In NavigateToPage with no time specification #1.");
         driver.get(webAddress);
+        UpdateTestResults("In NavigateToPage with no time specification #2.");
         Thread.sleep(10000);
+        UpdateTestResults("In NavigateToPage with no time specification #3.");
     }
+
 
     /* ****************************************************************
      *  DESCRIPTION:
      *  Navigates to the web address passed in and sleeps for the number of milliseconds passed in
      **************************************************************** */
     public void NavigateToPage(WebDriver driver, String webAddress, int milliseconds) throws InterruptedException{
-        //UpdateTestResults("In NavigateToPage waiting " + milliseconds + " milliseconds!");
+        UpdateTestResults("In NavigateToPage waiting " + milliseconds + " milliseconds!");
         if (milliseconds > 0) {
             driver.get(webAddress);
             Thread.sleep(milliseconds);
@@ -110,6 +114,7 @@ public class PageHelper {
         else
         {
             NavigateToPage(driver, webAddress);
+            UpdateTestResults("In NavigateToPage else " + milliseconds + " milliseconds!");
         }
     }
 
@@ -895,17 +900,40 @@ public class PageHelper {
             WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
+
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ UNIQUE IDENTIFIER ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "###  Before explaining how to fill in text fields, we need to cover the Unique Identifier.");
+            WriteToFile(get_helpFileName(), "###  By default, every time a test is run, a unique identifier is created.");
+            WriteToFile(get_helpFileName(), "###  This unique identifier is composed of the date and time with no delimiters.");
+            WriteToFile(get_helpFileName(), "###  The purpose of this Unique Identifier is to allow rerunning the same tests and generating unique ");
+            WriteToFile(get_helpFileName(), "###  values by appending this Unique Identifier to the string.");
+            WriteToFile(get_helpFileName(), "###  The Unique Identifier is 17 characters long and has the following format (yyyyMMddHHmmssSSS) ie.(20190402095619991).");
+            WriteToFile(get_helpFileName(), "###  -  4 digit year, 2 digit month, 2 digit day, 2 digit hours, 2 digit minutes, 2 digit seconds, 3 digit milliseconds ");
+            WriteToFile(get_helpFileName(), "###  In the Filling in and SendKeys sections, there are examples of exactly how to use this.");
+            WriteToFile(get_helpFileName(), "###  Anytime, the character sequence without parenthesis (**_uid_**), is used, that value is replaced with the Unique Identifier.");
+            WriteToFile(get_helpFileName(), "");
+
 //            WriteToFile(get_helpFileName(), "###  =========[ FILLING IN TEXT FIELDS ]=============================================================================================================================");
             WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ FILLING IN TEXT FIELDS ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "###  To fill in a field by ID and to make it non-crucial.  To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "╠first-name ; John ; ID ; true ; false╣");
             WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "###  To fill in a field by ID, add the Unique Identifier, and to make it non-crucial.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "╠first-name ; John**_uid_** ; ID ; true ; false╣");
+            WriteToFile(get_helpFileName(), "");
+
 
             WriteToFile(get_helpFileName(), "To fill in a field by ID and to make it non-crucial when it contains a reserved command like click.  To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "╠first-name ; sendkeys ╬ click ; ID ; true ; false╣");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "To fill in a field using the value you persisted in an earlier step use the following.");
             WriteToFile(get_helpFileName(), "╠first-name ; Sendkeys ╬ PersistedString ; ID ; true ; false╣");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To fill in a field by ID, add the Unique Id, and to make it non-crucial when it contains a reserved command like click.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "╠first-name ; sendkeys ╬ click**_uid_** ; ID ; true ; false╣");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To fill in a field by ID with the persisted value, add the Unique Id, and to make it non-crucial.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "╠first-name ; sendkeys ╬ PersistedString**_uid_** ; ID ; true ; false╣");
 //            WriteToFile(get_helpFileName(), "###  ================================================================================================================================================================");
             WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
@@ -982,9 +1010,10 @@ public class PageHelper {
             WriteToFile(get_helpFileName(), "");
 
             WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ PERSISTING RETRIEVED TEXT IN A VARIABLE FOR LATER USE ]", "═", 9, 159));
-            WriteToFile(get_helpFileName(), "###  There may be a time when you want to compare the value retrieved from one element with the value of another.");
-            WriteToFile(get_helpFileName(), "###  Unfortunately, you cannot do this directly, but what you can do is persist the value from one element and compare that ");
-            WriteToFile(get_helpFileName(), "###  persisted value with the value of the other element, which accomplishes comparing one element value with another.");
+            WriteToFile(get_helpFileName(), "###  There may be a need to compare the value retrieved from one element with the value of another.");
+            WriteToFile(get_helpFileName(), "###  Unfortunately, this cannot be done directly, but a persist action can be enacted allowing the storage of ");
+            WriteToFile(get_helpFileName(), "###  an element value that can then be compared to the value of another element.");
+            WriteToFile(get_helpFileName(), "###  This accomplishes comparing one element value with another.");
             WriteToFile(get_helpFileName(), "###  To persist the value of an element, use the following:");
             WriteToFile(get_helpFileName(), "╠/html[1]/body[1]/div[1]/form[1]/div[1]/div[4]/div[1] ; PersistString ; xPath ; true ; false╣");
             WriteToFile(get_helpFileName(), "");
@@ -995,12 +1024,13 @@ public class PageHelper {
             WriteToFile(get_helpFileName(), "╠/html[1]/body[1]/div[1]/form[1]/div[1]/div[4]/div[1] ; != ╬ PersistedString ; xPath ; false ; false╣");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "###  Although the following can be found in the sendkeys section, in an effort to group all persistence in one ");
-            WriteToFile(get_helpFileName(), "###  location it is duplicated here");
+            WriteToFile(get_helpFileName(), "###  location it is duplicated here.");
+            WriteToFile(get_helpFileName(), "###  There may be a need to send a persisted value to a control and that can be done as follows.");
             WriteToFile(get_helpFileName(), "###  To send the persisted value to a textbox or textarea form control, use the following:");
             WriteToFile(get_helpFileName(), "╠first-name ; Sendkeys ╬ PersistedString ; ID ; true ; false╣");
             WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "");
+//            WriteToFile(get_helpFileName(), "");
 
 //            WriteToFile(get_helpFileName(), "###  =========[ CLICK AN ELEMENT IN AN IFRAME ]=====================================================================================================================");
             WriteToFile(get_helpFileName(), "###  " + PrePostPad("[ CLICK AN ELEMENT IN AN IFRAME ]", "═", 9, 159));

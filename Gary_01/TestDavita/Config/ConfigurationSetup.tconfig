@@ -29,6 +29,7 @@
 //TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\MongoDbTest.txt
 //TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\NutrishLinks.txt
 //TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\Formy-FormTest_new2.txt
+TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\Al_LoginTest.txt
 //
 //Testing numeric TestFileName sort below
 //TestFileName2=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\Formy-FormTest_new.txt
@@ -37,7 +38,7 @@
 //TestFileName10=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\TestStatusAndValue_sortTest2.txt
 //
 //persistence testing
-TestFileName2=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\PersistenceTest1.txt
+//TestFileName2=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\PersistenceTest1.txt
 ScreenShotSaveFolder=C:\Gary\ScreenShots\Mashup
 MaxScreenShotsToTake=1
 //BrowserType=Edge
