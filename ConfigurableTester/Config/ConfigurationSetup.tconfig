@@ -34,7 +34,6 @@
 //Testing numeric TestFileName sort below
 //TestFileName2=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\Formy-FormTest_new.txt
 //TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\Find-Phrase-Test.txt
-TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\CreateTestsFromPage.txt
 //TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\TestStatusAndValue_sortTest.txt
 //TestFileName10=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\TestStatusAndValue_sortTest2.txt
 //
@@ -43,6 +42,11 @@ TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Seleni
 //TestFileName2=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\PersistenceTest2.txt
 //TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\Formy-FormTest_new2.txt
 //TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\GTM_Test.txt
+//
+// Create test files and test them
+//TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\CreateTestsFromPage.txt
+TestFileName0=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Tests\CheckImageSrcAlt.txt
+//
 ScreenShotSaveFolder=C:\Gary\ScreenShots\Mashup
 MaxScreenShotsToTake=5
 //BrowserType=Edge

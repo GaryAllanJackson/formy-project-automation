@@ -498,8 +498,15 @@ public class HomePage {
                 //get value and check against expected
                 if (!ts.getPerformWrite()) {
                     if (!ts.get_searchType().toLowerCase().equals("n/a")) {
-                        //refactored and moved to separate method
-                        CheckElementText(browserUsed, ts, expected, accessor, fileStepIndex, fileStepIndexForLog);
+                        //add different types of element checks here like img src, img alt, a href
+                        if (ts.get_expectedValue().toLowerCase().contains("check_image")) {
+                            CheckImageSrcAlt(browserUsed, ts, fileStepIndex);
+                        } else if (ts.get_expectedValue().toLowerCase().contains("check_a_href")) {
+                            CheckAnchorHref(browserUsed, ts, fileStepIndex);
+                        } else{
+                            //refactored and moved to separate method
+                            CheckElementText(browserUsed, ts, expected, accessor, fileStepIndex, fileStepIndexForLog);
+                        }
                     }
                     else {
                         if (ts.get_expectedValue().toLowerCase().contains("check") && (ts.get_expectedValue().toLowerCase().contains("post") ||
@@ -734,6 +741,86 @@ public class HomePage {
         }
     }
 
+    private void CheckAnchorHref(String browserUsed, TestSettings ts, String fileStepIndexForLog) {
+        //TODO: GAJ Working here
+        String[] expectedItems = ts.get_expectedValue().split(parameterDelimiter);
+        String[] expectedValues = expectedItems[0].split(" ");
+        String expectedValue = expectedValues[1] != null ? expectedValues[1] : "";
+        String actualValue="";
+        //was going to wire this for text and href but text is already wired up through the default method
+        String hrefTxt = "href"; //expectedValues[1].substring(expectedValues[1].lastIndexOf("_") +1).toLowerCase();   //check_image_src
+
+        if (ts.get_xPath().toLowerCase().equals(xpathCheckValue)) {
+            actualValue = this.driver.findElement(By.xpath(ts.get_xPath())).getAttribute(hrefTxt);
+        } else if (ts.get_xPath().toLowerCase().equals(cssSelectorCheckValue)) {
+            actualValue = this.driver.findElement(By.cssSelector(ts.get_xPath())).getAttribute(hrefTxt);
+        } else if (ts.get_xPath().toLowerCase().equals(tagNameCheckValue)) {
+            actualValue = this.driver.findElement(By.tagName(ts.get_xPath())).getAttribute(hrefTxt);
+        } else if (ts.get_xPath().toLowerCase().equals(classNameCheckValue)) {
+            actualValue = this.driver.findElement(By.className(ts.get_xPath())).getAttribute(hrefTxt);
+        } else if (ts.get_xPath().toLowerCase().equals(idCheckValue)) {
+            actualValue = this.driver.findElement(By.id(ts.get_xPath())).getAttribute(hrefTxt);
+        }
+
+        if (ts.get_isCrucial()) {
+            assertEquals(expectedValue, actualValue);
+        }
+        else {
+            try
+            {
+                assertEquals(expectedValue, actualValue);
+            }
+            catch (AssertionError ae) {
+                //do nothing, this just traps the assertion error so that processing can continue
+            }
+        }
+        if (expectedValue.trim().equals(actualValue.trim())) {
+            pageHelper.UpdateTestResults(pageHelper.indent8 + "Successful Anchor " + hrefTxt + " Check for step " + fileStepIndexForLog + " Expected: (" + expectedValue + ") Actual: (" + actualValue + ")", testResults);
+        } else {
+            pageHelper.UpdateTestResults(pageHelper.indent8 + "Failed Anchor " + hrefTxt + " Check for step " + fileStepIndexForLog + " Expected: (" + expectedValue + ") Actual: (" + actualValue + ")", testResults);
+        }
+    }
+
+    private void CheckImageSrcAlt(String browserUsed, TestSettings ts, String fileStepIndexForLog) {
+        //TODO: GAJ Working here
+        String[] expectedItems = ts.get_expectedValue().split(parameterDelimiter);
+        String[] expectedValues = expectedItems[0].split(" ");
+        String expectedValue = expectedValues[1] != null ? expectedValues[1] : "";
+        String actualValue="";
+        String srcAlt = expectedValues[1].substring(expectedValues[1].lastIndexOf("_") +1).toLowerCase();   //check_image_src
+
+        if (ts.get_xPath().toLowerCase().equals(xpathCheckValue)) {
+            actualValue = this.driver.findElement(By.xpath(ts.get_xPath())).getAttribute(srcAlt);
+        } else if (ts.get_xPath().toLowerCase().equals(cssSelectorCheckValue)) {
+            actualValue = this.driver.findElement(By.cssSelector(ts.get_xPath())).getAttribute(srcAlt);
+        } else if (ts.get_xPath().toLowerCase().equals(tagNameCheckValue)) {
+            actualValue = this.driver.findElement(By.tagName(ts.get_xPath())).getAttribute(srcAlt);
+        } else if (ts.get_xPath().toLowerCase().equals(classNameCheckValue)) {
+            actualValue = this.driver.findElement(By.className(ts.get_xPath())).getAttribute(srcAlt);
+        } else if (ts.get_xPath().toLowerCase().equals(idCheckValue)) {
+            actualValue = this.driver.findElement(By.id(ts.get_xPath())).getAttribute(srcAlt);
+        }
+
+        if (ts.get_isCrucial()) {
+            assertEquals(expectedValue, actualValue);
+        }
+        else {
+            try
+            {
+                assertEquals(expectedValue, actualValue);
+            }
+            catch (AssertionError ae) {
+                //do nothing, this just traps the assertion error so that processing can continue
+            }
+        }
+        if (expectedValue.trim().equals(actualValue.trim())) {
+            pageHelper.UpdateTestResults(pageHelper.indent8 + "Successful Image " + srcAlt + " Check for step " + fileStepIndexForLog + " Expected: (" + expectedValue + ") Actual: (" + actualValue + ")", testResults);
+        } else {
+            pageHelper.UpdateTestResults(pageHelper.indent8 + "Failed Image " + srcAlt + " Check for step " + fileStepIndexForLog + " Expected: (" + expectedValue + ") Actual: (" + actualValue + ")", testResults);
+        }
+
+    }
+
     /* ********************************************************************
      * DESCRIPTION:
      *      Creates a new timestamp to act as a unique id so that
@@ -806,269 +893,6 @@ public class HomePage {
         }
     }
 
-
-    /* ********************************************************************
-     * DESCRIPTION:
-     *      Creates a new MongoDb Client Connection or closes an open
-     *      connection.
-     ******************************************************************** */
-    private void SetMongoClient(String mongoDbConnection, TestSettings ts) {
-
-        //determine the type of mongo connection that needs to be used
-//        if (ts.get_xPath().toLowerCase().trim().contains("uri") && !mongoDbConnection.toLowerCase().contains("close connection")) {
-        if (ts.get_xPath().toLowerCase().trim().contains("uri") && !mongoDbConnection.toLowerCase().contains("close")) {
-            //mongoClientUri = new MongoClientURI(mongoDbConnection);
-            mongoClient = new MongoClient(new MongoClientURI(mongoDbConnection));
-        } else if (!mongoDbConnection.toLowerCase().contains("close")) {
-            //local connection?
-            mongoClient = new MongoClient(mongoDbConnection);
-        } else {
-            mongoClient.close();  //close the connection
-        }
-
-        MongoCursor<String> dbsCursor = mongoClient.listDatabaseNames().iterator();
-        while (dbsCursor.hasNext()) {
-            try {
-                pageHelper.UpdateTestResults(dbsCursor.next());
-                MongoDatabase db = mongoClient.getDatabase(dbsCursor.next());
-
-                pageHelper.UpdateTestResults("--[Tables - Start]----");
-                MongoIterable<String> col = db.listCollectionNames();
-
-
-                for (String table : col) {
-                    pageHelper.UpdateTestResults(pageHelper.indent5 + "Table = " + table);
-                    FindIterable<Document> fields = db.getCollection(table).find();
-                    pageHelper.UpdateTestResults(pageHelper.indent5 + "--[Fields - Start]----");
-                    /*
-                    try {
-                        int maxRecords = 1;
-                        int recordCount = 0;
-                        if (dbsCursor.next().equals("project-tracker-dev")) {
-                            pageHelper.UpdateTestResults("db." + table + ".find() = " + db.getCollection(table).find());
-                            for (Document field : fields) {
-                                pageHelper.UpdateTestResults(pageHelper.indent8 + "Field = " + field.toString().replace("Document{{id=", "\r\nDocument{{id="));
-//                                recordCount++;
-//                                if (recordCount > maxRecords) {
-                                    break;
-//                                }
-                            }
-                        }
-                    } catch (MongoQueryException qx) {
-                        pageHelper.UpdateTestResults("Field Retrieval MongoDb error occurred: " + qx.getErrorMessage());
-                    } catch (Exception ex) {
-                        pageHelper.UpdateTestResults("Field Retrieval error occurred: " + ex.getMessage());
-                    }*/
-                    pageHelper.UpdateTestResults(pageHelper.indent5 + "--[Fields - End]----");
-                }
-
-                pageHelper.UpdateTestResults("--[Tables - End]----");
-                //col.forEach(String table : col)
-                pageHelper.UpdateTestResults("");
-            } catch(Exception ex) {
-                pageHelper.UpdateTestResults("MongoDB error occurred: " + ex.getMessage());
-            }
-        }
-    }
-
-    private void CloseConnection() {
-    }
-
-    private void RunQuery(TestSettings ts, String fileStepIndexForLog) {
-
-        pageHelper.UpdateTestResults("In RunQuery method");
-        if (ts.get_xPath().toLowerCase().contains("mongo")) {
-            pageHelper.UpdateTestResults("RunQuery....in first If Statement");
-            String [] expectedItems = ts.get_expectedValue().split(parameterDelimiter);
-            String [] queryParameters = expectedItems[0].split(" ");
-            pageHelper.UpdateTestResults("RunQuery: queryParameters.length = " + queryParameters.length);
-            if (queryParameters.length > 5) {  //need to work through this
-                pageHelper.UpdateTestResults("RunQuery: queryParameters[0].toLowerCase().trim() = " + queryParameters[0].toLowerCase().trim());
-                if (queryParameters[0].toLowerCase().trim().equals("query")) {
-                    pageHelper.UpdateTestResults("RunQuery: ts.get_expectedValue().toLowerCase() = " + ts.get_expectedValue().toLowerCase());
-                    if (ts.get_expectedValue().toLowerCase().contains("where")) {
-                        String wherePhrase = expectedItems[0].substring(expectedItems[0].indexOf("where"));
-                        pageHelper.UpdateTestResults("wherePhrase = " + wherePhrase);
-                        pageHelper.UpdateTestResults("queryParameters[1] = " + queryParameters[1]);
-                        pageHelper.UpdateTestResults("queryParameters[2] = " + queryParameters[2]);
-                        MongoDatabase db = mongoClient.getDatabase(queryParameters[1]);
-                        MongoCollection<Document> col = db.getCollection(queryParameters[2]);
-
-                        List<Document> documents = (List<Document>) col.find().into(
-                                new ArrayList<Document>());
-
-                        if (documents.size() > 0) {
-                            for (Document document : documents) {
-                                pageHelper.UpdateTestResults("document = " + document);
-                            }
-                        }
-                        else {
-                            pageHelper.UpdateTestResults("No matching items found");
-                        }
-                        //region {Commented for now}
-                        /*
-                        BasicDBObject whereQuery = new BasicDBObject();
-                        pageHelper.UpdateTestResults("queryParameters[4] = " + queryParameters[4]);
-                        pageHelper.UpdateTestResults("queryParameters[5] = " + queryParameters[5].replace(",", ""));
-                        if (!queryParameters[6].contains("\"")) {
-                            whereQuery.put(queryParameters[4].replace("\"", "") + " " + queryParameters[5].replace(",", "").replace("\"", ""), parseInt(queryParameters[6]));
-                        } else {
-                            whereQuery.put(queryParameters[4].replace("\"", "") + " " + queryParameters[5].replace(",", "").replace("\"", ""), queryParameters[6]);
-                        }
-                        FindIterable<Document> iterableString = col.find(whereQuery);
-                        pageHelper.UpdateTestResults("iterableString = " + iterableString);
-                        if (iterableString != null) {
-                            for (Document item : iterableString) {
-                                pageHelper.UpdateTestResults("item = " + item);
-                            }
-                        }
-                        else {
-                            pageHelper.UpdateTestResults("No matching items found");
-                        }*/
-                        //endregion
-                    }
-                }
-            } else {  //get the entire table of data if no where clause exists
-                MongoDatabase db = mongoClient.getDatabase(queryParameters[1]);
-                MongoCollection<Document> col = db.getCollection(queryParameters[2]);
-                //List<Document> documents;
-                FindIterable<Document> documents = null;
-                Document doc = null;
-                if (queryParameters.length > 2) {
-
-//                    documents = (List<Document>) col.find("{" + queryParameters[3].toString() + ":" + queryParameters[4].toString() + "}").into(
-//                            new ArrayList<Document>());
-//                    documents = db.getCollection(queryParameters[2]).find("{ " +  queryParameters[3].toString() + ":" + queryParameters[4].toString() + " }"));
-                    BSONObject bsonObj = BasicDBObject.parse("{" + queryParameters[3].toString() + ":" + queryParameters[4].toString() + "}");
-//                    documents = db.getCollection(queryParameters[2]).find(((BasicDBObject) bsonObj)).first();
-                    doc = db.getCollection(queryParameters[2]).find(((BasicDBObject) bsonObj)).first();
-
-                    //NOTE: { Everything remaining in this if statement is for formatting and not necessary for the testing application }
-                    //code used below for troubleshooting not necessarily testing
-                    pageHelper.UpdateTestResults("Doc = " + doc.toString());
-//                    pageHelper.UpdateTestResults("Doc = " + doc.toString()
-//                            .replace("{{","\r\n" + pageHelper.indent5 + "{{\r\n " + pageHelper.indent5)
-//                            .replace("}},","\r\n" + pageHelper.indent5 + "}},\r\n")
-//                            .replace(",",",\r\n" + pageHelper.indent5));
-                    String[] docString = doc.toString().split(", ");
-                    int indent = 0;
-                    int padSize = 2;
-                    String tempItem = "";
-                    String tempItem2 = "";
-                    for (String item: docString) {
-                        tempItem = "";
-                        tempItem2 = "";
-                        pageHelper.UpdateTestResults("[indent set to: " + indent + "]");
-                        //pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) + item.trim() + " - (Unformatted)");
-                        if ((item.contains("{{") || item.contains("[")) && !item.contains("[]")) {
-
-                            while (item.indexOf("{{") > 0 || item.indexOf("[") > 0)
-                            {
-                                tempItem += pageHelper.PadIndent(padSize, indent) + item.substring(0, item.indexOf("{{") + 2).trim().replace("{{", "\r\n" + pageHelper.PadIndent(padSize, indent) + "{{\r\n");
-                                pageHelper.UpdateTestResults("tempItem = " + tempItem);
-                                item = item.substring(item.indexOf("{{") + 2).trim();
-                                pageHelper.UpdateTestResults("item = " + item);
-                                indent++;
-                                pageHelper.UpdateTestResults("[indent now set to: " + indent + "]");
-                            }
-                            if (item.length() > 0) {
-                                tempItem += pageHelper.PadIndent(padSize, indent) +  item.trim();
-                            }
-
-
-                            pageHelper.UpdateTestResults(pageHelper.ANSI_YELLOW + tempItem + pageHelper.ANSI_RESET);
-//                            while (tempItem.indexOf("[") > 0) {
-//                                tempItem2 += pageHelper.PadIndent(padSize, indent) + tempItem.substring(0, tempItem.indexOf("[") + 1).trim().replace("[", "\r\n" + pageHelper.PadIndent(padSize, indent) + "[\r\n");
-//                                tempItem = tempItem.substring(tempItem.indexOf("[") + 1).trim();
-//                                indent++;
-//                            }
-//                            if (tempItem.length() > 0) {
-//                                tempItem2 += pageHelper.PadIndent(padSize, indent) + tempItem.trim();
-//                            }
-//
-//
-//
-//                            pageHelper.UpdateTestResults(pageHelper.ANSI_BLUE + tempItem2 + pageHelper.ANSI_RESET);
-//                            pageHelper.UpdateTestResults(color + tempItem + pageHelper.ANSI_RESET);
-                        }
-                        else if ((item.contains("}}") || item.contains("]")) && !item.contains("[]")) {
-                            while (item.indexOf("}}") > 0)
-                            {
-                                tempItem += pageHelper.PadIndent(padSize, indent) + item.substring(0, item.indexOf("}}") + 2).replace("}}", "\r\n" + pageHelper.PadIndent(padSize, indent - 1) + "}}");
-//                                tempItem += pageHelper.PadIndent(padSize, indent) + item.substring(0, item.indexOf("}}") + 2).replace("}}", "\r\n" + pageHelper.PadIndent(padSize, indent - 1) + "}}\r\n");
-                                item = item.substring(item.indexOf("}}") + 2).trim();
-                                indent--;
-                            }
-                            if (item.length() > 0) {
-                                tempItem += pageHelper.PadIndent(padSize, indent) +  item;
-//                                tempItem += pageHelper.PadIndent(padSize, indent) +  item + " - (also left over)";
-                            }
-//                            if (tempItem.contains("]")) {
-//                                indent--;
-//                            }
-                            pageHelper.UpdateTestResults(tempItem);
-                            //pageHelper.UpdateTestResults(item);
-                            //indent--;
-                        }
-                        else {
-                            pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) +  item.trim() + " - (No delimiters)");
-                        }
-                       /*
-                        if (item.contains("{{") || item.contains("[")) {
-                            if (item.contains("{{")) {
-                                if (item.contains("=") && (item.indexOf("=") < item.indexOf("{{"))) {
-                                    pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) + item.replace("{{", pageHelper.PadIndent(padSize, indent)) + "\r\n" + pageHelper.PadIndent(padSize, indent) + "{{ ");
-                                } else {
-                                    pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) + item.replace("{{", pageHelper.PadIndent(padSize, indent)) + "{{\r\n " + pageHelper.PadIndent(padSize, indent + 1));
-                                    //pageHelper.UpdateTestResults(item.replace("{{", "\r\n" + pageHelper.PadIndent(4, indent)) + "{{\r\n " + pageHelper.PadIndent(4, indent + 1));
-                                }
-                            }
-                            if (item.contains("["))  {
-                                if (item.contains("]")) {
-                                    String temp = pageHelper.PadIndent(padSize, indent) + item.replace("[", "\r\n" + pageHelper.PadIndent(padSize, indent) + "[\r\n" + pageHelper.PadIndent(padSize, indent + 1));
-                                    temp += pageHelper.PadIndent(padSize, indent) + temp.replace("]", "\r\n" + pageHelper.PadIndent(padSize, indent - 1) + "]\r\n");
-
-                                } else {
-                                    pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) + item.replace("[", "\r\n" + pageHelper.PadIndent(padSize, indent) + "[\r\n" + pageHelper.PadIndent(padSize, indent + 1)));
-                                }
-                            }
-//                            pageHelper.UpdateTestResults("--[ Indent = " + indent + "]------");
-                            indent++;
-                        } else if (item.contains("}}") || item.contains("]")) {
-                            if (item.contains("}}")) {
-                                pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) + item.replace("}}", "\r\n" + pageHelper.PadIndent(padSize, indent - 1) + "}}") + ",");
-                            }
-                            if (item.contains("]")) {
-                                pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) + item.replace("]", "\r\n" + pageHelper.PadIndent(padSize, indent - 1) + "]\r\n"));
-                            }
-//                            pageHelper.UpdateTestResults(item.replace("}}", pageHelper.PadIndent(4, indent) + "\r\n" + pageHelper.PadIndent(4, indent - 1) + "}}") + ",");
-//                            pageHelper.UpdateTestResults("--[ Indent = " + indent + "]------");
-                            indent--;
-                        } else {
-                            pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) + item  + ",");
-//                            pageHelper.UpdateTestResults("--[ Indent = " + indent + "]------");
-                        } */
-                       // pageHelper.UpdateTestResults("--[ Indent = " + indent + "]------");
-                    }
-                } else {
-                    List<Document> documents2;
-                    documents2 = (List<Document>) col.find().into(
-                            new ArrayList<Document>());
-                }
-
-                /*
-                if (documents != null) {
-                    for (Document document : documents) {
-//                        pageHelper.UpdateTestResults("document = " + document.replace(",", ",\r\n"));
-                        pageHelper.UpdateTestResults("document = " + document.toString().replace(",",",\r\n"));
-                    }
-                }
-                else {
-                    pageHelper.UpdateTestResults("No matching items found");
-                } */
-            }
-        }
-    }
 
 
     /* ********************************************************************
@@ -1554,7 +1378,7 @@ public class HomePage {
         pageHelper.UpdateTestResults(pageHelper.indent5 + "Discovered " + linkCount + " links amongst " + links.size() + " anchor tags.\r\n", testResults);
     }
 
-    /* ************************************************************
+    /*************************************************************
      * DESCRIPTION:
      *      Checks all image tags for the presence of the checkType
      *      property passed in (alt, src).
@@ -1612,13 +1436,16 @@ public class HomePage {
         pageHelper.UpdateTestResults(pageHelper.indent5 + "Discovered " + altTagCount + " image " + checkType.toLowerCase().trim()  + " attributes  amongst " + images.size() + " image tags.\r\n", testResults);
     }
 
-    /* *************************************************************************
+
+
+    /***********************************************************************
      * DESCRIPTION:
-     *     If a Tag is passed in as part of the Expected values, search the text
-     *     of all tags of that type for the phrase, but if no tag is passed in,
-     *     search the text of all page elements for the phrase.
-     *
-     ************************************************************************* */
+     *      If a Tag is passed in as part of the Expected values, search the text
+     *      of all tags of that type for the phrase, but if no tag is passed in,
+     *      search the text of all page elements for the phrase.
+     * @param ts
+     * @param fileStepIndex
+     ********************************************************************** */
     private void FindPhrase(TestSettings ts, String fileStepIndex) {
         String cssSelector = "*";
         String [] expectedItems = ts.get_expectedValue().split(parameterDelimiter);
@@ -1630,7 +1457,7 @@ public class HomePage {
         List<WebElement> elements = driver.findElements(By.cssSelector(cssSelector));
         List<String> foundElements = new ArrayList<>();
 
-        //region {Future implementation NOTE}
+        //region {Implemented in the bottom for loop}
         // When searching a specific tag type for the phrase,
         // iterate through all child elements to see if one of them contains the text.
         // if a child or grandchild contains the text, eliminate the element as containing the text
@@ -1641,8 +1468,6 @@ public class HomePage {
                 if (element.getText().contains(expectedItems[2].trim())) {
                     wasFound = true;
                     foundElements.add(generateXPATH(element, ""));
-//                    pageHelper.UpdateTestResults(pageHelper.ANSI_GREEN + "Successful found (" + expectedItems[2].trim() + ") in element: " + generateXPATH(element, "") + " for step " + fileStepIndex + pageHelper.ANSI_RESET, testResults);
-                    //break;
                 }
             }
         }
@@ -1651,8 +1476,6 @@ public class HomePage {
                 if (element.getText().equals(expectedItems[2].trim())) {
                     wasFound = true;
                     foundElements.add(generateXPATH(element, ""));
-//                    pageHelper.UpdateTestResults(pageHelper.ANSI_GREEN + "Successful found (" + expectedItems[2].trim() + ") in element: " + generateXPATH(element, "") + " for step " + fileStepIndex + pageHelper.ANSI_RESET, testResults);
-                    //break;
                 }
             }
         }
@@ -1689,33 +1512,45 @@ public class HomePage {
         }
     }
 
+    /****************************************************************************
+     * DESCRIPTION:
+     *          Creates a file with element properties and attributes to allow
+     *          users to more quickly create test files without inspecting each
+     *          page element to do so.
+     *
+     * @param ts
+     *          expected values [0] = create_test_page
+     *          expected values [1] = Tag type to lookup (*) for all tags, defaults
+     *                              to * if left empty
+     *          expected values [2] = File where the results should be written
+     *          expected values [3] = Comma Delimited List of tags to skip when
+     *                              all tags is the lookup type.
+     *                             (Ignored for specific tag lookups.)
+     *
+     * @param fileStepIndex
+     *
+     * ╠n/a ; create_test_page  ╬ * ╬ C:\Tests Pages\TestFileOutput_A.txt ╬ html,head,title,meta,script,body,style ; n/a ; true ; false╣
+     *
+     * @return
+     *************************************************************************** */
     private String CreateTestPage(TestSettings ts, String fileStepIndex) {
-        //Update Help file with the following
-        //expected values [0] = create_test_page
-        //expected values [1] = Tag type to lookup (*) for all tags, defaults to * if left empty
-        //expected values [2] = File where the results should be written
-        //expected values [3] = Comma Delimited List of tags to skip when all tags is the lookup type. (Ignored for specific tag lookups.
-        //╠n/a ; create_test_page  ╬ a ╬ C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\TestFiles\Create Tests Pages\TestFileOutput_A.txt ╬ html,head,title,meta,script,body,style,a,nav,br,strong,div ; n/a ; true ; false╣
-        //GAJ working here...finish this shit
-        pageHelper.UpdateTestResults("In CreateTestPage #1");
         String cssSelector = "*";
         String [] expectedItems = ts.get_expectedValue().split(parameterDelimiter);
-        pageHelper.UpdateTestResults("In CreateTestPage #1.  ExpectedItems length:" + expectedItems.length);
         String newFileName = "/config/newTestFile.txt";
         int tagCount = (expectedItems.length == 4 && expectedItems[3] != null && !expectedItems[3].trim().isEmpty()) ? StringUtils.countMatches(ts.get_expectedValue(), parameterDelimiter) : 0;
         String [] skipTags = new String[tagCount];
+        boolean formatted = expectedItems[0].contains("format") ? true : false;
 
         //css selector to use
         if (expectedItems[1] != null && !expectedItems[1].trim().isEmpty()) {
             cssSelector = expectedItems[1].trim();
-
         }
         //name of file to write results to
         if (expectedItems[2] != null && !expectedItems[2].trim().isEmpty()) {
             newFileName = expectedItems[2].trim();
         }
 
-        //delete this if it exists
+        //delete this file if it exists
         try {
             pageHelper.DeleteFile(newFileName);
         } catch(Exception ex) {
@@ -1739,11 +1574,21 @@ public class HomePage {
             String elementHref;
             String elementSrc;
             String outputDescription;
-            pageHelper.UpdateTestResults("In CreateTestPage #2 elements retrieved: " + elements.size());
+            String elementAltText;
+            String inputType;
+            Boolean isVisible = true;
+//            pageHelper.UpdateTestResults("In CreateTestPage #2 elements retrieved: " + elements.size());
+            if (formatted) {
+                pageHelper.WriteToFile(newFileName, "╠" + testPage + " ; Navigate ╬ " + testPage + " ; n/a ; true ; true╣");
+            } else {
+                pageHelper.WriteToFile(newFileName, "URL being used: " + testPage);
+            }
 
             for (WebElement element : elements) {
                 canProceed = true;
+                outputDescription = "";
                 elementType = element.getTagName();
+                isVisible = element.isDisplayed();
                 if (cssSelector.equals("*")) {
                     if (skipTags != null && skipTags.length > 0) {
                         for (String skipTag : skipTags) {
@@ -1760,23 +1605,68 @@ public class HomePage {
 
                 if (canProceed) {
                     elementXPath = generateXPATH(element, "");
-
                     elementText = element.getText();
 
-                    outputDescription = "Element Type: " + elementType + " - Element xPath: " + elementXPath + " - Element Text: " + elementText;
+
+                    if (formatted) {
+                        if (!elementType.equals("img")) {
+                            if (isVisible) {
+                                outputDescription = "╠" + elementXPath + " ; " + elementText + " ; xPath ; " + "false ; false╣";
+                            }
+                            else {
+                                outputDescription = "### The following element is not visible by default";
+                                outputDescription += "\r\n";
+                                outputDescription += "╠" + elementXPath + " ; " + elementText + " ; xPath ; " + "false ; false╣";
+                            }
+                            //outputDescription += "╠" + elementXPath + " ; " + elementText + " ; xPath ; " + "false ; false╣";
+                        }
+                    } else {
+                        outputDescription = "Element Type: " + elementType + " - Element xPath: " + elementXPath + " - Element Text: " + elementText;
+                    }
 
                     if (elementType.equals("img")) {
                         elementSrc = element.getAttribute("src");
-                        outputDescription += " - Element Src: " + elementSrc;
+                        elementAltText = element.getAttribute("alt");
+                        if (formatted) {
+                            outputDescription = "╠" + elementXPath + " ; check_image_src " + elementSrc + " ; xPath ; " + "false ; false╣";
+                            outputDescription += "\r\n";
+                            outputDescription += "╠" + elementXPath + " ; check_image_alt " + elementAltText + " ; xPath ; " + "false ; false╣";
+                        } else {
+                            outputDescription += " - Element Src: " + elementSrc;
+                        }
                     } else if (elementType.equals("a")) {
                         elementHref = element.getAttribute("href");
-                        outputDescription += " - Element Href: " + elementHref;
+                        if (formatted && !elementHref.isEmpty()) {  //make sure that this is not an anchor
+                            outputDescription += "\r\n";
+                            outputDescription += "╠" + elementXPath + " ; check_a_href " + elementHref + " ; xPath ; " + "false ; false╣";
+                        } else if (!elementHref.isEmpty()) {
+                            outputDescription += " - Element Href: " + elementHref;
+                        } else {
+                            outputDescription = "###  The following element is an Anchor, not a link.\r\n" + outputDescription;
+                        }
+                    } else if (elementType.equals("input")) {
+                        inputType = element.getAttribute("type");
+                        if (formatted) {
+                            if (inputType.equals("text")) {
+                                outputDescription = "╠" + elementXPath + " ; sendkeys  ╬ [keys to send] ; xPath ; true ; false╣";
+                            } else if (inputType.equals("button") || inputType.equals("checkbox") || inputType.equals("radio")) {
+                                outputDescription = "╠" + elementXPath + " ; click ; xPath ; true ; false╣";
+                            }
+                        }
+                    }
+                    else if (elementType.equals("select") && formatted) {
+                        outputDescription = "╠" + elementXPath + " ; [value of option to select] ; xPath ; true ; false╣";
                     }
 
+
+                    if (!formatted) {
+                        outputDescription += " Element Visible: " + isVisible;
+                    }
                     pageHelper.UpdateTestResults(outputDescription, testResults);
                     pageHelper.WriteToFile(newFileName, outputDescription);
                 }
             }
+            pageHelper.WriteToFile(newFileName, "");
         } catch (Exception ex) {
             pageHelper.UpdateTestResults("Error: " + ex.getMessage());
         }
@@ -2528,7 +2418,7 @@ public class HomePage {
         // Using the == operator checks the memory address not the value
         String elementTag = xPath.substring(xPath.lastIndexOf("/") + 1).trim();
 
-        if (elementTag.toLowerCase().startsWith("a") && (elementTag.length() == 1 || elementTag.toLowerCase().indexOf("[") > 1)) {
+        if (elementTag.toLowerCase().startsWith("a") || elementTag.toLowerCase().startsWith("a[")) {
             return "Anchor";
         }
         if (elementTag.toLowerCase().startsWith("h") && (elementTag.length() == 2 || elementTag.toLowerCase().indexOf("[") > 1)) {
@@ -2619,6 +2509,273 @@ public class HomePage {
         return value;
     }
     //endregion
+
+
+    /* ********************************************************************
+     * DESCRIPTION:
+     *      Creates a new MongoDb Client Connection or closes an open
+     *      connection.
+     ******************************************************************** */
+    private void SetMongoClient(String mongoDbConnection, TestSettings ts) {
+
+        //determine the type of mongo connection that needs to be used
+//        if (ts.get_xPath().toLowerCase().trim().contains("uri") && !mongoDbConnection.toLowerCase().contains("close connection")) {
+        if (ts.get_xPath().toLowerCase().trim().contains("uri") && !mongoDbConnection.toLowerCase().contains("close")) {
+            //mongoClientUri = new MongoClientURI(mongoDbConnection);
+            mongoClient = new MongoClient(new MongoClientURI(mongoDbConnection));
+        } else if (!mongoDbConnection.toLowerCase().contains("close")) {
+            //local connection?
+            mongoClient = new MongoClient(mongoDbConnection);
+        } else {
+            mongoClient.close();  //close the connection
+        }
+
+        MongoCursor<String> dbsCursor = mongoClient.listDatabaseNames().iterator();
+        while (dbsCursor.hasNext()) {
+            try {
+                pageHelper.UpdateTestResults(dbsCursor.next());
+                MongoDatabase db = mongoClient.getDatabase(dbsCursor.next());
+
+                pageHelper.UpdateTestResults("--[Tables - Start]----");
+                MongoIterable<String> col = db.listCollectionNames();
+
+
+                for (String table : col) {
+                    pageHelper.UpdateTestResults(pageHelper.indent5 + "Table = " + table);
+                    FindIterable<Document> fields = db.getCollection(table).find();
+                    pageHelper.UpdateTestResults(pageHelper.indent5 + "--[Fields - Start]----");
+                    /*
+                    try {
+                        int maxRecords = 1;
+                        int recordCount = 0;
+                        if (dbsCursor.next().equals("project-tracker-dev")) {
+                            pageHelper.UpdateTestResults("db." + table + ".find() = " + db.getCollection(table).find());
+                            for (Document field : fields) {
+                                pageHelper.UpdateTestResults(pageHelper.indent8 + "Field = " + field.toString().replace("Document{{id=", "\r\nDocument{{id="));
+//                                recordCount++;
+//                                if (recordCount > maxRecords) {
+                                    break;
+//                                }
+                            }
+                        }
+                    } catch (MongoQueryException qx) {
+                        pageHelper.UpdateTestResults("Field Retrieval MongoDb error occurred: " + qx.getErrorMessage());
+                    } catch (Exception ex) {
+                        pageHelper.UpdateTestResults("Field Retrieval error occurred: " + ex.getMessage());
+                    }*/
+                    pageHelper.UpdateTestResults(pageHelper.indent5 + "--[Fields - End]----");
+                }
+
+                pageHelper.UpdateTestResults("--[Tables - End]----");
+                //col.forEach(String table : col)
+                pageHelper.UpdateTestResults("");
+            } catch(Exception ex) {
+                pageHelper.UpdateTestResults("MongoDB error occurred: " + ex.getMessage());
+            }
+        }
+    }
+
+    private void CloseConnection() {
+    }
+
+    private void RunQuery(TestSettings ts, String fileStepIndexForLog) {
+
+        pageHelper.UpdateTestResults("In RunQuery method");
+        if (ts.get_xPath().toLowerCase().contains("mongo")) {
+            pageHelper.UpdateTestResults("RunQuery....in first If Statement");
+            String [] expectedItems = ts.get_expectedValue().split(parameterDelimiter);
+            String [] queryParameters = expectedItems[0].split(" ");
+            pageHelper.UpdateTestResults("RunQuery: queryParameters.length = " + queryParameters.length);
+            if (queryParameters.length > 5) {  //need to work through this
+                pageHelper.UpdateTestResults("RunQuery: queryParameters[0].toLowerCase().trim() = " + queryParameters[0].toLowerCase().trim());
+                if (queryParameters[0].toLowerCase().trim().equals("query")) {
+                    pageHelper.UpdateTestResults("RunQuery: ts.get_expectedValue().toLowerCase() = " + ts.get_expectedValue().toLowerCase());
+                    if (ts.get_expectedValue().toLowerCase().contains("where")) {
+                        String wherePhrase = expectedItems[0].substring(expectedItems[0].indexOf("where"));
+                        pageHelper.UpdateTestResults("wherePhrase = " + wherePhrase);
+                        pageHelper.UpdateTestResults("queryParameters[1] = " + queryParameters[1]);
+                        pageHelper.UpdateTestResults("queryParameters[2] = " + queryParameters[2]);
+                        MongoDatabase db = mongoClient.getDatabase(queryParameters[1]);
+                        MongoCollection<Document> col = db.getCollection(queryParameters[2]);
+
+                        List<Document> documents = (List<Document>) col.find().into(
+                                new ArrayList<Document>());
+
+                        if (documents.size() > 0) {
+                            for (Document document : documents) {
+                                pageHelper.UpdateTestResults("document = " + document);
+                            }
+                        }
+                        else {
+                            pageHelper.UpdateTestResults("No matching items found");
+                        }
+                        //region {Commented for now}
+                        /*
+                        BasicDBObject whereQuery = new BasicDBObject();
+                        pageHelper.UpdateTestResults("queryParameters[4] = " + queryParameters[4]);
+                        pageHelper.UpdateTestResults("queryParameters[5] = " + queryParameters[5].replace(",", ""));
+                        if (!queryParameters[6].contains("\"")) {
+                            whereQuery.put(queryParameters[4].replace("\"", "") + " " + queryParameters[5].replace(",", "").replace("\"", ""), parseInt(queryParameters[6]));
+                        } else {
+                            whereQuery.put(queryParameters[4].replace("\"", "") + " " + queryParameters[5].replace(",", "").replace("\"", ""), queryParameters[6]);
+                        }
+                        FindIterable<Document> iterableString = col.find(whereQuery);
+                        pageHelper.UpdateTestResults("iterableString = " + iterableString);
+                        if (iterableString != null) {
+                            for (Document item : iterableString) {
+                                pageHelper.UpdateTestResults("item = " + item);
+                            }
+                        }
+                        else {
+                            pageHelper.UpdateTestResults("No matching items found");
+                        }*/
+                        //endregion
+                    }
+                }
+            } else {  //get the entire table of data if no where clause exists
+                MongoDatabase db = mongoClient.getDatabase(queryParameters[1]);
+                MongoCollection<Document> col = db.getCollection(queryParameters[2]);
+                //List<Document> documents;
+                FindIterable<Document> documents = null;
+                Document doc = null;
+                if (queryParameters.length > 2) {
+
+//                    documents = (List<Document>) col.find("{" + queryParameters[3].toString() + ":" + queryParameters[4].toString() + "}").into(
+//                            new ArrayList<Document>());
+//                    documents = db.getCollection(queryParameters[2]).find("{ " +  queryParameters[3].toString() + ":" + queryParameters[4].toString() + " }"));
+                    BSONObject bsonObj = BasicDBObject.parse("{" + queryParameters[3].toString() + ":" + queryParameters[4].toString() + "}");
+//                    documents = db.getCollection(queryParameters[2]).find(((BasicDBObject) bsonObj)).first();
+                    doc = db.getCollection(queryParameters[2]).find(((BasicDBObject) bsonObj)).first();
+
+                    //NOTE: { Everything remaining in this if statement is for formatting and not necessary for the testing application }
+                    //code used below for troubleshooting not necessarily testing
+                    pageHelper.UpdateTestResults("Doc = " + doc.toString());
+//                    pageHelper.UpdateTestResults("Doc = " + doc.toString()
+//                            .replace("{{","\r\n" + pageHelper.indent5 + "{{\r\n " + pageHelper.indent5)
+//                            .replace("}},","\r\n" + pageHelper.indent5 + "}},\r\n")
+//                            .replace(",",",\r\n" + pageHelper.indent5));
+                    String[] docString = doc.toString().split(", ");
+                    int indent = 0;
+                    int padSize = 2;
+                    String tempItem = "";
+                    String tempItem2 = "";
+                    for (String item: docString) {
+                        tempItem = "";
+                        tempItem2 = "";
+                        pageHelper.UpdateTestResults("[indent set to: " + indent + "]");
+                        //pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) + item.trim() + " - (Unformatted)");
+                        if ((item.contains("{{") || item.contains("[")) && !item.contains("[]")) {
+
+                            while (item.indexOf("{{") > 0 || item.indexOf("[") > 0)
+                            {
+                                tempItem += pageHelper.PadIndent(padSize, indent) + item.substring(0, item.indexOf("{{") + 2).trim().replace("{{", "\r\n" + pageHelper.PadIndent(padSize, indent) + "{{\r\n");
+                                pageHelper.UpdateTestResults("tempItem = " + tempItem);
+                                item = item.substring(item.indexOf("{{") + 2).trim();
+                                pageHelper.UpdateTestResults("item = " + item);
+                                indent++;
+                                pageHelper.UpdateTestResults("[indent now set to: " + indent + "]");
+                            }
+                            if (item.length() > 0) {
+                                tempItem += pageHelper.PadIndent(padSize, indent) +  item.trim();
+                            }
+
+
+                            pageHelper.UpdateTestResults(pageHelper.ANSI_YELLOW + tempItem + pageHelper.ANSI_RESET);
+//                            while (tempItem.indexOf("[") > 0) {
+//                                tempItem2 += pageHelper.PadIndent(padSize, indent) + tempItem.substring(0, tempItem.indexOf("[") + 1).trim().replace("[", "\r\n" + pageHelper.PadIndent(padSize, indent) + "[\r\n");
+//                                tempItem = tempItem.substring(tempItem.indexOf("[") + 1).trim();
+//                                indent++;
+//                            }
+//                            if (tempItem.length() > 0) {
+//                                tempItem2 += pageHelper.PadIndent(padSize, indent) + tempItem.trim();
+//                            }
+//
+//
+//
+//                            pageHelper.UpdateTestResults(pageHelper.ANSI_BLUE + tempItem2 + pageHelper.ANSI_RESET);
+//                            pageHelper.UpdateTestResults(color + tempItem + pageHelper.ANSI_RESET);
+                        }
+                        else if ((item.contains("}}") || item.contains("]")) && !item.contains("[]")) {
+                            while (item.indexOf("}}") > 0)
+                            {
+                                tempItem += pageHelper.PadIndent(padSize, indent) + item.substring(0, item.indexOf("}}") + 2).replace("}}", "\r\n" + pageHelper.PadIndent(padSize, indent - 1) + "}}");
+//                                tempItem += pageHelper.PadIndent(padSize, indent) + item.substring(0, item.indexOf("}}") + 2).replace("}}", "\r\n" + pageHelper.PadIndent(padSize, indent - 1) + "}}\r\n");
+                                item = item.substring(item.indexOf("}}") + 2).trim();
+                                indent--;
+                            }
+                            if (item.length() > 0) {
+                                tempItem += pageHelper.PadIndent(padSize, indent) +  item;
+//                                tempItem += pageHelper.PadIndent(padSize, indent) +  item + " - (also left over)";
+                            }
+//                            if (tempItem.contains("]")) {
+//                                indent--;
+//                            }
+                            pageHelper.UpdateTestResults(tempItem);
+                            //pageHelper.UpdateTestResults(item);
+                            //indent--;
+                        }
+                        else {
+                            pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) +  item.trim() + " - (No delimiters)");
+                        }
+                       /*
+                        if (item.contains("{{") || item.contains("[")) {
+                            if (item.contains("{{")) {
+                                if (item.contains("=") && (item.indexOf("=") < item.indexOf("{{"))) {
+                                    pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) + item.replace("{{", pageHelper.PadIndent(padSize, indent)) + "\r\n" + pageHelper.PadIndent(padSize, indent) + "{{ ");
+                                } else {
+                                    pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) + item.replace("{{", pageHelper.PadIndent(padSize, indent)) + "{{\r\n " + pageHelper.PadIndent(padSize, indent + 1));
+                                    //pageHelper.UpdateTestResults(item.replace("{{", "\r\n" + pageHelper.PadIndent(4, indent)) + "{{\r\n " + pageHelper.PadIndent(4, indent + 1));
+                                }
+                            }
+                            if (item.contains("["))  {
+                                if (item.contains("]")) {
+                                    String temp = pageHelper.PadIndent(padSize, indent) + item.replace("[", "\r\n" + pageHelper.PadIndent(padSize, indent) + "[\r\n" + pageHelper.PadIndent(padSize, indent + 1));
+                                    temp += pageHelper.PadIndent(padSize, indent) + temp.replace("]", "\r\n" + pageHelper.PadIndent(padSize, indent - 1) + "]\r\n");
+
+                                } else {
+                                    pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) + item.replace("[", "\r\n" + pageHelper.PadIndent(padSize, indent) + "[\r\n" + pageHelper.PadIndent(padSize, indent + 1)));
+                                }
+                            }
+//                            pageHelper.UpdateTestResults("--[ Indent = " + indent + "]------");
+                            indent++;
+                        } else if (item.contains("}}") || item.contains("]")) {
+                            if (item.contains("}}")) {
+                                pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) + item.replace("}}", "\r\n" + pageHelper.PadIndent(padSize, indent - 1) + "}}") + ",");
+                            }
+                            if (item.contains("]")) {
+                                pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) + item.replace("]", "\r\n" + pageHelper.PadIndent(padSize, indent - 1) + "]\r\n"));
+                            }
+//                            pageHelper.UpdateTestResults(item.replace("}}", pageHelper.PadIndent(4, indent) + "\r\n" + pageHelper.PadIndent(4, indent - 1) + "}}") + ",");
+//                            pageHelper.UpdateTestResults("--[ Indent = " + indent + "]------");
+                            indent--;
+                        } else {
+                            pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) + item  + ",");
+//                            pageHelper.UpdateTestResults("--[ Indent = " + indent + "]------");
+                        } */
+                        // pageHelper.UpdateTestResults("--[ Indent = " + indent + "]------");
+                    }
+                } else {
+                    List<Document> documents2;
+                    documents2 = (List<Document>) col.find().into(
+                            new ArrayList<Document>());
+                }
+
+                /*
+                if (documents != null) {
+                    for (Document document : documents) {
+//                        pageHelper.UpdateTestResults("document = " + document.replace(",", ",\r\n"));
+                        pageHelper.UpdateTestResults("document = " + document.toString().replace(",",",\r\n"));
+                    }
+                }
+                else {
+                    pageHelper.UpdateTestResults("No matching items found");
+                } */
+            }
+        }
+    }
+
+
+
 
     /* ************************************************************
      * DESCRIPTION:

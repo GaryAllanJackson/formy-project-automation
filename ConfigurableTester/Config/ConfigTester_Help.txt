@@ -334,21 +334,28 @@ To fill in a field by ID with the persisted value, add the Unique Id, and to mak
 ###  ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ###  ═════════[ FIND ELEMENTS ON A PAGE TO HELP MAKE A TEST FILE - NOT FOR TESTING BUT FOR HELPING TO CREATE TESTS ]════════════════════════════════════════════════
-###  IMPORTANT NOTE #1: Any parent element will contain the text of it's child element(s) so to get the element that actually 
-###                  contains the information you want, try to eliminate the hierarchical items above it that you do want, 
-###                  like container elements.
-###  IMPORTANT NOTE #2: Ensure that your file path does not contain any keyword used for any other action or you will get unexpected results.
+###  IMPORTANT NOTE #1: ANY PARENT ELEMENT WILL CONTAIN THE TEXT OF IT'S CHILD ELEMENT(s) SO TO GET THE ELEMENT THAT ACTUALLY 
+###                  CONTAINS THE INFORMATION DESIRED, TRY TO ELIMINATE THE HIERARCHICAL ITEMS ABOVE THAT ARE NOT DESIRED, 
+###                  LIKE CONTAINER ELEMENTS.  Examples include (html,head,body,div,table)
+###  IMPORTANT NOTE #2: ENSURE THAT YOUR FILE PATH DOES NOT CONTAIN ANY KEYWORD USED FOR ANY OTHER ACTION, OR YOU WILL GET UNEXPECTED RESULTS!!!
 ###  A test file needs to be created and you would like to spare yourself the hassle of looking up elements, associated properties and attributes.
 ###  To do this, create a test script, with a Navigate command, to Navigate to the page to be tested and then use the 
-###  create_test_page command.
-###  The create_test_page command:
+###  create_test_page command or the create_test_page_formatted command.
+###  The create_test_page command outputs key value information so that a determination can be made to as to whether an item should be tested and 
+###  it provides all of the information to create the test command but it is not formatted as a test command.
+###  The create_test_page_formatted command outputs the element information in a test command format allowing for quick copy and paste to a test file.
+###  Both files indicate if an element is visible, if an a tag is acting as an anchor or a link.
+###  The Formatted File, will create tests for a tags that check text and href, for images that check src, for text fields it create tests that compare text 
+###        provided with the element text, for text input it creates a sendkeys, for buttons, checkboxes and radio buttons it creates a click, 
+###        and for selects it creates a select command, allowing the user to enter one of the option values that is to be selected.
+###  The create_test_page command and the create_test_page_formatted command take the following test parameters:
 ###    - Takes n/a as the accessor ([URL/XPath/CssSelector/TagName/ID/ClassName])
 ###    - The Action/Expected Value field takes the create_test_page command and the following parameters:
 ###        -    Element Type: A single element with * being all elements and the default if left empty.
 ###            -   Elements Include but are not limited to: *, html, head, title, body, a, ol, ul, li, select, input etc...
 ###            -   If omitted, this will be * for all elements.
 ###        -    File Path and File Name: This is where the results will be written.
-###            -   If omitted, this will be written to the config folder.
+###            -   If omitted, this will be written to the config folder. (/config/newTestFile.txt)
 ###        -    A comma delimited list of elements to skip when retrieving all element (*) information.
 ###            -   These would usually be elements that do not have text themselves but contain elements that do have text.
 ###            -   Do not include spaces between elements, just a comma as follows: html,head,title,body,div
