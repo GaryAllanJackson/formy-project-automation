@@ -1,0 +1,110 @@
+
+╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                              CONFIGURATION FILE FORMAT                                                                                                 ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+// NOTES: Lines beginning with double slashes denote comments, in the configuration file, and will be ignored by the configuration reader.
+// BLANK LINES ARE NOT PERMITTED!!!  If you need visual space, start the blank line with double slashes and that is acceptable.
+// Configuration files are key=value pairs where you are setting a configurable value using the equal assignment operator
+// TestFileName - entries beginning with this are used to point to the file/files containing the test setting commands.
+//    -   These entries can be numbered so that they can be sorted and taken in order when reading a folder of files or 
+//         - they can have the same entry and be either sorted alphabetically, if SortSpecifiedTestFiles is true, or read 
+//         - in the order in which they appear, if SortSpecifiedTestFiles is set to false.
+//    -   The Test Setting Commands file is a described in detail below under the Test File Format Section.
+//
+// ScreenShotSaveFolder - folder where screenshots should be saved - Must already exist
+// BrowserType values: Firefox, Chrome, PhantomJS
+// RunHeadless - can be true to run headless or false to show the browser, but PhantomJs is always headless
+// TestAllBrowsers - can be true or false.  If false, BrowserType must be set.  If true, BrowserType is ignored and the program will cycle through all browsers.
+// SpecifyTestFiles - Can be true to specifiy each file and the order that files are run, or false to select a folder of files that will be ordered alphabetically.
+// SortSpecifiedTestFiles - This setting depends upon SpecifyTestFiles being true.
+//    -   Can be set to false to manually place the files in the order that you want them to be executed. (Default)
+//    -   Can be true to sort the files alphabetically and numerically using the number following the word TestFileName.
+//       -   An example of the sorted order follows: (TestFileName0, TestFileName1, TestFileName2 etc..)
+//       -   This forces a sort to be performed on the names so these will sort numerically.
+//       -   If multiple entries have the same number, like (TestFileName0, TestFileName0) those entries will also be sorted alphabetically.
+// TestFolderName - will contain the folder where test files exist when SpecifyTestFiles is false.
+// FolderFileFilterType - type of filtering you want to use to select similarly named files within a folder.  Options are: 
+//    -   [Starts With], [Contains] and [Ends With] 
+//    -   [Starts With] - will select only the test files starting with the filter entered
+//    -   [Contains] - will select only test files containing the filter entered
+//    -   [Ends With] - will select only test files ending with the filter entered
+// FolderFileFilter - the filter used to select only matching files within the Test Folder.
+// MaxScreenShotsToTake - the maximum number of screen shots to take including any unscheduled screenshots taken due to an error.
+//    -   When -1, only errors will create screen shots.
+//    -   When 0, there is no limit and all screenshots will be taken.
+//    -   When any other number, that number of screenshots or less will be taken depending upon the test and the max set.
+//    -   Errors like, Element not found, will create a screenshot to allow you to see the page the application was on when 
+//         the error occurred.
+//
+// In the example configuration file provided below, a single specific test file is being tested, the screen shot folder is specified, 
+// but no screenshots will be taken, only the test Chrome browser will be used and it will be visible, the TestFolderName specified, 
+// FolderFileFilterType specified, and FolderFileFilter specified  are all disregarded because SpecifiyTestFiles is true, meaning 
+// only files specifically specified will be used.
+// The commented test file lines were included to show a means in which different files can be setup but can be commented so that only 
+// the intended test files run.   
+//  These comments were also included  to show that duplicate TestFileName0 keys can be used as well as uniquely named 
+// incremental TestFileNames like TestFileName1, TestFileName2 etc.. can be used.  Just ensure that they are not preceded by 
+// comment characters, if intended to run.  
+//
+//TestFileName0=C:\TestSettings2.txt
+//TestFileName1=C:\TestSettings2.txt
+TestFileName0=C:\TestSettings.txt
+ScreenShotSaveFolder=C:\ScreenShots\MySite
+MaxScreenShotsToTake=-1
+BrowserType=Chrome
+RunHeadless=false
+TestAllBrowsers=false
+SpecifyTestFiles=true
+SortSpecifiedTestFiles=false
+TestFolderName=C:\MyTestFolder\
+FolderFileFilterType=Starts_With
+FolderFileFilter=MyPhrase
+
+
+╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                              TEST FILE FORMAT                                                                                                          ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+The Test file is an xml file that begins with the XML declaration followed by the <testSteps> root element.
+Each test is grouped in <step> elements, which consist of the all or some of the following nodes:
+
+<command>Command to execute</command> - The command node, describes the command to execute and is always required.
+<actionType>read/write</actionType> - The actionType node can be set to read or write describing this as a read or write action.
+	Assertions where an element value is being checked against a supplied value is a read.
+	Navigation, clicking, populating text boxes, selecting select options, accessing context menu etc.. 
+		are write actionTypes because they are performing an action rather than just reading a value.  
+<accessor>select-menu</accessor> - The element identifier.
+<accessorType>ID</accessorType> - The type of element identifier. (xPath, ClassName, CssSelector, Id, TagName)
+<expectedValue>What you expect to retrieve</expectedValue> - The optional expectedValue node, if present, 
+	acts as the expected value of the element value being retrieved as the actual value.
+<crucial>TRUE</crucial> - The crucial node can be set to True or False and determines if testing should stop 
+	or proceed if the step fails.  Set to True for stop and False for proceed.
+<arguments></arguments> - The arguments node is a container of numbered argument nodes.
+	Argument order is crucial and out of order arguments can have unpredictable results.
+	See the help sections below to learn the order of arguments for each command type.
+<arg1>First argument</arg1> The numbered arguments vary greatly depending upon the type of command.
+	<arg2>Second argument</arg2>
+	<arg3>Third argument</arg3>
+	Generally speaking, these numbered arguments are arranged so that the most relevant pieces are information 
+	are the first items and the less relevant pieces of information are last.
+There are few, if any, examples that use all nodes, so in the Navigation example below note that this does not use 
+Accessor and AccessorType nodes because it accesses the URL instead of a page element when making an assertion. 
+Also, keep in mind that while this represents a test file, it consists of only one of many possible test steps.
+
+<?xml version="1.0" encoding="UTF-8" ?>
+<testSteps>
+	<step>
+	<command>navigate</command>
+	<actionType>write</actionType>
+	<expectedValue>https://www.marvel.com/</expectedValue>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>https://www.marvel.com</arg1>
+		<arg2>1000</arg2>
+	</arguments>
+	</step>
+</testSteps>
+
+
+
+
+

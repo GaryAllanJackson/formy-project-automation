@@ -1,0 +1,18 @@
+// Read Header and assert test (Demo 1)
+//TestFileName2=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableTester\Tests\Fill_out_FormMy_Form_and_submit.xml
+//TestFileName2=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableTester\Tests\CheckImageSource-Test.xml
+//TestFileName2=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableTester\Tests\CheckAnchorhref-Test.xml
+//TestFileName2=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableTester\Tests\FindPhrase-Test.xml
+TestFileName2=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableTester\Tests\iFrame_AccessElement-Test.xml
+//TestFileName2=C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableTester\Tests\ContextMenu-Test.xml
+ScreenShotSaveFolder=C:\Gary\ScreenShots\Mashup
+MaxScreenShotsToTake=5
+BrowserType=Chrome
+//BrowserType=Firefox
+RunHeadless=false
+TestAllBrowsers=false
+SpecifyTestFiles=true
+SortSpecifiedTestFiles=false
+TestFolderName=
+FolderFileFilterType=
+FolderFileFilter=

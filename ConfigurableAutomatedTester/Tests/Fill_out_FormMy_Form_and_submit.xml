@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testSteps>
+	<step>
+		<!-- Tested - Good - Repeating for subsequent test steps -->
+		<command>navigate</command>
+		
+		<!-- Read or write -->
+		<actionType>write</actionType>
+
+		<!-- Expected value - required only when we want to validate something as part of our step. For this command it is optional -->
+		<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>
+		
+		<!-- crucial or non crucial -->
+		<crucial>TRUE</crucial>
+		<arguments>
+			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
+			<arg1>https://formy-project.herokuapp.com/form</arg1>
+			
+			<!-- second argument, can be optional but required if we include the expectedValue. For this example we send 1000ms as the time to wait before the assertion is made -->
+			<arg2>1000</arg2> 
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- multiple keystroke command... SENDKEYS! -->
+		<command>sendkeys</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<!-- the accessor is the target element where the key strokes will be sent to -->
+		<accessor>first-name</accessor>
+		<accessorType>ID</accessorType>
+		<arguments>
+			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
+			<arg1>John</arg1>
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- multiple keystroke command... SENDKEYS! -->
+		<command>sendkeys</command>
+		<actionType>write</actionType>
+		<crucial>FALSE</crucial>
+		<!-- the accessor is the target element where the key strokes will be sent to -->
+		<accessor>last-name</accessor>
+		<accessorType>ID</accessorType>
+		<arguments>
+			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
+			<arg1>Doe</arg1>
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- multiple keystroke command... SENDKEYS! -->
+		<command>sendkeys</command>
+		<actionType>write</actionType>
+		<crucial>FALSE</crucial>
+		<!-- the accessor is the target element where the key strokes will be sent to -->
+		<accessor>job-title</accessor>
+		<accessorType>ID</accessorType>
+		<arguments>
+			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
+			<arg1>QA Engineer</arg1>
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- multiple keystroke command... SENDKEYS! -->
+		<command>click</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<!-- the accessor is the target element where the key strokes will be sent to -->
+		<accessor>radio-button-2</accessor>
+		<accessorType>ID</accessorType>
+		<arguments>
+			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
+			<!-- <arg1>Doe</arg1> -->
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- multiple keystroke command... SENDKEYS! -->
+		<command>click</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<!-- the accessor is the target element where the key strokes will be sent to -->
+		<accessor>checkbox-2</accessor>
+		<accessorType>ID</accessorType>
+		<arguments>
+			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
+			<!-- <arg1>Doe</arg1> -->
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good (actually going down one extra time, have to check this) -->
+		<!-- multiple keystroke command... SENDKEYS! -->
+		<command>sendkeys</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<!-- the accessor is the target element where the key strokes will be sent to -->
+		<accessor>select-menu</accessor>
+		<accessorType>ID</accessorType>
+		<arguments>
+			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
+			<arg1>key.ARROW_DOWN</arg1>
+			<arg2>key.ARROW_DOWN</arg2>
+			<arg3>key.ENTER</arg3>
+			<!-- Last argument is the override time delay between sending keystrokes and is not required -->
+			<arg4>500</arg4>
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- multiple keystroke command... SENDKEYS! -->
+		<command>sendkeys</command>
+		<actionType>write</actionType>
+		<crucial>FALSE</crucial>
+		<!-- the accessor is the target element where the key strokes will be sent to -->
+		<accessor>datepicker</accessor>
+		<accessorType>ID</accessorType>
+		<arguments>
+			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
+			<arg1>05/28/2019</arg1>
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- multiple keystroke command... SENDKEYS! -->
+		<command>sendkeys</command>
+		<actionType>write</actionType>
+		<crucial>FALSE</crucial>
+		<!-- the accessor is the target element where the key strokes will be sent to -->
+		<accessor>datepicker</accessor>
+		<accessorType>ID</accessorType>
+		<arguments>
+			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
+			<arg1>05/28/2019</arg1>
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- multiple keystroke command... SENDKEYS! -->
+		<command>sendkeys</command>
+		<actionType>write</actionType>
+		<crucial>FALSE</crucial>
+		<!-- the accessor is the target element where the key strokes will be sent to -->
+		<accessor>datepicker</accessor>
+		<accessorType>ID</accessorType>
+		<arguments>
+			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
+			<arg1>Keys.RETURN</arg1>
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- click command  -->
+		<command>click</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<!-- the accessor is the target element where the key strokes will be sent to -->
+		<accessor>.btn.btn-lg.btn-primary </accessor>
+		<accessorType>CssSelector</accessorType>
+		<expectedValue>https://formy-project.herokuapp.com/thanks</expectedValue>
+		<arguments>
+			<!-- This first argument is the delay in milliseconds -->
+			<!-- <arg1>4000</arg1> -->
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- Normal hardcoded wait time -->
+		<command>wait</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<arguments>
+			<arg1>7000</arg1>
+		</arguments>
+	</step>
+	<!-- assert -->
+	<step>
+		<!-- Tested - Good -->
+		<command>assert</command>
+		<actionType>read</actionType>
+		<expectedValue>The form was successfully submitted!</expectedValue>
+		<crucial>TRUE</crucial>				   	
+		<accessor>alert</accessor>
+		<accessorType>ClassName</accessorType>
+	</step>
+</testSteps>
