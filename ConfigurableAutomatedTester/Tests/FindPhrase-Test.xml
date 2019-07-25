@@ -22,6 +22,28 @@
 		</arguments>
 	</step>
 	<step>
+		<!-- Tested - Good -->
+		<command>wait for page</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<arguments>
+			<!-- we will use arg1 as the element we are waiting on. In this command it would be the page iteself.  
+				Must be present! (set to n/a when waiting on page already navigated to.) -->
+			<arg1>https://formy-project.herokuapp.com/form</arg1>
+			
+			<!-- Max time in Seconds (30 is default) -->
+			<arg2>30</arg2>
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<command>check url</command>
+		<actionType>write</actionType>
+		<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>
+		<crucial>TRUE</crucial>
+	</step>
+	<step>
+		<!-- Tested - Good -->
 		<command>checkget</command>
 		<actionType>read</actionType>
 		<expectedValue>200</expectedValue>
@@ -32,6 +54,7 @@
 	</step>
 	<!--╠n/a ; check count a ╬ 18 ; n/a ; false ; false╣ -->
 	<step>
+		<!-- Tested - Good -->
 		<command>check count</command>
 		<actionType>read</actionType>
 		<expectedValue>18</expectedValue>
@@ -39,15 +62,26 @@
 		<arguments>
 			<arg1>a</arg1>
 		</arguments>
+	</step>	
+	<step>
+		<!-- Tested - Good -->
+		<!-- wait for an element to load in the page -->
+		<command>wait for element</command>
+		<actionType>write</actionType>
+		<crucial>FALSE</crucial>
+		<accessor>/html[1]/body[1]/div[1]/form[1]/div[1]/div[4]/div[1]/strong[1]/label[1]</accessor>
+		<accessorType>xPath</accessorType>
 	</step>
 	<!-- ╠n/a ; find  ╬  ╬ Highest level of education ; n/a ; false ; false╣ -->
 	<step>
+		<!-- Tested - Good -->
 		<command>find</command>
 		<actionType>read</actionType>
 		<expectedValue>Highest level of education</expectedValue>
 		<crucial>FALSE</crucial>		
 	</step>
 	<step>
+		<!-- Tested - Good -->
 		<command>find</command>
 		<actionType>read</actionType>
 		<expectedValue>Highest level of education</expectedValue>
@@ -57,6 +91,7 @@
 		</arguments>		
 	</step>
 	<step>
+		<!-- Tested - Good -->
 		<command>find</command>
 		<actionType>read</actionType>
 		<expectedValue>Highest level of education</expectedValue>
@@ -66,6 +101,7 @@
 		</arguments>		
 	</step>
 	<step>
+		<!-- Tested - Good -->
 		<command>find</command>
 		<actionType>read</actionType>
 		<expectedValue>Highest level</expectedValue>

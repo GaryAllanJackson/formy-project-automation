@@ -342,6 +342,7 @@ public class TestCentral {
             persistedString = null;
             //End - reset this for each test file
             testHelper.UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_PURPLE_BACKGROUND + AppConstants.ANSI_YELLOW + AppConstants.sectionLeftDown + testHelper.PrePostPad("[ Running Test Script ]", "═", 9, 157) + AppConstants.sectionRightDown + AppConstants.ANSI_RESET, false);
+            testHelper.UpdateTestResults("Running Test Script file: " + testFileName, true);
             for (int x = startIndex; x < testSteps.size(); x++) {
                 if (revertToParent) {
                     driver.switchTo().defaultContent();
@@ -467,10 +468,12 @@ public class TestCentral {
         testHelper.DebugDisplay("ts.get_command() = " + ts.get_command());
         if (ts.get_accessorType() != null && !ts.get_accessorType().toLowerCase().equals("n/a")) {
             //add different types of element checks here like img src, img alt, a href
-            if (ts.get_command().toLowerCase().contains("check_image")) {
+            if (ts.get_command().toLowerCase().contains("check_image") || ts.get_command().toLowerCase().contains("check image") ) {
                 CheckImageSrcAlt(ts, fileStepIndex);
-            } else if (ts.get_command().toLowerCase().contains("check_a_href")) {
+            } else if (ts.get_command().toLowerCase().contains("check_a_href") || ts.get_command().toLowerCase().contains("check a href")) {
                 CheckAnchorHref(ts, fileStepIndex);
+            } else if (ts.get_command().toLowerCase().equals("persiststring") || ts.get_command().toLowerCase().equals("persist string")) {
+                PersistValueController(ts, fileStepIndex);
             } else{
                 CheckElementText(ts, fileStepIndex);
             }
@@ -482,8 +485,10 @@ public class TestCentral {
                 CheckGetPostStatus(ts, fileStepIndex);
             }
             else if (ts.get_command().toLowerCase().contains("check") && ts.get_command().toLowerCase().contains("links")) {
-                testHelper.UpdateTestResults(AppConstants.indent5 + "Checking page links for " + ts.get_accessor(), false);
-                checkBrokenLinks(ts.get_accessor());
+                String url = GetArgumentValue(ts, 0, testPage);
+
+                testHelper.UpdateTestResults(AppConstants.indent5 + "Checking page links for " + url, false);
+                checkBrokenLinks(url);
             }
             else if (ts.get_command().toLowerCase().contains("check") && ts.get_command().toLowerCase().contains("image"))
             {
@@ -545,7 +550,7 @@ public class TestCentral {
             } else if (ts.get_command().toLowerCase().contains("sql server")) {
                 testHelper.UpdateTestResults("This feature is not implemented yet!", false);
             }
-        } else if (ts.get_expectedValue() != null && ts.get_expectedValue().toLowerCase().contains(persistStringCheckValue)) {
+        } else if (ts.get_command() != null && ts.get_command().toLowerCase().contains(persistStringCheckValue)) {
             PersistValueController(ts,fileStepIndex);
         } else if (ts.get_accessorType() == null || ts.get_accessorType().toLowerCase().indexOf("n/a") >= 0 ) {
             //TODO: FIGURE OUT WHAT YOU WERE TROUBLESHOOTING WITH THESE MESSAGES WHEN YOU SET THIS APPLICATION ASIDE
@@ -563,13 +568,14 @@ public class TestCentral {
             else if (ts.get_command().toLowerCase().indexOf("screenshot") >= 0) {
                 //scheduled screenshot capture action
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Taking Screenshot for step " + fileStepIndex, false);
-                PerformScreenShotCapture(GetBrowserUsed() + ts.get_expectedValue() + fileStepIndex);
+                PerformScreenShotCapture(GetBrowserUsed() + "_" + ts.get_expectedValue() + "_" + fileStepIndex + "_");
             }
             else if (ts.get_command().toLowerCase().indexOf("url") >= 0) {
                 CheckUrlWithoutNavigation(ts, fileStepIndex);
             }
             else if (ts.get_command().toLowerCase().contains("switch to tab")) {
-                if (ts.get_command().toLowerCase().contains("0")) {
+                boolean isChild = (GetArgumentNumericValue(ts, 0, 1) == 1) ? true : false;
+                if (ts.get_command().toLowerCase().contains("0") || !isChild) {
                     SwitchToTab(false, fileStepIndex);
                 }
                 else {
@@ -584,7 +590,7 @@ public class TestCentral {
                 Login(url, userId, password, fileStepIndex);
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Login complete for step " + fileStepIndex, true);
             }
-            else if (ts.get_command().toLowerCase().contains("create_test_page")) {
+            else if (ts.get_command().toLowerCase().contains("create_test_page") || ts.get_command().toLowerCase().contains("create test page")) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Performing Create Test Page for step " + fileStepIndex, true);
                 String createTestFileName = CreateTestPage(ts, fileStepIndex);
                 testHelper.UpdateTestResults("Create Test Page results written to file: " + createTestFileName, false);
@@ -702,7 +708,7 @@ public class TestCentral {
             //url has changed, check url against expected value
             String expectedUrl = ts.get_expectedValue();
 
-            if (ts.ArgumentList.size() > 1) {
+            if (ts.ArgumentList != null && ts.ArgumentList.size() > 1) {
                 delayMilliSeconds = GetArgumentNumericValue(ts, 0, AppConstants.DefaultTimeDelay);
                 DelayCheck(delayMilliSeconds, fileStepIndex);
                 expectedUrl = ts.get_expectedValue();
@@ -836,6 +842,9 @@ public class TestCentral {
      * @param ts   - TestStep Object
      * @param fileStepIndex - File and Step Index
      *
+     * IMPORTANT NOTE: NOTICED THAT FOR INPUT CONTROLS GETTING TEXT IS NOT WORKING
+     *                 NEED TO ADD CHECK AND IF TEXT IS NULL FOR INPUT TYPE=TEXT
+     *                 HAVE TO GET THE VALUE ATTRIBUTE INSTEAD.
      ************************************************************ */
     private void CheckElementText(TestStep ts, String fileStepIndex) throws Exception {
         String actual = "";
@@ -843,6 +852,8 @@ public class TestCentral {
         final String elementTypeCheckedAtStep = "Element type being checked at step ";
         String expected = ts.get_expectedValue();
         testHelper.DebugDisplay("IN the CheckElementText method ts.get_accessorType() = " + ts.get_accessorType());
+
+
 
         if (ts.get_accessorType().toLowerCase().equals(xpathCheckValue)) {
             testHelper.UpdateTestResults(AppConstants.indent5 + elementTypeCheckedAtStep + fileStepIndex + " by xPath: " + ts.get_accessor(), true);
@@ -864,12 +875,12 @@ public class TestCentral {
 
         //if (ts.get_expectedValue().toLowerCase().contains("!=")) {
         String arg = GetArgumentValue(ts, 0, null);
-        if (arg == "!=") {
+        testHelper.DebugDisplay("arg (!=) = " + arg);
+        if (arg != null && arg.equals("!=")) {
             notEqual = true;
         }
 
-        //if (ts.get_expectedValue() != null && !ts.get_expectedValue().isEmpty()) {
-        if (ts.get_expectedValue().toLowerCase().contains(persistedStringCheckValue)) {
+        if (ts.get_expectedValue() != null && ts.get_expectedValue().toLowerCase().contains(persistedStringCheckValue)) {
             if (persistedString != null) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Grabbing " + AppConstants.ANSI_CYAN + "persisted" + AppConstants.ANSI_RESET + " value: (" + persistedString + ") for comparison.", true);
                 expected = persistedString;
@@ -887,6 +898,28 @@ public class TestCentral {
             }
         }
 
+
+        if (ts.get_expectedValue().contains("<")) {
+            expected = expected.replace("<![CDATA[ ", "").replace(" ]]>","").trim();
+            expected = expected.substring(expected.indexOf("<"), expected.lastIndexOf(">"));
+            if (actual.contains("<")) {
+                actual = actual.substring(actual.indexOf("<"), actual.lastIndexOf(">"));
+            }
+            testHelper.DebugDisplay("### expected = (" + expected + ")");
+            testHelper.DebugDisplay("### actual = (" + actual + ")");
+        }
+
+        if (expected != null && actual != null) {
+            testHelper.DebugDisplay("### expected.trim() = (" + expected.trim() + ")");
+            testHelper.DebugDisplay("### actual.trim() = (" + actual.trim() + ")");
+        }
+
+        //if one value is missing and the other is null, make them equivalent
+        if ((expected.isEmpty() && actual == null) || (expected == null && actual.isEmpty()) ) {
+            expected = "";
+            actual = "";
+        }
+
         if (ts.get_crucial()) {
             if (!notEqual) {
                 assertEquals(expected, actual);
@@ -896,7 +929,11 @@ public class TestCentral {
             }
         } else {
             try {
-                assertEquals(expected, actual);
+                if (!notEqual) {
+                    assertEquals(expected, actual);
+                } else {
+                    assertFalse(expected.equals(actual));
+                }
             } catch (AssertionError ae) {
                 // do not capture screen shot here, if element not found, check methods will capture screen shot
             }
@@ -904,7 +941,7 @@ public class TestCentral {
         if (expected.equals(actual) && !notEqual) {
             testHelper.UpdateTestResults("Successful equal comparison results at step " + fileStepIndex + " Expected value: (" + expected + ") Actual value: (" + actual + ")\r\n", true);
         } else if (!expected.equals(actual) && notEqual) {
-            testHelper.UpdateTestResults("Successful not equal comparison results at step " + fileStepIndex + " Expected value: (" + expected + ") Actual value: (" + actual + ")\r\n", true);
+            testHelper.UpdateTestResults("Successful NOT equal (!=) comparison results at step " + fileStepIndex + " Expected value: (" + expected + ") Actual value: (" + actual + ")\r\n", true);
         } else if (!expected.equals(actual) && !notEqual) {
             testHelper.UpdateTestResults("Failed equal comparison results at step " + fileStepIndex + " Expected value: (" + expected + ") Actual value: (" + actual + ")\r\n", true);
             if (screenShotSaveFolder != null && !screenShotSaveFolder.isEmpty()) {
@@ -931,7 +968,7 @@ public class TestCentral {
      ******************************************************************** */
     private String PersistValue(TestStep ts, String accessor, String fileStepIndex) throws Exception
     {
-        testHelper.UpdateTestResults("IN the PersistValue method", false);
+        //testHelper.UpdateTestResults("IN the PersistValue method", false);
         String actual = null;
         if (ts.get_accessorType().toLowerCase().equals(xpathCheckValue)) {
             testHelper.UpdateTestResults(AppConstants.indent8 + "Element text being retrieved at step " + fileStepIndex + " by xPath: " + accessor, true);
@@ -1055,10 +1092,10 @@ public class TestCentral {
 
         if (url != null) {
             if (ts.get_command().toLowerCase().contains("post")) {
-                testHelper.UpdateTestResults(AppConstants.indent5 + "Checking Post status of " + ts.get_accessor(), false);
+                testHelper.UpdateTestResults(AppConstants.indent5 + "Checking Post status of " + url, false);
                 actualStatus = httpResponseCodeViaPost(url);
             } else if (ts.get_command().toLowerCase().contains("get")) {
-                testHelper.UpdateTestResults(AppConstants.indent5 + "Checking Get status of " + ts.get_accessor(), false);
+                testHelper.UpdateTestResults(AppConstants.indent5 + "Checking Get status of " + url, false);
                 actualStatus = httpResponseCodeViaGet(url);
             } else {
                 ImproperlyFormedTest(fileStepIndex);
@@ -1131,7 +1168,9 @@ public class TestCentral {
      * @param url - url to check
      ************************************************************ */
     public void checkBrokenLinks(String url) {
-        driver.get(url);
+        if (driver.getCurrentUrl() != url) {
+            driver.get(url);
+        }
         int linkCount = 0;
 
         //Get all the links on the page
@@ -1286,7 +1325,8 @@ public class TestCentral {
 
         try {
             String typeOfElement = this.driver.findElement(By.xpath(accessor)).getAttribute("type");
-            if (typeOfElement!= null && (typeOfElement.contains("select-one") || typeOfElement.contains("select-many"))) {
+            //testHelper.DebugDisplay("typeOfElement = " + typeOfElement);
+            if (typeOfElement!= null && ((typeOfElement.contains("select-one") || typeOfElement.contains("select-many")))) {
                 Select select = new Select(this.driver.findElement(By.xpath(accessor)));
                 //wait until element is present commented out and functionality pushed to separate stand-alone action
                 //Select select = new Select((new WebDriverWait(driver,10)).until(ExpectedConditions.presenceOfElementLocated(By.xpath(accessor))));
@@ -1294,11 +1334,29 @@ public class TestCentral {
                 actualValue = option.getText();
             }
             else {
-                actualValue = this.driver.findElement(By.xpath(accessor)).getText();
+                boolean isVisible = this.driver.findElement(By.xpath(accessor)).isDisplayed();
+                if (isVisible) {
+                    actualValue = this.driver.findElement(By.xpath(accessor)).getText();
+                    testHelper.DebugDisplay("###1 - Actual value retieved (isVisible = " + isVisible + ") = " + actualValue);
+                } else {
+                    //String script = "return arguments[0].innerHTML";
+                    String script = "return arguments[0].innerText";
+                    actualValue = (String) ((JavascriptExecutor) driver).executeScript(script, this.driver.findElement(By.xpath(accessor)));
+                    testHelper.DebugDisplay("###2 - Actual value retieved (isVisible = " + isVisible + ") = " + actualValue);
+                }
+
+
+                if (actualValue == null || actualValue.isEmpty()) {
+                    actualValue = this.driver.findElement(By.xpath(accessor)).getAttribute("value");
+                }
+                testHelper.DebugDisplay("###3 - Actual value retieved (isVisible = " + isVisible + ") = " + actualValue);
+                //region {Wait for element code - not being used but an idea that could be implemented}
+                //testHelper.DebugDisplay("actualValue = " + actualValue);
                 //wait until element is present commented out and functionality pushed to separate  stand-alone action
                 //actualValue = (new WebDriverWait(driver,10)).until(ExpectedConditions.presenceOfElementLocated(By.xpath(accessor))).getText();
+                //endregion
             }
-            if (!ts.get_expectedValue().toLowerCase().contains(persistStringCheckValue)) {
+            if (!ts.get_command().toLowerCase().contains(persistStringCheckValue)) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Checking element by XPath: " + ElementTypeLookup(accessor) + " for script " + fileStepIndex + " Actual Value: \"" + actualValue + "\"", true);
             }
             else {
@@ -1306,9 +1364,9 @@ public class TestCentral {
             }
         } catch (Exception e) {
             if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
-                testHelper.captureScreenShot(driver, GetBrowserUsed() + fileStepIndex + "xPath_Element_Not_Found", configurationFolder, true);
+                testHelper.captureScreenShot(driver, GetBrowserUsed() + "_" + fileStepIndex + "xPath_Element_Not_Found", configurationFolder, true);
             } else {
-                testHelper.captureScreenShot(driver, GetBrowserUsed() + fileStepIndex + "xPath_Element_Not_Found", screenShotSaveFolder, true);
+                testHelper.captureScreenShot(driver, GetBrowserUsed() + "_" + fileStepIndex + "xPath_Element_Not_Found", screenShotSaveFolder, true);
             }
             actualValue = null;
         }
@@ -1332,7 +1390,17 @@ public class TestCentral {
                 WebElement option = select.getFirstSelectedOption();
                 actualValue = option.getText();
             } else {
-                actualValue = this.driver.findElement(By.cssSelector(accessor)).getText();
+                boolean isVisible = this.driver.findElement(By.cssSelector(accessor)).isDisplayed();
+                if (isVisible) {
+                    actualValue = this.driver.findElement(By.cssSelector(accessor)).getText();
+                } else {
+                    //String script = "return arguments[0].innerHTML";
+                    String script = "return arguments[0].innerText";
+                    actualValue = (String) ((JavascriptExecutor) driver).executeScript(script, this.driver.findElement(By.cssSelector(accessor)));
+                }
+                if (actualValue == null || actualValue.isEmpty()) {
+                    actualValue = this.driver.findElement(By.cssSelector(accessor)).getAttribute("value");
+                }
             }
             if (!ts.get_expectedValue().toLowerCase().contains(persistStringCheckValue)) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Checking element by CssSelector: " + accessor + " for script " + fileStepIndex + " Actual Value: " + actualValue, true);
@@ -1341,9 +1409,9 @@ public class TestCentral {
             }
         } catch (Exception e) {
             if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
-                testHelper.captureScreenShot(driver, GetBrowserUsed() + fileStepIndex + "CssSelector_Element_Not_Found", configurationFolder, true);
+                testHelper.captureScreenShot(driver, GetBrowserUsed() + "_" + fileStepIndex + "CssSelector_Element_Not_Found", configurationFolder, true);
             } else {
-                testHelper.captureScreenShot(driver, GetBrowserUsed() + fileStepIndex + "CssSelector_Element_Not_Found", screenShotSaveFolder, true);
+                testHelper.captureScreenShot(driver, GetBrowserUsed() + "_" + fileStepIndex + "CssSelector_Element_Not_Found", screenShotSaveFolder, true);
             }
             actualValue = null;
         }
@@ -1370,7 +1438,18 @@ public class TestCentral {
                 actualValue = option.getText();
             }
             else {
-                actualValue = this.driver.findElement(By.tagName(accessor)).getText();
+
+                boolean isVisible = this.driver.findElement(By.tagName(accessor)).isDisplayed();
+                if (isVisible) {
+                    actualValue = this.driver.findElement(By.tagName(accessor)).getText();
+                } else {
+                    //String script = "return arguments[0].innerHTML";
+                    String script = "return arguments[0].innerText";
+                    actualValue = (String) ((JavascriptExecutor) driver).executeScript(script, this.driver.findElement(By.tagName(accessor)));
+                }
+                if (actualValue == null || actualValue.isEmpty()) {
+                    actualValue = this.driver.findElement(By.tagName(accessor)).getAttribute("value");
+                }
             }
             if (!ts.get_expectedValue().toLowerCase().contains(persistStringCheckValue)) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Checking element by TagName: " + ElementTypeLookup(accessor) + " for script " + fileStepIndex + " Actual Value: \"" + actualValue + "\"", true);
@@ -1379,10 +1458,10 @@ public class TestCentral {
             }
         } catch (Exception e) {
             if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
-                testHelper.captureScreenShot(driver, GetBrowserUsed() + fileStepIndex + "TagName_Element_Not_Found", configurationFolder, true);
+                testHelper.captureScreenShot(driver, GetBrowserUsed() + "_" + fileStepIndex + "TagName_Element_Not_Found", configurationFolder, true);
             }
             else {
-                testHelper.captureScreenShot(driver, GetBrowserUsed() + fileStepIndex + "TagName_Element_Not_Found", screenShotSaveFolder, true);
+                testHelper.captureScreenShot(driver, GetBrowserUsed() + "_" + fileStepIndex + "TagName_Element_Not_Found", screenShotSaveFolder, true);
             }
             actualValue = null;
         }
@@ -1409,7 +1488,17 @@ public class TestCentral {
                 actualValue = option.getText();
             }
             else {
-                actualValue = this.driver.findElement(By.className(accessor)).getText();
+                boolean isVisible = this.driver.findElement(By.className(accessor)).isDisplayed();
+                if (isVisible) {
+                    actualValue = this.driver.findElement(By.className(accessor)).getText();
+                } else {
+                    //String script = "return arguments[0].innerHTML";
+                    String script = "return arguments[0].innerText";
+                    actualValue = (String) ((JavascriptExecutor) driver).executeScript(script, this.driver.findElement(By.className(accessor)));
+                }
+                if (actualValue == null || actualValue.isEmpty()) {
+                    actualValue = this.driver.findElement(By.className(accessor)).getAttribute("value");
+                }
             }
             if (!ts.get_expectedValue().toLowerCase().contains(persistStringCheckValue)) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Checking element by ClassName: " + accessor + " for script " + fileStepIndex + " Actual Value: \"" + actualValue + "\"", true);
@@ -1418,10 +1507,10 @@ public class TestCentral {
             }
         } catch (Exception e) {
             if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
-                testHelper.captureScreenShot(driver, GetBrowserUsed() + fileStepIndex + "ClassName_Element_Not_Found", configurationFolder, true);
+                testHelper.captureScreenShot(driver, GetBrowserUsed() + "_" + fileStepIndex + "ClassName_Element_Not_Found", configurationFolder, true);
             }
             else {
-                testHelper.captureScreenShot(driver, GetBrowserUsed() + fileStepIndex + "ClassName_Element_Not_Found", screenShotSaveFolder, true);
+                testHelper.captureScreenShot(driver, GetBrowserUsed() + "_" + fileStepIndex + "ClassName_Element_Not_Found", screenShotSaveFolder, true);
             }
             actualValue = null;
         }
@@ -1448,19 +1537,31 @@ public class TestCentral {
                 actualValue = option.getText();
             }
             else {
-                actualValue = this.driver.findElement(By.id(accessor)).getText();
+
+                boolean isVisible = this.driver.findElement(By.id(accessor)).isDisplayed();
+                if (isVisible) {
+                    actualValue = this.driver.findElement(By.id(accessor)).getText();
+                } else {
+                    //String script = "return arguments[0].innerHTML";
+                    String script = "return arguments[0].innerText";
+                    actualValue = (String) ((JavascriptExecutor) driver).executeScript(script, this.driver.findElement(By.id(accessor)));
+                }
+
+                if (actualValue == null || actualValue.isEmpty()) {
+                    actualValue = this.driver.findElement(By.id(accessor)).getAttribute("value");
+                }
             }
-            if (!ts.get_expectedValue().toLowerCase().contains(persistStringCheckValue)) {
+            if (ts.get_expectedValue() != null && !ts.get_expectedValue().toLowerCase().contains(persistStringCheckValue)) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Checking element by ID: " + accessor + " for script " + fileStepIndex + " Actual Value: \"" + actualValue + "\"", true);
             } else {
                 testHelper.UpdateTestResults(AppConstants.indent8 + "Retrieving element text by ID: " + accessor + " for script " + fileStepIndex + " Actual Value: " + actualValue, true);
             }
         } catch (Exception e) {
             if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
-                testHelper.captureScreenShot(driver, GetBrowserUsed() + fileStepIndex + "Id_Element_Not_Found", configurationFolder, true);
+                testHelper.captureScreenShot(driver, GetBrowserUsed() + "_" + fileStepIndex + "Id_Element_Not_Found", configurationFolder, true);
             }
             else {
-                testHelper.captureScreenShot(driver, GetBrowserUsed() + fileStepIndex + "Id_Element_Not_Found", screenShotSaveFolder, true);
+                testHelper.captureScreenShot(driver, GetBrowserUsed() + "_" + fileStepIndex + "Id_Element_Not_Found", screenShotSaveFolder, true);
             }
             actualValue = null;
         }
@@ -1778,6 +1879,7 @@ public class TestCentral {
         } else if (command.toLowerCase().indexOf("screenshot") >= 0) {
             try {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Taking Screenshot for step " + fileStepIndex, true);
+                testHelper.DebugDisplay("SubAction before PerformScreenShotCapture = " + subAction);
                 PerformScreenShotCapture(subAction);
                 status = true;
             }catch (Exception e) {
@@ -1791,7 +1893,7 @@ public class TestCentral {
                     //String [] values = subAction.split(parameterDelimiter);
                     //subAction = values.length > 0 ? values[1].trim() : "";
                     //subAction = GetArgumentValue(ts,0, "");
-                    subAction = subAction.replace(uidReplacementChars, uniqueId);
+                    //subAction = subAction.replace(uidReplacementChars, uniqueId);
                     //pageHelper.UpdateTestResults("value = " + value);
                     //added the below structure so that the unique identifier could be used with the persisted string.
 //                    if (subAction.toLowerCase().contains(persistedStringCheckValue) && !values[1].trim().contains(uidReplacementChars)) {
@@ -1896,8 +1998,7 @@ public class TestCentral {
         try {
             testHelper.UpdateTestResults("Switched to Alert second try", false);
             testHelper.UpdateTestResults("Switched to Alert second try after", false);
-        }
-        catch(Exception ex) {
+        } catch (Exception ex) {
             try {
                 if (!isAlertPresent()) {
                     driver.get(testPage);
@@ -1912,9 +2013,7 @@ public class TestCentral {
                 driver.switchTo().defaultContent();
                 testHelper.UpdateTestResults("Switched to default context", false);
                 testHelper.UpdateTestResults("Completed login sequence without error.", true);
-            }
-            catch (Exception ex1)
-            {
+            } catch (Exception ex1) {
                 testHelper.UpdateTestResults("Exception " + ex.getMessage(), false);
                 //if (url == null || url.isEmpty() || !url.toLowerCase().trim().equals("n/a")) {
                 if (url == null || url.isEmpty() || !urlIsNA) {
@@ -1925,7 +2024,7 @@ public class TestCentral {
                 driver.get(newUrl);
                 //if the alert doesn't show up, you already have context and are logged in
             }
-    }
+        }
     }
 
 
@@ -2036,8 +2135,11 @@ public class TestCentral {
         Boolean pageLoadComplete = false;
         String accessorType = ts.get_accessorType() != null ? ts.get_accessorType().toLowerCase().trim() : null;
         String accessor = ts.get_accessor()!= null ? ts.get_accessor().trim() : null;
-        String elementIdentifier = GetArgumentValue(ts, 0, null);
+        String elementIdentifier = ts.get_command().toLowerCase().trim().contains("page") ? GetArgumentValue(ts, 0, "n/a") : GetArgumentValue(ts, 0, null);
         int maxTimeInSeconds = GetArgumentNumericValue(ts, 1, AppConstants.DefaultElementWaitTimeInSeconds);
+
+        testHelper.DebugDisplay("ts.get_command().toLowerCase().trim() = " + ts.get_command().toLowerCase().trim());
+        testHelper.DebugDisplay("elementIdentifier = " + elementIdentifier);
 
         //check that this argument is present
         if ((elementIdentifier == null || elementIdentifier.isEmpty()) && (accessorType == null || accessorType.isEmpty())) {
@@ -2074,8 +2176,9 @@ public class TestCentral {
                     element = new WebDriverWait(driver, maxTimeInSeconds).until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(accessor)));
                     break;
                 case "page":  //wait for page load
-                    if (elementIdentifier.toLowerCase().trim().contains("n/a")) {
+                    if (!elementIdentifier.toLowerCase().trim().contains("n/a")) {
                         try {
+                            testHelper.DebugDisplay("Navigating as part of wait for page!!!");
                             testHelper.NavigateToPage(driver, elementIdentifier);
                         } catch (Exception ex) {
                             testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed to navigate error: " + ex.getMessage(), true);
@@ -2168,7 +2271,7 @@ public class TestCentral {
         String [] expectedItems = ts.get_expectedValue().split(parameterDelimiter);
         String expectedUrl = ts.get_expectedValue();
 
-        if (ts.ArgumentList.size() > 0) {
+        if (ts.ArgumentList != null && ts.ArgumentList.size() > 0) {
             int delayMilliSeconds = GetArgumentNumericValue(ts, 0, AppConstants.DefaultTimeDelay);
             DelayCheck(delayMilliSeconds, fileStepIndex);
         }
@@ -2232,7 +2335,8 @@ public class TestCentral {
         }
 
         //elements to skip if all elements used (*) - don't put this within the cssSelector assignment in case it is not provided
-        testHelper.UpdateTestResults("skipTags.toString() = " + skipTags.toString(), false);
+        //testHelper.UpdateTestResults("skipTags.toString() = " + skipTags.toString(), false);
+        testHelper.UpdateTestResults("tagsToSkip = " + tagsToSkip, false);
 
         try {
             Boolean wasFound = false;
@@ -2248,9 +2352,13 @@ public class TestCentral {
             String elementAltText;
             String inputType;
             Boolean isVisible = true;
+            String script;
+
 //            pageHelper.UpdateTestResults("In CreateTestPage #2 elements retrieved: " + elements.size());
             if (formatted) {
-                testHelper.WriteToFile(newFileName, "╠" + testPage + " ; Navigate ╬ " + testPage + " ; n/a ; true ; true╣");
+                //testHelper.WriteToFile(newFileName, "╠" + testPage + " ; Navigate ╬ " + testPage + " ; n/a ; true ; true╣");
+                testHelper.WriteToFile(newFileName, CreateXmlFileStartAndEnd(true));
+                testHelper.WriteToFile(newFileName, CreateNavigationXmlTestStep(testPage, "TRUE"));
             } else {
                 testHelper.WriteToFile(newFileName, "URL being used: " + testPage);
             }
@@ -2281,69 +2389,225 @@ public class TestCentral {
                     if (formatted) {
                         if (!elementType.equals("img")) {
                             if (isVisible) {
-                                //outputDescription = "╠" + elementXPath + " ; " + elementText + " ; xPath ; " + "false ; false╣";
-                                outputDescription = CreateReadActionXmlTestStep(elementXPath, elementText, "FALSE");
+                                if (elementText != null && !elementText.isEmpty()) {
+                                    outputDescription = CreateReadActionXmlTestStep(elementXPath, elementText, "FALSE");
+                                }
                             }
                             else {
-                                outputDescription = "<!-- The following element is not visible by default -->";
-                                outputDescription += "\r\n";
-                                //outputDescription += "╠" + elementXPath + " ; " + elementText + " ; xPath ; " + "false ; false╣";
-                                outputDescription = CreateReadActionXmlTestStep(elementXPath, elementText, "FALSE");
+                                if (elementText != null && !elementText.isEmpty()) {
+                                    outputDescription = "\t<!-- The following element is not visible by default -->\r\n";
+                                    //script = "return arguments[0].innerHTML";
+                                    script = "return arguments[0].innerText";
+                                    elementText = (String) ((JavascriptExecutor) driver).executeScript(script, element);
+                                    outputDescription += CreateReadActionXmlTestStep(elementXPath, elementText, "FALSE");
+                                }
                             }
-                            //outputDescription += "╠" + elementXPath + " ; " + elementText + " ; xPath ; " + "false ; false╣";
                         }
                     } else {
-                        outputDescription = "Element Type: " + elementType + " - Element xPath: " + elementXPath + " - Element Text: " + elementText;
+                        if (elementText != null && !elementText.isEmpty()) {
+                            outputDescription = "Element Type: " + elementType + " - Element xPath: " + elementXPath + " - Element Text: " + elementText;
+                        }
                     }
 
                     if (elementType.equals("img")) {
                         elementSrc = element.getAttribute("src");
                         elementAltText = element.getAttribute("alt");
                         if (formatted) {
-                            outputDescription = "╠" + elementXPath + " ; check_image_src " + elementSrc + " ; xPath ; " + "false ; false╣";
-                            outputDescription += "\r\n";
-                            outputDescription += "╠" + elementXPath + " ; check_image_alt " + elementAltText + " ; xPath ; " + "false ; false╣";
+                            outputDescription = CreateImageReadActionsXmlTestSteps(elementXPath, elementSrc, elementAltText, "FALSE");
                         } else {
                             outputDescription += " - Element Src: " + elementSrc;
                         }
                     } else if (elementType.equals("a")) {
                         elementHref = element.getAttribute("href");
                         if (formatted && !elementHref.isEmpty()) {  //make sure that this is not an anchor
-                            outputDescription += "\r\n";
-                            outputDescription += "╠" + elementXPath + " ; check_a_href " + elementHref + " ; xPath ; " + "false ; false╣";
+                            outputDescription += CreateAHrefReadActionXmlTestStep(elementXPath, elementHref, "FALSE");
                         } else if (!elementHref.isEmpty()) {
                             outputDescription += " - Element Href: " + elementHref;
                         } else {
-                            outputDescription = "###  The following element is an Anchor, not a link.\r\n" + outputDescription;
+                            outputDescription = "\t<!--  The following element is an Anchor, not a link. -->\r\n" + outputDescription;
                         }
                     } else if (elementType.equals("input")) {
                         inputType = element.getAttribute("type");
                         if (formatted) {
                             if (inputType.equals("text")) {
-                                outputDescription = "╠" + elementXPath + " ; sendkeys  ╬ [keys to send] ; xPath ; true ; false╣";
+                                outputDescription = CreateSendKeysWriteActionXmlTestStep(elementXPath, "[keys to send]", "FALSE");
                             } else if (inputType.equals("button") || inputType.equals("checkbox") || inputType.equals("radio")) {
-                                outputDescription = "╠" + elementXPath + " ; click ; xPath ; true ; false╣";
+                                outputDescription = CreateClickWriteActionXmlTestStep(elementXPath, "click", "FALSE");
                             }
                         }
                     }
                     else if (elementType.equals("select") && formatted) {
-                        outputDescription = "╠" + elementXPath + " ; [value of option to select] ; xPath ; true ; false╣";
+                        outputDescription = CreateSelectWriteActionXmlTestStep(elementXPath, "[value of option to select]", "FALSE");
                     }
                     if (!formatted) {
                         outputDescription += " Element Visible: " + isVisible;
                     }
-                    testHelper.UpdateTestResults(outputDescription, true);
-                    testHelper.WriteToFile(newFileName, outputDescription);
+                    if (outputDescription != null && !outputDescription.isEmpty()) {
+                        testHelper.UpdateTestResults(outputDescription, true);
+                        testHelper.WriteToFile(newFileName, outputDescription);
+                    }
                 }
+            }
+            if (formatted) {
+                testHelper.WriteToFile(newFileName, CreateXmlFileStartAndEnd(false));
             }
             testHelper.WriteToFile(newFileName, "");
         } catch (Exception ex) {
             testHelper.UpdateTestResults("Error: " + ex.getMessage(), false);
         }
 
-        testHelper.UpdateTestResults("In CreateTestPage #2 returning nothing", false);
+        //testHelper.UpdateTestResults("In CreateTestPage #2 returning nothing", false);
 
         return newFileName;
+    }
+
+    private String CreateXmlFileStartAndEnd(boolean isStart) {
+        String returnValue = "";
+
+        if (isStart) {
+            returnValue = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\r\n" +
+                    "<testSteps>";
+        } else {
+            returnValue = "</testSteps>";
+        }
+
+        return returnValue;
+    }
+
+    private String CreateNavigationXmlTestStep(String testPage, String isCrucial) {
+        String returnValue = "";
+
+        if (testPage != null && !testPage.isEmpty()) {
+            returnValue = "\t<step>\r\n" +
+                    "\t\t<!-- Navigate to a page - The driver will go to the page in arg1 and compare that URL with the expected value if provided -->\r\n" +
+                    "\t\t<command>navigate</command>\r\n" +
+                    "\t\t<actionType>write</actionType>\r\n" +
+                    "\t\t<!-- Expected value - required only when validating successful navigation. For this command it is optional but suggested. -->\r\n" +
+                    "\t\t<expectedValue>" + testPage + "</expectedValue>\r\n" +
+                    "\t\t<crucial>" + isCrucial + "</crucial>\r\n" +
+                    "\t\t<arguments>\r\n" +
+                    "\t\t\t<!-- first argument expected by the command - A URL is expected for this command; It is also Required!!! -->\r\n" +
+                    "\t\t\t<arg1>" + testPage + "</arg1>\r\n" +
+                    "\t\t\t<!-- second argument, can be optional. For this command it is the time in milliseconds to wait before the assertion is made. -->\n" +
+                    "\t\t\t<arg2>1000</arg2> \n" +
+                    "\t\t\t<!-- third argument is optional and is for the window dimensions. Add them like this if desired. (w=800 h=800) -->\n" +
+                    "\t\t\t<arg3></arg3> \n" +
+                    "\t\t</arguments>\n" +
+                    "\t</step>";
+        }
+        return returnValue;
+    }
+
+    //TODO: GAJ finish this up
+    private String CreateSelectWriteActionXmlTestStep(String elementXPath, String selectedItem, String isCrucial) {
+        String returnValue = "";
+
+        if (elementXPath != null && !elementXPath.isEmpty()) {
+            returnValue = "\t<step>\r\n" +
+                    "\t\t<!-- multiple keystroke command... SENDKEYS! -->\r\n" +
+                    "\t\t<command>sendkeys</command>\r\n" +
+                    "\t\t<actionType>write</actionType>\r\n" +
+                    "\t\t<crucial>" + isCrucial + "</crucial>\r\n" +
+                    "\t\t<!-- the accessor is the target element where the key strokes will be sent to -->\r\n" +
+                    "\t\t<accessor>" + elementXPath + "</accessor>\r\n" +
+                    "\t\t<accessorType>xPath</accessorType>\r\n" +
+                    "\t\t<arguments>\r\n" +
+                    "\t\t\t<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->\r\n" +
+                    "\t\t\t<arg1>" + selectedItem + "</arg1>\r\n" +
+                    "\t\t\t<!-- Last argument is the override time delay between sending keystrokes and is not required -->\r\n" +
+                    "\t\t\t<arg4>500</arg4>\r\n" +
+                    "\t\t</arguments>\r\n" +
+                    "\t</step>";
+        }
+        return returnValue;
+    }
+
+
+    private String CreateClickWriteActionXmlTestStep(String elementXPath, String clickCommand, String isCrucial) {
+        String returnValue = "";
+        if (elementXPath != null && !elementXPath.isEmpty()) {
+            returnValue = "\t<step>\n" +
+                    "\t\t<!-- Click command... clicks on the element based on the accessor -->\r\n" +
+                    "\t\t<command>" + clickCommand + "</command>\r\n" +
+                    "\t\t<actionType>write</actionType>\r\n" +
+                    "\t\t<crucial>" + isCrucial + "</crucial>\r\n" +
+                    "\t\t<!-- the accessor is the target element where the key strokes will be sent -->\r\n" +
+                    "\t\t<accessor>" + elementXPath + "</accessor>\r\n" +
+                    "\t\t<accessorType>xPath</accessorType>" +
+                    "\t</step>";
+        }
+        return returnValue;
+    }
+
+
+    private String CreateSendKeysWriteActionXmlTestStep(String elementXPath, String argumentString, String isCrucial) {
+        String returnValue = "";
+
+        if (elementXPath != null && !elementXPath.isEmpty()) {
+            returnValue = "\t<step>\n" +
+                    "\t\t<!-- multiple keystroke command... SENDKEYS! -->\n" +
+                    "\t\t<command>sendkeys</command>\n" +
+                    "\t\t<actionType>write</actionType>\n" +
+                    "\t\t<crucial>" + isCrucial + "</crucial>\n" +
+                    "\t\t<!-- the accessor is the target element where the key strokes will be sent to -->\n" +
+                    "\t\t<accessor>" + elementXPath + "</accessor>\n" +
+                    "\t\t<accessorType>xPath</accessorType>\n" +
+                    "\t\t<arguments>\n" +
+                    "\t\t\t<!-- Send as many key strokes as needed. Each arg tag can store a key stroke. Arguments sent in sequetial order: arg1 > arg2 > arg3 > etc. -->\r\n" +
+                    "\t\t\t<!-- When sending a string, just enter the whole string in one arg tag (arg1) -->\n" +
+                    "\t\t\t<arg1>" + argumentString + "</arg1>\n" +
+                    "\t\t</arguments>\n" +
+                    "\t</step>";
+        }
+        return returnValue;
+    }
+
+
+    private String CreateAHrefReadActionXmlTestStep(String elementXPath, String elementHref, String isCrucial) {
+        String returnValue = "";
+        if (elementXPath != null && !elementXPath.isEmpty() && elementHref != null && !elementHref.isEmpty()) {
+            returnValue = "\r\n\t<step>\r\n" +
+                    "\t\t<!-- Compares the href of the anchor link element using the accessor against the expectedValue -->\r\n" +
+                    "\t\t<!--<command>CHECK A HREF</command>-->\r\n" +
+                    "\t\t<command>CHECK A HREF</command>\r\n" +
+                    "\t\t<actionType>read</actionType>\r\n" +
+                    "\t\t<crucial>" + isCrucial +"</crucial>\r\n" +
+                    "\t\t<!-- the accessor is the anchor whose href attribute will be checked against the expectedValue -->\r\n" +
+                    "\t\t<accessor>" + elementXPath + "</accessor>\r\n" +
+                    "\t\t<accessorType>xPath</accessorType>\r\n" +
+                    "\t\t<expectedValue>" + elementHref + "</expectedValue>\r\n" +
+                    "\t</step>";
+        }
+        return returnValue;
+    }
+
+
+    private String CreateImageReadActionsXmlTestSteps(String elementXPath, String elementSrc, String elementAltText, String isCrucial) {
+        String returnValue = "";
+
+        if (elementSrc != null && !elementSrc.isEmpty()) {
+            returnValue = "\t<step>\r\n" +
+                    "\t\t<command>check image src</command>\r\n" +
+                    "\t\t<actionType>read</actionType>\r\n" +
+                    "\t\t<crucial>" + isCrucial + "</crucial>\r\n" +
+                    "\t\t<accessor>" + elementXPath + "</accessor>\r\n" +
+                    "\t\t<accessorType>xPath</accessorType>\r\n" +
+                    "\t\t<expectedValue>" + elementSrc + "</expectedValue>\r\n" +
+                    "\t</step>";
+        }
+
+        if (elementAltText != null && !elementAltText.isEmpty()) {
+            returnValue += "\t<step>\r\n" +
+                    "\t\t<command>check image src</command>\r\n" +
+                    "\t\t<actionType>read</actionType>\r\n" +
+                    "\t\t<crucial>" + isCrucial + "</crucial>\r\n" +
+                    "\t\t<accessor>" + elementXPath + "</accessor>\r\n" +
+                    "\t\t<accessorType>xPath</accessorType>\r\n" +
+                    "\t\t<expectedValue>" + elementAltText + "</expectedValue>\r\n" +
+                    "\t</step>";
+        }
+
+        return returnValue;
     }
 
     /**********************************************************************************
@@ -2356,6 +2620,10 @@ public class TestCentral {
      **********************************************************************************/
     private String CreateReadActionXmlTestStep(String elementXPath, String elementText, String isCrucial) {
 
+        if (elementText.contains("<")) {
+            elementText = "<![CDATA[ " + elementText.trim() + " ]]>";
+        }
+
         String readActionTestStep = "\t<step>\r\n" +
                 "\t\t<command>assert</command>\r\n" +
                 "\t\t<actionType>read</actionType>\r\n" +
@@ -2363,7 +2631,7 @@ public class TestCentral {
                 "\t\t<crucial>"+ isCrucial + "</crucial>\r\n" +
                 "\t\t<accessor>" + elementXPath + "</accessor>\r\n" +
                 "\t\t<accessorType>xPath</accessorType>\r\n" +
-                "\t</step>\r\n";
+                "\t</step>";
 
         return readActionTestStep;
     }
@@ -2967,6 +3235,12 @@ public class TestCentral {
         }
         if (elementTag.toLowerCase().startsWith("button") || elementTag.toLowerCase().equals("button")) {
             return "Button";
+        }
+        if (elementTag.toLowerCase().startsWith("strong") || elementTag.toLowerCase().equals("strong")) {
+            return "Strong";
+        }
+        if (elementTag.toLowerCase().startsWith("option") || elementTag.toLowerCase().equals("option")) {
+            return "Option";
         }
         else {
            testHelper.UpdateTestResults(AppConstants.indent5 + "Failed to find element type for elementTag: (" + elementTag + ") Length = " + elementTag.length(), true);

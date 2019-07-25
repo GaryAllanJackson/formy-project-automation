@@ -351,7 +351,6 @@ public class TestHelper{
      * @param isError -
      **************************************************************** */
     public void captureScreenShot(WebDriver driver, String screenShotName, String screenShotFolder, boolean isError) {
-
         //if ((maxScreenShotsToTake > 0 && screenShotsTaken < maxScreenShotsToTake) || (maxScreenShotsToTake == 0) || isError) {
         if ((maxScreenShotsToTake > 0 && screenShotsTaken < maxScreenShotsToTake) || (maxScreenShotsToTake == 0)) {
             try {
@@ -391,7 +390,8 @@ public class TestHelper{
                 }
 
                 if (!isError) {
-                    UpdateTestResults(AppConstants.indent5 + AppConstants.ANSI_GREEN + "Screenshot successfully taken for step " + fileStepIndex + AppConstants.ANSI_RESET, true);
+                    //UpdateTestResults(AppConstants.indent5 + AppConstants.ANSI_GREEN + "Screenshot successfully taken for step " + fileStepIndex + AppConstants.ANSI_RESET, true);
+                    UpdateTestResults(AppConstants.ANSI_GREEN + "Screenshot successfully taken for step " + fileStepIndex + AppConstants.ANSI_RESET, true);
                 } else {
                     UpdateTestResults(AppConstants.ANSI_RED + "Screenshot taken for step " + fileStepIndex + " - Error condition!" + AppConstants.ANSI_RESET, true);
                 }
@@ -412,7 +412,7 @@ public class TestHelper{
         else {
             UpdateTestResults(AppConstants.indent5 + "Screenshot (" + screenShotName + ") not taken due to screenshot limit.  Increase MaxScreenShotsToTake in configuration file to capture this screenshot.", true);
         }
-//        UpdateTestResults("");
+        UpdateTestResults("", true);
     }
 
     /*****************************************************************
@@ -704,7 +704,8 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
             WriteToFile(get_helpFileName(), "║                                              TEST FILE FORMAT                                                                                                          ║");
             WriteToFile(get_helpFileName(), "╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
-            WriteToFile(get_helpFileName(), "The Test file is an xml file that begins with the XML declaration followed by the <testSteps> root element.");
+            WriteToFile(get_helpFileName(), "The Test file is an xml file, that can include comments just like any xml file.");
+            WriteToFile(get_helpFileName(), "It begins with the XML declaration followed by the <testSteps> root element.");
             WriteToFile(get_helpFileName(), "Each test is grouped in <step> elements, which consist of the all or some of the following nodes:\r\n");
             WriteToFile(get_helpFileName(), "<command>Command to execute</command> - The command node, describes the command to execute and is always required.");
             WriteToFile(get_helpFileName(), "<actionType>read/write</actionType> - The actionType node can be set to read or write describing this as a read or write action.");
@@ -726,7 +727,8 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\tare the first items and the less relevant pieces of information are last.");
             WriteToFile(get_helpFileName(), "There are few, if any, examples that use all nodes, so in the Navigation example below note that this does not use ");
             WriteToFile(get_helpFileName(), "Accessor and AccessorType nodes because it accesses the URL instead of a page element when making an assertion. ");
-            WriteToFile(get_helpFileName(), "Also, keep in mind that while this represents a test file, it consists of only one of many possible test steps.\r\n");
+            WriteToFile(get_helpFileName(), "Also, keep in mind that while this represents the structure of a test file, it consists of only one of many possible test steps.\r\n");
+            WriteToFile(get_helpFileName(), "Usually, the test file will consist of multiple steps like (navigation, check element values(multiple steps) click element...etc...");
             WriteToFile(get_helpFileName(), "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
             WriteToFile(get_helpFileName(), "<testSteps>");
             WriteToFile(get_helpFileName(), "\t<step>");
@@ -741,7 +743,726 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\t</step>");
             WriteToFile(get_helpFileName(), "</testSteps>\r\n");
             WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ NAVIGATION ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "All Navigation steps should be marked as crucial, as all subsequent checks require that navigation complete successfully!!!");
+            WriteToFile(get_helpFileName(), "An assertion does not have to be part of navigation, but it probably should be!!!");
+            WriteToFile(get_helpFileName(), "To navigate without checking the URL, remove the expectedValue node completely as displayed in the example below.");
             WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To Navigate, without checking the URL to ensure that navigation occurred properly.");
+            WriteToFile(get_helpFileName(), "Please note that making this crucial is irrelevant as no assertions will be made.");
+            WriteToFile(get_helpFileName(), "<step>\r\n\t<command>navigate</command>\r\n\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n\t<arguments>\r\n" +
+                    "\t\t<arg1>https://formy-project.herokuapp.com/form</arg1>\r\n" +
+                    "\t\t<arg2>4000</arg2>\r\n\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ NAVIGATION WITH SUCCESSFUL NAVIGATION CONFIRMATION ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "To Navigate, assert that the URL is what is in the expectedValue node and to wait 4 thousand milli-seconds before making the assertion to allow the page to load:");
+            WriteToFile(get_helpFileName(), "PLEASE NOTE: Asserting that the URL is correct does not mean that a server transfer didn't redirect the URL to a different page but leave the URL untouched. ");
+            WriteToFile(get_helpFileName(), "<step>\r\n\t<command>navigate</command>\r\n\t<actionType>write</actionType>\r\n" +
+                                                        "\t<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>\r\n" +
+                                                        "\t<crucial>TRUE</crucial>\r\n\t<arguments>\r\n" +
+                                                        "\t\t<arg1>https://formy-project.herokuapp.com/form</arg1>\r\n" +
+                                                        "\t\t<arg2>4000</arg2>\r\n\t</arguments>\r\n" +
+                                                        "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To Navigate, assert that the URL is as expected, add a time delay and set the browser dimensions to 800 width by 800 height:");
+            WriteToFile(get_helpFileName(), "<step>\r\n\t<command>navigate</command>\r\n\t<actionType>write</actionType>\r\n" +
+                    "\t<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n\t<arguments>\r\n" +
+                    "\t\t<arg1>https://formy-project.herokuapp.com/form</arg1>\r\n" +
+                    "\t\t<arg2>4000</arg2>\r\n\t\t<arg3>w=800 h=800</arg3>\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ NAVIGATION WITH AUTHENTICATION WITH AND WITHOUT NAVIGATION CONFIRMATION ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To Navigate and Authenticate with username and password and assert that the URL is in the expectedValue node and to wait 4 thousand milli-seconds ");
+            WriteToFile(get_helpFileName(), "before making the assertion to allow the page to load:");
+            WriteToFile(get_helpFileName(), "<step>\r\n\t<command>navigate</command>\r\n\t<actionType>write</actionType>\r\n" +
+                                                        "\t<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>\r\n" +
+                                                        "\t<crucial>TRUE</crucial>\r\n\t<arguments>\r\n" +
+                                                        "\t\t<arg1>https://username:password@formy-project.herokuapp.com/form</arg1>\r\n" +
+                                                        "\t\t<arg2>4000</arg2>\r\n\t</arguments>\r\n" +
+                                                        "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To Navigate and Authenticate with username and password:");
+            WriteToFile(get_helpFileName(), "<step>\r\n\t<command>navigate</command>\r\n\t<actionType>write</actionType>\r\n" +
+                                                        "\t<crucial>TRUE</crucial>\r\n\t<arguments>\r\n" +
+                                                        "\t\t<arg1>https://username:password@formy-project.herokuapp.com/form</arg1>\r\n" +
+                                                        "\t\t<arg2>4000</arg2>\r\n\t</arguments>\r\n" +
+                                                        "</step>");
+            WriteToFile(get_helpFileName(), "");
+
+            WriteToFile(get_helpFileName(), PrePostPad("[ LOGIN WITH NAVIGATION ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "To login and navigate in one step.");
+            WriteToFile(get_helpFileName(), "Please note this is for normal passwords which cannot contain spaces or characters that require escaping.");
+            WriteToFile(get_helpFileName(), "<step>\r\n\t<command>login</command>\r\n\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n\t<arguments>\r\n" +
+                    "\t\t<arg1>username</arg1>\r\n" +
+                    "\t\t<arg2>password</arg2>\r\n" +
+                    "\t\t<arg3>http://www.myCoolPage.com</arg3>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ ALERT POPUP LOGIN ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To login when presented with an alert style popup, which could happen upon landing on the site or after the site redirects you, and to make this crucial.");
+            WriteToFile(get_helpFileName(), "Please note this is for normal passwords which cannot contain spaces or characters that require escaping.");
+            WriteToFile(get_helpFileName(), "<step>\r\n\t<command>login</command>\r\n\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n\t<arguments>\r\n" +
+                    "\t\t<arg1>username</arg1>\r\n" +
+                    "\t\t<arg2>password</arg2>\r\n\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK URL WITHOUT NAVIGATION ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "To check a URL without navigating and to make it crucial.  To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>check url</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK GET REQUEST STATUS WITHOUT NAVIGATION ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "To check the Get Requests status of a URL without navigating and to make it crucial.  To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "The Space between check and get is optional as shown below.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>checkget</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<expectedValue>200</expectedValue>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>https://www.swtestacademy.com/about-software-test-academy/ </arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "Alternative way splitting the words apart.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>check get</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<expectedValue>200</expectedValue>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>https://www.swtestacademy.com/about-software-test-academy/ </arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK POST REQUEST STATUS WITHOUT NAVIGATION ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "<!-- Test results unconfirmed!!! Need to find suitable URL that allows posting. -->");
+            WriteToFile(get_helpFileName(), "To check the Post Requests status of a URL without navigating and to make it crucial.  To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "The Space between check and post is optional as shown below.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>checkpost</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<expectedValue>200</expectedValue>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>https://www.swtestacademy.com/about-software-test-academy/ </arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "Alternative way splitting the words apart.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>check post</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<expectedValue>200</expectedValue>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>https://www.swtestacademy.com/about-software-test-academy/ </arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK DOCUMENT READY STATE COMPLETE WITHOUT NAVIGATION AS A POST NAVIGATION STEP]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "To check that the document ready state is complete after previously navigating to a new page and to make it crucial. ");
+            WriteToFile(get_helpFileName(), "NOTE: The first argument must be n/a as shown below.  ");
+            WriteToFile(get_helpFileName(), "- Omitting this argument or leaving it empty will result in an invalid format exception.");
+            WriteToFile(get_helpFileName(), "To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "This will be most useful for triggered navigation.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>wait for page</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>n/a</arg1>\r\n" +
+                    "\t\t<arg2>30</arg2>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK DOCUMENT READY STATE COMPLETE WITH NAVIGATION IN A SINGLE STEP]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "To check that the document ready state is complete after navigating to a new page and to make it crucial. ");
+            WriteToFile(get_helpFileName(), "To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>wait for page</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>https://formy-project.herokuapp.com/form</arg1>\r\n" +
+                    "\t\t<arg2>30</arg2>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK AN ANCHOR HREF ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "To check an anchor's href url and to make it non-crucial.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "This will check the value of the href and compare it to the expected value provided.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>check_a_href</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<expectedValue>https://www.swtestacademy.com/about-software-test-academy/ </expectedValue>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<accessor>//*[@id=\"menu-item-21\"]/a</accessor>\r\n" +
+                    "\t<accessorType>xPath</accessorType>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>alt</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>\r\n");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "Alternative way splitting the words.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>check a href</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<expectedValue>https://www.swtestacademy.com/about-software-test-academy/ </expectedValue>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<accessor>//*[@id=\"menu-item-21\"]/a</accessor>\r\n" +
+                    "\t<accessorType>xPath</accessorType>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>alt</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>\r\n");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK ALL PAGE LINKS USING URL ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "To check all page links and to make it non-crucial.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "This will check for a status code of 200 for all links on the page, based on the URL in the arg1 node, ");
+            WriteToFile(get_helpFileName(), "but will report the status code for all links.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>check links</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>https://nutrish.com/</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK ALL PAGE LINKS WITHOUT USING URL ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "This will check for a status code of 200 for all links on the current page, but will report the status code for all links.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>check links</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK THE COUNT OF A SPECIFIC ELEMENT ON A PAGE ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "To check the count of a specific element on a page and to make it non-crucial.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "This will count the number of times an element is found on a page and compare that to the expected value.");
+            WriteToFile(get_helpFileName(), "In the example below, the test compares the number of \"a\" tags on the page with the expected number of 18.");
+            WriteToFile(get_helpFileName(), "If the page has 18 \"a\" tags, the test passes, otherwise it fails.");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>check count</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<expectedValue>18</expectedValue>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n"  +
+                    "\t<arguments>\r\n"  +
+                    "\t\t<arg1>a</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK ALL PAGE IMAGE SRC TAGS WITH SEPARATE NAVIGATION STEP ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "To check all page image src tags, on the current page, to ensure a source exists and to make it non-crucial.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sources but will report the status of all image sources.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>check images src</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK ALL PAGE IMAGE SRC TAGS WITH NO SEPARATE NAVIGATION STEP ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "To check all page image src tags, on the page specified in the arg1 node, to ensure a source exists and to make it non-crucial.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sources but will report the status of all image sources.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>check images src</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>https://semantic-ui.com/modules/dropdown.html</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK ALL PAGE IMAGE ALT TAGS WITH SEPARATE NAVIGATION STEP ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "To check all page image alt tags, for ADA compliance and to make it crucial.  To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "The alt tag will checked to see if it exists and is not empty.  Empty tags will be flagged as failed.");
+            WriteToFile(get_helpFileName(), "This is a small part of 508 compliance.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>check images alt</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK ALL PAGE IMAGE ALT TAGS WITH NO SEPARATE NAVIGATION STEP ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "To check all page image alt tags, for ADA compliance and to make it crucial.  To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "The alt tag will checked to see if it exists and is not empty.  Empty tags will be flagged as failed.");
+            WriteToFile(get_helpFileName(), "This is a small part of 508 compliance.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>check images alt</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>https://semantic-ui.com/modules/dropdown.html</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ WAITING A SPECIFIC AMOUNT OF TIME FOR ITEMS TO BE AVAILABLE ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "To wait for a specific amount of time before continuing to allow for page loading or script completion.");
+            WriteToFile(get_helpFileName(), "To wait for 5 thousand milli-seconds before continuing onto the next step.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>wait</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>10000</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ WAITING FOR THE PRESENCE OF AN ELEMENT ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "To wait for an element to be present, requires checking for the element using an accessor unlike waiting a specific amount of time.");
+            WriteToFile(get_helpFileName(), "To wait for for a maximum of 15 seconds for an element to be present and making this check crucial, use the following.");
+            WriteToFile(get_helpFileName(), "To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; wait ╬ 15 ; xPath ; true ; true╣");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>wait for element</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<accessor>//*[@id=\"slider-3\"]/div/div[1]/div/h3</accessor>\r\n" +
+                    "\t<accessorType>xPath</accessorType>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ WAITING FOR DOCUMENT READY STATE COMPLETE ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "To wait for the page to fully load and document state to be complete, use the following command.");
+            WriteToFile(get_helpFileName(), "Please note that the accessor is set to page and that an accessor type is present.  Any Accessor Type must be present, although it is not used,");
+            WriteToFile(get_helpFileName(), "to distinguish this document ready state complete wait from a time interval wait.");
+            WriteToFile(get_helpFileName(), "To wait for for a maximum of 15 seconds for document state complete and to make this check crucial, use the following.");
+            WriteToFile(get_helpFileName(), "To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "╠page ; wait ╬ 15 ; xPath ; true ; true╣");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>wait for page</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>https://www.marvel.com/</arg1>\r\n" +
+                    "\t\t<arg2>30</arg2>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ UNIQUE IDENTIFIER ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "Before explaining how to fill in text fields, we need to cover the Unique Identifier.");
+            WriteToFile(get_helpFileName(), "By default, every time a test is run, a unique identifier is created.");
+            WriteToFile(get_helpFileName(), "This unique identifier is composed of the date and time with no delimiters.");
+            WriteToFile(get_helpFileName(), "The purpose of this Unique Identifier is to allow rerunning the same tests and generating unique ");
+            WriteToFile(get_helpFileName(), "values by appending this Unique Identifier to the string, thus creating a unique data set each test run.");
+            WriteToFile(get_helpFileName(), "The Unique Identifier is 17 characters long and has the following format (yyyyMMddHHmmssSSS) ie.(20190402095619991).");
+            WriteToFile(get_helpFileName(), " -  4 digit year, 2 digit month, 2 digit day, 2 digit hours, 2 digit minutes, 2 digit seconds, 3 digit milliseconds ");
+            WriteToFile(get_helpFileName(), "In the Filling in and SendKeys sections, there are examples of exactly how to use this.");
+            WriteToFile(get_helpFileName(), "Anytime, the character sequence without parenthesis (**_uid_**), is used, that value is replaced with the Unique Identifier.");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ PERSISTING RETRIEVED TEXT IN A VARIABLE FOR LATER USE ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "There may be a need to compare the value retrieved from one element with the value of another.");
+            WriteToFile(get_helpFileName(), "Unfortunately, this cannot be done directly, but a Persist action can be enacted allowing the storage of ");
+            WriteToFile(get_helpFileName(), "an element's value that can then be compared to the value of another element.");
+            WriteToFile(get_helpFileName(), "This accomplishes comparing one element value with another.");
+            WriteToFile(get_helpFileName(), "To persist the value of an element, use the following:");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>PersistString</command>\r\n" +
+                    "\t<accessor>/html/body/div/h1</accessor>\r\n" +
+                    "\t<accessorType>xPath</accessorType>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ FILLING IN TEXT FIELDS ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "###  To fill in a field by ID and to make it non-crucial.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>sendkeys</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<accessor>first-name</accessor>\r\n" +
+                    "\t<accessorType>ID</accessorType>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>John</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To fill in a field by ID, appending the Unique Identifier to the name John, and to make it non-crucial.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>sendkeys</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<accessor>first-name</accessor>\r\n" +
+                    "\t<accessorType>ID</accessorType>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>John**_uid_**</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To fill in a field by ID and to make it non-crucial when it contains a reserved command like click.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>sendkeys</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<accessor>first-name</accessor>\r\n" +
+                    "\t<accessorType>ID</accessorType>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>click</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To fill in a field using the value you persisted in an earlier step use the following.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>sendkeys</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<accessor>first-name</accessor>\r\n" +
+                    "\t<accessorType>ID</accessorType>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>PersistedString</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To fill in a field by ID, add the Unique Id, and to make it non-crucial when it contains a reserved command like click.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>sendkeys</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<accessor>first-name</accessor>\r\n" +
+                    "\t<accessorType>ID</accessorType>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>click**_uid_**</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To fill in a field by ID with the persisted value, add the Unique Id, and to make it non-crucial.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>sendkeys</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<accessor>first-name</accessor>\r\n" +
+                    "\t<accessorType>ID</accessorType>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>PersistedString**_uid_**</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To compare the persisted value to an element, use the following:");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>assert</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<accessor>/html[1]/body[1]/div[1]/form[1]/div[1]/div[4]/div[1]</accessor>\r\n" +
+                    "\t<accessorType>xPath</accessorType>\r\n" +
+                    "\t<expectedValue>PersistedString</expectedValue>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To retrieve the text of an element by xPath and compare it to the persisted value and assert that it is not equal.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>assert</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<accessor>/html[1]/body[1]/div[1]/form[1]/div[1]/div[4]/div[1]</accessor>\r\n" +
+                    "\t<accessorType>xPath</accessorType>\r\n" +
+                    "\t<expectedValue>PersistedString</expectedValue>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>!=</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "Although the following can be found in the sendkeys section, in an effort to group all persistence in one ");
+            WriteToFile(get_helpFileName(), "location it is duplicated here.");
+            WriteToFile(get_helpFileName(), "There may be a need to send a persisted value to a control and that can be done as follows.");
+            WriteToFile(get_helpFileName(), "To send the persisted value to a textbox or textarea form control, use the following:");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>sendkeys</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<accessor>first-name</accessor>\r\n" +
+                    "\t<accessorType>ID</accessorType>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>PersistedString</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ CLICK AN ELEMENT IN AN IFRAME ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "To click an element by xPath in an iFrame.");
+            WriteToFile(get_helpFileName(), "Note that the name of the iFrame is the first argument and the action to take is the second argument.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Switch to iFrame</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>false</crucial>\r\n" +
+                    "\t<accessor>//button[contains(@id,'menu1')]</accessor>\r\n" +
+                    "\t<accessorType>xPath</accessorType>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>iframeResult</arg1>\r\n" +
+                    "\t\t<arg2>click</arg2>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ SELECT AN OPTION FROM AN HTML SELECT ELEMENT ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "To select an option from an HTML Select (drop down/list) element there are two methods.");
+            WriteToFile(get_helpFileName(), "Sendkeys can be used to select an item based on its text or Click can be used on the option");
+            WriteToFile(get_helpFileName(), "actually being selected.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>sendkeys</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "\t<accessor>select-menu</accessor>\r\n" +
+                    "\t<accessorType>ID</accessorType>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>0-1</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "Alternate method of selecting an option from an HTML select element.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>click</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "\t<accessor>option[value='1']</accessor>\r\n" +
+                    "\t<accessorType>CssSelector</accessorType>\r\n");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ TAKING SCREENSHOTS ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "To take a screen shot/print screen.  The browser will be resized automatically to capture all page content.");
+            WriteToFile(get_helpFileName(), "╠n/a ; ScreenShot ; n/a ; true ; false╣");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>screenshot</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>false</crucial>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ SWITCHING BROWSER TABS ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "Some actions are related and to avoid unnecessary steps the enter key will be pressed after right clicking and arrowing to a particular item.");
+            WriteToFile(get_helpFileName(), "To Right click on an element, move down to the first menu item, click it to open in a new tab and switch to the new tab:");
+            WriteToFile(get_helpFileName(), "╠//*[@id=\"rso\"]/div[1]/div/div[1]/div/div/div[1]/a ; right click ╬ Keys.Arrow_Down ╬ Switch to tab ; xPath ; true ; false╣");
+
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>right click</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "\t<accessor>//*[@id=\"block-menu-menu-dc-menu\"]/div/div/ul/li[2]/a</accessor>\r\n" +
+                    "\t<accessorType>xPath</accessorType>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>Keys.Arrow_Down</arg1>\r\n" +
+                    "\t\t<arg2>Keys.Enter</arg2>\r\n" +
+                    "\t\t<arg3>switch to tab</arg3>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "Alternatively, the steps can be separated into two separate steps where the ");
+            WriteToFile(get_helpFileName(), "context menu opens a new tab and then the next step switches to the second tab.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>right click</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "\t<accessor>//*[@id=\"block-menu-menu-dc-menu\"]/div/div/ul/li[2]/a</accessor>\r\n" +
+                    "\t<accessorType>xPath</accessorType>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>Keys.Arrow_Down</arg1>\r\n" +
+                    "\t\t<arg2>Keys.Enter</arg2>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Switch to tab</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "Alternate Switch to tab command with the tab specified as an argument.");
+            WriteToFile(get_helpFileName(), "Currently, 1 and 0 are the only acceptable values as only one child tab should be opened per test");
+            WriteToFile(get_helpFileName(), "and to switch to the child tab use 1.  To switch to the main (parent) tab use 0.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Switch to tab</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>1</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To Switch back to the first tab after switching to the second tab.");
+            WriteToFile(get_helpFileName(), "Note that this requires 0 (Zero) to be specified in the command.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Switch to tab 0</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ FIND ELEMENTS THAT HAVE SPECIFIC TEXT ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "There are times when you may need to search for text but do not know the accessor necessary to find that text.");
+            WriteToFile(get_helpFileName(), "The Find functionality allows you search all elements regardless of type or just all tags of a specific type for a phrase.");
+            WriteToFile(get_helpFileName(), "Additionally, the Find functionality returns the xPath of all elements where the text is found, but when searching ");
+            WriteToFile(get_helpFileName(), "for text without specifying a tag, only the actual tag containing the text is returned, not elements in the upper ");
+            WriteToFile(get_helpFileName(), "hierarchy; however, when using a specific tag, if a child tag of that tag contains the text, the searched tag will be returned ");
+            WriteToFile(get_helpFileName(), "as successfully containing that text. ");
+            WriteToFile(get_helpFileName(), "To Find text searching all elements and make this non-crucial, use the following.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>find</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<expectedValue>Highest level of education</expectedValue>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To Find text searching all div elements and make this non-crucial, use the following.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>find</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<expectedValue>Highest level of education</expectedValue>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>div</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To Find text searching all label elements and make this non-crucial, use the following.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>find</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<expectedValue>Highest level of education</expectedValue>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>label</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ FIND ELEMENTS THAT CONTAIN TEXT ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "There are times when you may need to search for a portion of text but do not know the accessor necessary to find that text.");
+            WriteToFile(get_helpFileName(), "A specific instance might be when searching for text that would be in a paragraph.  ");
+            WriteToFile(get_helpFileName(), "You wouldn't want to add the entire paragraph when you can add a snippet to verify that part of it is there. ");
+            WriteToFile(get_helpFileName(), "Additionally, the Find functionality returns the xPath of all elements where the text is found.");
+            WriteToFile(get_helpFileName(), "To Find element containing text searching all div elements and make this non-crucial, use the following.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>find</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<expectedValue>Highest level</expectedValue>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>div</arg1>\r\n" +
+                    "\t\t<arg1>contains</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ FIND ELEMENTS ON A PAGE TO HELP MAKE A TEST FILE - NOT FOR TESTING BUT FOR HELPING TO CREATE TESTS ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "IMPORTANT NOTE #1: ANY PARENT ELEMENT WILL CONTAIN THE TEXT OF IT'S CHILD ELEMENT(s) SO TO GET THE ELEMENT THAT ACTUALLY ");
+            WriteToFile(get_helpFileName(), "                  CONTAINS THE INFORMATION DESIRED, TRY TO ELIMINATE THE HIERARCHICAL ITEMS ABOVE THAT ARE NOT DESIRED, ");
+            WriteToFile(get_helpFileName(), "                  LIKE CONTAINER ELEMENTS.  Examples include (html,head,body,div,table)");
+            WriteToFile(get_helpFileName(), "  IMPORTANT NOTE #2: ENSURE THAT YOUR FILE PATH DOES NOT CONTAIN ANY KEYWORD USED FOR ANY OTHER ACTION, OR YOU WILL GET UNEXPECTED RESULTS!!!");
+            WriteToFile(get_helpFileName(), "  A test file needs to be created and you would like to spare yourself the hassle of looking up elements, associated properties and attributes.");
+            WriteToFile(get_helpFileName(), "  To do this, create a test script, with a Navigate command, to Navigate to the page to be tested and then use the ");
+            WriteToFile(get_helpFileName(), "  create_test_page command or the create_test_page_formatted command.");
+            WriteToFile(get_helpFileName(), "  The create_test_page command outputs key value information so that a determination can be made to as to whether an item should be tested and ");
+            WriteToFile(get_helpFileName(), "  it provides all of the information to create the test command but it is not formatted as a test command.");
+            WriteToFile(get_helpFileName(), "  The create_test_page_formatted command outputs the element information in a test command format allowing for quick copy and paste to a test file.");
+            WriteToFile(get_helpFileName(), "  Both files indicate if an element is visible, if an a tag is acting as an anchor or a link.");
+            WriteToFile(get_helpFileName(), "  The Formatted File, will create tests for a tags that check text and href, for images that check src, for text fields it create tests that compare text ");
+            WriteToFile(get_helpFileName(), "\t provided with the element text, for text input it creates a sendkeys, for buttons, checkboxes and radio buttons it creates a click, ");
+            WriteToFile(get_helpFileName(), "\t and for selects it creates a select command, allowing the user to enter one of the option values that is to be selected.");
+            WriteToFile(get_helpFileName(), "  The create_test_page command and the create_test_page_formatted command take the following test parameters:");
+            WriteToFile(get_helpFileName(), "\t - Takes n/a as the accessor ([URL/XPath/CssSelector/TagName/ID/ClassName])");
+            WriteToFile(get_helpFileName(), "\t - The Action/Expected Value field takes the create_test_page command and the following parameters:");
+            WriteToFile(get_helpFileName(), "\t\t -    Element Type: A single element with * being all elements and the default if left empty.");
+            WriteToFile(get_helpFileName(), "\t\t\t -   Elements Include but are not limited to: *, html, head, title, body, a, ol, ul, li, select, input etc...");
+            WriteToFile(get_helpFileName(), "\t\t\t -   If omitted, this will be * for all elements.");
+            WriteToFile(get_helpFileName(), "\t\t -    File Path and File Name: This is where the results will be written.");
+            WriteToFile(get_helpFileName(), "\t\t\t -   If omitted, this will be written to the config folder. (/config/newTestFile.txt)");
+            WriteToFile(get_helpFileName(), "\t\t -    A comma delimited list of elements to skip when retrieving all element (*) information.");
+            WriteToFile(get_helpFileName(), "\t\t\t -   These would usually be elements that do not have text themselves but contain elements that do have text.");
+            WriteToFile(get_helpFileName(), "\t\t\t -   Do not include spaces between elements, just a comma as follows: html,head,title,body,div");
+            WriteToFile(get_helpFileName(), "\t\t\t -   Skip elements are ONLY APPLIED WHEN RETRIEVING ALL ELEMENTS and IGNORED WHEN RETRIEVING A SPECIFIC TAG TYPE.");
+            WriteToFile(get_helpFileName(), "\t - Takes n/a as the Element Lookup Type.");
+            WriteToFile(get_helpFileName(), "\t - Takes true as Perform Action other than Read because it is retrieving information and saving it to a file.");
+            WriteToFile(get_helpFileName(), "\t - Takes false, as this is not a test and nothing is being asserted; therefore, nothing is crucial and this setting will be ignored.");
+            WriteToFile(get_helpFileName(), "  The following two examples gets all page elements, saves them to a file, skips a list of container and other elements.");
+            WriteToFile(get_helpFileName(), "╠n/a ; create_test_page  ╬  ╬ C:\\MyLocalPath\\MyLocalFolder\\My Test Page Creation Folder\\TestFileOutput_All.txt ╬ html,head,title,meta,script,body,style,a,nav,br,strong,div ; n/a ; true ; false╣");
+            WriteToFile(get_helpFileName(), "╠n/a ; create_test_page  ╬ * ╬ C:\\MyLocalPath\\MyLocalFolder\\My Test Page Creation Folder\\TestFileOutput_All.txt ╬ html,head,title,meta,script,body,style,a,nav,br,strong,div ; n/a ; true ; false╣");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "The following example gets all anchor tag elements, saves them to a file, and ignores the skips list because all elements are not being retrieved.");
+            WriteToFile(get_helpFileName(), "╠n/a ; create_test_page  ╬ a ╬ C:\\MyLocalPath\\MyLocalFolder\\My Test Page Creation Folder\\TestFileOutput_A_Only.txt ╬ html,head,title,meta,script,body,style,a,nav,br,strong,div ; n/a ; true ; false╣");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "The following example is the correct equivalent of the previous command.");
+            WriteToFile(get_helpFileName(), "╠n/a ; create_test_page  ╬ a ╬ C:\\MyLocalPath\\MyLocalFolder\\My Test Page Creation Folder\\TestFileOutput_A.txt ; n/a ; true ; false╣");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+            WriteToFile(get_helpFileName(), "║                                              TROUBLESHOOTING                                                                                                           ║");
+            WriteToFile(get_helpFileName(), "╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+            WriteToFile(get_helpFileName(), "DRIVER ISSUES");
+            WriteToFile(get_helpFileName(), "If you run the application and the browser briefly opens and then closes:");
+            WriteToFile(get_helpFileName(), "Check you local browser version and compare that with the corresponding web driver for that browser.");
+            WriteToFile(get_helpFileName(), "If these are not the same, upgrade the web driver for this browser and it should work.");
+            WriteToFile(get_helpFileName(), "═════════════════════════════════════════════════════════");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "URL VALIDATION FAILURE");
+            WriteToFile(get_helpFileName(), "When you enter a url into your web browser although the trailing slash may be there or may not be there, the returned URL from the test app differs.");
+            WriteToFile(get_helpFileName(), "Update your test to reflect what the test app is returning as this is the actual URL for this page.");
+            WriteToFile(get_helpFileName(), "═════════════════════════════════════════════════════════");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "MISSING CONFIGURATION FILE");
+            WriteToFile(get_helpFileName(), "If you are running in JUnit and see the following message, the config file is not in the correct location or has the wrong name.");
+            WriteToFile(get_helpFileName(), "Configuration File not found! (Config/ConfigurationSetup.tconfig)");
+            WriteToFile(get_helpFileName(), "Place the configuration file in the location above with the name specified and re-run the test.");
+            WriteToFile(get_helpFileName(), "Exiting!!!");
+            WriteToFile(get_helpFileName(), "configSettings is null!!!");
+            WriteToFile(get_helpFileName(), "═════════════════════════════════════════════════════════");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "UNEXPECTED OUTPUT FROM A TEST STEP");
+            WriteToFile(get_helpFileName(), "If you have an unexpected output or outcome of a test step, check the Action/Expected value field in your test ");
+            WriteToFile(get_helpFileName(), "and ensure that there is no keyword in there that the application may attempt to execute instead of the action intended.");
+            WriteToFile(get_helpFileName(), "The test will have to be re-written to account for this.");
+            WriteToFile(get_helpFileName(), "A specific SendKeys keyword was added to send text that could be misconstrued because it contains keywords.");
+            WriteToFile(get_helpFileName(), "While this particular solution may not be the one you need, there is likely a solution but if not, please document the issue ");
+            WriteToFile(get_helpFileName(), "so that it can be addressed in future implementations.");
+            WriteToFile(get_helpFileName(), "═════════════════════════════════════════════════════════");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
         } catch (Exception e) {

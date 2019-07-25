@@ -2,7 +2,8 @@
 <testSteps>
 	<step>
 		<!-- Tested - Good -->
-		<!-- Command - ALWAYS required -->
+		<!-- Navigate to a page - The driver will go to the page in arg1 and compare that URL with the expected value if provided -->
+		<!-- Command - ALWAYS required -->		
 		<command>navigate</command>
 		
 		<!-- Read or write -->
@@ -19,10 +20,13 @@
 			
 			<!-- second argument, can be optional but required if we include the expectedValue. For this example we send 1000ms as the time to wait before the assertion is made -->
 			<arg2>1000</arg2> 
+			<!-- third argument is the window dimensions -->
+			<arg3></arg3> 
 		</arguments>
 	</step>
 	<step>
 		<!-- Tested - Good -->
+		<!-- Compares the value of the accessor with the expectedValue.  -->
 		<command>assert</command>
 		<actionType>read</actionType>
 		<expectedValue>FEATURED CHARACTERS</expectedValue>
@@ -51,6 +55,7 @@
 	</step>
 	<step>
 		<!-- Tested - Good -->
+		<!-- wait for the page to be fully loaded document state ready -->
 		<command>wait for page</command>
 		<actionType>write</actionType>
 		<crucial>TRUE</crucial>
@@ -64,7 +69,7 @@
 		</arguments>
 	</step>
 	<step>
-		<!-- Tested - Good - Repeating for subsequent test steps -->
+		<!-- Tested - Good - Example of Navigation being repeated for subsequent test steps -->
 		<command>navigate</command>
 		
 		<!-- Read or write -->
@@ -127,7 +132,7 @@
 	</step>
 	<step>
 		<!-- Tested - Good -->
-		<!-- multiple keystroke command... SENDKEYS! -->
+		<!-- Click command... clicks on the element based on the accessor, this selects a radio button -->
 		<command>click</command>
 		<actionType>write</actionType>
 		<crucial>TRUE</crucial>
@@ -141,7 +146,7 @@
 	</step>
 	<step>
 		<!-- Tested - Good -->
-		<!-- multiple keystroke command... SENDKEYS! -->
+		<!-- Click command... clicks on the element based on the accessor, this checks a checkbox -->
 		<command>click</command>
 		<actionType>write</actionType>
 		<crucial>TRUE</crucial>
@@ -171,12 +176,14 @@
 	</step>	
 	<step>
 		<!-- Tested - Good -->
+		<!-- Switch to tab, if 1 is not provided as part of the argument list, it switches to tab 0.  Only can be used to switch to tab 0 or 1.  1 child tab per test. -->
 		<command>Switch to tab</command>
 		<actionType>write</actionType>
 		<crucial>TRUE</crucial>
 	</step>
 	<step>
 		<!-- Tested - Good -->
+		<!-- Compares the value of the accessor with the expectedValue. Note that only xml acceptable characters are allowed and all other characters must be encoded as shown.  -->
 		<command>assert</command>
 		<actionType>read</actionType>
 		<expectedValue>COMICS &amp; GRAPHIC NOVELS</expectedValue>
@@ -186,6 +193,7 @@
 	</step>
 	<step>
 		<!-- Tested - Good -->
+		<!-- Switch to tab, if 1 is not provided as part of the argument list, it switches to tab 0.  Only can be used to switch to tab 0 or 1.  1 child tab per test. -->
 		<command>Switch to tab 0</command>
 		<actionType>write</actionType>
 		<crucial>TRUE</crucial>
@@ -282,7 +290,7 @@
 		<actionType>read</actionType>
 		<expectedValue>The form was successfully submitted!</expectedValue>
 		<crucial>TRUE</crucial>				   	
-		<accessor>╠alert</accessor>
+		<accessor>alert</accessor>
 		<accessorType>ClassName</accessorType>
 	</step>
 	<step>
@@ -326,6 +334,44 @@
 			<arg1>alt</arg1>
 		</arguments>
 	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- Compares the href of the anchor link element using the accessor against the expectedValue -->
+		<command>CHECK_A_HREF</command>
+		<actionType>read</actionType>
+		<crucial>TRUE</crucial>
+		<!-- the accessor is the anchor whose href attribute will be checked against the expectedValue -->
+		<accessor>//*[@id="menu-item-21"]/a</accessor>
+		<accessorType>xPath</accessorType>
+		<expectedValue>https://www.swtestacademy.com/about-software-test-academy/</expectedValue>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- Compares the href of the anchor link element using the accessor against the expectedValue -->
+		<command>CHECK A HREF</command>
+		<actionType>read</actionType>
+		<crucial>TRUE</crucial>
+		<!-- the accessor is the anchor whose href attribute will be checked against the expectedValue -->
+		<accessor>//*[@id="menu-item-21"]/a</accessor>
+		<accessorType>xPath</accessorType>
+		<expectedValue>https://www.swtestacademy.com/about-software-test-academy/</expectedValue>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- Checks all links ensuring that each returns a 200 -->
+		<command>check links</command>
+		<actionType>read</actionType>
+		<crucial>FALSE</crucial>
+		<arguments>
+			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
+			<arg1>https://nutrish.com/</arg1>
+		</arguments>
+	</step>	
+	<step>
+		<command>check links</command>
+		<actionType>read</actionType>
+		<crucial>FALSE</crucial>
+	</step>	
 	<step>
 		<command>Check Contrast</command>
 		<actionType>read</actionType>
