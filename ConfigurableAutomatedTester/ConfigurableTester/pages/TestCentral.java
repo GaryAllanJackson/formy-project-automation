@@ -3,6 +3,7 @@ import com.mongodb.MongoClientURI;
 import org.apache.xpath.operations.Bool;
 import org.openqa.selenium.WebDriver;
 
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,7 +44,6 @@ import java.beans.ExceptionListener;
 import java.io.File;
 import java.io.IOException;
 //import java.security.Timestamp;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
@@ -99,7 +99,6 @@ public class TestCentral {
      //endregion
 
     //region { constants }
-    private final String parameterDelimiter = " ╬ ";  //made parameter delimiter a constant
     private final String uidReplacementChars = "**_uid_**"; //made the timestamp/unique id replacement string a constant
     private final String persistStringCheckValue = "persiststring";
     private final String persistedStringCheckValue = "persistedstring";
@@ -121,13 +120,10 @@ public class TestCentral {
     //endregion
 
     private WebDriver driver;
-//    private PageHelper pageHelper = new PageHelper();
     private TestHelper testHelper = new TestHelper();
     private boolean testAllBrowsers = false;  //true;
-    //List<TestSettings> testSettings = new ArrayList<TestSettings>();
     List<TestStep> testSteps = new ArrayList<TestStep>();
     private String testFileName;
-    List<String> testResults = new ArrayList<>();
     SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy_HH-mm-ss");
     private String logFileUniqueName = dateFormat.format(new Date());
     private String logFileName = configurationFile.contains("\\") ?
@@ -146,6 +142,7 @@ public class TestCentral {
     private boolean _executedFromMain = false;
     private int brokenLinksStatusCode;
     private MongoClient mongoClient = null;
+    private Connection sqlConnection = null;
     private MongoClientURI mongoClientUri = null;
     private String persistedString = null;
     private String uniqueId = null;
@@ -378,6 +375,7 @@ public class TestCentral {
             }
             testHelper.UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_PURPLE_BACKGROUND + AppConstants.ANSI_YELLOW  + AppConstants.sectionLeftUp + testHelper.PrePostPad("[ End of Test Script ]", "═", 9, 157) + AppConstants.sectionRightUp + AppConstants.ANSI_RESET, false);
         }
+        PerformCleanup();
         driver.close();
         driver.quit();
 
@@ -386,6 +384,42 @@ public class TestCentral {
 //            ShutDownChromeDriver();
 //        }
     }
+
+    private void PerformCleanup() throws SQLException {
+
+        CloseOpenConnections();
+
+    }
+
+    /*********************************************************************
+     * Description: Will close any open connections that have not been
+     *              explicitly closed with a Test Step.
+     ******************************************************************* */
+    private void CloseOpenConnections() throws SQLException {
+        if (sqlConnection != null) {
+            sqlConnection.close();
+            testHelper.UpdateTestResults("Closed open Sql Server Connection!!!", true);
+        }
+        if (mongoClient != null) {
+            mongoClient.close();
+            testHelper.UpdateTestResults("Closed open MongoDb Connection!!!", true);
+        }
+    }
+
+    private void CloseOpenConnections(String databaseConnectionType, String fileStepIndex) throws SQLException {
+        if (databaseConnectionType == AppConstants.SqlServer) {
+            if (sqlConnection != null) {
+                sqlConnection.close();
+                testHelper.UpdateTestResults("Successful closing of open Sql Server Connection for step " + fileStepIndex, true);
+            }
+        } else if (databaseConnectionType == AppConstants.MongoDb) {
+            if (mongoClient != null) {
+                mongoClient.close();
+                testHelper.UpdateTestResults("Successful closing of open MongoDb Connection for step " + fileStepIndex, true);
+            }
+        }
+    }
+
 
     /*********************************************************************
      * Description: This method returns the browser used as a string
@@ -539,17 +573,28 @@ public class TestCentral {
         } else if (ts.get_command().toLowerCase().contains("wait for")) {
             //wait for a speficic element to load
             WaitForElement(ts, fileStepIndex);
-        } else if (ts.get_command().toLowerCase().toLowerCase().equals("connect to database")) {
+        } else if (ts.get_command().toLowerCase().equals("connect to database")) {
+            testHelper.DebugDisplay("In PerformWriteActions connect to database check");
             //TODO GAJ working here can have different connection types if we go for the connection keyword here
             String databaseType = GetArgumentValue(ts, 0, null);
-            String connectionString = GetArgumentValue(ts, 0, null);
-
-            if (databaseType.toLowerCase().equals("mongodb")) {
+            String connectionString = GetArgumentValue(ts, 1, null);
+            testHelper.DebugDisplay("In PerformWriteActions databaseType = " + databaseType);
+            if (databaseType.toLowerCase().equals("mongodb") || databaseType.toLowerCase().contains("mongo")) {
                 //connect to mongo db or close an open mongo db connection
-                SetMongoClient(connectionString, ts);
-            } else if (ts.get_command().toLowerCase().contains("sql server")) {
-                testHelper.UpdateTestResults("This feature is not implemented yet!", false);
+                SetMongoClient(ts, fileStepIndex);
+            } else if (databaseType.toLowerCase().contains("sql server")) {
+                SetSqlServerClient(ts, fileStepIndex);
+                //testHelper.UpdateTestResults("This feature is not implemented yet!", false);
             }
+        } else if (ts.get_command().toLowerCase().equals("close database connection") || ts.get_command().toLowerCase().equals("close database") ) {
+            String databaseType = GetArgumentValue(ts, 0, null);
+
+            if (databaseType.toLowerCase().equals(AppConstants.MongoDb.toLowerCase()) || databaseType.toLowerCase().contains("mongo")) {
+                CloseOpenConnections(AppConstants.MongoDb, fileStepIndex);
+            } else if (databaseType.toLowerCase().contains(AppConstants.SqlServer.toLowerCase())) {
+                CloseOpenConnections(AppConstants.SqlServer, fileStepIndex);
+            }
+
         } else if (ts.get_command() != null && ts.get_command().toLowerCase().contains(persistStringCheckValue)) {
             PersistValueController(ts,fileStepIndex);
         } else if (ts.get_accessorType() == null || ts.get_accessorType().toLowerCase().indexOf("n/a") >= 0 ) {
@@ -607,11 +652,8 @@ public class TestCentral {
      * @param fileStepIndex
      ******************************************************************************/
     private void CheckElementCountController(TestStep ts, String fileStepIndex) {
-        //String [] expectedItems = ts.get_expectedValue().split(parameterDelimiter);
-        //String [] checkItems = expectedItems[0].split(" ");
         String checkItem = GetArgumentValue(ts, 0, null);
         String url = GetArgumentValue(ts,1,null);
-//        String page = ts.get_accessor().toLowerCase().equals("n/a") ? driver.getCurrentUrl() : ts.get_accessor().trim();
         String page = url == null ? driver.getCurrentUrl() : url;
         if (checkItem != null) {
             testHelper.UpdateTestResults(AppConstants.indent5 + "Checking count of " + checkItem + " on page " + page, false);
@@ -680,7 +722,6 @@ public class TestCentral {
     private void PerformAccessorActionController(TestStep ts, String fileStepIndex) throws InterruptedException {
         Boolean status;
         testHelper.UpdateTestResults(AppConstants.indent5 + "Performing action using " + ts.get_accessorType() + " " + fileStepIndex + " non-read action", true);
-        //String [] expectedItems = ts.get_expectedValue().split(parameterDelimiter);
         String subAction = null;
         int delayMilliSeconds = 0;
 
@@ -701,10 +742,8 @@ public class TestCentral {
         }
 
         //if not a right click context command
-        //if (ts.get_expectedValue().toLowerCase().indexOf(parameterDelimiter) >= 0 && subAction == null && !ts.get_expectedValue().toLowerCase().contains("right click")
         if (!ts.get_command().toLowerCase().contains("right click") && !ts.get_command().toLowerCase().contains("sendkeys")
                 && !ts.get_command().toLowerCase().contains("send keys") && !ts.get_command().toLowerCase().contains("switch to iframe")) {
-//            && !ts.get_command().toLowerCase().contains("send keys") && !subAction.toLowerCase().contains("click")) {
             //url has changed, check url against expected value
             String expectedUrl = ts.get_expectedValue();
 
@@ -765,8 +804,6 @@ public class TestCentral {
             item = argument.get_parameter();
             testHelper.DebugDisplay("Argument list item = " + item);
             if (!item.toLowerCase().contains("sendkeys")) {
-//                status = PerformAction(ts.get_searchType(), ts.get_xPath(), "sendkeys" + parameterDelimiter + item, fileStepIndex);
-                //status = PerformAction(ts, "sendkeys" + parameterDelimiter + item, fileStepIndex);
                 status = PerformAction(ts, item, fileStepIndex);
                 DelayCheck(timeDelay, fileStepIndex);
             }
@@ -819,20 +856,31 @@ public class TestCentral {
      * @param ts
      * @param fileStepIndex
      ********************************************************************************/
-    private void DatabaseQueryController(TestStep ts, String fileStepIndex) {
-        testHelper.UpdateTestResults("Found query....", false);
-        if (ts.get_command().toLowerCase().contains("mongo")) {
-            testHelper.UpdateTestResults("Found query then mongo....", false);
-            //make sure that this connection has been established
-            if (mongoClient != null) {
-                testHelper.UpdateTestResults("Found query, and mongo and in the if before RunQuery....", false);
-                RunQuery(ts, fileStepIndex);
-            } else {
-                testHelper.UpdateTestResults("Connection is not available!!!", false);
+    private void DatabaseQueryController(TestStep ts, String fileStepIndex) throws SQLException {
+        //testHelper.DebugDisplay("Found query....");
+        try {
+            if (ts.get_command().toLowerCase().contains("mongo")) {
+                testHelper.UpdateTestResults("Found query then mongo....", false);
+                //make sure that this connection has been established
+                if (mongoClient != null) {
+                    testHelper.UpdateTestResults("Found query, and mongo and in the if before RunMongoQuery....", false);
+                    RunMongoQuery(ts, fileStepIndex);
+                } else {
+                    testHelper.UpdateTestResults("Connection is not available!!!", false);
+                }
+                testHelper.UpdateTestResults("Found query, and mongo after the if before RunMongoQuery....", false);
+            } else if (ts.get_command().toLowerCase().contains("sql server") || ts.get_command().toLowerCase().contains("sqlserver")) {
+                //testHelper.UpdateTestResults(AppConstants.indent5 + "Running Sql Server - Sql Query", true);
+                testHelper.UpdateTestResults( AppConstants.ANSI_CYAN + AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start Sql Server Query Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+                RunSqlServerQuery(ts, fileStepIndex);
+                testHelper.UpdateTestResults( AppConstants.ANSI_CYAN + AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End Sql Server Query Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
             }
-            testHelper.UpdateTestResults("Found query, and mongo after the if before RunQuery....", false);
+        } catch(SQLException e) {
+            testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failure in DatabaseQueryController for step " + fileStepIndex  + "\r\n" + e.getMessage() + AppConstants.ANSI_RESET, true);
         }
     }
+
+
     //endregion
 
     /*************************************************************
@@ -1888,26 +1936,16 @@ public class TestCentral {
         } else {  //if it is not a click, send keys or screenshot
             try {
                 //use sendkeys as the command when sending keywords to a form
-//                if (ts.get_command().contains(sendKeys)) {
                 if (command.contains(sendKeys)) {
-                    //String [] values = subAction.split(parameterDelimiter);
-                    //subAction = values.length > 0 ? values[1].trim() : "";
-                    //subAction = GetArgumentValue(ts,0, "");
-                    //subAction = subAction.replace(uidReplacementChars, uniqueId);
-                    //pageHelper.UpdateTestResults("value = " + value);
                     //added the below structure so that the unique identifier could be used with the persisted string.
-//                    if (subAction.toLowerCase().contains(persistedStringCheckValue) && !values[1].trim().contains(uidReplacementChars)) {
                     if (subAction.toLowerCase().contains(persistedStringCheckValue) && !subAction.trim().contains(uidReplacementChars)) {
                         testHelper.UpdateTestResults(AppConstants.indent8 + AppConstants.ANSI_CYAN + "Using Persisted value (" + persistedString + ")" + AppConstants.ANSI_RESET, true);
                         subAction = persistedString;
                     }
                     else {
-//                        if (values[1].trim().toLowerCase().contains(persistedStringCheckValue) && values[1].trim().contains(uidReplacementChars)) {
                         if (subAction.trim().toLowerCase().contains(persistedStringCheckValue) && subAction.trim().contains(uidReplacementChars)) {
                             testHelper.UpdateTestResults(AppConstants.indent8 + AppConstants.ANSI_CYAN + "Using Persisted value (" + persistedString + ")" + AppConstants.ANSI_RESET, true);
-//                            if (values[1].trim().indexOf(persistedStringCheckValue) < values[1].trim().indexOf(uidReplacementChars)) {
                             if (subAction.trim().indexOf(persistedStringCheckValue) < subAction.trim().indexOf(uidReplacementChars)) {
-//                                if (values[1].trim().indexOf(" ") > values[1].trim().indexOf(persistedStringCheckValue))
                                 if (subAction.trim().indexOf(" ") > subAction.trim().indexOf(persistedStringCheckValue))
                                 {
                                     subAction = persistedString + " " + uniqueId;
@@ -1916,7 +1954,6 @@ public class TestCentral {
                                     subAction = persistedString + uniqueId;
                                 }
                             } else {
-//                                if (values[1].trim().indexOf(" ") > values[1].trim().indexOf(uidReplacementChars))
                                 if (subAction.trim().indexOf(" ") > subAction.trim().indexOf(uidReplacementChars))
                                 {
                                     subAction = uniqueId + " " + persistedString;
@@ -2268,7 +2305,6 @@ public class TestCentral {
      ******************************************************************** */
     private void CheckUrlWithoutNavigation(TestStep ts, String fileStepIndex) throws InterruptedException {
         //check url without navigation
-        String [] expectedItems = ts.get_expectedValue().split(parameterDelimiter);
         String expectedUrl = ts.get_expectedValue();
 
         if (ts.ArgumentList != null && ts.ArgumentList.size() > 0) {
@@ -2335,7 +2371,6 @@ public class TestCentral {
         }
 
         //elements to skip if all elements used (*) - don't put this within the cssSelector assignment in case it is not provided
-        //testHelper.UpdateTestResults("skipTags.toString() = " + skipTags.toString(), false);
         testHelper.UpdateTestResults("tagsToSkip = " + tagsToSkip, false);
 
         try {
@@ -2354,9 +2389,7 @@ public class TestCentral {
             Boolean isVisible = true;
             String script;
 
-//            pageHelper.UpdateTestResults("In CreateTestPage #2 elements retrieved: " + elements.size());
             if (formatted) {
-                //testHelper.WriteToFile(newFileName, "╠" + testPage + " ; Navigate ╬ " + testPage + " ; n/a ; true ; true╣");
                 testHelper.WriteToFile(newFileName, CreateXmlFileStartAndEnd(true));
                 testHelper.WriteToFile(newFileName, CreateNavigationXmlTestStep(testPage, "TRUE"));
             } else {
@@ -2456,11 +2489,16 @@ public class TestCentral {
             testHelper.UpdateTestResults("Error: " + ex.getMessage(), false);
         }
 
-        //testHelper.UpdateTestResults("In CreateTestPage #2 returning nothing", false);
-
         return newFileName;
     }
 
+    /**************************************************************************
+     * Description: This Creates the start and end XML tags that contain the
+     *              Test Steps.
+     *
+     * @param isStart - boolean determining if start or end should be created
+     * @return - Start or End XML tags.
+     **************************************************************************/
     private String CreateXmlFileStartAndEnd(boolean isStart) {
         String returnValue = "";
 
@@ -2474,6 +2512,13 @@ public class TestCentral {
         return returnValue;
     }
 
+    /*******************************************************************************************
+     * Description: This Creates the Navigation Test Step to navigate to the page to be tested.
+     *
+     * @param testPage - Page URL where testing is to begin.
+     * @param isCrucial - Flag to set the crucial
+     * @return - XML Test Step
+     *******************************************************************************************/
     private String CreateNavigationXmlTestStep(String testPage, String isCrucial) {
         String returnValue = "";
 
@@ -2498,7 +2543,14 @@ public class TestCentral {
         return returnValue;
     }
 
-    //TODO: GAJ finish this up
+    /**************************************************************************
+     * Description: This Creates a Test Step that Selects an Option from
+     *              a Select list.
+     * @param elementXPath - xPath for the element
+     * @param selectedItem - value to select
+     * @param isCrucial - Flag to set the crucial
+     * @return - XML Test Step
+     ************************************************************************ */
     private String CreateSelectWriteActionXmlTestStep(String elementXPath, String selectedItem, String isCrucial) {
         String returnValue = "";
 
@@ -2522,7 +2574,14 @@ public class TestCentral {
         return returnValue;
     }
 
-
+    /*************************************************************************************
+     * Description: This Creates a Test Step that Clicks an element.
+     *
+     * @param elementXPath - xPath for the element
+     * @param clickCommand - Command to perform.
+     * @param isCrucial - Flag to set the crucial
+     * @return - XML Test Step
+     *************************************************************************************/
     private String CreateClickWriteActionXmlTestStep(String elementXPath, String clickCommand, String isCrucial) {
         String returnValue = "";
         if (elementXPath != null && !elementXPath.isEmpty()) {
@@ -2539,7 +2598,14 @@ public class TestCentral {
         return returnValue;
     }
 
-
+    /*************************************************************************************
+     * Description: This Creates a Test Step that Sends key strokes to an input type element.
+     *
+     * @param elementXPath - xPath for the element
+     * @param argumentString - Command to perform.
+     * @param isCrucial - Flag to set the crucial
+     * @return - XML Test Step
+     *************************************************************************************/
     private String CreateSendKeysWriteActionXmlTestStep(String elementXPath, String argumentString, String isCrucial) {
         String returnValue = "";
 
@@ -2562,7 +2628,14 @@ public class TestCentral {
         return returnValue;
     }
 
-
+    /*************************************************************************************
+     * Description: This Creates a Test Step that Reads the href value of an anchor element.
+     *
+     * @param elementXPath - xPath for the element
+     * @param elementHref - expected value of the anchor's href attribute
+     * @param isCrucial  - Flag to set the crucial
+     * @return - XML Test Step
+     *************************************************************************************/
     private String CreateAHrefReadActionXmlTestStep(String elementXPath, String elementHref, String isCrucial) {
         String returnValue = "";
         if (elementXPath != null && !elementXPath.isEmpty() && elementHref != null && !elementHref.isEmpty()) {
@@ -2581,7 +2654,18 @@ public class TestCentral {
         return returnValue;
     }
 
-
+    /*************************************************************************************
+     * Description: This Creates up to two Test Steps if the image's src and alt
+     *              attributes are present, but if not, creates one based on what is provided.
+     *              The first Test Step Reads the src value of an image element.
+     *              The second Test Step Reads the alt value of the image element.
+     *
+     * @param elementXPath  - xPath for the element
+     * @param elementSrc - expected value of the image's src attribute
+     * @param elementAltText - expected value of the image's alt attribute
+     * @param isCrucial  - Flag to set the crucial
+     * @return - XML Test Steps
+     *************************************************************************************/
     private String CreateImageReadActionsXmlTestSteps(String elementXPath, String elementSrc, String elementAltText, String isCrucial) {
         String returnValue = "";
 
@@ -2613,10 +2697,11 @@ public class TestCentral {
     /**********************************************************************************
      * Description: Helper method for the Create test method that creates the assert
      *              test step for formatted tests.
-     * @param elementXPath
-     * @param elementText
-     * @param isCrucial
-     * @return
+     *
+     * @param elementXPath - xPath for the element
+     * @param elementText - expected value of the page element
+     * @param isCrucial - Flag to set the crucial
+     * @return - XML Test Step
      **********************************************************************************/
     private String CreateReadActionXmlTestStep(String elementXPath, String elementText, String isCrucial) {
 
@@ -2667,6 +2752,73 @@ public class TestCentral {
         return null;
     }
     //endregion
+
+    private void SetSqlServerClient(TestStep ts, String fileStepIndex) {
+        //			<!--arg2>jdbc:sqlserver://local.database.windows.net:1433;database=PocFisForumV2;user=forum_user;password=forum_user;encrypt=true;trustServerCertificate=false;loginTimeout=30;</arg2-->
+        String sqlDatabaseName = GetArgumentValue(ts, 1, null);
+        String sqlUserId = GetArgumentValue(ts, 2, null);
+        String sqlPassword = GetArgumentValue(ts, 3, null);
+        String sqlConnectionString = sqlDatabaseName.contains("jdbc:sqlserver") ? sqlDatabaseName : null;
+
+        if (sqlDatabaseName != null && sqlUserId != null && sqlPassword != null && sqlConnectionString == null) {
+            sqlConnectionString = sqlConnectionString == null ? "database=" + sqlDatabaseName + ";user=" + sqlUserId + ";password=" + sqlPassword + ";" : sqlConnectionString;
+            if (sqlConnectionString != null && !sqlConnectionString.isEmpty()) {
+                //sqlConnectionString = "jdbc:sqlserver://localhost:1433;" + sqlConnectionString + "encrypt=true;trustServerCertificate=false;loginTimeout=30;";
+                sqlConnectionString = "jdbc:sqlserver://localhost:1433;" + sqlConnectionString + "encrypt=false;trustServerCertificate=true;loginTimeout=30;";
+            }
+        }
+
+
+        try {
+            sqlConnection = DriverManager.getConnection(sqlConnectionString);
+            testHelper.UpdateTestResults(AppConstants.ANSI_GREEN + "Successful establishment of connection to SQL Server Database for step " + fileStepIndex + AppConstants.ANSI_RESET, true);
+        } catch(SQLException e) {
+            testHelper.UpdateTestResults("Failure", true);
+            testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed to establish a connection to the SQL Server for step " + fileStepIndex + "\r\n Error Message: " + e.getMessage() + AppConstants.ANSI_RESET, true);
+        }
+    }
+
+    private void RunSqlServerQuery(TestStep ts, String fileStepIndex) throws SQLException {
+        String sqlTable = GetArgumentValue(ts, 0, null);
+        String sqlField = GetArgumentValue(ts, 1, null);
+        String whereClause = GetArgumentValue(ts, 2, null);
+        String sqlStatement = sqlTable.toLowerCase().contains("select") ? sqlTable : null;
+        String actual = null;
+
+        if (sqlConnection == null) {
+            testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed to find active Sql Server connection to the SQL Server for step " + fileStepIndex + AppConstants.ANSI_RESET, true);
+        }
+
+        Statement statement = sqlConnection.createStatement();
+        ResultSet resultSet = null;
+
+        try {
+            if (sqlStatement == null || sqlStatement.isEmpty()) {
+                sqlStatement = "Select " + sqlField + " from " + sqlTable + " " + whereClause;
+            }
+            testHelper.UpdateTestResults(AppConstants.indent8 + "sqlStatement = " + sqlStatement, true);
+
+            resultSet = statement.executeQuery(sqlStatement);
+            while (resultSet.next()) {
+                actual = resultSet.getString(1);
+                break;
+            }
+
+            if (ts.get_crucial()) {
+                assertEquals(ts.get_expectedValue(), actual);
+            } else {
+                if (ts.get_expectedValue().trim().equals(actual.trim())) {
+                    testHelper.UpdateTestResults(AppConstants.ANSI_GREEN + "Successful Sql Query for step " + fileStepIndex + " Expected: (" + ts.get_expectedValue() + ") Actual: (" + actual + ")" + AppConstants.ANSI_RESET, true);
+                } else {
+                    testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed Sql Server for step " + fileStepIndex + " Expected: (" + ts.get_expectedValue() + ") Actual: (" + actual + ")" + AppConstants.ANSI_RESET, true);
+                }
+            }
+        } catch(SQLException e) {
+            testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed to execute query successfully for step " + fileStepIndex + "\r\n Error: " + e.getMessage() + AppConstants.ANSI_RESET, true);
+        }
+
+    }
+
 
     //region { Methods under development }
     /* *************************************************************************
@@ -2816,38 +2968,48 @@ public class TestCentral {
 
     }
 
-    private void RunQuery(TestStep ts, String fileStepIndex) {
 
-        testHelper.UpdateTestResults("In RunQuery method", false);
-        if (ts.get_command().toLowerCase().contains("mongo")) {
-            testHelper.UpdateTestResults("RunQuery....in first If Statement", false);
-            String [] expectedItems = ts.get_expectedValue().split(parameterDelimiter);
-            String [] queryParameters = expectedItems[0].split(" ");
-            testHelper.UpdateTestResults("RunQuery: queryParameters.length = " + queryParameters.length, false);
-            if (queryParameters.length > 5) {  //need to work through this
-                testHelper.UpdateTestResults("RunQuery: queryParameters[0].toLowerCase().trim() = " + queryParameters[0].toLowerCase().trim(), false);
-                if (queryParameters[0].toLowerCase().trim().equals("query")) {
-                    testHelper.UpdateTestResults("RunQuery: ts.get_expectedValue().toLowerCase() = " + ts.get_expectedValue().toLowerCase(), false);
-                    if (ts.get_expectedValue().toLowerCase().contains("where")) {
-                        String wherePhrase = expectedItems[0].substring(expectedItems[0].indexOf("where"));
-                        testHelper.UpdateTestResults("wherePhrase = " + wherePhrase, false);
-                        testHelper.UpdateTestResults("queryParameters[1] = " + queryParameters[1], false);
-                        testHelper.UpdateTestResults("queryParameters[2] = " + queryParameters[2], false);
-                        MongoDatabase db = mongoClient.getDatabase(queryParameters[1]);
-                        MongoCollection<Document> col = db.getCollection(queryParameters[2]);
+    //region {Partially implemented MongoDb connectivity }
+    private void RunMongoQuery(TestStep ts, String fileStepIndex) {
+        testHelper.UpdateTestResults("In RunMongoQuery method", false);
+        testHelper.UpdateTestResults("RunMongoQuery....in first If Statement", false);
+        String queryDataBase = GetArgumentValue(ts, 0, null);
+        String queryTable = GetArgumentValue(ts, 1, null);
+        String queryField = GetArgumentValue(ts, 2, null);
+        String whereClause = GetArgumentValue(ts, 3, null);
+        String objectElement = whereClause != null && whereClause.isEmpty() && whereClause.toLowerCase().contains("where") ? null : whereClause;
+        if (objectElement != null) {
+            whereClause = null;
+        }
 
-                        List<Document> documents = (List<Document>) col.find().into(
-                                new ArrayList<Document>());
+        if (queryDataBase == null || queryTable == null || queryField == null) {
+            String errorMissingStructure = queryDataBase == null ? "Database" : queryTable == null ? "Table" : "Field";
+            testHelper.UpdateTestResults(AppConstants.ANSI_RED + "ERROR: Invalid Query Command, " + errorMissingStructure +
+                    " is missing! Aborting Test Step " + fileStepIndex, true);
+            return;
+        }
 
-                        if (documents.size() > 0) {
-                            for (Document document : documents) {
-                                testHelper.UpdateTestResults("document = " + document, false);
-                            }
-                        }
-                        else {
-                            testHelper.UpdateTestResults("No matching items found", false);
-                        }
-                        //region {Commented for now}
+        testHelper.UpdateTestResults("RunMongoQuery: queryDataBase = " + queryDataBase, false);
+
+        if (whereClause != null && !whereClause.isEmpty()) {
+            testHelper.UpdateTestResults("RunMongoQuery: queryTable.toLowerCase().trim() = " + queryTable.toLowerCase().trim(), false);
+            testHelper.UpdateTestResults("RunMongoQuery: queryField.toLowerCase() = " + queryField.toLowerCase(), false);
+
+            testHelper.UpdateTestResults("whereClause = " + whereClause, false);
+            MongoDatabase db = mongoClient.getDatabase(queryDataBase);
+            MongoCollection<Document> col = db.getCollection(queryTable);
+
+            List<Document> documents = (List<Document>) col.find().into(
+                    new ArrayList<Document>());
+
+            if (documents.size() > 0) {
+                for (Document document : documents) {
+                    testHelper.UpdateTestResults("document = " + document, false);
+                }
+            } else {
+                testHelper.UpdateTestResults("No matching items found", false);
+            }
+            //region {Commented for now}
                         /*
                         BasicDBObject whereQuery = new BasicDBObject();
                         pageHelper.UpdateTestResults("queryParameters[4] = " + queryParameters[4]);
@@ -2867,58 +3029,61 @@ public class TestCentral {
                         else {
                             pageHelper.UpdateTestResults("No matching items found");
                         }*/
-                        //endregion
-                    }
-                }
-            } else {  //get the entire table of data if no where clause exists
-                MongoDatabase db = mongoClient.getDatabase(queryParameters[1]);
-                MongoCollection<Document> col = db.getCollection(queryParameters[2]);
-                //List<Document> documents;
-                FindIterable<Document> documents = null;
-                Document doc = null;
-                if (queryParameters.length > 2) {
+            //endregion
+        } else {  //get the entire table of data if no where clause exists
+            MongoDatabase db = mongoClient.getDatabase(queryDataBase);
+            MongoCollection<Document> col = db.getCollection(queryTable);
+            //List<Document> documents;
+            FindIterable<Document> documents = null;
+            Document doc = null;
+            //if (queryParameters.length > 2) {
+            if (queryField != null) {
 
+                //region {commented code block 2}
 //                    documents = (List<Document>) col.find("{" + queryParameters[3].toString() + ":" + queryParameters[4].toString() + "}").into(
 //                            new ArrayList<Document>());
 //                    documents = db.getCollection(queryParameters[2]).find("{ " +  queryParameters[3].toString() + ":" + queryParameters[4].toString() + " }"));
-                    BSONObject bsonObj = BasicDBObject.parse("{" + queryParameters[3].toString() + ":" + queryParameters[4].toString() + "}");
+                //endregion
+                BSONObject bsonObj = BasicDBObject.parse("{" + queryField.toString() + ":" + objectElement + "}");
 //                    documents = db.getCollection(queryParameters[2]).find(((BasicDBObject) bsonObj)).first();
-                    doc = db.getCollection(queryParameters[2]).find(((BasicDBObject) bsonObj)).first();
+                doc = db.getCollection(queryTable).find(((BasicDBObject) bsonObj)).first();
 
-                    //NOTE: { Everything remaining in this if statement is for formatting and not necessary for the testing application }
-                    //code used below for troubleshooting not necessarily testing
-                    testHelper.UpdateTestResults("Doc = " + doc.toString(), false);
+                //NOTE: { Everything remaining in this if statement is for formatting and not necessary for the testing application }
+                //code used below for troubleshooting not necessarily testing
+                testHelper.UpdateTestResults("Doc = " + doc.toString(), false);
+                //region { commented code block 3}
 //                    pageHelper.UpdateTestResults("Doc = " + doc.toString()
 //                            .replace("{{","\r\n" + pageHelper.indent5 + "{{\r\n " + pageHelper.indent5)
 //                            .replace("}},","\r\n" + pageHelper.indent5 + "}},\r\n")
 //                            .replace(",",",\r\n" + pageHelper.indent5));
-                    String[] docString = doc.toString().split(", ");
-                    int indent = 0;
-                    int padSize = 2;
-                    String tempItem = "";
-                    String tempItem2 = "";
-                    for (String item: docString) {
-                        tempItem = "";
-                        tempItem2 = "";
-                        testHelper.UpdateTestResults("[indent set to: " + indent + "]", false);
-                        //pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) + item.trim() + " - (Unformatted)");
-                        if ((item.contains("{{") || item.contains("[")) && !item.contains("[]")) {
+                //endregion
+                String[] docString = doc.toString().split(", ");
+                int indent = 0;
+                int padSize = 2;
+                String tempItem = "";
+                String tempItem2 = "";
+                for (String item : docString) {
+                    tempItem = "";
+                    tempItem2 = "";
+                    testHelper.UpdateTestResults("[indent set to: " + indent + "]", false);
+                    //pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) + item.trim() + " - (Unformatted)");
+                    if ((item.contains("{{") || item.contains("[")) && !item.contains("[]")) {
 
-                            while (item.indexOf("{{") > 0 || item.indexOf("[") > 0)
-                            {
-                                tempItem += testHelper.PadIndent(padSize, indent) + item.substring(0, item.indexOf("{{") + 2).trim().replace("{{", "\r\n" + testHelper.PadIndent(padSize, indent) + "{{\r\n");
-                                testHelper.UpdateTestResults("tempItem = " + tempItem, false);
-                                item = item.substring(item.indexOf("{{") + 2).trim();
-                                testHelper.UpdateTestResults("item = " + item, false);
-                                indent++;
-                                testHelper.UpdateTestResults("[indent now set to: " + indent + "]", false);
-                            }
-                            if (item.length() > 0) {
-                                tempItem += testHelper.PadIndent(padSize, indent) +  item.trim();
-                            }
+                        while (item.indexOf("{{") > 0 || item.indexOf("[") > 0) {
+                            tempItem += testHelper.PadIndent(padSize, indent) + item.substring(0, item.indexOf("{{") + 2).trim().replace("{{", "\r\n" + testHelper.PadIndent(padSize, indent) + "{{\r\n");
+                            testHelper.UpdateTestResults("tempItem = " + tempItem, false);
+                            item = item.substring(item.indexOf("{{") + 2).trim();
+                            testHelper.UpdateTestResults("item = " + item, false);
+                            indent++;
+                            testHelper.UpdateTestResults("[indent now set to: " + indent + "]", false);
+                        }
+                        if (item.length() > 0) {
+                            tempItem += testHelper.PadIndent(padSize, indent) + item.trim();
+                        }
 
 
-                            testHelper.UpdateTestResults(AppConstants.ANSI_YELLOW + tempItem + AppConstants.ANSI_RESET, false);
+                        testHelper.UpdateTestResults(AppConstants.ANSI_YELLOW + tempItem + AppConstants.ANSI_RESET, false);
+                        //region { commented code block 4 }
 //                            while (tempItem.indexOf("[") > 0) {
 //                                tempItem2 += pageHelper.PadIndent(padSize, indent) + tempItem.substring(0, tempItem.indexOf("[") + 1).trim().replace("[", "\r\n" + pageHelper.PadIndent(padSize, indent) + "[\r\n");
 //                                tempItem = tempItem.substring(tempItem.indexOf("[") + 1).trim();
@@ -2932,29 +3097,28 @@ public class TestCentral {
 //
 //                            pageHelper.UpdateTestResults(pageHelper.ANSI_BLUE + tempItem2 + pageHelper.ANSI_RESET);
 //                            pageHelper.UpdateTestResults(color + tempItem + pageHelper.ANSI_RESET);
-                        }
-                        else if ((item.contains("}}") || item.contains("]")) && !item.contains("[]")) {
-                            while (item.indexOf("}}") > 0)
-                            {
-                                tempItem += testHelper.PadIndent(padSize, indent) + item.substring(0, item.indexOf("}}") + 2).replace("}}", "\r\n" + testHelper.PadIndent(padSize, indent - 1) + "}}");
+                        //endregion
+                    } else if ((item.contains("}}") || item.contains("]")) && !item.contains("[]")) {
+                        while (item.indexOf("}}") > 0) {
+                            tempItem += testHelper.PadIndent(padSize, indent) + item.substring(0, item.indexOf("}}") + 2).replace("}}", "\r\n" + testHelper.PadIndent(padSize, indent - 1) + "}}");
 //                                tempItem += pageHelper.PadIndent(padSize, indent) + item.substring(0, item.indexOf("}}") + 2).replace("}}", "\r\n" + pageHelper.PadIndent(padSize, indent - 1) + "}}\r\n");
-                                item = item.substring(item.indexOf("}}") + 2).trim();
-                                indent--;
-                            }
-                            if (item.length() > 0) {
-                                tempItem += testHelper.PadIndent(padSize, indent) +  item;
+                            item = item.substring(item.indexOf("}}") + 2).trim();
+                            indent--;
+                        }
+                        if (item.length() > 0) {
+                            tempItem += testHelper.PadIndent(padSize, indent) + item;
 //                                tempItem += pageHelper.PadIndent(padSize, indent) +  item + " - (also left over)";
-                            }
+                        }
 //                            if (tempItem.contains("]")) {
 //                                indent--;
 //                            }
-                            testHelper.UpdateTestResults(tempItem, false);
-                            //pageHelper.UpdateTestResults(item);
-                            //indent--;
-                        }
-                        else {
-                            testHelper.UpdateTestResults(testHelper.PadIndent(padSize, indent) +  item.trim() + " - (No delimiters)", false);
-                        }
+                        testHelper.UpdateTestResults(tempItem, false);
+                        //pageHelper.UpdateTestResults(item);
+                        //indent--;
+                    } else {
+                        testHelper.UpdateTestResults(testHelper.PadIndent(padSize, indent) + item.trim() + " - (No delimiters)", false);
+                    }
+                    //region { commented code block 5 }
                        /*
                         if (item.contains("{{") || item.contains("[")) {
                             if (item.contains("{{")) {
@@ -2990,14 +3154,15 @@ public class TestCentral {
                             pageHelper.UpdateTestResults(pageHelper.PadIndent(padSize, indent) + item  + ",");
 //                            pageHelper.UpdateTestResults("--[ Indent = " + indent + "]------");
                         } */
-                        // pageHelper.UpdateTestResults("--[ Indent = " + indent + "]------");
-                    }
-                } else {
-                    List<Document> documents2;
-                    documents2 = (List<Document>) col.find().into(
-                            new ArrayList<Document>());
+                    // pageHelper.UpdateTestResults("--[ Indent = " + indent + "]------");
+                    //endregion
                 }
-
+            } else {
+                List<Document> documents2;
+                documents2 = (List<Document>) col.find().into(
+                        new ArrayList<Document>());
+            }
+            //region { commented code block 6 }
                 /*
                 if (documents != null) {
                     for (Document document : documents) {
@@ -3008,7 +3173,7 @@ public class TestCentral {
                 else {
                     pageHelper.UpdateTestResults("No matching items found");
                 } */
-            }
+           //endregion
         }
     }
 
@@ -3020,16 +3185,16 @@ public class TestCentral {
      *            database, figure out what is worth logging but for now
      *            do not log anything except to the screen.
      ******************************************************************** */
-    private void SetMongoClient(String mongoDbConnection, TestStep ts) {
-
+    private void SetMongoClient(TestStep ts, String fileStepIndex) {
         //determine the type of mongo connection that needs to be used
-        String connectionType = GetArgumentValue(ts, 2, null);
+        String connectionType = GetArgumentValue(ts, 3, null);
+        String connectionString = GetArgumentValue(ts, 2, null);
 
-        if (connectionType.toLowerCase().trim().equals("uri") && !mongoDbConnection.toLowerCase().contains("close")) {
-            mongoClient = new MongoClient(new MongoClientURI(mongoDbConnection));
-        } else if (!mongoDbConnection.toLowerCase().contains("close")) {
+        if (connectionType.toLowerCase().trim().equals("uri") && !connectionString.toLowerCase().contains("close")) {
+            mongoClient = new MongoClient(new MongoClientURI(connectionString));
+        } else if (!connectionString.toLowerCase().contains("close")) {
             //local connection?
-            mongoClient = new MongoClient(mongoDbConnection);
+            mongoClient = new MongoClient(connectionString);
         } else {
             mongoClient.close();  //close the connection
         }
@@ -3078,7 +3243,7 @@ public class TestCentral {
             }
         }
     }
-
+    //endregion
     //endregion
 
 

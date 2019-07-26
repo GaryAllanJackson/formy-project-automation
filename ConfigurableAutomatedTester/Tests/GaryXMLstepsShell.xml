@@ -420,12 +420,14 @@
 		<accessor></accessor>
 		<accessorType></accessorType>
 		<arguments>
-			<!-- Table to query -->
+			<!-- Database to query -->
 			<arg1>project-tracker-admin-dev</arg1>
+			<!-- Table to query -->
+			<arg1>cellHistories</arg1>
 			<!-- Field to query -->
 			<arg2>cellHistories</arg2>
-			
-			<arg3></arg3>
+			<!-- where clause - optional -->
+			<arg3>where "Assigned To" = 5</arg3>
 			<arg4></arg4>
 		</arguments>
 	</step>

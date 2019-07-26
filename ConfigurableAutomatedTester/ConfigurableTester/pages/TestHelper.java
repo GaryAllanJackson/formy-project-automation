@@ -261,7 +261,7 @@ public class TestHelper{
                         if (arguments != null && arguments.getLength() > 0) {
                             argumentList = new ArrayList<>();
                             argCount = 0;
-//                            UpdateTestResults("arguments = " + arguments.getLength());
+                           DebugDisplay("arguments = " + arguments.getLength());
                             for (int a = 0; a < arguments.getLength(); a++) {
                                 Node argNode = arguments.item(a);
                                 argument = new Argument();
@@ -1393,33 +1393,153 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\t provided with the element text, for text input it creates a sendkeys, for buttons, checkboxes and radio buttons it creates a click, ");
             WriteToFile(get_helpFileName(), "\t and for selects it creates a select command, allowing the user to enter one of the option values that is to be selected.");
             WriteToFile(get_helpFileName(), "  The create_test_page command and the create_test_page_formatted command take the following test parameters:");
-            WriteToFile(get_helpFileName(), "\t - Takes n/a as the accessor ([URL/XPath/CssSelector/TagName/ID/ClassName])");
-            WriteToFile(get_helpFileName(), "\t - The Action/Expected Value field takes the create_test_page command and the following parameters:");
+            WriteToFile(get_helpFileName(), "   - arg1 is the Tag Type.  Use * for all tags, or div for just div tags etc...");
             WriteToFile(get_helpFileName(), "\t\t -    Element Type: A single element with * being all elements and the default if left empty.");
             WriteToFile(get_helpFileName(), "\t\t\t -   Elements Include but are not limited to: *, html, head, title, body, a, ol, ul, li, select, input etc...");
             WriteToFile(get_helpFileName(), "\t\t\t -   If omitted, this will be * for all elements.");
+            WriteToFile(get_helpFileName(), "   - arg2 is the File where the Tags will be written.");
             WriteToFile(get_helpFileName(), "\t\t -    File Path and File Name: This is where the results will be written.");
             WriteToFile(get_helpFileName(), "\t\t\t -   If omitted, this will be written to the config folder. (/config/newTestFile.txt)");
+            WriteToFile(get_helpFileName(), "   - arg3 is the comma delimited list of Tags to exclude.");
             WriteToFile(get_helpFileName(), "\t\t -    A comma delimited list of elements to skip when retrieving all element (*) information.");
             WriteToFile(get_helpFileName(), "\t\t\t -   These would usually be elements that do not have text themselves but contain elements that do have text.");
             WriteToFile(get_helpFileName(), "\t\t\t -   Do not include spaces between elements, just a comma as follows: html,head,title,body,div");
             WriteToFile(get_helpFileName(), "\t\t\t -   Skip elements are ONLY APPLIED WHEN RETRIEVING ALL ELEMENTS and IGNORED WHEN RETRIEVING A SPECIFIC TAG TYPE.");
-            WriteToFile(get_helpFileName(), "\t - Takes n/a as the Element Lookup Type.");
-            WriteToFile(get_helpFileName(), "\t - Takes true as Perform Action other than Read because it is retrieving information and saving it to a file.");
-            WriteToFile(get_helpFileName(), "\t - Takes false, as this is not a test and nothing is being asserted; therefore, nothing is crucial and this setting will be ignored.");
             WriteToFile(get_helpFileName(), "  The following two examples gets all page elements, saves them to a file, skips a list of container and other elements.");
-            WriteToFile(get_helpFileName(), "╠n/a ; create_test_page  ╬  ╬ C:\\MyLocalPath\\MyLocalFolder\\My Test Page Creation Folder\\TestFileOutput_All.txt ╬ html,head,title,meta,script,body,style,a,nav,br,strong,div ; n/a ; true ; false╣");
-            WriteToFile(get_helpFileName(), "╠n/a ; create_test_page  ╬ * ╬ C:\\MyLocalPath\\MyLocalFolder\\My Test Page Creation Folder\\TestFileOutput_All.txt ╬ html,head,title,meta,script,body,style,a,nav,br,strong,div ; n/a ; true ; false╣");
-            WriteToFile(get_helpFileName(), "");
+//            WriteToFile(get_helpFileName(), "╠n/a ; create_test_page  ╬  ╬ C:\\MyLocalPath\\MyLocalFolder\\My Test Page Creation Folder\\TestFileOutput_All.txt ╬ html,head,title,meta,script,body,style,a,nav,br,strong,div ; n/a ; true ; false╣");
+//            WriteToFile(get_helpFileName(), "╠n/a ; create_test_page  ╬ * ╬ C:\\MyLocalPath\\MyLocalFolder\\My Test Page Creation Folder\\TestFileOutput_All.txt ╬ html,head,title,meta,script,body,style,a,nav,br,strong,div ; n/a ; true ; false╣");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>create_test_page_formatted</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>*</arg1>\r\n" +
+                    "\t\t<arg2>C:\\Users\\gjackson\\Downloads\\Ex_Files_Selenium_EssT\\Ex_Files_Selenium_EssT\\Exercise Files\\ConfigurableAutomatedTester\\Tests\\TestPages\\Formy-Test.xml</arg2>\r\n" +
+                    "\t\t<arg3>html,head,title,meta,script,body,style,nav,br,div,form</arg3>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "The following example gets all anchor tag elements, saves them to a file, and ignores the skips list because all elements are not being retrieved.");
-            WriteToFile(get_helpFileName(), "╠n/a ; create_test_page  ╬ a ╬ C:\\MyLocalPath\\MyLocalFolder\\My Test Page Creation Folder\\TestFileOutput_A_Only.txt ╬ html,head,title,meta,script,body,style,a,nav,br,strong,div ; n/a ; true ; false╣");
+            //WriteToFile(get_helpFileName(), "╠n/a ; create_test_page  ╬ a ╬ C:\\MyLocalPath\\MyLocalFolder\\My Test Page Creation Folder\\TestFileOutput_A_Only.txt ╬ html,head,title,meta,script,body,style,a,nav,br,strong,div ; n/a ; true ; false╣");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>create_test_page_formatted</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>a</arg1>\r\n" +
+                    "\t\t<arg2>C:\\Users\\gjackson\\Downloads\\Ex_Files_Selenium_EssT\\Ex_Files_Selenium_EssT\\Exercise Files\\ConfigurableAutomatedTester\\Tests\\TestPages\\TestFileOutput_A_Only.txt</arg2>\r\n" +
+                    "\t\t<arg3>html,head,title,meta,script,body,style,nav,br,div,form</arg3>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "The following example is the correct equivalent of the previous command.");
-            WriteToFile(get_helpFileName(), "╠n/a ; create_test_page  ╬ a ╬ C:\\MyLocalPath\\MyLocalFolder\\My Test Page Creation Folder\\TestFileOutput_A.txt ; n/a ; true ; false╣");
+            //WriteToFile(get_helpFileName(), "╠n/a ; create_test_page  ╬ a ╬ C:\\MyLocalPath\\MyLocalFolder\\My Test Page Creation Folder\\TestFileOutput_A.txt ; n/a ; true ; false╣");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>create_test_page_formatted</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>a</arg1>\r\n" +
+                    "\t\t<arg2>C:\\Users\\gjackson\\Downloads\\Ex_Files_Selenium_EssT\\Ex_Files_Selenium_EssT\\Exercise Files\\ConfigurableAutomatedTester\\Tests\\TestPages\\TestFileOutput_A_Only.txt</arg2>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CONNECT TO SQL SERVER DATABASE AND CLOSE THE CONNECTION ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "There will be times during the course of QAing a site where querying the database can confirm that a value has been ");
+            WriteToFile(get_helpFileName(), "added or removed.");
+            WriteToFile(get_helpFileName(), "IMPORTANT: ENSURE THAT YOU ALWAYS CREATE A CLOSE CONNECTION TEST STEP TO CLOSE THE CONNECTION YOU OPEN!!!!");
+            WriteToFile(get_helpFileName(), "To do this, you must first establish a connection to the database and this is how to do that.");
+            WriteToFile(get_helpFileName(), "There are two ways to establish a connection to Sql Server. ");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<!-- Open Connection to Sql Server -->\r\n" +
+                    "\t<command>Connect to Database</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<!-- Type of Database (MongoDb, Sql Server)-->\r\n" +
+                    "\t\t<arg1>SQL Server</arg1>\r\n" +
+                    "\t\t<!-- Database to connect to -->\r\n" +
+                    "\t\t<arg2>PocFisForumV2</arg2>\r\n" +
+                    "\t\t<!-- user name -->\r\n" +
+                    "\t\t<arg3>forum_user</arg3>\r\n" +
+                    "\t\t<!-- password -->\r\n" +
+                    "\t\t<arg4>forum_user</arg4>\r\n" +
+                    "\t\t<!-- connection type - not currently used -->\r\n" +
+                    "\t\t<arg5>local</arg5>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "The alternative method with more control but with more risk of failure.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Connect to Database</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>true</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<!-- Type of Database (MongoDb, Sql Server)-->\r\n" +
+                    "\t\t<arg1>SQL Server</arg1>\r\n" +
+                    "\t\t<!-- Connection String or Close to close the connection -->\r\n" +
+                    "\t\t<!-- when using a uri, escape all illegal xml characters (escape: ampersands with &amp;) -->\r\n" +
+                    "\t\t<arg2>jdbc:sqlserver://localhost:1433;database=PocFisForumV2;user=forum_user;password=forum_user;encrypt=false;trustServerCertificate=true;loginTimeout=30;</arg2>\r\n" +
+                    "\t\t<!-- arg2>jdbc:sqlserver://local.database.windows.net:1433;database=PocFisForumV2;user=forum_user;password=forum_user;encrypt=true;trustServerCertificate=false;loginTimeout=30;</arg2 -->\r\n" +
+                    "\t\t<!-- currently not implemented but created to distinguish between local and non-local SQL databases -->\r\n" +
+                    "\t\t<arg3>local</arg3>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CLOSING THE DATABASE CONNECTION ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "Equally important as opening the database connection object, is closing the database connection object.");
+            WriteToFile(get_helpFileName(), "Open connections consume resources and unclosed connections can use up all available memory or an ");
+            WriteToFile(get_helpFileName(), "allotment of connections depending on where the connection lives.");
+            WriteToFile(get_helpFileName(), "To avoid this, always write a close connection command whenever writing an open connection command.");
+            WriteToFile(get_helpFileName(), "The close command is simple and as follows:");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Close Database Connection</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>SQL Server</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>\r\n");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ QUERYING THE SQL SERVER DATABASE  ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "When testing a site, there sometimes needs to be verification that a value was ");
+            WriteToFile(get_helpFileName(), "actually written to, or removed from the database.  ");
+            WriteToFile(get_helpFileName(), "This is the purpose of the Sql Server Query Command.");
+            WriteToFile(get_helpFileName(), "There are two ways to query the database.");
+            WriteToFile(get_helpFileName(), "First option: Specify the Table, Field and Where clause separately.");
+            WriteToFile(get_helpFileName(), "<step>\n" +
+                    "\t\t<command>Sql Server Query</command>\n" +
+                    "\t\t<actionType>read</actionType>\n" +
+                    "\t\t<expectedValue>General</expectedValue>\n" +
+                    "\t\t<crucial>false</crucial>\n" +
+                    "\t\t<arguments>\n" +
+                    "\t\t\t<!-- Table to query or select statement -->\n" +
+                    "\t\t\t<arg1>[POCFISForumV2].[dbo].[Forums]</arg1>\n" +
+                    "\t\t\t<!-- Field to query -->\n" +
+                    "\t\t\t<arg2>Forum</arg2>\n" +
+                    "\t\t\t<!-- where clause - optional -->\n" +
+                    "\t\t\t<arg3>where ForumId = 1</arg3>\n" +
+                    "\t\t</arguments>\n" +
+                    "\t</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "Second Option: Specify the entire Select statement.");
+            WriteToFile(get_helpFileName(), "<step>\n" +
+                    "\t\t<command>Sql Server Query</command>\n" +
+                    "\t\t<actionType>read</actionType>\n" +
+                    "\t\t<expectedValue>FAQ</expectedValue>\n" +
+                    "\t\t<crucial>false</crucial>\n" +
+                    "\t\t<arguments>\n" +
+                    "\t\t\t<!-- Table to query or select statement -->\n" +
+                    "\t\t\t<arg1>Select Forum from [POCFISForumV2].[dbo].[Forums] where ForumId = 2</arg1>\n" +
+                    "\t\t</arguments>\n" +
+                    "\t</step>");
+
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
             WriteToFile(get_helpFileName(), "║                                              TROUBLESHOOTING                                                                                                           ║");

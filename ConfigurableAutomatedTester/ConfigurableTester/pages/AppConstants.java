@@ -73,5 +73,7 @@ public class AppConstants {
     public static final int DefaultTimeDelay = 4000;
     public static final int DefaultElementWaitTimeInSeconds = 30;
 
+    public static final String SqlServer = "Sql Server";
+    public static final String MongoDb = "MongoDb";
 
 }
