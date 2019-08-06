@@ -1,7 +1,24 @@
 public class AppConstants {
 
+    public static final int XmlElementNode = 1;
+    public static final int XmlTextNode = 3;
 
-    //region { XML Node name constants}
+    //region { XML Node name constants for Configuration Settings }
+    public static final String RootConfigurationNode = "automatedTestConfiguration";
+    public static final String ScreenShotSaveFolderNode = "screenShotSaveFolder";
+    public static final String MaxScreenShotsToTakeNode = "maxScreenShotsToTake";
+    public static final String BrowserTypeNode = "browserType";
+    public static final String RunHeadlessNode = "runHeadless";
+    public static final String TestAllBrowsersNode = "testAllBrowsers";
+    public static final String SpecifyTestFilesNode = "specifyTestFiles";
+    public static final String SortSpecifiedTestFilesNode = "sortSpecifiedTestFiles";
+    public static final String TestFolderNameNode = "testFolderName";
+    public static final String FolderFileFilterTypeNode = "folderFileFilterType";
+    public static final String FolderFileFilterNode = "folderFileFilter";
+    public static final String TestFilesNode = "testFiles";
+    //endregion
+
+    //region { XML Node name constants for Test Settings }
     public static final String RootTestNode = "testSteps";
     public static final String TestStepNode = "step";
     public static final String CommandNode = "command";
@@ -30,7 +47,7 @@ public class AppConstants {
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
     public static final String ANSI_BRIGHTWHITE = "\u001B[40m";
-    public static final String ANSI_BRIGHTYELLOW = "\u001b[94m";
+    public static final String ANSI_BRIGHTBLUE = "\u001b[94m";
     //endregion
 
     //region {System out background colors }

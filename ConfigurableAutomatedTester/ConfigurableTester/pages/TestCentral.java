@@ -52,8 +52,8 @@ import java.util.NoSuchElementException;
 import static java.lang.Integer.parseInt;
 import static java.util.stream.LongStream.range;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.mongodb.*;
 enum BrowserTypes {
     Chrome, Firefox, PhantomJS, Internet_Explorer, Edge
@@ -110,7 +110,8 @@ public class TestCentral {
     //endregion
 
     //region { Configuration Variables }
-    private String configurationFile = "Config/ConfigurationSetup.tconfig";
+    //private String configurationFile = "Config/ConfigurationSetup.tconfig";
+    private String configurationFile = "Config/ConfigurationSetup.xml";
     private String configurationFolder = "Config/";
     private static String testPage = "https://www.myWebsite.com/";
     private boolean runHeadless = true;
@@ -197,7 +198,8 @@ public class TestCentral {
      **************************************************************************** */
     @Test   //xpath lookup in this method does not work with headless phantomJS
     public void ConfigurableTestController() throws Exception {
-        testHelper.UpdateTestResults("Starting Test app", false);
+//        testHelper.UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_GREEN_BACKGROUND + AppConstants.ANSI_BLUE + AppConstants.ANSI_BOLD + "╔" + testHelper.PrePostPad("[ Starting Test app ]", "═", 9, 157) + "╗" + AppConstants.ANSI_RESET, false);
+        //testHelper.UpdateTestResults(AppConstants.ANSI_BRIGHTBLUE +  "Starting Test app", false);
         TestCentralStart(is_executedFromMain());
         if (testAllBrowsers) {
             for (int b = 0; b < maxBrowsers; b++) {
@@ -240,12 +242,17 @@ public class TestCentral {
         this.set_executedFromMain(isStartedFromMain);
 
         File tmp = new File(configurationFile);
-        testHelper.UpdateTestResults(AppConstants.ANSI_YELLOW +  "Config File absolute path = " + AppConstants.ANSI_RESET + tmp.getAbsolutePath(), false);
-        testHelper.UpdateTestResults(AppConstants.ANSI_YELLOW +  "Log File Name = " + AppConstants.ANSI_RESET  + logFileName, false);
-        testHelper.UpdateTestResults(AppConstants.ANSI_YELLOW +  "Help File Name = " + AppConstants.ANSI_RESET + helpFileName, false);
+        testHelper.UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_WHITE_BACKGROUND + AppConstants.ANSI_BLUE + AppConstants.ANSI_BOLD + "╔" + testHelper.PrePostPad(AppConstants.ANSI_RESET + AppConstants.ANSI_BRIGHTBLUE  +"[ Starting Test Application Initialization ]" + AppConstants.FRAMED + AppConstants.ANSI_WHITE_BACKGROUND + AppConstants.ANSI_BLUE + AppConstants.ANSI_BOLD, "═", 9, 157) + "╗" + AppConstants.ANSI_RESET, false);
+        testHelper.UpdateTestResults(AppConstants.ANSI_BRIGHTBLUE + AppConstants.indent5 +  "Config File absolute path = " + AppConstants.ANSI_RESET + tmp.getAbsolutePath(), false);
+        testHelper.UpdateTestResults(AppConstants.ANSI_BRIGHTBLUE + AppConstants.indent5 +  "Log File Name = " + AppConstants.ANSI_RESET  + logFileName, false);
+        testHelper.UpdateTestResults(AppConstants.ANSI_BRIGHTBLUE + AppConstants.indent5 +  "Help File Name = " + AppConstants.ANSI_RESET + helpFileName, false);
+        testHelper.UpdateTestResults(AppConstants.ANSI_BRIGHTBLUE + AppConstants.indent5 + "Executed From Main or as JUnit Test = " + AppConstants.ANSI_RESET + (is_executedFromMain() ? "Standalone App" : "JUnit Test"), false);
+        testHelper.UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_WHITE_BACKGROUND + AppConstants.ANSI_BLUE + AppConstants.ANSI_BOLD + "╚" + testHelper.PrePostPad(AppConstants.ANSI_RESET + AppConstants.ANSI_BRIGHTBLUE  +"[ End Test Application Initialization ]" + AppConstants.FRAMED + AppConstants.ANSI_WHITE_BACKGROUND + AppConstants.ANSI_BLUE + AppConstants.ANSI_BOLD, "═", 9, 157) + "╝" + AppConstants.ANSI_RESET, false);
+        testHelper.UpdateTestResults("", false);
 
         testHelper.set_logFileName(logFileName);
         testHelper.set_helpFileName(helpFileName);
+
         boolean status = ConfigureTestEnvironment();
         if (!status) {
             return;
@@ -278,8 +285,7 @@ public class TestCentral {
      *************************************************************************** */
     private boolean ConfigureTestEnvironment() throws Exception {
         String tmpBrowserType;
-        testHelper.UpdateTestResults(AppConstants.ANSI_YELLOW + "Executed From Main or as JUnit Test = " + AppConstants.ANSI_RESET + (is_executedFromMain() ? "Standalone App" : "JUnit Test"), false);
-        ConfigSettings configSettings = testHelper.ReadConfigurationSettings(configurationFile, is_executedFromMain());
+        ConfigSettings configSettings = testHelper.ReadConfigurationSettingsXmlFile(configurationFile, is_executedFromMain());
 
         if (configSettings != null) {
             tmpBrowserType = configSettings.get_browserType().toLowerCase();
@@ -496,10 +502,6 @@ public class TestCentral {
      * @param fileStepIndex - the file index and the step index.
      ******************************************************************/
     private void PerformReadActions(TestStep ts, String fileStepIndex) throws Exception {
-
-        testHelper.DebugDisplay("In PerformReadActions");
-        testHelper.DebugDisplay("ts.get_accessorType() = " + ts.get_accessorType());
-        testHelper.DebugDisplay("ts.get_command() = " + ts.get_command());
         if (ts.get_accessorType() != null && !ts.get_accessorType().toLowerCase().equals("n/a")) {
             //add different types of element checks here like img src, img alt, a href
             if (ts.get_command().toLowerCase().contains("check_image") || ts.get_command().toLowerCase().contains("check image") ) {
@@ -559,14 +561,12 @@ public class TestCentral {
     private void PerformWriteActions(TestStep ts, String fileStepIndex) throws Exception {
         Boolean status;
         //Perform all non read actions below that use an accessor
-        testHelper.DebugDisplay("#1 This is where we are!");
 
         if (ts.get_accessorType() != null && (((ts.get_accessorType().toLowerCase().indexOf(xpathCheckValue) >= 0) || (ts.get_accessorType().toLowerCase().indexOf(cssSelectorCheckValue) >= 0) ||
                 (ts.get_accessorType().toLowerCase().indexOf(tagNameCheckValue) >= 0) || (ts.get_accessorType().toLowerCase().indexOf(idCheckValue) >= 0) ||
                 (ts.get_accessorType().toLowerCase().indexOf(classNameCheckValue) >= 0))
                 && (!ts.get_command().toLowerCase().contains("sendkeys") && !ts.get_command().toLowerCase().contains("send keys")
                 && !ts.get_command().toLowerCase().contains("wait") && !ts.get_command().toLowerCase().contains(persistStringCheckValue)))) {
-            testHelper.DebugDisplay("#2 This is where we are!");
             PerformAccessorActionController(ts, fileStepIndex);
         }  else if (ts.get_command().toLowerCase().contains("sendkeys") || ts.get_command().toLowerCase().contains("send keys")) {
             SendKeysController(ts, fileStepIndex);
@@ -574,17 +574,14 @@ public class TestCentral {
             //wait for a speficic element to load
             WaitForElement(ts, fileStepIndex);
         } else if (ts.get_command().toLowerCase().equals("connect to database")) {
-            testHelper.DebugDisplay("In PerformWriteActions connect to database check");
-            //TODO GAJ working here can have different connection types if we go for the connection keyword here
             String databaseType = GetArgumentValue(ts, 0, null);
             String connectionString = GetArgumentValue(ts, 1, null);
-            testHelper.DebugDisplay("In PerformWriteActions databaseType = " + databaseType);
             if (databaseType.toLowerCase().equals("mongodb") || databaseType.toLowerCase().contains("mongo")) {
                 //connect to mongo db or close an open mongo db connection
                 SetMongoClient(ts, fileStepIndex);
             } else if (databaseType.toLowerCase().contains("sql server")) {
+                //establish a connection to a sql server database - connection lives until closed or end of the test
                 SetSqlServerClient(ts, fileStepIndex);
-                //testHelper.UpdateTestResults("This feature is not implemented yet!", false);
             }
         } else if (ts.get_command().toLowerCase().equals("close database connection") || ts.get_command().toLowerCase().equals("close database") ) {
             String databaseType = GetArgumentValue(ts, 0, null);
@@ -594,7 +591,6 @@ public class TestCentral {
             } else if (databaseType.toLowerCase().contains(AppConstants.SqlServer.toLowerCase())) {
                 CloseOpenConnections(AppConstants.SqlServer, fileStepIndex);
             }
-
         } else if (ts.get_command() != null && ts.get_command().toLowerCase().contains(persistStringCheckValue)) {
             PersistValueController(ts,fileStepIndex);
         } else if (ts.get_accessorType() == null || ts.get_accessorType().toLowerCase().indexOf("n/a") >= 0 ) {
@@ -725,18 +721,14 @@ public class TestCentral {
         String subAction = null;
         int delayMilliSeconds = 0;
 
-        testHelper.DebugDisplay("#2 This is where we are!");
-
         //check if switching to an iFrame
         if (ts.get_command() != null && !ts.get_command().toLowerCase().contains("switch to iframe")) {
             status = PerformAction(ts, null, fileStepIndex);
-            testHelper.DebugDisplay("#3 This is where we are!");
         }
         else {
             //subAction can either be the expected value or a command to perform like click
             if (ts.get_command().toLowerCase().contains("switch to iframe")) {
                 subAction = GetArgumentValue(ts, 1, null);
-                testHelper.DebugDisplay("#4 This is where we are! subAction = " + subAction);
             }
             status = PerformAction(ts, subAction, fileStepIndex);
         }
@@ -802,7 +794,6 @@ public class TestCentral {
         //for (String item: keysToSend) {
         for (Argument argument : ts.ArgumentList) {
             item = argument.get_parameter();
-            testHelper.DebugDisplay("Argument list item = " + item);
             if (!item.toLowerCase().contains("sendkeys")) {
                 status = PerformAction(ts, item, fileStepIndex);
                 DelayCheck(timeDelay, fileStepIndex);
@@ -870,7 +861,6 @@ public class TestCentral {
                 }
                 testHelper.UpdateTestResults("Found query, and mongo after the if before RunMongoQuery....", false);
             } else if (ts.get_command().toLowerCase().contains("sql server") || ts.get_command().toLowerCase().contains("sqlserver")) {
-                //testHelper.UpdateTestResults(AppConstants.indent5 + "Running Sql Server - Sql Query", true);
                 testHelper.UpdateTestResults( AppConstants.ANSI_CYAN + AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start Sql Server Query Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
                 RunSqlServerQuery(ts, fileStepIndex);
                 testHelper.UpdateTestResults( AppConstants.ANSI_CYAN + AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End Sql Server Query Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
@@ -879,8 +869,6 @@ public class TestCentral {
             testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failure in DatabaseQueryController for step " + fileStepIndex  + "\r\n" + e.getMessage() + AppConstants.ANSI_RESET, true);
         }
     }
-
-
     //endregion
 
     /*************************************************************
@@ -899,14 +887,10 @@ public class TestCentral {
         Boolean notEqual = false;
         final String elementTypeCheckedAtStep = "Element type being checked at step ";
         String expected = ts.get_expectedValue();
-        testHelper.DebugDisplay("IN the CheckElementText method ts.get_accessorType() = " + ts.get_accessorType());
-
-
 
         if (ts.get_accessorType().toLowerCase().equals(xpathCheckValue)) {
             testHelper.UpdateTestResults(AppConstants.indent5 + elementTypeCheckedAtStep + fileStepIndex + " by xPath: " + ts.get_accessor(), true);
             actual = CheckElementWithXPath(ts, fileStepIndex);
-            testHelper.DebugDisplay("actual = " + actual);
         } else if (ts.get_accessorType().toLowerCase().equals(cssSelectorCheckValue)) {
             testHelper.UpdateTestResults(AppConstants.indent5 + elementTypeCheckedAtStep + fileStepIndex + " by CssSelector: " + ts.get_accessor(), true);
             actual = CheckElementWithCssSelector(ts, fileStepIndex);
@@ -921,9 +905,7 @@ public class TestCentral {
             actual = CheckElementWithId(ts, fileStepIndex);
         }
 
-        //if (ts.get_expectedValue().toLowerCase().contains("!=")) {
         String arg = GetArgumentValue(ts, 0, null);
-        testHelper.DebugDisplay("arg (!=) = " + arg);
         if (arg != null && arg.equals("!=")) {
             notEqual = true;
         }
@@ -953,13 +935,6 @@ public class TestCentral {
             if (actual.contains("<")) {
                 actual = actual.substring(actual.indexOf("<"), actual.lastIndexOf(">"));
             }
-            testHelper.DebugDisplay("### expected = (" + expected + ")");
-            testHelper.DebugDisplay("### actual = (" + actual + ")");
-        }
-
-        if (expected != null && actual != null) {
-            testHelper.DebugDisplay("### expected.trim() = (" + expected.trim() + ")");
-            testHelper.DebugDisplay("### actual.trim() = (" + actual.trim() + ")");
         }
 
         //if one value is missing and the other is null, make them equivalent
@@ -1373,7 +1348,6 @@ public class TestCentral {
 
         try {
             String typeOfElement = this.driver.findElement(By.xpath(accessor)).getAttribute("type");
-            //testHelper.DebugDisplay("typeOfElement = " + typeOfElement);
             if (typeOfElement!= null && ((typeOfElement.contains("select-one") || typeOfElement.contains("select-many")))) {
                 Select select = new Select(this.driver.findElement(By.xpath(accessor)));
                 //wait until element is present commented out and functionality pushed to separate stand-alone action
@@ -1385,19 +1359,17 @@ public class TestCentral {
                 boolean isVisible = this.driver.findElement(By.xpath(accessor)).isDisplayed();
                 if (isVisible) {
                     actualValue = this.driver.findElement(By.xpath(accessor)).getText();
-                    testHelper.DebugDisplay("###1 - Actual value retieved (isVisible = " + isVisible + ") = " + actualValue);
                 } else {
                     //String script = "return arguments[0].innerHTML";
                     String script = "return arguments[0].innerText";
                     actualValue = (String) ((JavascriptExecutor) driver).executeScript(script, this.driver.findElement(By.xpath(accessor)));
-                    testHelper.DebugDisplay("###2 - Actual value retieved (isVisible = " + isVisible + ") = " + actualValue);
                 }
 
 
                 if (actualValue == null || actualValue.isEmpty()) {
                     actualValue = this.driver.findElement(By.xpath(accessor)).getAttribute("value");
                 }
-                testHelper.DebugDisplay("###3 - Actual value retieved (isVisible = " + isVisible + ") = " + actualValue);
+
                 //region {Wait for element code - not being used but an idea that could be implemented}
                 //testHelper.DebugDisplay("actualValue = " + actualValue);
                 //wait until element is present commented out and functionality pushed to separate  stand-alone action
@@ -1923,11 +1895,9 @@ public class TestCentral {
             } catch (Exception e) {
                 status = false;
             }
-//        } else if (ts.get_command().toLowerCase().indexOf("screenshot") >= 0) {
         } else if (command.toLowerCase().indexOf("screenshot") >= 0) {
             try {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Taking Screenshot for step " + fileStepIndex, true);
-                testHelper.DebugDisplay("SubAction before PerformScreenShotCapture = " + subAction);
                 PerformScreenShotCapture(subAction);
                 status = true;
             }catch (Exception e) {
@@ -2175,8 +2145,6 @@ public class TestCentral {
         String elementIdentifier = ts.get_command().toLowerCase().trim().contains("page") ? GetArgumentValue(ts, 0, "n/a") : GetArgumentValue(ts, 0, null);
         int maxTimeInSeconds = GetArgumentNumericValue(ts, 1, AppConstants.DefaultElementWaitTimeInSeconds);
 
-        testHelper.DebugDisplay("ts.get_command().toLowerCase().trim() = " + ts.get_command().toLowerCase().trim());
-        testHelper.DebugDisplay("elementIdentifier = " + elementIdentifier);
 
         //check that this argument is present
         if ((elementIdentifier == null || elementIdentifier.isEmpty()) && (accessorType == null || accessorType.isEmpty())) {
@@ -2215,7 +2183,6 @@ public class TestCentral {
                 case "page":  //wait for page load
                     if (!elementIdentifier.toLowerCase().trim().contains("n/a")) {
                         try {
-                            testHelper.DebugDisplay("Navigating as part of wait for page!!!");
                             testHelper.NavigateToPage(driver, elementIdentifier);
                         } catch (Exception ex) {
                             testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed to navigate error: " + ex.getMessage(), true);
@@ -2784,9 +2751,16 @@ public class TestCentral {
         String whereClause = GetArgumentValue(ts, 2, null);
         String sqlStatement = sqlTable.toLowerCase().contains("select") ? sqlTable : null;
         String actual = null;
+        String comparisonType = GetArgumentValue(ts, ts.ArgumentList.size()-1, "=");
+
 
         if (sqlConnection == null) {
             testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed to find active Sql Server connection to the SQL Server for step " + fileStepIndex + AppConstants.ANSI_RESET, true);
+        }
+
+        //in case the comparison type is not passed in, default it to equals.
+        if (!comparisonType.equals("!=") && !comparisonType.equals("=")) {
+            comparisonType = "=";
         }
 
         Statement statement = sqlConnection.createStatement();
@@ -2805,12 +2779,24 @@ public class TestCentral {
             }
 
             if (ts.get_crucial()) {
-                assertEquals(ts.get_expectedValue(), actual);
-            } else {
-                if (ts.get_expectedValue().trim().equals(actual.trim())) {
-                    testHelper.UpdateTestResults(AppConstants.ANSI_GREEN + "Successful Sql Query for step " + fileStepIndex + " Expected: (" + ts.get_expectedValue() + ") Actual: (" + actual + ")" + AppConstants.ANSI_RESET, true);
+                if (comparisonType.equals("=")) {
+                    assertEquals(ts.get_expectedValue(), actual);
                 } else {
-                    testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed Sql Server for step " + fileStepIndex + " Expected: (" + ts.get_expectedValue() + ") Actual: (" + actual + ")" + AppConstants.ANSI_RESET, true);
+                    assertNotEquals(ts.get_expectedValue(), actual);
+                }
+            } else {
+                if (comparisonType.equals("=")) {
+                    if (ts.get_expectedValue().trim().equals(actual.trim())) {
+                        testHelper.UpdateTestResults(AppConstants.ANSI_GREEN + "Successful Sql Query for step " + fileStepIndex + " Expected: (" + ts.get_expectedValue() + ") Actual: (" + actual + ")" + AppConstants.ANSI_RESET, true);
+                    } else {
+                        testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed Sql Server for step " + fileStepIndex + " Expected: (" + ts.get_expectedValue() + ") Actual: (" + actual + ")" + AppConstants.ANSI_RESET, true);
+                    }
+                } else {
+                    if (!ts.get_expectedValue().trim().equals(actual.trim())) {
+                        testHelper.UpdateTestResults(AppConstants.ANSI_GREEN + "Successful Sql Query for step " + fileStepIndex + " Expected: (" + ts.get_expectedValue() + ") != Actual: (" + actual + ")" + AppConstants.ANSI_RESET, true);
+                    } else {
+                        testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed Sql Server for step " + fileStepIndex + " Expected: (" + ts.get_expectedValue() + ") != Actual: (" + actual + ")" + AppConstants.ANSI_RESET, true);
+                    }
                 }
             }
         } catch(SQLException e) {

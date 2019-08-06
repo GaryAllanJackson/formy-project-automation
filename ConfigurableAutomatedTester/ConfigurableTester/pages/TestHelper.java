@@ -161,6 +161,147 @@ public class TestHelper{
         return configSettings;
     }
 
+    public ConfigSettings ReadConfigurationSettingsXmlFile(String configurationXmlFile, boolean isExecutedFromMain) throws Exception {
+//        DebugDisplay("#1 IN ReadConfigurationSettingsXmlFile method");
+        PrintSamples();
+        ConfigSettings configSettings = new ConfigSettings();
+        String configValue;
+        ArrayList<String> tempFiles = new ArrayList<>();
+        int testFileCount;
+
+        File configFile = new File(configurationXmlFile);
+        if (!configFile.exists() && isExecutedFromMain) {
+            Scanner scanner = new Scanner(System.in);
+            UpdateTestResults("Configuration File not found (" + configurationXmlFile + ")", false);
+            UpdateTestResults("Enter the path to the config file: ", false);
+            String tempconfigurationFile = scanner.nextLine();
+            configurationXmlFile = tempconfigurationFile;
+            UpdateTestResults("configurationFile = " + configurationXmlFile, false);
+        }
+        else if (!configFile.exists() && !isExecutedFromMain) {
+            UpdateTestResults(  AppConstants.ANSI_RED + AppConstants.ANSI_BOLD + "Configuration File not found! (" + configurationXmlFile + ")", false);
+            UpdateTestResults("Place the configuration file in the location above with the name specified and re-run the test.\r\nExiting!!!", false);
+            return null;
+        }
+
+        try {
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(configurationXmlFile);
+
+            doc.getDocumentElement().normalize();
+            UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_YELLOW_BACKGROUND + AppConstants.ANSI_BLUE + AppConstants.ANSI_BOLD + AppConstants.sectionLeftDown + PrePostPad("[ Reading Config (" + configurationXmlFile + ") file ]", "═", 9, 157) + AppConstants.sectionRightDown + AppConstants.ANSI_RESET, false);
+
+            //get all steps
+            NodeList settings = doc.getElementsByTagName(AppConstants.RootConfigurationNode);
+            //get the root node as a node
+            Node nNode = settings.item(0);
+
+            if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element eElement = (Element) nNode;
+
+                //ScreenShotSaveFolder - default not set
+                configValue = (eElement.getElementsByTagName(AppConstants.ScreenShotSaveFolderNode).item(0) != null) ?
+                        eElement.getElementsByTagName(AppConstants.ScreenShotSaveFolderNode).item(0).getTextContent() : null;
+                configSettings.set_screenShotSaveFolder(configValue);
+                UpdateTestResults(AppConstants.ANSI_YELLOW + AppConstants.indent5 + "ScreenShotSaveFolder = "  + AppConstants.ANSI_RESET + configSettings.get_screenShotSaveFolder(), false);
+
+                //MaxScreenShotsToTake - Default set to 0
+                configValue = (eElement.getElementsByTagName(AppConstants.MaxScreenShotsToTakeNode).item(0) != null) ?
+                    eElement.getElementsByTagName(AppConstants.MaxScreenShotsToTakeNode).item(0).getTextContent() : "0";
+                configSettings.set_maxScreenShots(parseInt(configValue));
+                maxScreenShotsToTake = parseInt(configValue);
+                UpdateTestResults(AppConstants.ANSI_YELLOW + AppConstants.indent5 + "MaxScreenShotsToTake = "  + AppConstants.ANSI_RESET + configSettings.get_maxScreenShots(), false);
+
+                //BrowserType - default set to Chrome
+                configValue = (eElement.getElementsByTagName(AppConstants.BrowserTypeNode).item(0) != null) ?
+                        eElement.getElementsByTagName(AppConstants.BrowserTypeNode).item(0).getTextContent() : "Chrome";
+                configSettings.set_browserType(configValue);
+                UpdateTestResults(AppConstants.ANSI_YELLOW + AppConstants.indent5 + "BrowserType = " + AppConstants.ANSI_RESET + configSettings.get_browserType().toString(), false);
+
+                //RunHeadless - default set to false
+                configValue = (eElement.getElementsByTagName(AppConstants.RunHeadlessNode).item(0) != null) ?
+                        eElement.getElementsByTagName(AppConstants.RunHeadlessNode).item(0).getTextContent() : "false";
+                configSettings.set_runHeadless(Boolean.parseBoolean(configValue));
+                UpdateTestResults(AppConstants.ANSI_YELLOW + AppConstants.indent5 + "RunHeadless = "  + AppConstants.ANSI_RESET + configSettings.get_runHeadless().toString(), false);
+
+                //TestAllBrowsers - default set to false
+                configValue = (eElement.getElementsByTagName(AppConstants.TestAllBrowsersNode).item(0) != null) ?
+                        eElement.getElementsByTagName(AppConstants.TestAllBrowsersNode).item(0).getTextContent() : "false";
+                configSettings.set_testAllBrowsers(Boolean.parseBoolean(configValue));
+                UpdateTestResults(AppConstants.ANSI_YELLOW + AppConstants.indent5 + "TestAllBrowsers = "  + AppConstants.ANSI_RESET + configSettings.get_testAllBrowsers().toString(), false);
+
+                //SpecifyTestFileNames - default set to true
+                configValue = (eElement.getElementsByTagName(AppConstants.SpecifyTestFilesNode).item(0) != null) ?
+                        eElement.getElementsByTagName(AppConstants.SpecifyTestFilesNode).item(0).getTextContent() : "true";
+                configSettings.set_specifyFileNames(Boolean.parseBoolean(configValue));
+                UpdateTestResults(AppConstants.ANSI_YELLOW + AppConstants.indent5 + "SpecifyTestFileNames = "  + AppConstants.ANSI_RESET + configSettings.get_specifyFileNames(), false);
+
+                //SortSpecifiedTestFiles - default set to false
+                configValue = (eElement.getElementsByTagName(AppConstants.SortSpecifiedTestFilesNode).item(0) != null) ?
+                        eElement.getElementsByTagName(AppConstants.SortSpecifiedTestFilesNode).item(0).getTextContent() : "false";
+                configSettings.set_sortSpecifiedTestFiles(Boolean.parseBoolean(configValue));
+                UpdateTestResults(AppConstants.ANSI_YELLOW + AppConstants.indent5 + "SortSpecifiedTestFiles = "  + AppConstants.ANSI_RESET + configSettings.get_sortSpecifiedTestFiles().toString(), false);
+
+                //TestFolderName - default set to null
+                configValue = (eElement.getElementsByTagName(AppConstants.TestFolderNameNode).item(0) != null) ?
+                        eElement.getElementsByTagName(AppConstants.TestFolderNameNode).item(0).getTextContent() : null;
+                configSettings.set_testFolderName(configValue);
+                UpdateTestResults(AppConstants.ANSI_YELLOW + AppConstants.indent5 + "TestFolderName = "  + AppConstants.ANSI_RESET + configSettings.get_testFolderName(), false);
+
+                //FolderFileFilterType - default set to null
+                configValue = (eElement.getElementsByTagName(AppConstants.FolderFileFilterTypeNode).item(0) != null) ?
+                        eElement.getElementsByTagName(AppConstants.FolderFileFilterTypeNode).item(0).getTextContent() : null;
+                configSettings.set_folderFileFilterType(configValue);
+                UpdateTestResults(AppConstants.ANSI_YELLOW + AppConstants.indent5 + "FolderFileFilterType = "  + AppConstants.ANSI_RESET + configSettings.get_folderFileFilterType(), false);
+
+                //FolderFileFilter - default set to null
+                configValue = (eElement.getElementsByTagName(AppConstants.FolderFileFilterNode).item(0) != null) ?
+                        eElement.getElementsByTagName(AppConstants.FolderFileFilterNode).item(0).getTextContent() : null;
+                configSettings.set_folderFileFilter(configValue);
+                UpdateTestResults(AppConstants.ANSI_YELLOW + AppConstants.indent5 + "FolderFileFilter = "  + AppConstants.ANSI_RESET + configSettings.get_folderFileFilter(), false);
+
+
+                if (eElement.getElementsByTagName(AppConstants.TestFilesNode).item(0) != null) {
+                    NodeList testFiles = eElement.getElementsByTagName(AppConstants.TestFilesNode).item(0).getChildNodes();
+
+                    if (testFiles != null && testFiles.getLength() > 0) {
+                        tempFiles = new ArrayList<>();
+                        testFileCount = 0;
+//                        DebugDisplay("TestFiles = " + testFiles.getLength());
+                        for (int a = 0; a < testFiles.getLength(); a++) {
+                            Node testFileNode = testFiles.item(a);
+                            configValue = testFileNode.getTextContent().trim();
+                            if (testFileNode.getNodeType() == AppConstants.XmlElementNode && (configValue != null && !configValue.isEmpty())) {
+                                tempFiles.add(configValue);
+                                configSettings.set_testSettingsFile(configValue);
+                                UpdateTestResults(AppConstants.ANSI_YELLOW + AppConstants.indent5 + "TestFileName = " + AppConstants.ANSI_RESET + configSettings.get_testSettingsFile(), false);
+                            }
+                        }
+                    }
+                }
+
+                if (!configSettings.get_specifyFileNames() && (configSettings.get_testFolderName() != null && !configSettings.get_testFolderName().isEmpty())) {
+                    UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_BLUE_BACKGROUND + AppConstants.ANSI_YELLOW + AppConstants.sectionLeftDown + PrePostPad("[ Start - Retrieving Files in specified folder. ]", "═", 9, 157) + AppConstants.sectionRightDown + AppConstants.ANSI_RESET, false);
+                    configSettings.reset_testFiles();
+                    File temp = new File(configSettings.get_testFolderName());
+                    configSettings = GetAllFilesInFolder(temp, "txt", configSettings);
+                    UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_BLUE_BACKGROUND + AppConstants.ANSI_YELLOW + AppConstants.sectionLeftDown + PrePostPad("[ End Retrieving Files in specified folder. ]", "═", 9, 157) + AppConstants.sectionRightDown + AppConstants.ANSI_RESET, false);
+                }
+            }
+        } catch (Exception e) {
+            UpdateTestResults("The following error occurred while reading the Configuration Settings XML file: \r\n" + e.getMessage(), false);
+        }
+
+        if (tempFiles.size() > 0 && configSettings.get_specifyFileNames() && configSettings.get_sortSpecifiedTestFiles()) {
+            SortTestFiles(tempFiles, configSettings);
+        }
+
+//        UpdateTestResults(FRAMED + ANSI_YELLOW_BACKGROUND + ANSI_BLUE + ANSI_BOLD + sectionEndFormatLeft + "End of Reading Configuration File" + sectionEndFormatRight + ANSI_RESET);
+        UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_YELLOW_BACKGROUND + AppConstants.ANSI_BLUE + AppConstants.ANSI_BOLD + AppConstants.sectionLeftUp + PrePostPad("[ End of Reading Configuration File ]", "═", 9, 157) + AppConstants.sectionRightUp + AppConstants.ANSI_RESET, false);
+        return configSettings;
+    }
+
     /********************************************************************************************
      * DESCRIPTION:  This method reads in the test file, parsing each line and creating a
      * new <TestSettings> object, placing the xPath string into the xPath Property, placing
@@ -170,7 +311,7 @@ public class TestHelper{
      * @param testXmlFileName - Name and Path of the Test Settings file.
      ******************************************************************************************* */
     public List<TestStep> ReadTestSettingsXmlFile(List<TestStep> testSteps, String testXmlFileName) throws Exception {
-        DebugDisplay("#1 IN ReadTestSettingsXmlFile method");
+
         try{
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -179,7 +320,6 @@ public class TestHelper{
             List<Argument> argumentList;
             String argumentString = "";
             int argCount = 0;
-            DebugDisplay("#2 IN ReadTestSettingsXmlFile method");
             String argumentMessage = null;
 
             //optional, but recommended
@@ -261,7 +401,7 @@ public class TestHelper{
                         if (arguments != null && arguments.getLength() > 0) {
                             argumentList = new ArrayList<>();
                             argCount = 0;
-                           DebugDisplay("arguments = " + arguments.getLength());
+//                           DebugDisplay("arguments = " + arguments.getLength());
                             for (int a = 0; a < arguments.getLength(); a++) {
                                 Node argNode = arguments.item(a);
                                 argument = new Argument();
@@ -635,7 +775,6 @@ public class TestHelper{
             if (helpFile.exists()) {
                 helpFile.delete();
             }
-            UpdateTestResults(AppConstants.ANSI_YELLOW + "Help file name: " + AppConstants.ANSI_RESET + helpFile, false);
 
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
@@ -723,8 +862,9 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\tSee the help sections below to learn the order of arguments for each command type.");
             WriteToFile(get_helpFileName(), "<arg1>First argument</arg1> The numbered arguments vary greatly depending upon the type of command.");
             WriteToFile(get_helpFileName(), "\t<arg2>Second argument</arg2>\r\n\t<arg3>Third argument</arg3>");
-            WriteToFile(get_helpFileName(), "\tGenerally speaking, these numbered arguments are arranged so that the most relevant pieces are information ");
+            WriteToFile(get_helpFileName(), "\tGenerally speaking, these numbered arguments are arranged so that the most relevant pieces of information ");
             WriteToFile(get_helpFileName(), "\tare the first items and the less relevant pieces of information are last.");
+            WriteToFile(get_helpFileName(), "\tThe order of the arguments is crucial, while properly numbering is important but improperly numbering is forgivable as long as the xml is valid.");
             WriteToFile(get_helpFileName(), "There are few, if any, examples that use all nodes, so in the Navigation example below note that this does not use ");
             WriteToFile(get_helpFileName(), "Accessor and AccessorType nodes because it accesses the URL instead of a page element when making an assertion. ");
             WriteToFile(get_helpFileName(), "Also, keep in mind that while this represents the structure of a test file, it consists of only one of many possible test steps.\r\n");
@@ -1511,32 +1651,46 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "This is the purpose of the Sql Server Query Command.");
             WriteToFile(get_helpFileName(), "There are two ways to query the database.");
             WriteToFile(get_helpFileName(), "First option: Specify the Table, Field and Where clause separately.");
-            WriteToFile(get_helpFileName(), "<step>\n" +
-                    "\t\t<command>Sql Server Query</command>\n" +
-                    "\t\t<actionType>read</actionType>\n" +
-                    "\t\t<expectedValue>General</expectedValue>\n" +
-                    "\t\t<crucial>false</crucial>\n" +
-                    "\t\t<arguments>\n" +
-                    "\t\t\t<!-- Table to query or select statement -->\n" +
-                    "\t\t\t<arg1>[POCFISForumV2].[dbo].[Forums]</arg1>\n" +
-                    "\t\t\t<!-- Field to query -->\n" +
-                    "\t\t\t<arg2>Forum</arg2>\n" +
-                    "\t\t\t<!-- where clause - optional -->\n" +
-                    "\t\t\t<arg3>where ForumId = 1</arg3>\n" +
-                    "\t\t</arguments>\n" +
-                    "\t</step>");
+            WriteToFile(get_helpFileName(), "The last argument is the comparison type and must be included for != test steps, ");
+            WriteToFile(get_helpFileName(), "but is optional for = test steps.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Sql Server Query</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<expectedValue>General</expectedValue>\r\n" +
+                    "\t<crucial>false</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<!-- Table to query or select statement -->\r\n" +
+                    "\t\t<arg1>[POCFISForumV2].[dbo].[Forums]</arg1>\r\n" +
+                    "\t\t<!-- Field to query -->\r\n" +
+                    "\t\t<arg2>Forum</arg2>\r\n" +
+                    "\t\t<!-- where clause - optional -->\r\n" +
+                    "\t\t<arg3>where ForumId = 1</arg3>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "Second Option: Specify the entire Select statement.");
-            WriteToFile(get_helpFileName(), "<step>\n" +
-                    "\t\t<command>Sql Server Query</command>\n" +
-                    "\t\t<actionType>read</actionType>\n" +
-                    "\t\t<expectedValue>FAQ</expectedValue>\n" +
-                    "\t\t<crucial>false</crucial>\n" +
-                    "\t\t<arguments>\n" +
-                    "\t\t\t<!-- Table to query or select statement -->\n" +
-                    "\t\t\t<arg1>Select Forum from [POCFISForumV2].[dbo].[Forums] where ForumId = 2</arg1>\n" +
-                    "\t\t</arguments>\n" +
-                    "\t</step>");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Sql Server Query</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<expectedValue>FAQ</expectedValue>\r\n" +
+                    "\t<crucial>false</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<!-- Table to query or select statement -->\r\n" +
+                    "\t\t<arg1>Select Forum from [POCFISForumV2].[dbo].[Forums] where ForumId = 2</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "Second Option Alternative type of SQL Select Statement: Specify the entire Select statement.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Sql Server Query</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<expectedValue>FAQ</expectedValue>\r\n" +
+                    "\t<crucial>false</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<!-- Table to query or select statement -->\r\n" +
+                    "\t\t<arg1>Select Top(1) Forum from [POCFISForumV2].[dbo].[Forums]</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
 
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
@@ -1816,3 +1970,4 @@ public class TestHelper{
     }
 
 }
+

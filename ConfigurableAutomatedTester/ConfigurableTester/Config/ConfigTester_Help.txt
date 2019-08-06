@@ -85,8 +85,9 @@ Each test is grouped in <step> elements, which consist of the all or some of the
 <arg1>First argument</arg1> The numbered arguments vary greatly depending upon the type of command.
 	<arg2>Second argument</arg2>
 	<arg3>Third argument</arg3>
-	Generally speaking, these numbered arguments are arranged so that the most relevant pieces are information 
+	Generally speaking, these numbered arguments are arranged so that the most relevant pieces of information 
 	are the first items and the less relevant pieces of information are last.
+	The order of the arguments is crucial, while properly numbering is important but improperly numbering is forgivable as long as the xml is valid.
 There are few, if any, examples that use all nodes, so in the Navigation example below note that this does not use 
 Accessor and AccessorType nodes because it accesses the URL instead of a page element when making an assertion. 
 Also, keep in mind that while this represents the structure of a test file, it consists of only one of many possible test steps.
@@ -782,33 +783,163 @@ IMPORTANT NOTE #1: ANY PARENT ELEMENT WILL CONTAIN THE TEXT OF IT'S CHILD ELEMEN
 	 provided with the element text, for text input it creates a sendkeys, for buttons, checkboxes and radio buttons it creates a click, 
 	 and for selects it creates a select command, allowing the user to enter one of the option values that is to be selected.
   The create_test_page command and the create_test_page_formatted command take the following test parameters:
-	 - Takes n/a as the accessor ([URL/XPath/CssSelector/TagName/ID/ClassName])
-	 - The Action/Expected Value field takes the create_test_page command and the following parameters:
+   - arg1 is the Tag Type.  Use * for all tags, or div for just div tags etc...
 		 -    Element Type: A single element with * being all elements and the default if left empty.
 			 -   Elements Include but are not limited to: *, html, head, title, body, a, ol, ul, li, select, input etc...
 			 -   If omitted, this will be * for all elements.
+   - arg2 is the File where the Tags will be written.
 		 -    File Path and File Name: This is where the results will be written.
 			 -   If omitted, this will be written to the config folder. (/config/newTestFile.txt)
+   - arg3 is the comma delimited list of Tags to exclude.
 		 -    A comma delimited list of elements to skip when retrieving all element (*) information.
 			 -   These would usually be elements that do not have text themselves but contain elements that do have text.
 			 -   Do not include spaces between elements, just a comma as follows: html,head,title,body,div
 			 -   Skip elements are ONLY APPLIED WHEN RETRIEVING ALL ELEMENTS and IGNORED WHEN RETRIEVING A SPECIFIC TAG TYPE.
-	 - Takes n/a as the Element Lookup Type.
-	 - Takes true as Perform Action other than Read because it is retrieving information and saving it to a file.
-	 - Takes false, as this is not a test and nothing is being asserted; therefore, nothing is crucial and this setting will be ignored.
   The following two examples gets all page elements, saves them to a file, skips a list of container and other elements.
-╠n/a ; create_test_page  ╬  ╬ C:\MyLocalPath\MyLocalFolder\My Test Page Creation Folder\TestFileOutput_All.txt ╬ html,head,title,meta,script,body,style,a,nav,br,strong,div ; n/a ; true ; false╣
-╠n/a ; create_test_page  ╬ * ╬ C:\MyLocalPath\MyLocalFolder\My Test Page Creation Folder\TestFileOutput_All.txt ╬ html,head,title,meta,script,body,style,a,nav,br,strong,div ; n/a ; true ; false╣
-
+<step>
+	<command>create_test_page_formatted</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>*</arg1>
+		<arg2>C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\TestPages\Formy-Test.xml</arg2>
+		<arg3>html,head,title,meta,script,body,style,nav,br,div,form</arg3>
+	</arguments>
+</step>
 
 
 The following example gets all anchor tag elements, saves them to a file, and ignores the skips list because all elements are not being retrieved.
-╠n/a ; create_test_page  ╬ a ╬ C:\MyLocalPath\MyLocalFolder\My Test Page Creation Folder\TestFileOutput_A_Only.txt ╬ html,head,title,meta,script,body,style,a,nav,br,strong,div ; n/a ; true ; false╣
+<step>
+	<command>create_test_page_formatted</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>a</arg1>
+		<arg2>C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\TestPages\TestFileOutput_A_Only.txt</arg2>
+		<arg3>html,head,title,meta,script,body,style,nav,br,div,form</arg3>
+	</arguments>
+</step>
 
 The following example is the correct equivalent of the previous command.
-╠n/a ; create_test_page  ╬ a ╬ C:\MyLocalPath\MyLocalFolder\My Test Page Creation Folder\TestFileOutput_A.txt ; n/a ; true ; false╣
+<step>
+	<command>create_test_page_formatted</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>a</arg1>
+		<arg2>C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\TestPages\TestFileOutput_A_Only.txt</arg2>
+	</arguments>
+</step>
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
+═════════[ CONNECT TO SQL SERVER DATABASE AND CLOSE THE CONNECTION ]═══════════════════════════════════════════════════════════════════════════════════════════
+There will be times during the course of QAing a site where querying the database can confirm that a value has been 
+added or removed.
+IMPORTANT: ENSURE THAT YOU ALWAYS CREATE A CLOSE CONNECTION TEST STEP TO CLOSE THE CONNECTION YOU OPEN!!!!
+To do this, you must first establish a connection to the database and this is how to do that.
+There are two ways to establish a connection to Sql Server. 
+<step>
+	<!-- Open Connection to Sql Server -->
+	<command>Connect to Database</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<!-- Type of Database (MongoDb, Sql Server)-->
+		<arg1>SQL Server</arg1>
+		<!-- Database to connect to -->
+		<arg2>PocFisForumV2</arg2>
+		<!-- user name -->
+		<arg3>forum_user</arg3>
+		<!-- password -->
+		<arg4>forum_user</arg4>
+		<!-- connection type - not currently used -->
+		<arg5>local</arg5>
+	</arguments>
+</step>
+
+The alternative method with more control but with more risk of failure.
+<step>
+	<command>Connect to Database</command>
+	<actionType>write</actionType>
+	<crucial>true</crucial>
+	<arguments>
+		<!-- Type of Database (MongoDb, Sql Server)-->
+		<arg1>SQL Server</arg1>
+		<!-- Connection String or Close to close the connection -->
+		<!-- when using a uri, escape all illegal xml characters (escape: ampersands with &amp;) -->
+		<arg2>jdbc:sqlserver://localhost:1433;database=PocFisForumV2;user=forum_user;password=forum_user;encrypt=false;trustServerCertificate=true;loginTimeout=30;</arg2>
+		<!-- arg2>jdbc:sqlserver://local.database.windows.net:1433;database=PocFisForumV2;user=forum_user;password=forum_user;encrypt=true;trustServerCertificate=false;loginTimeout=30;</arg2 -->
+		<!-- currently not implemented but created to distinguish between local and non-local SQL databases -->
+		<arg3>local</arg3>
+	</arguments>
+</step>
+
+═════════[ CLOSING THE DATABASE CONNECTION ]═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Equally important as opening the database connection object, is closing the database connection object.
+Open connections consume resources and unclosed connections can use up all available memory or an 
+allotment of connections depending on where the connection lives.
+To avoid this, always write a close connection command whenever writing an open connection command.
+The close command is simple and as follows:
+<step>
+	<command>Close Database Connection</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>SQL Server</arg1>
+	</arguments>
+</step>
+
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ QUERYING THE SQL SERVER DATABASE  ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+When testing a site, there sometimes needs to be verification that a value was 
+actually written to, or removed from the database.  
+This is the purpose of the Sql Server Query Command.
+There are two ways to query the database.
+First option: Specify the Table, Field and Where clause separately.
+The last argument is the comparison type and must be included for != test steps, 
+but is optional for = test steps.
+<step>
+	<command>Sql Server Query</command>
+	<actionType>read</actionType>
+	<expectedValue>General</expectedValue>
+	<crucial>false</crucial>
+	<arguments>
+		<!-- Table to query or select statement -->
+		<arg1>[POCFISForumV2].[dbo].[Forums]</arg1>
+		<!-- Field to query -->
+		<arg2>Forum</arg2>
+		<!-- where clause - optional -->
+		<arg3>where ForumId = 1</arg3>
+	</arguments>
+</step>
+
+Second Option: Specify the entire Select statement.
+<step>
+	<command>Sql Server Query</command>
+	<actionType>read</actionType>
+	<expectedValue>FAQ</expectedValue>
+	<crucial>false</crucial>
+	<arguments>
+		<!-- Table to query or select statement -->
+		<arg1>Select Forum from [POCFISForumV2].[dbo].[Forums] where ForumId = 2</arg1>
+	</arguments>
+</step>
+
+Second Option Alternative type of SQL Select Statement: Specify the entire Select statement.
+<step>
+	<command>Sql Server Query</command>
+	<actionType>read</actionType>
+	<expectedValue>FAQ</expectedValue>
+	<crucial>false</crucial>
+	<arguments>
+		<!-- Table to query or select statement -->
+		<arg1>Select Top(1) Forum from [POCFISForumV2].[dbo].[Forums]</arg1>
+	</arguments>
+</step>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 ║                                              TROUBLESHOOTING                                                                                                           ║
