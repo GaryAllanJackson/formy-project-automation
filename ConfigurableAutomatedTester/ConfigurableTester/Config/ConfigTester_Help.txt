@@ -2,63 +2,127 @@
 ╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 ║                                              CONFIGURATION FILE FORMAT                                                                                                 ║
 ╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
-// NOTES: Lines beginning with double slashes denote comments, in the configuration file, and will be ignored by the configuration reader.
-// BLANK LINES ARE NOT PERMITTED!!!  If you need visual space, start the blank line with double slashes and that is acceptable.
-// Configuration files are key=value pairs where you are setting a configurable value using the equal assignment operator
-// TestFileName - entries beginning with this are used to point to the file/files containing the test setting commands.
-//    -   These entries can be numbered so that they can be sorted and taken in order when reading a folder of files or 
-//         - they can have the same entry and be either sorted alphabetically, if SortSpecifiedTestFiles is true, or read 
-//         - in the order in which they appear, if SortSpecifiedTestFiles is set to false.
-//    -   The Test Setting Commands file is a described in detail below under the Test File Format Section.
-//
-// ScreenShotSaveFolder - folder where screenshots should be saved - Must already exist
-// BrowserType values: Firefox, Chrome, PhantomJS
-// RunHeadless - can be true to run headless or false to show the browser, but PhantomJs is always headless
-// TestAllBrowsers - can be true or false.  If false, BrowserType must be set.  If true, BrowserType is ignored and the program will cycle through all browsers.
-// SpecifyTestFiles - Can be true to specifiy each file and the order that files are run, or false to select a folder of files that will be ordered alphabetically.
-// SortSpecifiedTestFiles - This setting depends upon SpecifyTestFiles being true.
-//    -   Can be set to false to manually place the files in the order that you want them to be executed. (Default)
-//    -   Can be true to sort the files alphabetically and numerically using the number following the word TestFileName.
-//       -   An example of the sorted order follows: (TestFileName0, TestFileName1, TestFileName2 etc..)
-//       -   This forces a sort to be performed on the names so these will sort numerically.
-//       -   If multiple entries have the same number, like (TestFileName0, TestFileName0) those entries will also be sorted alphabetically.
-// TestFolderName - will contain the folder where test files exist when SpecifyTestFiles is false.
-// FolderFileFilterType - type of filtering you want to use to select similarly named files within a folder.  Options are: 
-//    -   [Starts With], [Contains] and [Ends With] 
-//    -   [Starts With] - will select only the test files starting with the filter entered
-//    -   [Contains] - will select only test files containing the filter entered
-//    -   [Ends With] - will select only test files ending with the filter entered
-// FolderFileFilter - the filter used to select only matching files within the Test Folder.
-// MaxScreenShotsToTake - the maximum number of screen shots to take including any unscheduled screenshots taken due to an error.
-//    -   When -1, only errors will create screen shots.
-//    -   When 0, there is no limit and all screenshots will be taken.
-//    -   When any other number, that number of screenshots or less will be taken depending upon the test and the max set.
-//    -   Errors like, Element not found, will create a screenshot to allow you to see the page the application was on when 
-//         the error occurred.
-//
-// In the example configuration file provided below, a single specific test file is being tested, the screen shot folder is specified, 
-// but no screenshots will be taken, only the test Chrome browser will be used and it will be visible, the TestFolderName specified, 
-// FolderFileFilterType specified, and FolderFileFilter specified  are all disregarded because SpecifiyTestFiles is true, meaning 
-// only files specifically specified will be used.
-// The commented test file lines were included to show a means in which different files can be setup but can be commented so that only 
-// the intended test files run.   
-//  These comments were also included  to show that duplicate TestFileName0 keys can be used as well as uniquely named 
-// incremental TestFileNames like TestFileName1, TestFileName2 etc.. can be used.  Just ensure that they are not preceded by 
-// comment characters, if intended to run.  
-//
-//TestFileName0=C:\TestSettings2.txt
-//TestFileName1=C:\TestSettings2.txt
-TestFileName0=C:\TestSettings.txt
-ScreenShotSaveFolder=C:\ScreenShots\MySite
-MaxScreenShotsToTake=-1
-BrowserType=Chrome
-RunHeadless=false
-TestAllBrowsers=false
-SpecifyTestFiles=true
-SortSpecifiedTestFiles=false
-TestFolderName=C:\MyTestFolder\
-FolderFileFilterType=Starts_With
-FolderFileFilter=MyPhrase
+NOTES: The file format is XML, so to make comments use <!-- to begin the comment and --> to end the comment.
+Comments can span lines but comments cannot include other comment blocks.
+Refer to an XML guide for proper commenting.  Google it!!!!
+Both configuration file examples can be used as starting points, just substitute values accordingly.
+The terms element and node may be used interchangeably below to refer to the same thing.
+The following is an example of a configuration file which will be explained below.
+<?xml version="1.0" encoding="UTF-8" ?>
+<automatedTestConfiguration>
+	<!-- folder where screenshots should be saved -->
+	<screenShotSaveFolder>C:\Gary\ScreenShots\Mashup</screenShotSaveFolder>
+	<maxScreenShotsToTake>5</maxScreenShotsToTake>
+	<browserType>Chrome</browserType>
+	<!--<browserType>Firefox</browserType>-->
+	<runHeadless>false</runHeadless>
+	<testAllBrowsers>false</testAllBrowsers>
+	<specifyTestFiles>true</specifyTestFiles>
+	<sortSpecifiedTestFiles>false</sortSpecifiedTestFiles>
+	<!-- Individual File Settings -->
+	<testFiles>
+		<!--<testFileName1>C:\ConfigurableAutomatedTester\Tests\SqlServerAccess-Test.xml</testFileName1>
+		<testFileName2>C:\ConfigurableAutomatedTester\Tests\RunSqlQueries_Alternate-Test.xml</testFileName2>-->
+		<testFileName1>C:\ConfigurableAutomatedTester\Tests\Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1>
+		<testFileName2>C:\ConfigurableAutomatedTester\Tests\CheckImageSource-Test.xml</testFileName2>
+	</testFiles>
+	<!-- Folder Testing Settings -->
+	<testFolderName></testFolderName>
+	<folderFileFilterType></folderFileFilterType>
+	<folderFileFilter></folderFileFilter>
+</automatedTestConfiguration>
+
+The first line is an XML file declaration and must be present as is.
+All elements are required but not all elements have to have a value.  Read on.
+The <automatedTestConfiguration> is the root element in which all configuration elements are contained.
+	It contains no text itself.
+<!-- folder where screenshots should be saved --> is a comment and was purposely included to demonstrate how to add comments.
+	Comments were added to describe the function of the element that follows it.
+	Subsequent comments will not be described.
+The <screenShotSaveFolder></screenShotSaveFolder> element specifies the location where Screen Shots will be saved.
+	This folder must already exist!
+The <maxScreenShotsToTake></maxScreenShotsToTake> element specifies the maximum number of Screen Shots to take.
+		-   When -1, only errors will create screen shots.
+		-   When 0, there is no limit and all screenshots will be taken.
+		-   When any other number, that number of screenshots or less will be taken depending upon the test and the max set.
+		-   Errors like, Element not found, will create a screenshot to allow you to see the page the application was on when 
+			the error occurred.
+The <browserType></browserType> element specifies the type of browser to use when running the test(s).
+	-Valid values are: Firefox, Chrome, PhantomJS
+The <runHeadless></runHeadless> element specifies whether to run the test(s) in headless mode.
+		-	This is a boolean field and can be true or false.  The case does not matter.
+	Headless mode means that the browser does not display on-screen and is used with automation servers
+	to allow running automated tests as part of the build process.
+		-	PhantomJS always runs headless.  To watch the test, use Chrome or Firefox.
+		-	To watch the test, use Chrome or Firefox.
+		-	If not specified, Chrome is the default and will be used.
+The <testAllBrowsers></testAllBrowsers> element specifies whether the test(s) should run in all browsers or just the selected browser.
+		-	This is a boolean field and can be true or false.  The case does not matter.
+		-	If false, BrowserType must be set and only that browser will be used when running tests.
+		-	If true, BrowserType is ignored and the program will cycle through all browsers.
+The <specifyTestFiles></specifyTestFiles> element specifies whether or not the configuration file will list the test files to be used.
+		-	This is a boolean field and can be true or false.  The case does not matter.
+		-	If true, the files specified will be used in the order in which they are listed.
+		-	If false, the files will be ignored as this indicates that the folder settings will be used instead.
+The <sortSpecifiedTestFiles></sortSpecifiedTestFiles> element specifies whether or not to sort the test files.
+	This setting made sense in the old system but makes much less sense now since files are physically listed in numerical order.
+	The number no longer has meaning in the sort as each entry should be entered in numerical order, so the number will not be used for sorting.
+		-	If false, files are taken in the order in which they are physically and numerically listed.
+		-	If true, files will be sorted alphabetically and re-listed on the screen to show the order in which they will execute.
+The <testFiles></testFiles> element is a container element for the testFileName elements and has no textual content of its own.
+The <testFileName1></testFileName1> element specifies the test file to use for the test and each element should end with an incremental numeric value.
+	It should be noted that while this ending numeric value should be incremental, the application will read all 
+	testFileName nodes in the order they are entered regardless of the numbering.
+	To avoid any possible issues related to this, it is suggested that you follow the best practice and number appropriately.
+	The commented test file lines were included to show a means in which different files can be setup but can be commented so that only 
+	the intended test files run.   
+---------------------
+The following three settings need to be talked about together since they work together to provide a particularly useful piece of functionality.
+The <testFolderName></testFolderName> element specifies the folder where test files are located to allow for reading a folder of 
+test files instead of naming each test file individually.
+The <folderFileFilterType></folderFileFilterType> element specifies the type of filtering to perform on the files in the folder.  Options are: 
+	-	[Starts With], [Contains] and [Ends With] 
+		-	[Starts With] - will select only the test files starting with the filter entered
+		-	[Contains] - will select only test files containing the filter entered
+		-	[Ends With] - will select only test files ending with the filter entered
+The <folderFileFilter></folderFileFilter> element specifies the phrase to use to when selecting files in the specified folder.
+	When used with the other folder settings, a folder containing a multitude of test files can be pointed to using the <testFolderName></testFolderName> element.
+	Then, using the <folderFileFilterType></folderFileFilterType> element, [Starts With] can be used to return only files starting with a specific value.
+	Finally, using the <folderFileFilter></folderFileFilter> element, a phrase like the project name can be used to select only files in the selected folder that start with the project name.
+
+In the example configuration file provided above the explanations, two specific test files are being tested, the screen shot folder is specified, 
+a maximum of 5 screenshots will be taken, only the test Chrome browser will be used and it will be visible, the files will be run in the order entered,
+the TestFolderName, FolderFileFilterType and FolderFileFilter have not been specified but would have been disregarded if specified because
+SpecifiyTestFiles is true, meaning only files specifically specified will be used.
+The commented test file lines were included to show a means in which different files can be setup but can be commented so that only
+
+In the example configuration file provided below, a folder of test files are being tested, but only the files that contain the phrase "sql"
+will be used, the screen shot folder is specified, but no screenshots will be taken, only the Chrome browser will be used and it will be visible,
+and although test files are specified, they will be ignored because SpecifiyTestFiles is false meaning the folder settings will be used to 
+determine the test files to be used.
+<?xml version="1.0" encoding="UTF-8" ?>
+<automatedTestConfiguration>
+	<!-- folder where screenshots should be saved -->
+	<screenShotSaveFolder>C:\Gary\ScreenShots\Mashup</screenShotSaveFolder>
+	<maxScreenShotsToTake>5</maxScreenShotsToTake>
+	<browserType>Chrome</browserType>
+	<!--<browserType>Firefox</browserType>-->
+	<runHeadless>false</runHeadless>
+	<testAllBrowsers>false</testAllBrowsers>
+	<specifyTestFiles>false</specifyTestFiles>
+	<sortSpecifiedTestFiles>true</sortSpecifiedTestFiles>
+	<!-- Individual File Settings -->
+	<testFiles>
+		<!--<testFileName1>C:\ConfigurableAutomatedTester\Tests\SqlServerAccess-Test.xml</testFileName1>
+		<testFileName2>C:\ConfigurableAutomatedTester\Tests\RunSqlQueries_Alternate-Test.xml</testFileName2>-->
+		<testFileName1>C:\ConfigurableAutomatedTester\Tests\Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1>
+		<testFileName2>C:\ConfigurableAutomatedTester\Tests\CheckImageSource-Test.xml</testFileName2>
+	</testFiles>
+	<!-- Folder Testing Settings -->
+	<testFolderName>C:\ConfigurableAutomatedTester\Tests\</testFolderName>
+	<folderFileFilterType>contains</folderFileFilterType>
+	<folderFileFilter>sql</folderFileFilter>
+</automatedTestConfiguration>
 
 
 ╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗

@@ -145,7 +145,7 @@ public class TestHelper{
                 File temp = new File(configSettings.get_testFolderName());
                 configSettings = GetAllFilesInFolder(temp, "txt", configSettings);
 //                UpdateTestResults(FRAMED + ANSI_BLUE_BACKGROUND + ANSI_YELLOW + sectionEndFormatLeft + "End Retrieving Files in specified folder." + sectionEndFormatRight + ANSI_RESET);
-                UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_BLUE_BACKGROUND + AppConstants.ANSI_YELLOW  + AppConstants.sectionLeftDown + PrePostPad("[ End Retrieving Files in specified folder. ]", "═", 9, 157) + AppConstants.sectionRightDown + AppConstants.ANSI_RESET, false);
+                UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_BLUE_BACKGROUND + AppConstants.ANSI_YELLOW  + AppConstants.sectionLeftUp + PrePostPad("[ End Retrieving Files in specified folder. ]", "═", 9, 157) + AppConstants.sectionRightUp + AppConstants.ANSI_RESET, false);
             }
         }
         catch (Exception e) {
@@ -264,7 +264,6 @@ public class TestHelper{
 
                 if (eElement.getElementsByTagName(AppConstants.TestFilesNode).item(0) != null) {
                     NodeList testFiles = eElement.getElementsByTagName(AppConstants.TestFilesNode).item(0).getChildNodes();
-
                     if (testFiles != null && testFiles.getLength() > 0) {
                         tempFiles = new ArrayList<>();
                         testFileCount = 0;
@@ -275,7 +274,9 @@ public class TestHelper{
                             if (testFileNode.getNodeType() == AppConstants.XmlElementNode && (configValue != null && !configValue.isEmpty())) {
                                 tempFiles.add(configValue);
                                 configSettings.set_testSettingsFile(configValue);
-                                UpdateTestResults(AppConstants.ANSI_YELLOW + AppConstants.indent5 + "TestFileName = " + AppConstants.ANSI_RESET + configSettings.get_testSettingsFile(), false);
+                                if (configSettings.get_specifyFileNames()) {
+                                    UpdateTestResults(AppConstants.ANSI_YELLOW + AppConstants.indent5 + "TestFileName = " + AppConstants.ANSI_RESET + configSettings.get_testSettingsFile(), false);
+                                }
                             }
                         }
                     }
@@ -286,7 +287,7 @@ public class TestHelper{
                     configSettings.reset_testFiles();
                     File temp = new File(configSettings.get_testFolderName());
                     configSettings = GetAllFilesInFolder(temp, "txt", configSettings);
-                    UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_BLUE_BACKGROUND + AppConstants.ANSI_YELLOW + AppConstants.sectionLeftDown + PrePostPad("[ End Retrieving Files in specified folder. ]", "═", 9, 157) + AppConstants.sectionRightDown + AppConstants.ANSI_RESET, false);
+                    UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_BLUE_BACKGROUND + AppConstants.ANSI_YELLOW + AppConstants.sectionLeftUp + PrePostPad("[ End Retrieving Files in specified folder. ]", "═", 9, 157) + AppConstants.sectionRightUp + AppConstants.ANSI_RESET, false);
                 }
             }
         } catch (Exception e) {
@@ -294,7 +295,12 @@ public class TestHelper{
         }
 
         if (tempFiles.size() > 0 && configSettings.get_specifyFileNames() && configSettings.get_sortSpecifiedTestFiles()) {
-            SortTestFiles(tempFiles, configSettings);
+            //SortTestFiles(tempFiles, configSettings);
+            SortTestXmlFiles(tempFiles, configSettings);
+            UpdateTestResults(AppConstants.ANSI_YELLOW + AppConstants.indent5 + "[ TestFileNames Re-Sorted, new order shown below ]" + AppConstants.ANSI_RESET, false);
+            for (int index=0;index<tempFiles.size();index++) {
+                UpdateTestResults(AppConstants.ANSI_YELLOW + AppConstants.indent8 + "TestFileName = " + AppConstants.ANSI_RESET + tempFiles.get(index), false);
+            }
         }
 
 //        UpdateTestResults(FRAMED + ANSI_YELLOW_BACKGROUND + ANSI_BLUE + ANSI_BOLD + sectionEndFormatLeft + "End of Reading Configuration File" + sectionEndFormatRight + ANSI_RESET);
@@ -780,63 +786,128 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
             WriteToFile(get_helpFileName(), "║                                              CONFIGURATION FILE FORMAT                                                                                                 ║");
             WriteToFile(get_helpFileName(), "╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
-            WriteToFile(get_helpFileName(), "// NOTES: Lines beginning with double slashes denote comments, in the configuration file, and will be ignored by the configuration reader.");
-            WriteToFile(get_helpFileName(), "// BLANK LINES ARE NOT PERMITTED!!!  If you need visual space, start the blank line with double slashes and that is acceptable.");
-            WriteToFile(get_helpFileName(), "// Configuration files are key=value pairs where you are setting a configurable value using the equal assignment operator");
-            WriteToFile(get_helpFileName(), "// TestFileName - entries beginning with this are used to point to the file/files containing the test setting commands.");
-            WriteToFile(get_helpFileName(), "//    -   These entries can be numbered so that they can be sorted and taken in order when reading a folder of files or ");
-            WriteToFile(get_helpFileName(), "//         - they can have the same entry and be either sorted alphabetically, if SortSpecifiedTestFiles is true, or read ");
-            WriteToFile(get_helpFileName(), "//         - in the order in which they appear, if SortSpecifiedTestFiles is set to false.");
-            WriteToFile(get_helpFileName(), "//    -   The Test Setting Commands file is a described in detail below under the Test File Format Section.");
-            WriteToFile(get_helpFileName(), "//");
-            WriteToFile(get_helpFileName(), "// ScreenShotSaveFolder - folder where screenshots should be saved - Must already exist");
-            WriteToFile(get_helpFileName(), "// BrowserType values: Firefox, Chrome, PhantomJS");
-            WriteToFile(get_helpFileName(), "// RunHeadless - can be true to run headless or false to show the browser, but PhantomJs is always headless");
-            WriteToFile(get_helpFileName(), "// TestAllBrowsers - can be true or false.  If false, BrowserType must be set.  If true, BrowserType is ignored and the program will cycle through all browsers.");
-            WriteToFile(get_helpFileName(), "// SpecifyTestFiles - Can be true to specifiy each file and the order that files are run, or false to select a folder of files that will be ordered alphabetically.");
-            WriteToFile(get_helpFileName(), "// SortSpecifiedTestFiles - This setting depends upon SpecifyTestFiles being true.");
-            WriteToFile(get_helpFileName(), "//    -   Can be set to false to manually place the files in the order that you want them to be executed. (Default)");
-            WriteToFile(get_helpFileName(), "//    -   Can be true to sort the files alphabetically and numerically using the number following the word TestFileName.");
-            WriteToFile(get_helpFileName(), "//       -   An example of the sorted order follows: (TestFileName0, TestFileName1, TestFileName2 etc..)");
-            WriteToFile(get_helpFileName(), "//       -   This forces a sort to be performed on the names so these will sort numerically.");
-            WriteToFile(get_helpFileName(), "//       -   If multiple entries have the same number, like (TestFileName0, TestFileName0) those entries will also be sorted alphabetically.");
-            WriteToFile(get_helpFileName(), "// TestFolderName - will contain the folder where test files exist when SpecifyTestFiles is false.");
-            WriteToFile(get_helpFileName(), "// FolderFileFilterType - type of filtering you want to use to select similarly named files within a folder.  Options are: ");
-            WriteToFile(get_helpFileName(), "//    -   [Starts With], [Contains] and [Ends With] ");
-            WriteToFile(get_helpFileName(), "//    -   [Starts With] - will select only the test files starting with the filter entered");
-            WriteToFile(get_helpFileName(), "//    -   [Contains] - will select only test files containing the filter entered");
-            WriteToFile(get_helpFileName(), "//    -   [Ends With] - will select only test files ending with the filter entered");
-            WriteToFile(get_helpFileName(), "// FolderFileFilter - the filter used to select only matching files within the Test Folder.");
-            WriteToFile(get_helpFileName(), "// MaxScreenShotsToTake - the maximum number of screen shots to take including any unscheduled screenshots taken due to an error.");
-            WriteToFile(get_helpFileName(), "//    -   When -1, only errors will create screen shots.");
-            WriteToFile(get_helpFileName(), "//    -   When 0, there is no limit and all screenshots will be taken.");
-            WriteToFile(get_helpFileName(), "//    -   When any other number, that number of screenshots or less will be taken depending upon the test and the max set.");
-            WriteToFile(get_helpFileName(), "//    -   Errors like, Element not found, will create a screenshot to allow you to see the page the application was on when ");
-            WriteToFile(get_helpFileName(), "//         the error occurred.");
-            WriteToFile(get_helpFileName(), "//");
-            WriteToFile(get_helpFileName(), "// In the example configuration file provided below, a single specific test file is being tested, the screen shot folder is specified, ");
-            WriteToFile(get_helpFileName(), "// but no screenshots will be taken, only the test Chrome browser will be used and it will be visible, the TestFolderName specified, ");
-            WriteToFile(get_helpFileName(), "// FolderFileFilterType specified, and FolderFileFilter specified  are all disregarded because SpecifiyTestFiles is true, meaning ");
-            WriteToFile(get_helpFileName(), "// only files specifically specified will be used.");
-            WriteToFile(get_helpFileName(), "// The commented test file lines were included to show a means in which different files can be setup but can be commented so that only ");
-            WriteToFile(get_helpFileName(), "// the intended test files run.   ");
-            WriteToFile(get_helpFileName(),"//  These comments were also included  to show that duplicate TestFileName0 keys can be used as well as uniquely named ");
-            WriteToFile(get_helpFileName(), "// incremental TestFileNames like TestFileName1, TestFileName2 etc.. can be used.  Just ensure that they are not preceded by ");
-            WriteToFile(get_helpFileName(), "// comment characters, if intended to run.  ");
-            WriteToFile(get_helpFileName(), "//");
-            WriteToFile(get_helpFileName(), "//TestFileName0=C:\\TestSettings2.txt");
-            WriteToFile(get_helpFileName(), "//TestFileName1=C:\\TestSettings2.txt");
-            WriteToFile(get_helpFileName(), "TestFileName0=C:\\TestSettings.txt");
-            WriteToFile(get_helpFileName(), "ScreenShotSaveFolder=C:\\ScreenShots\\MySite");
-            WriteToFile(get_helpFileName(), "MaxScreenShotsToTake=-1");
-            WriteToFile(get_helpFileName(), "BrowserType=Chrome");
-            WriteToFile(get_helpFileName(), "RunHeadless=false");
-            WriteToFile(get_helpFileName(), "TestAllBrowsers=false");
-            WriteToFile(get_helpFileName(), "SpecifyTestFiles=true");
-            WriteToFile(get_helpFileName(), "SortSpecifiedTestFiles=false");
-            WriteToFile(get_helpFileName(), "TestFolderName=C:\\MyTestFolder\\");
-            WriteToFile(get_helpFileName(), "FolderFileFilterType=Starts_With");
-            WriteToFile(get_helpFileName(), "FolderFileFilter=MyPhrase");
+            WriteToFile(get_helpFileName(), "NOTES: The file format is XML, so to make comments use <!-- to begin the comment and --> to end the comment.");
+            WriteToFile(get_helpFileName(), "Comments can span lines but comments cannot include other comment blocks.");
+            WriteToFile(get_helpFileName(), "Refer to an XML guide for proper commenting.  Google it!!!!");
+            WriteToFile(get_helpFileName(), "Both configuration file examples can be used as starting points, just substitute values accordingly.");
+            WriteToFile(get_helpFileName(), "The terms element and node may be used interchangeably below to refer to the same thing.");
+            WriteToFile(get_helpFileName(), "The following is an example of a configuration file which will be explained below.");
+            WriteToFile(get_helpFileName(), "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\r\n" +
+                    "<automatedTestConfiguration>\r\n" +
+                    "\t<!-- folder where screenshots should be saved -->\r\n" +
+                    "\t<screenShotSaveFolder>C:\\Gary\\ScreenShots\\Mashup</screenShotSaveFolder>\r\n" +
+                    "\t<maxScreenShotsToTake>5</maxScreenShotsToTake>\r\n" +
+                    "\t<browserType>Chrome</browserType>\r\n" +
+                    "\t<!--<browserType>Firefox</browserType>-->\r\n" +
+                    "\t<runHeadless>false</runHeadless>\r\n" +
+                    "\t<testAllBrowsers>false</testAllBrowsers>\r\n" +
+                    "\t<specifyTestFiles>true</specifyTestFiles>\r\n" +
+                    "\t<sortSpecifiedTestFiles>false</sortSpecifiedTestFiles>\r\n" +
+                    "\t<!-- Individual File Settings -->\r\n" +
+                    "\t<testFiles>\r\n" +
+                    "\t\t<!--<testFileName1>C:\\ConfigurableAutomatedTester\\Tests\\SqlServerAccess-Test.xml</testFileName1>\r\n" +
+                    "\t\t<testFileName2>C:\\ConfigurableAutomatedTester\\Tests\\RunSqlQueries_Alternate-Test.xml</testFileName2>-->\r\n" +
+                    "\t\t<testFileName1>C:\\ConfigurableAutomatedTester\\Tests\\Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1>\r\n" +
+                    "\t\t<testFileName2>C:\\ConfigurableAutomatedTester\\Tests\\CheckImageSource-Test.xml</testFileName2>\r\n" +
+                    "\t</testFiles>\r\n" +
+                    "\t<!-- Folder Testing Settings -->\r\n" +
+                    "\t<testFolderName></testFolderName>\r\n" +
+                    "\t<folderFileFilterType></folderFileFilterType>\r\n" +
+                    "\t<folderFileFilter></folderFileFilter>\r\n" +
+                    "</automatedTestConfiguration>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "The first line is an XML file declaration and must be present as is.");
+            WriteToFile(get_helpFileName(), "All elements are required but not all elements have to have a value.  Read on.");
+            WriteToFile(get_helpFileName(), "The <automatedTestConfiguration> is the root element in which all configuration elements are contained.");
+            WriteToFile(get_helpFileName(), "\tIt contains no text itself.");
+            WriteToFile(get_helpFileName(), "<!-- folder where screenshots should be saved --> is a comment and was purposely included to demonstrate how to add comments.");
+            WriteToFile(get_helpFileName(), "\tComments were added to describe the function of the element that follows it.");
+            WriteToFile(get_helpFileName(), "\tSubsequent comments will not be described.");
+            WriteToFile(get_helpFileName(), "The <screenShotSaveFolder></screenShotSaveFolder> element specifies the location where Screen Shots will be saved.");
+            WriteToFile(get_helpFileName(), "\tThis folder must already exist!");
+            WriteToFile(get_helpFileName(), "The <maxScreenShotsToTake></maxScreenShotsToTake> element specifies the maximum number of Screen Shots to take.");
+            WriteToFile(get_helpFileName(), "\t\t-   When -1, only errors will create screen shots.");
+            WriteToFile(get_helpFileName(), "\t\t-   When 0, there is no limit and all screenshots will be taken.");
+            WriteToFile(get_helpFileName(), "\t\t-   When any other number, that number of screenshots or less will be taken depending upon the test and the max set.");
+            WriteToFile(get_helpFileName(), "\t\t-   Errors like, Element not found, will create a screenshot to allow you to see the page the application was on when ");
+            WriteToFile(get_helpFileName(), "\t\t\tthe error occurred.");
+            WriteToFile(get_helpFileName(), "The <browserType></browserType> element specifies the type of browser to use when running the test(s).");
+            WriteToFile(get_helpFileName(), "\t-Valid values are: Firefox, Chrome, PhantomJS");
+            WriteToFile(get_helpFileName(), "The <runHeadless></runHeadless> element specifies whether to run the test(s) in headless mode.");
+            WriteToFile(get_helpFileName(), "\t\t-\tThis is a boolean field and can be true or false.  The case does not matter.");
+            WriteToFile(get_helpFileName(), "\tHeadless mode means that the browser does not display on-screen and is used with automation servers");
+            WriteToFile(get_helpFileName(), "\tto allow running automated tests as part of the build process.");
+            WriteToFile(get_helpFileName(), "\t\t-\tPhantomJS always runs headless.  To watch the test, use Chrome or Firefox.");
+            WriteToFile(get_helpFileName(), "\t\t-\tTo watch the test, use Chrome or Firefox.");
+            WriteToFile(get_helpFileName(), "\t\t-\tIf not specified, Chrome is the default and will be used.");
+            WriteToFile(get_helpFileName(), "The <testAllBrowsers></testAllBrowsers> element specifies whether the test(s) should run in all browsers or just the selected browser.");
+            WriteToFile(get_helpFileName(), "\t\t-\tThis is a boolean field and can be true or false.  The case does not matter.");
+            WriteToFile(get_helpFileName(), "\t\t-\tIf false, BrowserType must be set and only that browser will be used when running tests.");
+            WriteToFile(get_helpFileName(), "\t\t-\tIf true, BrowserType is ignored and the program will cycle through all browsers.");
+            WriteToFile(get_helpFileName(), "The <specifyTestFiles></specifyTestFiles> element specifies whether or not the configuration file will list the test files to be used.");
+            WriteToFile(get_helpFileName(), "\t\t-\tThis is a boolean field and can be true or false.  The case does not matter.");
+            WriteToFile(get_helpFileName(), "\t\t-\tIf true, the files specified will be used in the order in which they are listed.");
+            WriteToFile(get_helpFileName(), "\t\t-\tIf false, the files will be ignored as this indicates that the folder settings will be used instead.");
+            WriteToFile(get_helpFileName(), "The <sortSpecifiedTestFiles></sortSpecifiedTestFiles> element specifies whether or not to sort the test files.");
+            WriteToFile(get_helpFileName(), "\tThis setting made sense in the old system but makes much less sense now since files are physically listed in numerical order.");
+            WriteToFile(get_helpFileName(), "\tThe number no longer has meaning in the sort as each entry should be entered in numerical order, so the number will not be used for sorting.");
+            WriteToFile(get_helpFileName(), "\t\t-\tIf false, files are taken in the order in which they are physically and numerically listed.");
+            WriteToFile(get_helpFileName(), "\t\t-\tIf true, files will be sorted alphabetically and re-listed on the screen to show the order in which they will execute.");
+            WriteToFile(get_helpFileName(), "The <testFiles></testFiles> element is a container element for the testFileName elements and has no textual content of its own.");
+            WriteToFile(get_helpFileName(), "The <testFileName1></testFileName1> element specifies the test file to use for the test and each element should end with an incremental numeric value.");
+            WriteToFile(get_helpFileName(), "\tIt should be noted that while this ending numeric value should be incremental, the application will read all ");
+            WriteToFile(get_helpFileName(), "\ttestFileName nodes in the order they are entered regardless of the numbering.");
+            WriteToFile(get_helpFileName(), "\tTo avoid any possible issues related to this, it is suggested that you follow the best practice and number appropriately.");
+            WriteToFile(get_helpFileName(), "\tThe commented test file lines were included to show a means in which different files can be setup but can be commented so that only ");
+            WriteToFile(get_helpFileName(), "\tthe intended test files run.   ");
+
+            WriteToFile(get_helpFileName(), "---------------------");
+            WriteToFile(get_helpFileName(), "The following three settings need to be talked about together since they work together to provide a particularly useful piece of functionality.");
+            WriteToFile(get_helpFileName(), "The <testFolderName></testFolderName> element specifies the folder where test files are located to allow for reading a folder of ");
+            WriteToFile(get_helpFileName(), "test files instead of naming each test file individually.");
+            WriteToFile(get_helpFileName(), "The <folderFileFilterType></folderFileFilterType> element specifies the type of filtering to perform on the files in the folder.  Options are: ");
+            WriteToFile(get_helpFileName(), "\t-\t[Starts With], [Contains] and [Ends With] ");
+            WriteToFile(get_helpFileName(), "\t\t-\t[Starts With] - will select only the test files starting with the filter entered");
+            WriteToFile(get_helpFileName(), "\t\t-\t[Contains] - will select only test files containing the filter entered");
+            WriteToFile(get_helpFileName(), "\t\t-\t[Ends With] - will select only test files ending with the filter entered");
+            WriteToFile(get_helpFileName(), "The <folderFileFilter></folderFileFilter> element specifies the phrase to use to when selecting files in the specified folder.");
+            WriteToFile(get_helpFileName(), "\tWhen used with the other folder settings, a folder containing a multitude of test files can be pointed to using the <testFolderName></testFolderName> element.");
+            WriteToFile(get_helpFileName(), "\tThen, using the <folderFileFilterType></folderFileFilterType> element, [Starts With] can be used to return only files starting with a specific value.");
+            WriteToFile(get_helpFileName(), "\tFinally, using the <folderFileFilter></folderFileFilter> element, a phrase like the project name can be used to select only files in the selected folder that start with the project name.");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "In the example configuration file provided above the explanations, two specific test files are being tested, the screen shot folder is specified, ");
+            WriteToFile(get_helpFileName(), "a maximum of 5 screenshots will be taken, only the test Chrome browser will be used and it will be visible, the files will be run in the order entered,");
+            WriteToFile(get_helpFileName(), "the TestFolderName, FolderFileFilterType and FolderFileFilter have not been specified but would have been disregarded if specified because");
+            WriteToFile(get_helpFileName(), "SpecifiyTestFiles is true, meaning only files specifically specified will be used.");
+            WriteToFile(get_helpFileName(), "The commented test file lines were included to show a means in which different files can be setup but can be commented so that only");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "In the example configuration file provided below, a folder of test files are being tested, but only the files that contain the phrase \"sql\"");
+            WriteToFile(get_helpFileName(), "will be used, the screen shot folder is specified, but no screenshots will be taken, only the Chrome browser will be used and it will be visible,");
+            WriteToFile(get_helpFileName(), "and although test files are specified, they will be ignored because SpecifiyTestFiles is false meaning the folder settings will be used to ");
+            WriteToFile(get_helpFileName(), "determine the test files to be used.");
+            WriteToFile(get_helpFileName(), "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\r\n" +
+                    "<automatedTestConfiguration>\r\n" +
+                    "\t<!-- folder where screenshots should be saved -->\r\n" +
+                    "\t<screenShotSaveFolder>C:\\Gary\\ScreenShots\\Mashup</screenShotSaveFolder>\r\n" +
+                    "\t<maxScreenShotsToTake>5</maxScreenShotsToTake>\r\n" +
+                    "\t<browserType>Chrome</browserType>\r\n" +
+                    "\t<!--<browserType>Firefox</browserType>-->\r\n" +
+                    "\t<runHeadless>false</runHeadless>\r\n" +
+                    "\t<testAllBrowsers>false</testAllBrowsers>\r\n" +
+                    "\t<specifyTestFiles>false</specifyTestFiles>\r\n" +
+                    "\t<sortSpecifiedTestFiles>true</sortSpecifiedTestFiles>\r\n" +
+                    "\t<!-- Individual File Settings -->\r\n" +
+                    "\t<testFiles>\r\n" +
+                    "\t\t<!--<testFileName1>C:\\ConfigurableAutomatedTester\\Tests\\SqlServerAccess-Test.xml</testFileName1>\r\n" +
+                    "\t\t<testFileName2>C:\\ConfigurableAutomatedTester\\Tests\\RunSqlQueries_Alternate-Test.xml</testFileName2>-->\r\n" +
+                    "\t\t<testFileName1>C:\\ConfigurableAutomatedTester\\Tests\\Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1>\r\n" +
+                    "\t\t<testFileName2>C:\\ConfigurableAutomatedTester\\Tests\\CheckImageSource-Test.xml</testFileName2>\r\n" +
+                    "\t</testFiles>\r\n" +
+                    "\t<!-- Folder Testing Settings -->\r\n" +
+                    "\t<testFolderName>C:\\ConfigurableAutomatedTester\\Tests\\</testFolderName>\r\n" +
+                    "\t<folderFileFilterType>contains</folderFileFilterType>\r\n" +
+                    "\t<folderFileFilter>sql</folderFileFilter>\r\n" +
+                    "</automatedTestConfiguration>");
 
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
@@ -1805,6 +1876,45 @@ public class TestHelper{
             configSettings.set_testSettingsFile(configValue, x);
         }
     }
+
+    private void SortTestXmlFiles(ArrayList<String> tempFiles, ConfigSettings configSettings) {
+        String configValue;
+        String firstFile;
+        String secondFile;
+        String temp1;
+        String temp2;
+
+        for (int y=0;y<tempFiles.size();y++) {
+            firstFile = tempFiles.get(y);
+//            UpdateTestResults("In outer y loop num1 = " + num1);
+            for (int x = 0; x < tempFiles.size(); x++) {
+                secondFile = tempFiles.get(x);
+                //if (firstFile.compareTo(secondFile) > 0 && y < x) {
+                if (secondFile.compareTo(firstFile) > 0 && y > x) {
+                    temp1 = tempFiles.get(y);
+                    temp2 = tempFiles.get(x);
+                    tempFiles.remove(x);
+                    tempFiles.remove(y);
+                    tempFiles.add(x, temp1);
+                    tempFiles.add(y, temp2);
+                } else if (firstFile.compareTo(secondFile) > 0 && x > y) {
+                    temp1 = tempFiles.get(y);
+                    temp2 = tempFiles.get(x);
+                    tempFiles.remove(x);
+                    tempFiles.remove(y);
+                    tempFiles.add(y, temp2);
+                    tempFiles.add(x, temp1);
+                }
+            }
+        }
+
+
+        for (int x=0;x<tempFiles.size();x++) {
+            configValue = tempFiles.get(x).substring(tempFiles.get(x).indexOf("=") + 1);
+            configSettings.set_testSettingsFile(configValue, x);
+        }
+    }
+
 
     /* ******************************************************************
      * Description: This method gets all files in the folder passed in

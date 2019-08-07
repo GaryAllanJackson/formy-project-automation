@@ -1,12 +1,35 @@
 Currently, there are two separate Projects as part of this application.
-For both projects:
-First, update hardcoded paths for config file, log file(TestHelper.java, PageHelper.java), and the Chrome, Firefox and PhantomJs drivers.
-Second, mark the test folder as a test folder.
-Third, mark pages and Entities as source root folder.
-Fourth, make sure that your java version is 1.8 so that you can compile.
+THE INITIAL PROJECT:
+	The initial project used ANSI delimiters along with spaces and semi-colons in the test file while using two forward slashes in the Configuration file
+	and became quite complex to understand and explain to others.
+	To use the initial project, be sure to update the HomePage.java file below and reverse the commented calls in the Form.Java.
+	Run the TestHomePage() method using JUnit to run this part of the application. 
 
+THE UPDATED PROJECT:  (Default currently setup to run.)
+	The Updated Project uses XML to describe the configuration file and the Test Settings files.  
+	This uniform approach allows for easier understanding because there is a common template for constructing both file types.
+	This project has more functionality than the initial project such as Sql Server connectivity and querying.
+	To use the updated project, be sure to update the TestCentral.java file below. 
+	Run the ConfigurableTestController() method using JUnit to run this part of the application.
 
-For setting up the NEW project that uses XML formatted Test Files
+FOR BOTH PROJECTS PARTS:
+	1. 	First, open the TestCentral.java and HomePage.java files and update hardcoded paths for the config file, 
+		log file, as well as the paths for the Chrome, Firefox and PhantomJs drivers.
+
+	2.	Second, mark the Pages, test and Entities folders as Sources Root folders.
+
+	3.	Third, make sure that your java version is 1.8 so that you can compile.
+
+	4. 	Optionally, you may choose to change the default name and or path of the Configuration file, the log file or the help file, 
+		all of which can be changed in the 
+
+FOR SETTING UP A NEW PROJECT:
+	1. 	Create the configuration file.  
+		Two configuration files are part of this project and can be found in the Config project folder.
+		It is suggested that you make a backup of these files to ensure that you do not lose the structure.
+		For the Updated Project: ConfigurationSetup.xml
+		For the Legacy Project: ConfigurationSetup.tconfig
+		
 
 
 
