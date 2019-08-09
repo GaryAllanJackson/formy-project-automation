@@ -27,12 +27,12 @@
 	<step>
 		<!-- Tested - Good -->
 		<!-- Compares the value of the accessor with the expectedValue.  -->
-		<command>create_test_page_formatted</command>
+		<command>create_test_page</command>
 		<actionType>write</actionType>
 		<crucial>TRUE</crucial>				   	
 		<arguments>
 			<arg1>*</arg1>
-			<arg2>C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\TestPages\Formy-Test.xml</arg2>
+			<arg2>C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\TestPages\Formy-Unformatted-Test.txt</arg2>
 			<arg3>html,head,title,meta,script,body,style,nav,br,div,form</arg3>	
 		</arguments>
 	</step>

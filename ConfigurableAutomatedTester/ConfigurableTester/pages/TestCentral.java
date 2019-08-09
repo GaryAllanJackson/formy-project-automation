@@ -192,14 +192,11 @@ public class TestCentral {
 
 
     /****************************************************************************
-     *  DESCRIPTION:
-     *    Runs all of the tests read in from the test settings file.
+     *  DESCRIPTION: Runs all of the tests read in from the test settings file.
      *
      **************************************************************************** */
-    @Test   //xpath lookup in this method does not work with headless phantomJS
+    @Test
     public void ConfigurableTestController() throws Exception {
-//        testHelper.UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_GREEN_BACKGROUND + AppConstants.ANSI_BLUE + AppConstants.ANSI_BOLD + "╔" + testHelper.PrePostPad("[ Starting Test app ]", "═", 9, 157) + "╗" + AppConstants.ANSI_RESET, false);
-        //testHelper.UpdateTestResults(AppConstants.ANSI_BRIGHTBLUE +  "Starting Test app", false);
         TestCentralStart(is_executedFromMain());
         if (testAllBrowsers) {
             for (int b = 0; b < maxBrowsers; b++) {
@@ -232,22 +229,27 @@ public class TestCentral {
         }
     }
 
-    /* ****************************************************************
+
+    /**************************************************************************
      * Description: Default Constructor.  Reads the configuration file
-     * and the associated test file and when a site is not being tested
-     * using all browsers, it sets the browser that will be used for the
-     * test.
-     **************************************************************** */
+     *              and the associated test file and when a site is not being
+     *              tested using all browsers, it sets the browser that will
+     *              be used for the test.
+     * @param isStartedFromMain
+     * @throws Exception
+     ***************************************************************************/
     public void TestCentralStart(boolean isStartedFromMain) throws Exception {
         this.set_executedFromMain(isStartedFromMain);
 
         File tmp = new File(configurationFile);
-        testHelper.UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_WHITE_BACKGROUND + AppConstants.ANSI_BLUE + AppConstants.ANSI_BOLD + "╔" + testHelper.PrePostPad(AppConstants.ANSI_RESET + AppConstants.ANSI_BRIGHTBLUE  +"[ Starting Test Application Initialization ]" + AppConstants.FRAMED + AppConstants.ANSI_WHITE_BACKGROUND + AppConstants.ANSI_BLUE + AppConstants.ANSI_BOLD, "═", 9, 157) + "╗" + AppConstants.ANSI_RESET, false);
+        //testHelper.UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_WHITE_BACKGROUND + AppConstants.ANSI_BLUE + AppConstants.ANSI_BOLD + "╔" + testHelper.PrePostPad(AppConstants.ANSI_RESET + AppConstants.ANSI_BRIGHTBLUE  +"[ Starting Test Application Initialization ]" + AppConstants.FRAMED + AppConstants.ANSI_WHITE_BACKGROUND + AppConstants.ANSI_BLUE + AppConstants.ANSI_BOLD, "═", 9, 157) + "╗" + AppConstants.ANSI_RESET, false);
+        testHelper.CreateSectionHeader("[ Starting Test Application Initialization ]", AppConstants.FRAMED + AppConstants.ANSI_WHITE_BACKGROUND + AppConstants.ANSI_BOLD, AppConstants.ANSI_BLUE, true, false, false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BRIGHTBLUE + AppConstants.indent5 +  "Config File absolute path = " + AppConstants.ANSI_RESET + tmp.getAbsolutePath(), false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BRIGHTBLUE + AppConstants.indent5 +  "Log File Name = " + AppConstants.ANSI_RESET  + logFileName, false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BRIGHTBLUE + AppConstants.indent5 +  "Help File Name = " + AppConstants.ANSI_RESET + helpFileName, false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BRIGHTBLUE + AppConstants.indent5 + "Executed From Main or as JUnit Test = " + AppConstants.ANSI_RESET + (is_executedFromMain() ? "Standalone App" : "JUnit Test"), false);
-        testHelper.UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_WHITE_BACKGROUND + AppConstants.ANSI_BLUE + AppConstants.ANSI_BOLD + "╚" + testHelper.PrePostPad(AppConstants.ANSI_RESET + AppConstants.ANSI_BRIGHTBLUE  +"[ End Test Application Initialization ]" + AppConstants.FRAMED + AppConstants.ANSI_WHITE_BACKGROUND + AppConstants.ANSI_BLUE + AppConstants.ANSI_BOLD, "═", 9, 157) + "╝" + AppConstants.ANSI_RESET, false);
+        //testHelper.UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_WHITE_BACKGROUND + AppConstants.ANSI_BLUE + AppConstants.ANSI_BOLD + "╚" + testHelper.PrePostPad(AppConstants.ANSI_RESET + AppConstants.ANSI_BRIGHTBLUE  +"[ End Test Application Initialization ]" + AppConstants.FRAMED + AppConstants.ANSI_WHITE_BACKGROUND + AppConstants.ANSI_BLUE + AppConstants.ANSI_BOLD, "═", 9, 157) + "╝" + AppConstants.ANSI_RESET, false);
+        testHelper.CreateSectionHeader("[ End Test Application Initialization ]", AppConstants.FRAMED + AppConstants.ANSI_WHITE_BACKGROUND + AppConstants.ANSI_BOLD, AppConstants.ANSI_BLUE, false, false, false);
         testHelper.UpdateTestResults("", false);
 
         testHelper.set_logFileName(logFileName);
@@ -258,7 +260,8 @@ public class TestCentral {
             return;
         }
 
-        testHelper.UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_GREEN_BACKGROUND + AppConstants.ANSI_BLUE + AppConstants.ANSI_BOLD + "╔" + testHelper.PrePostPad("[ Beginning Configuration ]", "═", 9, 157) + "╗" + AppConstants.ANSI_RESET, false);
+        //testHelper.UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_GREEN_BACKGROUND + AppConstants.ANSI_BLUE + AppConstants.ANSI_BOLD + "╔" + testHelper.PrePostPad("[ Beginning Configuration ]", "═", 9, 157) + "╗" + AppConstants.ANSI_RESET, false);
+        testHelper.CreateSectionHeader("[ Beginning Configuration ]", AppConstants.FRAMED + AppConstants.ANSI_GREEN_BACKGROUND + AppConstants.ANSI_BOLD, AppConstants.ANSI_BLUE, true, true, false);
         testHelper.UpdateTestResults(AppConstants.ANSI_GREEN + AppConstants.indent5 + "Configured Browser Selection = " + AppConstants.ANSI_RESET + get_selectedBrowserType(), true);
 
         if (!testAllBrowsers) {
@@ -273,7 +276,8 @@ public class TestCentral {
             }else if (get_selectedBrowserType() == BrowserTypes.Edge) {
                 SetEdgeDriver();
             }
-            testHelper.UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_GREEN_BACKGROUND + AppConstants.ANSI_BLUE + AppConstants.ANSI_BOLD + "╚" + testHelper.PrePostPad("[ Ending Configuration ]", "═", 9, 157) + "╝" + AppConstants.ANSI_RESET, false);
+            //testHelper.UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_GREEN_BACKGROUND + AppConstants.ANSI_BLUE + AppConstants.ANSI_BOLD + "╚" + testHelper.PrePostPad("[ Ending Configuration ]", "═", 9, 157) + "╝" + AppConstants.ANSI_RESET, false);
+            testHelper.CreateSectionHeader("[ Ending Configuration ]", AppConstants.FRAMED + AppConstants.ANSI_GREEN_BACKGROUND + AppConstants.ANSI_BOLD, AppConstants.ANSI_BLUE, false, true, false);
         }
     }
 
@@ -328,23 +332,20 @@ public class TestCentral {
             return;
         }
         int startIndex = 0;  //used for instances when you do not want to start at the first element to test
-        //String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
         boolean revertToParent = false;
 
-        //Uncomment this to have the Unique Identifier span test files for a single run.
-        //uniqueId = GetUniqueIdentifier();
-        //boolean isError = false;
 
         for (int fileIndex = 0; fileIndex < testFiles.size(); fileIndex++) {
-            //moved this here so that the Unique Identifier is created for each test file.
-            uniqueId = testHelper.GetUniqueIdentifier();
             testFileName = testFiles.get(fileIndex);
             //Start - reset this for each test file
+            //moved this here so that the Unique Identifier is created for each test file.
+            uniqueId = testHelper.GetUniqueIdentifier();
             testSteps = new ArrayList<>();
             testSteps = testHelper.ReadTestSettingsXmlFile(testSteps, testFileName);
             persistedString = null;
             //End - reset this for each test file
-            testHelper.UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_PURPLE_BACKGROUND + AppConstants.ANSI_YELLOW + AppConstants.sectionLeftDown + testHelper.PrePostPad("[ Running Test Script ]", "═", 9, 157) + AppConstants.sectionRightDown + AppConstants.ANSI_RESET, false);
+            //testHelper.UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_PURPLE_BACKGROUND + AppConstants.ANSI_YELLOW + AppConstants.sectionLeftDown + testHelper.PrePostPad("[ Running Test Script ]", "═", 9, 157) + AppConstants.sectionRightDown + AppConstants.ANSI_RESET, false);
+            testHelper.CreateSectionHeader("[ Running Test Script ]", AppConstants.FRAMED + AppConstants.ANSI_PURPLE_BACKGROUND + AppConstants.ANSI_BOLD, AppConstants.ANSI_YELLOW, true, true, true);
             testHelper.UpdateTestResults("Running Test Script file: " + testFileName, true);
             for (int x = startIndex; x < testSteps.size(); x++) {
                 if (revertToParent) {
@@ -365,7 +366,7 @@ public class TestCentral {
                     revertToParent = true;
                 }
 
-                testHelper.DebugDisplay("Command:" + ts.get_command() + " Action Type:" + ts.get_actionType().toLowerCase());
+                //testHelper.DebugDisplay("Command:" + ts.get_command() + " Action Type:" + ts.get_actionType().toLowerCase());
                 if (ts.get_actionType().toLowerCase().equals("write")) {
                     PerformWriteActions(ts, fileStepIndex);
                 } else {
@@ -376,25 +377,44 @@ public class TestCentral {
                     testHelper.UpdateTestResults(AppConstants.ANSI_CYAN + AppConstants.iFrameSectionBottomLeft + testHelper.PrePostPad("[ End Switch to IFrame - Reverting to defaultContent ]", "═", 9, 157) + AppConstants.iFrameSectionBottomRight + AppConstants.ANSI_RESET, false);
                     revertToParent = false;
                 }
-
-                //code here
             }
-            testHelper.UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_PURPLE_BACKGROUND + AppConstants.ANSI_YELLOW  + AppConstants.sectionLeftUp + testHelper.PrePostPad("[ End of Test Script ]", "═", 9, 157) + AppConstants.sectionRightUp + AppConstants.ANSI_RESET, false);
+            //testHelper.UpdateTestResults(AppConstants.FRAMED + AppConstants.ANSI_PURPLE_BACKGROUND + AppConstants.ANSI_YELLOW  + AppConstants.sectionLeftUp + testHelper.PrePostPad("[ End of Test Script ]", "═", 9, 157) + AppConstants.sectionRightUp + AppConstants.ANSI_RESET, false);
+            testHelper.CreateSectionHeader("[ End of Test Script ]", AppConstants.FRAMED + AppConstants.ANSI_PURPLE_BACKGROUND + AppConstants.ANSI_BOLD, AppConstants.ANSI_YELLOW, false, true, true);
         }
         PerformCleanup();
         driver.close();
         driver.quit();
-
-        //chromedriver does not shut down from memory so you have to kill the process programmatically
-//        if (this.driver.toString().indexOf("Chrome") >= 0) {
-//            ShutDownChromeDriver();
-//        }
     }
 
+    /*****************************************************************
+     * Description: Created to clean up any resources that have not been
+     *              destroyed/closed at this point.
+     * @throws SQLException
+     *****************************************************************/
     private void PerformCleanup() throws SQLException {
-
         CloseOpenConnections();
+        if (this.driver.toString().indexOf("Chrome") >= 0) {
+            ShutDownChromeDriver();
+        }
+    }
 
+    /*************************************************************
+     * DESCRIPTION:  Shuts down the Chrome Driver.
+     *
+     * FURTHER EXPLANATION:
+     *      For some reason, Chrome Driver notoriously does not shut
+     *      down when the test completes although other drivers do,
+     *      so this fixes that by shutting down all instances of
+     *      the Chrome Driver currently running on your machine.
+     ************************************************************ */
+    private void ShutDownChromeDriver(){
+        try {
+            // Execute command
+            String command = "taskkill /im chromedriver.exe /f";
+            Process child = Runtime.getRuntime().exec(command);
+        } catch (IOException e) {
+            testHelper.UpdateTestResults("The following error occurred while trying to shut down ChromeDriver: " + e.getMessage(), true);
+        }
     }
 
     /*********************************************************************
@@ -412,6 +432,13 @@ public class TestCentral {
         }
     }
 
+    /*************************************************************************
+     * Description: Closes a database connection object based on the parameters
+     *              passed in.
+     * @param databaseConnectionType
+     * @param fileStepIndex
+     * @throws SQLException
+     *************************************************************************/
     private void CloseOpenConnections(String databaseConnectionType, String fileStepIndex) throws SQLException {
         if (databaseConnectionType == AppConstants.SqlServer) {
             if (sqlConnection != null) {
@@ -438,16 +465,16 @@ public class TestCentral {
         return browserUsed;
     }
 
-//    private String GetArgumentValue(TestStep ts, int index) {
-//        Argument arg  = ts.ArgumentList != null && ts.ArgumentList.size() > index ? ts.ArgumentList.get(index) : null;
-//
-//        if (arg!=null) {
-//            return arg.get_parameter();
-//        } else {
-//            return null;
-//        }
-//    }
 
+    /**************************************************************************
+     * Description: Retrieves the argument value at the specified index
+     *              and returns it if available or it returns the defaultValue
+     *              parameter passed in.
+     * @param ts
+     * @param index
+     * @param defaultValue
+     * @return
+     **************************************************************************/
     private String GetArgumentValue(TestStep ts, int index, String defaultValue) {
         Argument arg  = ts.ArgumentList != null && ts.ArgumentList.size() > index ? ts.ArgumentList.get(index) : null;
 
@@ -480,6 +507,13 @@ public class TestCentral {
         }
     }
 
+    /*****************************************************************
+     * Description: Checks if the Argument retrieved at the specified
+     *              index is numeric.
+     * @param ts
+     * @param index
+     * @return - True if numeric, else False
+     *****************************************************************/
     private Boolean CheckArgumentNumeric(TestStep ts, int index) {
         Argument arg  = ts.ArgumentList != null && ts.ArgumentList.size() > index ? ts.ArgumentList.get(index) : null;
         int returnValueCheck;
@@ -510,46 +544,38 @@ public class TestCentral {
                 CheckAnchorHref(ts, fileStepIndex);
             } else if (ts.get_command().toLowerCase().equals("persiststring") || ts.get_command().toLowerCase().equals("persist string")) {
                 PersistValueController(ts, fileStepIndex);
-            } else{
+            } else {
                 CheckElementText(ts, fileStepIndex);
             }
-        }
-        else {
+        } else {
             if (ts.get_command().toLowerCase().contains("check") && (ts.get_command().toLowerCase().contains("post") ||
                     ts.get_command().toLowerCase().contains("get"))) {
                 //refactored and moved to separate method
                 CheckGetPostStatus(ts, fileStepIndex);
-            }
-            else if (ts.get_command().toLowerCase().contains("check") && ts.get_command().toLowerCase().contains("links")) {
+            } else if (ts.get_command().toLowerCase().contains("check") && ts.get_command().toLowerCase().contains("links")) {
                 String url = GetArgumentValue(ts, 0, testPage);
 
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Checking page links for " + url, false);
-                checkBrokenLinks(url);
-            }
-            else if (ts.get_command().toLowerCase().contains("check") && ts.get_command().toLowerCase().contains("image"))
+                CheckBrokenLinks(url);
+            } else if (ts.get_command().toLowerCase().contains("check") && ts.get_command().toLowerCase().contains("image"))
             {
                 String url = GetArgumentValue(ts, 0, null);
                 if (ts.get_command().toLowerCase().contains("alt")) {
-                    checkADAImages(url, "alt");
+                    CheckADAImages(url, "alt");
+                } else if (ts.get_command().toLowerCase().contains("src")) {
+                    CheckADAImages(url, "src");
                 }
-                else if (ts.get_command().toLowerCase().contains("src")) {
-                    checkADAImages(url, "src");
-                }
-            }
-            else if (ts.get_command().toLowerCase().contains("check") && ts.get_command().toLowerCase().contains("count")) {
+            } else if (ts.get_command().toLowerCase().contains("check") && ts.get_command().toLowerCase().contains("count")) {
                 CheckElementCountController(ts, fileStepIndex);
-            }
-            else if (ts.get_command().toLowerCase().contains("check") && ts.get_expectedValue().toLowerCase().contains("contrast")) {
+            } else if (ts.get_command().toLowerCase().contains("check") && ts.get_expectedValue().toLowerCase().contains("contrast")) {
                 ColorContrastController(ts, fileStepIndex);
-            } //perform a database query
-            else if (ts.get_command().toLowerCase().contains("query")) {
+            } else if (ts.get_command().toLowerCase().contains("query")) {
+                //perform a database query
                 DatabaseQueryController(ts, fileStepIndex);
-            }
-            else if (ts.get_command().toLowerCase().contains("find")) {
+            } else if (ts.get_command().toLowerCase().contains("find")) {
                 FindPhraseController(ts, fileStepIndex);
             }
         }
-
     }
 
     /*****************************************************************
@@ -575,7 +601,6 @@ public class TestCentral {
             WaitForElement(ts, fileStepIndex);
         } else if (ts.get_command().toLowerCase().equals("connect to database")) {
             String databaseType = GetArgumentValue(ts, 0, null);
-            String connectionString = GetArgumentValue(ts, 1, null);
             if (databaseType.toLowerCase().equals("mongodb") || databaseType.toLowerCase().contains("mongo")) {
                 //connect to mongo db or close an open mongo db connection
                 SetMongoClient(ts, fileStepIndex);
@@ -585,7 +610,6 @@ public class TestCentral {
             }
         } else if (ts.get_command().toLowerCase().equals("close database connection") || ts.get_command().toLowerCase().equals("close database") ) {
             String databaseType = GetArgumentValue(ts, 0, null);
-
             if (databaseType.toLowerCase().equals(AppConstants.MongoDb.toLowerCase()) || databaseType.toLowerCase().contains("mongo")) {
                 CloseOpenConnections(AppConstants.MongoDb, fileStepIndex);
             } else if (databaseType.toLowerCase().contains(AppConstants.SqlServer.toLowerCase())) {
@@ -601,37 +625,30 @@ public class TestCentral {
             //perform all non-read actions below that do not use an accessor
             if (ts.get_command().toLowerCase().indexOf("navigate") >= 0) {
                 PerformExplicitNavigation(ts, fileStepIndex);
-            }
-            else if (ts.get_command().toLowerCase().equals("wait") || ts.get_command().toLowerCase().equals("delay")) {
+            } else if (ts.get_command().toLowerCase().equals("wait") || ts.get_command().toLowerCase().equals("delay")) {
                 int delayMilliSeconds = GetArgumentNumericValue(ts, 0, 0);
                 DelayCheck(delayMilliSeconds, fileStepIndex);
-            }
-            else if (ts.get_command().toLowerCase().indexOf("screenshot") >= 0) {
+            } else if (ts.get_command().toLowerCase().indexOf("screenshot") >= 0) {
                 //scheduled screenshot capture action
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Taking Screenshot for step " + fileStepIndex, false);
                 PerformScreenShotCapture(GetBrowserUsed() + "_" + ts.get_expectedValue() + "_" + fileStepIndex + "_");
-            }
-            else if (ts.get_command().toLowerCase().indexOf("url") >= 0) {
+            } else if (ts.get_command().toLowerCase().indexOf("url") >= 0) {
                 CheckUrlWithoutNavigation(ts, fileStepIndex);
-            }
-            else if (ts.get_command().toLowerCase().contains("switch to tab")) {
+            } else if (ts.get_command().toLowerCase().contains("switch to tab")) {
                 boolean isChild = (GetArgumentNumericValue(ts, 0, 1) == 1) ? true : false;
                 if (ts.get_command().toLowerCase().contains("0") || !isChild) {
                     SwitchToTab(false, fileStepIndex);
-                }
-                else {
+                } else {
                     SwitchToTab(true, fileStepIndex);
                 }
-            }
-            else if (ts.get_command().toLowerCase().contains("login")) {
+            } else if (ts.get_command().toLowerCase().contains("login")) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Performing login for step " + fileStepIndex, true);
                 String userId = GetArgumentValue(ts, 0, null);
                 String password = GetArgumentValue(ts, 1, null);
                 String url = GetArgumentValue(ts, 2, "n/a");
                 Login(url, userId, password, fileStepIndex);
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Login complete for step " + fileStepIndex, true);
-            }
-            else if (ts.get_command().toLowerCase().contains("create_test_page") || ts.get_command().toLowerCase().contains("create test page")) {
+            } else if (ts.get_command().toLowerCase().contains("create_test_page") || ts.get_command().toLowerCase().contains("create test page")) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Performing Create Test Page for step " + fileStepIndex, true);
                 String createTestFileName = CreateTestPage(ts, fileStepIndex);
                 testHelper.UpdateTestResults("Create Test Page results written to file: " + createTestFileName, false);
@@ -651,11 +668,11 @@ public class TestCentral {
         String checkItem = GetArgumentValue(ts, 0, null);
         String url = GetArgumentValue(ts,1,null);
         String page = url == null ? driver.getCurrentUrl() : url;
+
         if (checkItem != null) {
             testHelper.UpdateTestResults(AppConstants.indent5 + "Checking count of " + checkItem + " on page " + page, false);
-            int expectedCount = ts.get_expectedValue() != null ? parseInt(ts.get_expectedValue()) : 0;    //parseInt(expectedItems[1]);
-            //checkElementCount(ts.get_accessor(), checkItems[2].trim(), expectedCount, fileStepIndex, ts.get_crucial());
-            checkElementCount(url, checkItem, expectedCount, fileStepIndex, ts.get_crucial());
+            int expectedCount = ts.get_expectedValue() != null ? parseInt(ts.get_expectedValue()) : 0;
+            CheckElementCount(url, checkItem, expectedCount, fileStepIndex, ts.get_crucial());
         } else {
             ImproperlyFormedTest(fileStepIndex);
         }
@@ -675,12 +692,10 @@ public class TestCentral {
         if (cssSelector != null && !cssSelector.trim().isEmpty() ) {
             if (!containsOrEquals.toLowerCase().equals("contains")) {
                 message = "Performing find searching all '" + cssSelector.trim() + "' elements for '" + phrase.trim() + "'";
-            }
-            else {
+            } else {
                 message = "Performing find searching all '" + cssSelector.trim() + "' elements containing '" + phrase.trim() + "'";
             }
-        }
-        else {
+        } else {
             if (!containsOrEquals.toLowerCase().contains("contains")) {
                 message = "Performing find searching all elements for '" + phrase.trim() + "'";
             } else {
@@ -700,11 +715,13 @@ public class TestCentral {
      *
      ******************************************************************************/
     private void PersistValueController(TestStep ts, String fileStepIndex) throws Exception {
-        testHelper.UpdateTestResults(AppConstants.indent5 + AppConstants.ANSI_CYAN + "╔" + testHelper.PrePostPad("[ Start Persisting Element Value ]", "═", 9, 152) + "╗" + AppConstants.ANSI_RESET, false);
+        //testHelper.UpdateTestResults(AppConstants.indent5 + AppConstants.ANSI_CYAN + "╔" + testHelper.PrePostPad("[ Start Persisting Element Value ]", "═", 9, 152) + "╗" + AppConstants.ANSI_RESET, false);
+        testHelper.CreateSectionHeader(AppConstants.indent5 + "[ Start Persisting Element Value ]", "", AppConstants.ANSI_CYAN, true, false, true);
         testHelper.UpdateTestResults(AppConstants.indent8 + "Persisting value found by: " + ts.get_accessorType() + " accessor: " + ts.get_accessor(), true);
         persistedString = PersistValue(ts, ts.get_accessor(), fileStepIndex);
         testHelper.UpdateTestResults(AppConstants.indent8 + "Persisted value = (" + persistedString + ")", true);
-        testHelper.UpdateTestResults(AppConstants.indent5 + AppConstants.ANSI_CYAN + "╚" + testHelper.PrePostPad("[ End Persisting action, but value persisted and usable until end of test file ]", "═", 9, 152) + "╝" + AppConstants.ANSI_RESET, false);
+        //testHelper.UpdateTestResults(AppConstants.indent5 + AppConstants.ANSI_CYAN + "╚" + testHelper.PrePostPad("[ End Persisting action, but value persisted and usable until end of test file ]", "═", 9, 152) + "╝" + AppConstants.ANSI_RESET, false);
+        testHelper.CreateSectionHeader(AppConstants.indent5 + "[ End Persisting action, but value persisted and usable until end of test file ]", "", AppConstants.ANSI_CYAN, false, false, true);
     }
 
 
@@ -724,8 +741,7 @@ public class TestCentral {
         //check if switching to an iFrame
         if (ts.get_command() != null && !ts.get_command().toLowerCase().contains("switch to iframe")) {
             status = PerformAction(ts, null, fileStepIndex);
-        }
-        else {
+        } else {
             //subAction can either be the expected value or a command to perform like click
             if (ts.get_command().toLowerCase().contains("switch to iframe")) {
                 subAction = GetArgumentValue(ts, 1, null);
@@ -783,15 +799,13 @@ public class TestCentral {
         Boolean isNumeric = false;
         String item;
         int timeDelay = 400;
-        //if (keysToSend[0].trim().toLowerCase().contains("sendkeys") && keysToSend[0].trim().toLowerCase().contains(" "))
 
         isNumeric = CheckArgumentNumeric(ts, ts.ArgumentList.size() -1);
         if (isNumeric && (ts.get_command().toLowerCase().contains("sendkeys") || ts.get_command().toLowerCase().contains("send keys")))
         {
-            //timeDelay = parseInt(keysToSend[0].split(" ")[1]);
             timeDelay = GetArgumentNumericValue(ts, ts.ArgumentList.size() -1, 400);
         }
-        //for (String item: keysToSend) {
+
         for (Argument argument : ts.ArgumentList) {
             item = argument.get_parameter();
             if (!item.toLowerCase().contains("sendkeys")) {
@@ -861,9 +875,12 @@ public class TestCentral {
                 }
                 testHelper.UpdateTestResults("Found query, and mongo after the if before RunMongoQuery....", false);
             } else if (ts.get_command().toLowerCase().contains("sql server") || ts.get_command().toLowerCase().contains("sqlserver")) {
-                testHelper.UpdateTestResults( AppConstants.ANSI_CYAN + AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start Sql Server Query Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+                //testHelper.UpdateTestResults( AppConstants.ANSI_CYAN + AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start Sql Server Query Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+                testHelper.CreateSectionHeader("[ Start Sql Server Query Event ]", "", AppConstants.ANSI_CYAN, true, false, true);
+                //testHelper.CreateSectionHeader("[ End of Test Script ]", AppConstants.FRAMED + AppConstants.ANSI_PURPLE_BACKGROUND + AppConstants.ANSI_BOLD, AppConstants.ANSI_YELLOW, false, true, true);
                 RunSqlServerQuery(ts, fileStepIndex);
-                testHelper.UpdateTestResults( AppConstants.ANSI_CYAN + AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End Sql Server Query Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+                //testHelper.UpdateTestResults( AppConstants.ANSI_CYAN + AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End Sql Server Query Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+                testHelper.CreateSectionHeader("[ End Sql Server Query Event ]", "", AppConstants.ANSI_CYAN, false, false, true);
             }
         } catch(SQLException e) {
             testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failure in DatabaseQueryController for step " + fileStepIndex  + "\r\n" + e.getMessage() + AppConstants.ANSI_RESET, true);
@@ -914,16 +931,17 @@ public class TestCentral {
             if (persistedString != null) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Grabbing " + AppConstants.ANSI_CYAN + "persisted" + AppConstants.ANSI_RESET + " value: (" + persistedString + ") for comparison.", true);
                 expected = persistedString;
-            }
-            else {
+            } else {
                 testHelper.UpdateTestResults("", false);
-                testHelper.UpdateTestResults(AppConstants.indent5 + AppConstants.ANSI_RED + "╔" + testHelper.PrePostPad("[ Start of Persistence Usage Error ]", "═", 9, 152) + "╗" + AppConstants.ANSI_RESET, true);
+                //testHelper.UpdateTestResults(AppConstants.indent5 + AppConstants.ANSI_RED + "╔" + testHelper.PrePostPad("[ Start of Persistence Usage Error ]", "═", 9, 152) + "╗" + AppConstants.ANSI_RESET, true);
+                testHelper.CreateSectionHeader(AppConstants.indent5 +"[ Start of Persistence Usage Error ]", "", AppConstants.ANSI_RED, true, false, true);
                 testHelper.UpdateTestResults(AppConstants.indent8 + AppConstants.ANSI_RED + "ERROR: No value previously persisted!!! " + AppConstants.ANSI_RESET + "Using empty string () instead of null for comparison.", true);
                 testHelper.UpdateTestResults(AppConstants.indent8 + AppConstants.ANSI_RED + "IMPORTANT:" + AppConstants.ANSI_RESET + " A value must first be persisted before that persisted value can be used for comparison.", false);
                 testHelper.UpdateTestResults(AppConstants.indent8 + AppConstants.ANSI_RED + "NOTE:" + AppConstants.ANSI_RESET + " Values persisted in one test file are reset before the start of the next test file.", false);
                 testHelper.UpdateTestResults(AppConstants.indent8 + AppConstants.indent5 + "Any values you want persisted for comparison, must first be persisted in the test file performing the comparison!!!",false);
                 testHelper.UpdateTestResults(AppConstants.indent8 + AppConstants.indent5 + "Refer to the help file for more information regarding persisting and comparing persisted values.", false);
-                testHelper.UpdateTestResults(AppConstants.indent5 + AppConstants.ANSI_RED + "╚" + testHelper.PrePostPad("[ End of Persistence Usage Error ]", "═", 9, 152) + "╝" + AppConstants.ANSI_RESET, true);
+                //testHelper.UpdateTestResults(AppConstants.indent5 + AppConstants.ANSI_RED + "╚" + testHelper.PrePostPad("[ End of Persistence Usage Error ]", "═", 9, 152) + "╝" + AppConstants.ANSI_RESET, true);
+                testHelper.CreateSectionHeader(AppConstants.indent5 +"[ End of Persistence Usage Error ]", "", AppConstants.ANSI_RED, false, false, true);
                 expected = "";
             }
         }
@@ -946,8 +964,7 @@ public class TestCentral {
         if (ts.get_crucial()) {
             if (!notEqual) {
                 assertEquals(expected, actual);
-            }
-            else {
+            } else {
                 assertFalse(expected.equals(actual));
             }
         } else {
@@ -989,9 +1006,7 @@ public class TestCentral {
      * @param fileStepIndex
      *
      ******************************************************************** */
-    private String PersistValue(TestStep ts, String accessor, String fileStepIndex) throws Exception
-    {
-        //testHelper.UpdateTestResults("IN the PersistValue method", false);
+    private String PersistValue(TestStep ts, String accessor, String fileStepIndex) throws Exception  {
         String actual = null;
         if (ts.get_accessorType().toLowerCase().equals(xpathCheckValue)) {
             testHelper.UpdateTestResults(AppConstants.indent8 + "Element text being retrieved at step " + fileStepIndex + " by xPath: " + accessor, true);
@@ -1009,7 +1024,6 @@ public class TestCentral {
             testHelper.UpdateTestResults(AppConstants.indent8 + "Element text being retrieved at step " + fileStepIndex + " by Id: " + accessor, true);
             actual = CheckElementWithId(ts, fileStepIndex);
         }
-
         return actual;
     }
 
@@ -1022,10 +1036,8 @@ public class TestCentral {
      * @param fileStepIndex
      *******************************************************************************/
     private void CheckImageSrcAlt(TestStep ts, String fileStepIndex) {
-        //TODO: GAJ Working here
         String actualValue="";
         String srcAlt = GetArgumentValue(ts, 0, "src");
-        //testHelper.UpdateTestResults("In CheckImageSrcAlt where I should be!!! - accessor = " + ts.get_accessor(), false);
 
         if (ts.get_accessorType().toLowerCase().equals(xpathCheckValue)) {
             actualValue = this.driver.findElement(By.xpath(ts.get_accessor())).getAttribute(srcAlt);
@@ -1041,13 +1053,11 @@ public class TestCentral {
 
         if (ts.get_crucial()) {
             assertEquals(ts.get_expectedValue(), actualValue);
-        }
-        else {
+        } else {
             try
             {
                 assertEquals(ts.get_expectedValue(), actualValue);
-            }
-            catch (AssertionError ae) {
+            } catch (AssertionError ae) {
                 //do nothing, this just traps the assertion error so that processing can continue
             }
         }
@@ -1066,9 +1076,8 @@ public class TestCentral {
      * @param fileStepIndex
      *******************************************************************************/
     private void CheckAnchorHref(TestStep ts, String fileStepIndex) {
-        //TODO: GAJ Working here
         String actualValue="";
-        //was going to wire this for text and href but text is already wired up through the default method
+        //Not wired for checking text because text is already wired up through the default assert method
         String hrefTxt = "href";
 
 
@@ -1145,23 +1154,24 @@ public class TestCentral {
         }
     }
 
-    /*************************************************************
-     * DESCRIPTION:
-     *      Returns the URL of the current page.
-     ************************************************************ */
+    /********************************************************************
+     * DESCRIPTION: Returns the URL of the current page.
+     * @return
+     ********************************************************************/
     public String GetCurrentPageUrl() {
         return this.driver.getCurrentUrl();
     }
 
+
     /*************************************************************
-     * DESCRIPTION:
-     *      Returns the status code of the url passed in for a
-     *      GET request.
+     * DESCRIPTION: Returns the status code of the url passed in for a
+     *              GET request.
      * @param url - url to check
      ************************************************************ */
     public int httpResponseCodeViaGet(String url) {
         return RestAssured.get(url).statusCode();
     }
+
 
     /*************************************************************
      * DESCRIPTION:
@@ -1184,13 +1194,14 @@ public class TestCentral {
         testHelper.UpdateTestResults("Imporperly formatted test for step " + fileStepIndex, true);
     }
 
+
     /*************************************************************
-     * DESCRIPTION:
-     *      Retrieves all anchor tags in a page and reports the
-     *      status of all anchor tags that have an href attribute.
+     * DESCRIPTION: Retrieves all anchor tags in a page and
+     *              reports the status of all anchor tags that
+     *              have an href attribute.
      * @param url - url to check
      ************************************************************ */
-    public void checkBrokenLinks(String url) {
+    public void CheckBrokenLinks(String url) {
         if (driver.getCurrentUrl() != url) {
             driver.get(url);
         }
@@ -1245,7 +1256,7 @@ public class TestCentral {
      * @param url - url to check
      * @param checkType - Set to Image alt or src attribute
      ************************************************************ */
-    public void checkADAImages(String url, String checkType) {
+    public void CheckADAImages(String url, String checkType) {
         if (url != null && !url.isEmpty() && !url.toLowerCase().trim().equals("n/a")) {
             driver.get(url);
         }
@@ -1266,13 +1277,12 @@ public class TestCentral {
                 } else {
                     testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed image alt tag missing for img src: " + imgSrc + AppConstants.ANSI_RESET, true);
                 }
-            }else if (checkType.toLowerCase().trim().equals("src")) {
+            } else if (checkType.toLowerCase().trim().equals("src")) {
                 if (imgSrc != null && !imgSrc.trim().isEmpty()) {
                     altTagCount++;
                     try {
                         brokenImageSrcStatusCode = httpResponseCodeViaGet(imgSrc);
-                    }
-                    catch (Exception ex) {
+                    } catch (Exception ex) {
                         testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed Error when attempting to validate image src " + imgSrc + " Error: " + ex.getMessage() + AppConstants.ANSI_RESET, true);
                     }
                     if (200 != brokenImageSrcStatusCode) {
@@ -1280,8 +1290,7 @@ public class TestCentral {
                     } else {
                         testHelper.UpdateTestResults(AppConstants.ANSI_GREEN + "Successful image src test " + imgSrc + " gave a response code of " + brokenImageSrcStatusCode + AppConstants.ANSI_RESET, true);
                     }
-                }
-                else {
+                } else {
                     if (altTag != null) {
                         testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed image src tag missing for image with alt tag: " + altTag + AppConstants.ANSI_RESET, true);
                     } else {
@@ -1308,7 +1317,7 @@ public class TestCentral {
      * @param fileStepIndex -
      * @param isCrucial -
      ************************************************************ */
-    private void checkElementCount(String url, String checkElement, int expectedCount, String fileStepIndex, boolean isCrucial) {
+    private void CheckElementCount(String url, String checkElement, int expectedCount, String fileStepIndex, boolean isCrucial) {
         int actualCount;
         if (url != null && !url.isEmpty() && !url.toLowerCase().trim().equals("n/a")) {
             driver.get(url);
@@ -1318,12 +1327,10 @@ public class TestCentral {
 
         if (isCrucial) {
             assertEquals(expectedCount, actualCount);
-        }
-        else {
+        } else {
             try {
                 assertEquals(expectedCount, actualCount);
-            }
-            catch (AssertionError ae) {
+            } catch (AssertionError ae) {
                 //do nothing, just trap the error so that testing can continue
             }
 
@@ -1354,8 +1361,7 @@ public class TestCentral {
                 //Select select = new Select((new WebDriverWait(driver,10)).until(ExpectedConditions.presenceOfElementLocated(By.xpath(accessor))));
                 WebElement option = select.getFirstSelectedOption();
                 actualValue = option.getText();
-            }
-            else {
+            } else {
                 boolean isVisible = this.driver.findElement(By.xpath(accessor)).isDisplayed();
                 if (isVisible) {
                     actualValue = this.driver.findElement(By.xpath(accessor)).getText();
@@ -1364,7 +1370,6 @@ public class TestCentral {
                     String script = "return arguments[0].innerText";
                     actualValue = (String) ((JavascriptExecutor) driver).executeScript(script, this.driver.findElement(By.xpath(accessor)));
                 }
-
 
                 if (actualValue == null || actualValue.isEmpty()) {
                     actualValue = this.driver.findElement(By.xpath(accessor)).getAttribute("value");
@@ -1378,8 +1383,7 @@ public class TestCentral {
             }
             if (!ts.get_command().toLowerCase().contains(persistStringCheckValue)) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Checking element by XPath: " + ElementTypeLookup(accessor) + " for script " + fileStepIndex + " Actual Value: \"" + actualValue + "\"", true);
-            }
-            else {
+            } else {
                 testHelper.UpdateTestResults(AppConstants.indent8 + "Retrieving element text by XPath: " + ElementTypeLookup(accessor) + " for script " + fileStepIndex + " Actual Value: \"" + actualValue + "\"", true);
             }
         } catch (Exception e) {
@@ -1389,8 +1393,7 @@ public class TestCentral {
                 testHelper.captureScreenShot(driver, GetBrowserUsed() + "_" + fileStepIndex + "xPath_Element_Not_Found", screenShotSaveFolder, true);
             }
             actualValue = null;
-        }
-        finally {
+        } finally {
             return actualValue;
         }
     }
@@ -1434,8 +1437,7 @@ public class TestCentral {
                 testHelper.captureScreenShot(driver, GetBrowserUsed() + "_" + fileStepIndex + "CssSelector_Element_Not_Found", screenShotSaveFolder, true);
             }
             actualValue = null;
-        }
-        finally {
+        } finally {
             return actualValue;
         }
     }
@@ -1456,9 +1458,7 @@ public class TestCentral {
                 Select select = new Select(this.driver.findElement(By.tagName(accessor)));
                 WebElement option = select.getFirstSelectedOption();
                 actualValue = option.getText();
-            }
-            else {
-
+            } else {
                 boolean isVisible = this.driver.findElement(By.tagName(accessor)).isDisplayed();
                 if (isVisible) {
                     actualValue = this.driver.findElement(By.tagName(accessor)).getText();
@@ -1479,13 +1479,11 @@ public class TestCentral {
         } catch (Exception e) {
             if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
                 testHelper.captureScreenShot(driver, GetBrowserUsed() + "_" + fileStepIndex + "TagName_Element_Not_Found", configurationFolder, true);
-            }
-            else {
+            } else {
                 testHelper.captureScreenShot(driver, GetBrowserUsed() + "_" + fileStepIndex + "TagName_Element_Not_Found", screenShotSaveFolder, true);
             }
             actualValue = null;
-        }
-        finally {
+        } finally {
             return actualValue;
         }
     }
@@ -1506,8 +1504,7 @@ public class TestCentral {
                 Select select = new Select(this.driver.findElement(By.className(accessor)));
                 WebElement option = select.getFirstSelectedOption();
                 actualValue = option.getText();
-            }
-            else {
+            } else {
                 boolean isVisible = this.driver.findElement(By.className(accessor)).isDisplayed();
                 if (isVisible) {
                     actualValue = this.driver.findElement(By.className(accessor)).getText();
@@ -1528,13 +1525,11 @@ public class TestCentral {
         } catch (Exception e) {
             if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
                 testHelper.captureScreenShot(driver, GetBrowserUsed() + "_" + fileStepIndex + "ClassName_Element_Not_Found", configurationFolder, true);
-            }
-            else {
+            } else {
                 testHelper.captureScreenShot(driver, GetBrowserUsed() + "_" + fileStepIndex + "ClassName_Element_Not_Found", screenShotSaveFolder, true);
             }
             actualValue = null;
-        }
-        finally {
+        } finally {
             return actualValue;
         }
     }
@@ -1555,8 +1550,7 @@ public class TestCentral {
                 Select select = new Select(this.driver.findElement(By.id(accessor)));
                 WebElement option = select.getFirstSelectedOption();
                 actualValue = option.getText();
-            }
-            else {
+            } else {
 
                 boolean isVisible = this.driver.findElement(By.id(accessor)).isDisplayed();
                 if (isVisible) {
@@ -1566,7 +1560,6 @@ public class TestCentral {
                     String script = "return arguments[0].innerText";
                     actualValue = (String) ((JavascriptExecutor) driver).executeScript(script, this.driver.findElement(By.id(accessor)));
                 }
-
                 if (actualValue == null || actualValue.isEmpty()) {
                     actualValue = this.driver.findElement(By.id(accessor)).getAttribute("value");
                 }
@@ -1579,13 +1572,11 @@ public class TestCentral {
         } catch (Exception e) {
             if (screenShotSaveFolder == null || screenShotSaveFolder.isEmpty()) {
                 testHelper.captureScreenShot(driver, GetBrowserUsed() + "_" + fileStepIndex + "Id_Element_Not_Found", configurationFolder, true);
-            }
-            else {
+            } else {
                 testHelper.captureScreenShot(driver, GetBrowserUsed() + "_" + fileStepIndex + "Id_Element_Not_Found", screenShotSaveFolder, true);
             }
             actualValue = null;
-        }
-        finally {
+        } finally {
             return actualValue;
         }
     }
@@ -1620,8 +1611,7 @@ public class TestCentral {
                     foundElements.add(generateXPATH(element, ""));
                 }
             }
-        }
-        else {
+        } else {
             for (WebElement element : elements) {
                 if (element.getText().equals(ts.get_expectedValue().trim())) {
                     wasFound = true;
@@ -1636,8 +1626,7 @@ public class TestCentral {
                 message = "Failed to find (" + ts.get_expectedValue().trim() + ") searching all " + cssSelector + " elements.";
             }
             testHelper.UpdateTestResults(AppConstants.ANSI_RED + message + AppConstants.ANSI_RESET, true);
-        }
-        else {
+        } else {
             //eliminate any hierarchical elements that don't actually contain the text
             for (int y = foundElements.size() -1;y>= 0;y--) {
                 for (int x = foundElements.size() - 1;x>=0;x--) {
@@ -1648,8 +1637,7 @@ public class TestCentral {
                             } else if (foundElements.get(x).contains(foundElements.get(y))) {
                                 foundElements.remove(y);
                             }
-                        }
-                        catch(IndexOutOfBoundsException io) {
+                        } catch(IndexOutOfBoundsException io) {
                             //try moving on to the next item doing nothing here
                             //pageHelper.UpdateTestResults("Error y = " + y + " and x = " + x + " - " + io.getMessage());
                         }
@@ -1676,14 +1664,28 @@ public class TestCentral {
         String delayTime = GetArgumentValue(ts, 1, null);
         String windowDimensions = GetArgumentValue(ts, 2, null);
 
+        if (!testHelper.CheckIsUrl(navigateUrl)) {
+            ArrayList<String> arguments = SortNavigationArguments(navigateUrl, delayTime, windowDimensions, "navigate");
+            navigateUrl = arguments.get(0);
+            delayTime = arguments.get(1);
+            windowDimensions = arguments.get(2);
+            UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
+        }
+
+        if (testHelper.tryParse(delayTime) == null) {
+            ArrayList<String> arguments = SortNavigationArguments(navigateUrl, delayTime, windowDimensions, "delay");
+            navigateUrl = arguments.get(0);
+            delayTime = arguments.get(1);
+            windowDimensions = arguments.get(2);
+            UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
+        }
+
+
         String expectedUrl = null;
         int delayMilliSeconds = 0;
 
-        testHelper.UpdateTestResults("navigateUrl = " + navigateUrl, false);
-        testHelper.UpdateTestResults("delayTime = " + delayTime, false);
-        testHelper.UpdateTestResults("windowDimensions = " + windowDimensions, false);
-
         if (navigateUrl != null && !navigateUrl.isEmpty()) {
+            testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start Explicit Navigation Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
             expectedUrl = ts.get_expectedValue() != null ? ts.get_expectedValue().trim() : null;
 
             if (delayTime != null && !delayTime.isEmpty()) {
@@ -1701,31 +1703,28 @@ public class TestCentral {
                     if (wStart < hStart) {
                         width = parseInt(dimensions.substring(dimensions.indexOf("w=") + 2, dimensions.indexOf("h=")).trim());
                         height = parseInt(dimensions.substring(dimensions.indexOf("h=") + 2, dimensions.length()).trim());
-                    }
-                    else {
+                    } else {
                         height= parseInt(dimensions.substring(dimensions.indexOf("h=") + 2, dimensions.indexOf("w=")).trim());
                         width = parseInt(dimensions.substring(dimensions.indexOf("w=") + 2, dimensions.length()).trim());
                     }
-                    testHelper.UpdateTestResults(AppConstants.indent5 + "Setting browser dimensions to (Width=" + width + " Height=" + height, true);
+                    testHelper.UpdateTestResults(AppConstants.indent8 + "Setting browser dimensions to (Width=" + width + " Height=" + height + ")", true);
                     testHelper.SetWindowContentDimensions(driver, width, height);
                 }
             }
         }
         this.testPage = navigateUrl;
         //Explicit Navigation Event
-        testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start Explicit Navigation Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+
         testHelper.UpdateTestResults(AppConstants.indent8 + "Navigating to " + navigateUrl + " for step " + fileStepIndex, true);
         String actualUrl = CheckPageUrl(delayMilliSeconds);
         if (expectedUrl != null && expectedUrl.trim().length() > 0) {
             if (ts.get_crucial()) {
                 assertEquals(expectedUrl, actualUrl);
-            }
-            else {
+            } else {
                 try
                 {
                     assertEquals(expectedUrl, actualUrl);
-                }
-                catch (AssertionError ae) {
+                } catch (AssertionError ae) {
                     //do nothing, this just traps the assertion error so that processing can continue
                 }
             }
@@ -1738,6 +1737,92 @@ public class TestCentral {
         testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End Explicit Navigation Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
     }
 
+    private void UpdateNavigationTestStepArguments(TestStep ts, String navigateUrl, String delayTime, String windowDimensions) {
+        ts.ArgumentList = new ArrayList<>();
+        Argument item = new Argument();
+        item.set_parameter(navigateUrl);
+        ts.ArgumentList.add(item);
+        item = new Argument();
+        item.set_parameter(delayTime);
+        ts.ArgumentList.add(item);
+        item = new Argument();
+        item.set_parameter(windowDimensions);
+        ts.ArgumentList.add(item);
+    }
+
+    private ArrayList<String> SortNavigationArguments(String navigateUrl, String delayTime, String windowDimensions, String sortField) {
+        Boolean status;
+        String returnValue;
+        ArrayList<String> arguments = new ArrayList<>();
+
+        if (sortField.toLowerCase().equals("navigate")) {
+            if (delayTime != null && !delayTime.isEmpty() && testHelper.CheckIsUrl(delayTime)) {
+                returnValue = delayTime;
+                //navigateUrl in delayTime, delayTime in windowDimension, windowDimension in navigateUrl
+                if (navigateUrl.toLowerCase().contains("w=") || navigateUrl.toLowerCase().contains("h=")) {
+                    delayTime = windowDimensions;
+                    windowDimensions = navigateUrl;
+                    navigateUrl = returnValue;
+                    arguments.add(navigateUrl);
+                    arguments.add(delayTime);
+                    arguments.add(windowDimensions);
+                } else if (windowDimensions.toLowerCase().contains("w=") || windowDimensions.toLowerCase().contains("h=")) {
+                    //delayTime in navigateUrl, navigateUrl in delayTime, windowDimension in windowDimension
+                    delayTime = navigateUrl;
+                    navigateUrl = returnValue;
+                    arguments.add(navigateUrl);
+                    arguments.add(delayTime);
+                    arguments.add(windowDimensions);
+                }
+            } else if (windowDimensions != null && !windowDimensions.isEmpty() && testHelper.CheckIsUrl(windowDimensions)) {
+                testHelper.DebugDisplay("IN windowdimensions has URL");
+                returnValue = windowDimensions;
+                if (navigateUrl.toLowerCase().contains("w=") || navigateUrl.toLowerCase().contains("h=")) {
+                    testHelper.DebugDisplay("IN windowdimensions has URL - navigateURL has window dimensions");
+                    windowDimensions = navigateUrl;
+                    navigateUrl = returnValue;
+                    arguments.add(navigateUrl);
+                    arguments.add(delayTime);
+                    arguments.add(windowDimensions);
+                } else {
+                    windowDimensions = delayTime;
+                    delayTime = navigateUrl;
+                    navigateUrl = returnValue;
+                    arguments.add(navigateUrl);
+                    arguments.add(delayTime);
+                    arguments.add(windowDimensions);
+                }
+            } else if (testHelper.tryParse(delayTime) != null) {
+                //delayTime in delayTime, navigateUrl in windowDimensions, windowDimensions in navigateUrl
+                returnValue = windowDimensions;
+                windowDimensions = navigateUrl;
+                navigateUrl = returnValue;
+                arguments.add(navigateUrl);
+                arguments.add(delayTime);
+                arguments.add(windowDimensions);
+            }
+        } else if (sortField.toLowerCase().equals("delay")) {
+            //if delay is the sort field that means the navigation field is correct.
+            if (delayTime.toLowerCase().contains("w=") || delayTime.toLowerCase().contains("h=")) {
+                if (windowDimensions != null && !windowDimensions.isEmpty()) {
+                    returnValue = windowDimensions;
+                    windowDimensions = delayTime;
+                    delayTime = returnValue;
+                    arguments.add(navigateUrl);
+                    arguments.add(delayTime);
+                    arguments.add(windowDimensions);
+                } else {
+                    windowDimensions = delayTime;
+                    delayTime = Integer.toString(AppConstants.DefaultTimeDelay);
+                    arguments.add(navigateUrl);
+                    arguments.add(delayTime);
+                    arguments.add(windowDimensions);
+                }
+            }
+        }
+        return arguments;
+    }
+
     /*******************************************************************************
      * DESCRIPTION: Performs non-text retrieval actions such as clicking,
      *              navigating, waiting, taking screen shots etc...
@@ -1745,7 +1830,6 @@ public class TestCentral {
      * @param subAction -
      * @param fileStepIndex -
      ***************************************************************************** */
-    //public Boolean PerformAction(String accesssorType, String accessor, String value, String fileStepIndex) {
     public Boolean PerformAction(TestStep ts, String subAction, String fileStepIndex) {
         Boolean status = false;
         final String click = "click";
@@ -1756,12 +1840,9 @@ public class TestCentral {
         String command = ts.get_command().toLowerCase().contains("switch to iframe") ? subAction : ts.get_command();
 
         //if this is a click event, click it
-        //if (value.toLowerCase().contains(click) && !value.toLowerCase().contains(sendKeys)) {
         if ((command.toLowerCase().contains("click")) && !command.contains(sendKeys)) {
-            //if (ts.get_command().toLowerCase().contains(doubleClick)) {
             if (command.toLowerCase().contains(doubleClick)) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Performing double click on " + ts.get_accessor() + " using " + ts.get_accessorType() + " for step " + fileStepIndex, true);
-//            } else if (ts.get_command().toLowerCase().contains(rightClick)) {
             } else if (command.toLowerCase().contains(rightClick)) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Performing right click on " + ts.get_accessor() + " using " + ts.get_accessorType() + " for step " + fileStepIndex, true);
             } else {
@@ -1769,35 +1850,27 @@ public class TestCentral {
             }
             try {
                 if (ts.get_accessorType().toLowerCase().equals(xpathCheckValue)) {
-//                    if (!ts.get_command().toLowerCase().contains(rightClick)) {
                     if (!command.toLowerCase().contains(rightClick)) {
-//                        if (!ts.get_command().toLowerCase().contains(doubleClick)) {
                         if (!command.toLowerCase().contains(doubleClick)) {
                             this.driver.findElement(By.xpath(ts.get_accessor())).click();
                             testHelper.UpdateTestResults("Click performed!", false);
-                        }
-                        else {
+                        } else {
                             //doubleclick
                             Actions action = new Actions(driver);
                             action.doubleClick(driver.findElement(By.xpath(ts.get_accessor()))).build().perform();
                         }
-                    }
-                    else {  //right click element
+                    } else {  //right click element
                         Actions action = new Actions(driver);
-//                        if (ts.get_command().toLowerCase().contains(keys)) {
                         if (command.toLowerCase().contains(keys)) {
                             action.contextClick(driver.findElement(By.xpath(ts.get_accessor()))).build().perform();
-                        }
-                        else {
+                        } else {
                             action.contextClick(driver.findElement(By.xpath(ts.get_accessor()))).build().perform();
                             SelectFromContextMenu(ts, fileStepIndex);
                         }
                     }
                 }
                 else if (ts.get_accessorType().toLowerCase().equals(idCheckValue)) {
-//                    if (!ts.get_command().toLowerCase().contains(rightClick)) {
                     if (!command.toLowerCase().contains(rightClick)) {
-//                        if (!ts.get_command().toLowerCase().contains(doubleClick)) {
                         if (!command.toLowerCase().contains(doubleClick)) {
                             //click
                             this.driver.findElement(By.id(ts.get_accessor())).click();
@@ -1808,20 +1881,15 @@ public class TestCentral {
                         }
                     } else {  //right click element
                         Actions action = new Actions(driver);
-//                        if (!ts.get_command().toLowerCase().contains(keys)) {
                         if (!command.toLowerCase().contains(keys)) {
                             action.contextClick(this.driver.findElement(By.id(ts.get_accessor()))).build().perform();
-                        }
-                        else {
+                        } else {
                             action.contextClick(driver.findElement(By.id(ts.get_accessor()))).build().perform();
                             SelectFromContextMenu(ts, fileStepIndex);
                         }
                     }
-                }
-                else if (ts.get_accessorType().toLowerCase().equals(classNameCheckValue)) {
-//                    if (!ts.get_command().toLowerCase().contains(rightClick)) {
+                } else if (ts.get_accessorType().toLowerCase().equals(classNameCheckValue)) {
                     if (!command.toLowerCase().contains(rightClick)) {
-//                        if (!ts.get_command().toLowerCase().contains(doubleClick)) {
                         if (!command.toLowerCase().contains(doubleClick)) {
                             //click
                             this.driver.findElement(By.className(ts.get_accessor())).click();
@@ -1835,42 +1903,34 @@ public class TestCentral {
 //                        if (!ts.get_command().toLowerCase().contains(keys)) {
                         if (!command.toLowerCase().contains(keys)) {
                             action.contextClick(this.driver.findElement(By.className(ts.get_accessor()))).build().perform();
-                        }
-                        else {
+                        } else {
                             action.contextClick(driver.findElement(By.className(ts.get_accessor()))).build().perform();
                             SelectFromContextMenu(ts, fileStepIndex);
                         }
                     }
-                }
-                else if (ts.get_accessorType().toLowerCase().equals(cssSelectorCheckValue)) {
+                } else if (ts.get_accessorType().toLowerCase().equals(cssSelectorCheckValue)) {
 //                    if (!ts.get_command().toLowerCase().contains(rightClick)) {
                     if (!command.toLowerCase().contains(rightClick)) {
 //                        if (!ts.get_command().toLowerCase().contains(doubleClick)) {
                         if (!command.toLowerCase().contains(doubleClick)) {
                             //click
                             this.driver.findElement(By.cssSelector(ts.get_accessor())).click();
-                        }
-                        else {
+                        } else {
                             //doubleclick
                             Actions action = new Actions(driver);
                             action.doubleClick(driver.findElement(By.cssSelector(ts.get_accessor()))).build().perform();
                         }
                     } else {  //right click element
                         Actions action = new Actions(driver);
-//                        if (!ts.get_command().toLowerCase().contains(keys)) {
                         if (!command.toLowerCase().contains(keys)) {
                             action.contextClick(this.driver.findElement(By.cssSelector(ts.get_accessor()))).build().perform();
-                        }
-                        else {
+                        } else {
                             action.contextClick(driver.findElement(By.cssSelector(ts.get_accessor()))).build().perform();
                             SelectFromContextMenu(ts, fileStepIndex);
                         }
                     }
-                }
-                else if (ts.get_accessorType().toLowerCase().equals(tagNameCheckValue)) {
-//                    if (!ts.get_command().toLowerCase().contains(rightClick)) {
+                } else if (ts.get_accessorType().toLowerCase().equals(tagNameCheckValue)) {
                     if (!command.toLowerCase().contains(rightClick)) {
-//                        if (!ts.get_command().toLowerCase().contains(doubleClick)) {
                         if (!command.toLowerCase().contains(doubleClick)) {
                             //click
                             this.driver.findElement(By.tagName(ts.get_accessor())).click();
@@ -1881,11 +1941,9 @@ public class TestCentral {
                         }
                     } else {  //right click element
                         Actions action = new Actions(driver);
-//                        if (!ts.get_command().toLowerCase().contains(keys)) {
                         if (!command.toLowerCase().contains(keys)) {
                             action.contextClick(this.driver.findElement(By.tagName(ts.get_accessor()))).build().perform();
-                        }
-                        else {
+                        } else {
                             action.contextClick(driver.findElement(By.tagName(ts.get_accessor()))).build().perform();
                             SelectFromContextMenu(ts, fileStepIndex);
                         }
@@ -1900,7 +1958,7 @@ public class TestCentral {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Taking Screenshot for step " + fileStepIndex, true);
                 PerformScreenShotCapture(subAction);
                 status = true;
-            }catch (Exception e) {
+            } catch (Exception e) {
                 status = false;
             }
         } else {  //if it is not a click, send keys or screenshot
@@ -1911,24 +1969,21 @@ public class TestCentral {
                     if (subAction.toLowerCase().contains(persistedStringCheckValue) && !subAction.trim().contains(uidReplacementChars)) {
                         testHelper.UpdateTestResults(AppConstants.indent8 + AppConstants.ANSI_CYAN + "Using Persisted value (" + persistedString + ")" + AppConstants.ANSI_RESET, true);
                         subAction = persistedString;
-                    }
-                    else {
+                    } else {
                         if (subAction.trim().toLowerCase().contains(persistedStringCheckValue) && subAction.trim().contains(uidReplacementChars)) {
                             testHelper.UpdateTestResults(AppConstants.indent8 + AppConstants.ANSI_CYAN + "Using Persisted value (" + persistedString + ")" + AppConstants.ANSI_RESET, true);
                             if (subAction.trim().indexOf(persistedStringCheckValue) < subAction.trim().indexOf(uidReplacementChars)) {
                                 if (subAction.trim().indexOf(" ") > subAction.trim().indexOf(persistedStringCheckValue))
                                 {
                                     subAction = persistedString + " " + uniqueId;
-                                }
-                                else {
+                                } else {
                                     subAction = persistedString + uniqueId;
                                 }
                             } else {
                                 if (subAction.trim().indexOf(" ") > subAction.trim().indexOf(uidReplacementChars))
                                 {
                                     subAction = uniqueId + " " + persistedString;
-                                }
-                                else {
+                                } else {
                                     subAction =  uniqueId + persistedString;
                                 }
                             }
@@ -1941,17 +1996,13 @@ public class TestCentral {
                     testHelper.UpdateTestResults(AppConstants.indent8 + "Performing special SendKeys value = " + subAction + " for step " + fileStepIndex, true);
                     if (ts.get_accessorType().toLowerCase().equals(xpathCheckValue)) {
                         this.driver.findElement(By.xpath(ts.get_accessor())).sendKeys(GetKeyValue(subAction, fileStepIndex));
-                    }
-                    else if (ts.get_accessorType().toLowerCase().equals(idCheckValue)) {
+                    } else if (ts.get_accessorType().toLowerCase().equals(idCheckValue)) {
                         this.driver.findElement(By.id(ts.get_accessor())).sendKeys(GetKeyValue(subAction, fileStepIndex));
-                    }
-                    else if (ts.get_accessorType().toLowerCase().equals(classNameCheckValue)) {
+                    } else if (ts.get_accessorType().toLowerCase().equals(classNameCheckValue)) {
                         this.driver.findElement(By.className(ts.get_accessor())).sendKeys(GetKeyValue(subAction, fileStepIndex));
-                    }
-                    else if (ts.get_accessorType().toLowerCase().equals(cssSelectorCheckValue)) {
+                    } else if (ts.get_accessorType().toLowerCase().equals(cssSelectorCheckValue)) {
                         this.driver.findElement(By.cssSelector(ts.get_accessor())).sendKeys(GetKeyValue(subAction, fileStepIndex));
-                    }
-                    else if (ts.get_accessorType().toLowerCase().equals(tagNameCheckValue)) {
+                    } else if (ts.get_accessorType().toLowerCase().equals(tagNameCheckValue)) {
                         this.driver.findElement(By.tagName(ts.get_accessor())).sendKeys(GetKeyValue(subAction, fileStepIndex));
                     }
                 } else {
@@ -1959,21 +2010,16 @@ public class TestCentral {
                         testHelper.UpdateTestResults(AppConstants.indent5 + "Replacing Unique Identifier placeholder", true);
                     }
                     subAction = subAction.replace(uidReplacementChars, uniqueId);
-                    //pageHelper.UpdateTestResults("Not sending reserved Key strokes.");
                     testHelper.UpdateTestResults(AppConstants.indent8 + "Performing default SendKeys value = " + subAction + " for step " + fileStepIndex, true);
                     if (ts.get_accessorType().toLowerCase().equals(xpathCheckValue)) {
                         this.driver.findElement(By.xpath(ts.get_accessor())).sendKeys(subAction);
-                    }
-                    else if (ts.get_accessorType().toLowerCase().equals(idCheckValue)) {
+                    } else if (ts.get_accessorType().toLowerCase().equals(idCheckValue)) {
                         this.driver.findElement(By.id(ts.get_accessor())).sendKeys(subAction);
-                    }
-                    else if (ts.get_accessorType().toLowerCase().equals(classNameCheckValue)) {
+                    } else if (ts.get_accessorType().toLowerCase().equals(classNameCheckValue)) {
                         this.driver.findElement(By.className(ts.get_accessor())).sendKeys(subAction);
-                    }
-                    else if (ts.get_accessorType().toLowerCase().equals(cssSelectorCheckValue)) {
+                    } else if (ts.get_accessorType().toLowerCase().equals(cssSelectorCheckValue)) {
                         this.driver.findElement(By.cssSelector(ts.get_accessor())).sendKeys(subAction);
-                    }
-                    else if (ts.get_accessorType().toLowerCase().equals(tagNameCheckValue)) {
+                    } else if (ts.get_accessorType().toLowerCase().equals(tagNameCheckValue)) {
                         this.driver.findElement(By.tagName(ts.get_accessor())).sendKeys(subAction);
                     }
                 }
@@ -2156,8 +2202,7 @@ public class TestCentral {
         {
             accessorType = "page";
             testHelper.UpdateTestResults(AppConstants.indent5 + "Waiting a maximum of " + maxTimeInSeconds + " seconds for page load to complete at step " + fileStepIndex, true);
-        }
-        else {
+        } else {
             testHelper.UpdateTestResults(AppConstants.indent5 + "Waiting a maximum of " + maxTimeInSeconds + " seconds for presence of element " + accessor + " at step " + fileStepIndex, true);
         }
 
@@ -2239,8 +2284,6 @@ public class TestCentral {
      * @param value
      ************************************************************ */
     private void PerformScreenShotCapture(String value) {
-        //String browserUsed = this.driver.toString().substring(0, this.driver.toString().indexOf(':')) + "_";
-        //pageHelper.captureScreenShot(driver, browserUsed + "ScreenShotAction_" + value, screenShotSaveFolder);
         testHelper.captureScreenShot(driver, value, screenShotSaveFolder, false);
     }
 
@@ -2296,10 +2339,9 @@ public class TestCentral {
         try {
             driver.switchTo().alert();
             return true;
-        } // try
-        catch (Exception e) {
+        } catch (Exception e) {
             return false;
-        } // catch
+        }
     }
 
     /****************************************************************************
@@ -2377,8 +2419,7 @@ public class TestCentral {
                             }
                         }
                     }
-                }
-                else {
+                } else {
                     canProceed = true;
                 }
 
@@ -2720,8 +2761,14 @@ public class TestCentral {
     }
     //endregion
 
+    /**************************************************************************
+     * Description: Opens a Sql Server connection and sets the global
+     *              sqlConnection object so that it can be used
+     *              throughout the rest of the test.
+     * @param ts
+     * @param fileStepIndex
+     **************************************************************************/
     private void SetSqlServerClient(TestStep ts, String fileStepIndex) {
-        //			<!--arg2>jdbc:sqlserver://local.database.windows.net:1433;database=PocFisForumV2;user=forum_user;password=forum_user;encrypt=true;trustServerCertificate=false;loginTimeout=30;</arg2-->
         String sqlDatabaseName = GetArgumentValue(ts, 1, null);
         String sqlUserId = GetArgumentValue(ts, 2, null);
         String sqlPassword = GetArgumentValue(ts, 3, null);
@@ -2735,7 +2782,6 @@ public class TestCentral {
             }
         }
 
-
         try {
             sqlConnection = DriverManager.getConnection(sqlConnectionString);
             testHelper.UpdateTestResults(AppConstants.ANSI_GREEN + "Successful establishment of connection to SQL Server Database for step " + fileStepIndex + AppConstants.ANSI_RESET, true);
@@ -2745,6 +2791,13 @@ public class TestCentral {
         }
     }
 
+    /******************************************************************************************
+     * Description: Runs a Sql Server query that returns one field, retrieves that fields value
+     *              and compares it to the expected value.
+     * @param ts
+     * @param fileStepIndex
+     * @throws SQLException
+     ******************************************************************************************/
     private void RunSqlServerQuery(TestStep ts, String fileStepIndex) throws SQLException {
         String sqlTable = GetArgumentValue(ts, 0, null);
         String sqlField = GetArgumentValue(ts, 1, null);
@@ -2770,7 +2823,8 @@ public class TestCentral {
             if (sqlStatement == null || sqlStatement.isEmpty()) {
                 sqlStatement = "Select " + sqlField + " from " + sqlTable + " " + whereClause;
             }
-            testHelper.UpdateTestResults(AppConstants.indent8 + "sqlStatement = " + sqlStatement, true);
+            //testHelper.UpdateTestResults(AppConstants.indent8 + "sqlStatement = " + sqlStatement, true);
+            testHelper.UpdateTestResults(AppConstants.indent5 + "sqlStatement = " + sqlStatement, true);
 
             resultSet = statement.executeQuery(sqlStatement);
             while (resultSet.next()) {
@@ -2802,7 +2856,6 @@ public class TestCentral {
         } catch(SQLException e) {
             testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed to execute query successfully for step " + fileStepIndex + "\r\n Error: " + e.getMessage() + AppConstants.ANSI_RESET, true);
         }
-
     }
 
 
@@ -2845,8 +2898,7 @@ public class TestCentral {
                         overRideMessage += "\r\nDifference value overridden to: " + contrastStandard;
                     }
                 }
-            }
-            else if (rangeVariables[0].toLowerCase().contains("d=")) {
+            } else if (rangeVariables[0].toLowerCase().contains("d=")) {
                 contrastStandard = parseInt(rangeVariables[0].split("=")[1]);
                 overRideMessage = "Difference value overridden to: " + contrastStandard;
                 if (rangeVariables.length > 1) {
@@ -2935,8 +2987,6 @@ public class TestCentral {
             } else {
                 testHelper.UpdateTestResults( AppConstants.ANSI_RED + "Warning brightness and Warning contrast forecolor(" + color + ") brightness: " + foreColorBrightness + " backcolor(" + backColor + ")" + backColorAncestor + " brightness: " + backColorBrightness + " Contrast: " + brightness + " Color Difference: " + contrast +   AppConstants.ANSI_RESET, false);
             }
-
-
             //region { testing }
 //            String colorString = element.getAttribute("class");
 //            String[] arrColor = colorString.split("#");
@@ -3255,7 +3305,6 @@ public class TestCentral {
      *  Sets the WebDriver to the Chrome Driver
      **************************************************************************** */
     private void SetChromeDriver() {
-        //testHelper.UpdateTestResults(AppConstants.indent5 + "[Setting ChromeDriver]", testResults);
         testHelper.UpdateTestResults( AppConstants.indent5 + "[" + AppConstants.ANSI_GREEN + "Setting " + AppConstants.ANSI_RESET + "ChromeDriver]" + AppConstants.ANSI_RESET , true);
         System.setProperty("webdriver.chrome.driver", chromeDriverPath);
 
@@ -3327,7 +3376,7 @@ public class TestCentral {
      *  (https://stackoverflow.com/questions/51621782/osprocess-checkforerror-createprocess-error-193-1-is-not-a-valid-win32-appl)
      **************************************************************************** */
     private void SetEdgeDriver() {
-        testHelper.UpdateTestResults("The Edge Browser has not been fully implemented.  Experiencing errors on start.  Please select another browser.", true);
+        testHelper.UpdateTestResults("The Edge Browser Driver was not available at the time this application was created.  Please select another browser.", true);
         /*
         testHelper.UpdateTestResults( AppConstants.indent5 + "[" + AppConstants.ANSI_GREEN + "Setting " + AppConstants.ANSI_RESET + "EdgeDriver]" + AppConstants.ANSI_RESET , testResults);
         File edge = new File(edgeDriverPath);

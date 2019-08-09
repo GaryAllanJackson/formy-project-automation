@@ -16,9 +16,11 @@
 		<arguments>
 			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
 			<arg1>https://www.cafebustelo.com/en/coffees</arg1>
-			
-			<!-- second argument, can be optional but required if we include the expectedValue. For this example we send 1000ms as the time to wait before the assertion is made -->
-			<arg2>1000</arg2> 
+			<!-- second argument, can be optional but required when including window dimension argument. 
+				For this example we send 1000ms as the time to wait before continuing. -->
+			<arg2>1000</arg2>
+			<!-- third argument, can be optional - Window Dimensions width then height --> 		
+			<arg3>w=800 h=800</arg3>			
 		</arguments>
 	</step>
 	<step>

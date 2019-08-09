@@ -4,6 +4,11 @@
 ╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 NOTES: The file format is XML, so to make comments use <!-- to begin the comment and --> to end the comment.
 Comments can span lines but comments cannot include other comment blocks.
+Comments are lightly sprinkled in some of the help XML examples below.
+	THIS APPLICATION IGNORES ALL COMMENTS.
+COMMENTS ARE FOR THE USER.
+Some of the comments are descriptive and some show alternative options, but it is suggested that you read the help file
+to best understand how to use this Configurable Automated Testing Application.
 Refer to an XML guide for proper commenting.  Google it!!!!
 Both configuration file examples can be used as starting points, just substitute values accordingly.
 The terms element and node may be used interchangeably below to refer to the same thing.
@@ -36,69 +41,95 @@ The first line is an XML file declaration and must be present as is.
 All elements are required but not all elements have to have a value.  Read on.
 The <automatedTestConfiguration> is the root element in which all configuration elements are contained.
 	It contains no text itself.
+
 <!-- folder where screenshots should be saved --> is a comment and was purposely included to demonstrate how to add comments.
 	Comments were added to describe the function of the element that follows it.
 	Subsequent comments will not be described.
+
 The <screenShotSaveFolder></screenShotSaveFolder> element specifies the location where Screen Shots will be saved.
 	This folder must already exist!
+
 The <maxScreenShotsToTake></maxScreenShotsToTake> element specifies the maximum number of Screen Shots to take.
-		-   When -1, only errors will create screen shots.
+	This allows the user to understand any hard drive space limitations and prevent screenshots from eating up space.
+	In the event that tests fail, this setting can be changed to try to target the issue with a screenshot if the 
+	reported error is insufficient for troubleshooting thoroughly.
+		-   When -1, no screen shots will be taken even if an error occurs.
 		-   When 0, there is no limit and all screenshots will be taken.
-		-   When any other number, that number of screenshots or less will be taken depending upon the test and the max set.
+		-   When any other number, that number of screenshots or less will be taken depending upon the test and the max value set.
 		-   Errors like, Element not found, will create a screenshot to allow you to see the page the application was on when 
 			the error occurred.
+
 The <browserType></browserType> element specifies the type of browser to use when running the test(s).
 	-Valid values are: Firefox, Chrome, PhantomJS
+
 The <runHeadless></runHeadless> element specifies whether to run the test(s) in headless mode.
 		-	This is a boolean field and can be true or false.  The case does not matter.
 	Headless mode means that the browser does not display on-screen and is used with automation servers
 	to allow running automated tests as part of the build process.
-		-	PhantomJS always runs headless.  To watch the test, use Chrome or Firefox.
+		-	PhantomJS always runs headless if selected regardless of the runHeadless setting.
 		-	To watch the test, use Chrome or Firefox.
 		-	If not specified, Chrome is the default and will be used.
+
 The <testAllBrowsers></testAllBrowsers> element specifies whether the test(s) should run in all browsers or just the selected browser.
 		-	This is a boolean field and can be true or false.  The case does not matter.
 		-	If false, BrowserType must be set and only that browser will be used when running tests.
 		-	If true, BrowserType is ignored and the program will cycle through all browsers.
+
 The <specifyTestFiles></specifyTestFiles> element specifies whether or not the configuration file will list the test files to be used.
 		-	This is a boolean field and can be true or false.  The case does not matter.
 		-	If true, the files specified will be used in the order in which they are listed.
 		-	If false, the files will be ignored as this indicates that the folder settings will be used instead.
+
 The <sortSpecifiedTestFiles></sortSpecifiedTestFiles> element specifies whether or not to sort the test files.
-	This setting made sense in the old system but makes much less sense now since files are physically listed in numerical order.
+	This setting made sense in the old system but makes much less sense now that files are physically listed numerically.
 	The number no longer has meaning in the sort as each entry should be entered in numerical order, so the number will not be used for sorting.
-		-	If false, files are taken in the order in which they are physically and numerically listed.
+		-	If false, files are taken in the order in which they are physically listed, which should be numerically.
 		-	If true, files will be sorted alphabetically and re-listed on the screen to show the order in which they will execute.
+
 The <testFiles></testFiles> element is a container element for the testFileName elements and has no textual content of its own.
+
 The <testFileName1></testFileName1> element specifies the test file to use for the test and each element should end with an incremental numeric value.
+	Example:
+		<testFileName1></testFileName1>
+		<testFileName2></testFileName2>
+
 	It should be noted that while this ending numeric value should be incremental, the application will read all 
 	testFileName nodes in the order they are entered regardless of the numbering.
-	To avoid any possible issues related to this, it is suggested that you follow the best practice and number appropriately.
+	To avoid any possible issues related to this, it is suggested that you follow the best practice and number appropriately, as described.
 	The commented test file lines were included to show a means in which different files can be setup but can be commented so that only 
-	the intended test files run.   
----------------------
+	the intended test files run.
+
+---------------------[ Start of Grouped Configuration Settings ]-------------------
 The following three settings need to be talked about together since they work together to provide a particularly useful piece of functionality.
+Together, the following settings allow for filtering a particular folder for the files used for testing.
+If a common naming convention is used for test files that include the project name, these settings allow for running 
+Just one Project's test files, just some of a Project's test files or just one test file in a project or one type of test file across all test projects.
+
 The <testFolderName></testFolderName> element specifies the folder where test files are located to allow for reading a folder of 
-test files instead of naming each test file individually.
+	test files instead of naming each test file individually.
+
 The <folderFileFilterType></folderFileFilterType> element specifies the type of filtering to perform on the files in the folder.  Options are: 
 	-	[Starts With], [Contains] and [Ends With] 
 		-	[Starts With] - will select only the test files starting with the filter entered
 		-	[Contains] - will select only test files containing the filter entered
 		-	[Ends With] - will select only test files ending with the filter entered
+
 The <folderFileFilter></folderFileFilter> element specifies the phrase to use to when selecting files in the specified folder.
+
 	When used with the other folder settings, a folder containing a multitude of test files can be pointed to using the <testFolderName></testFolderName> element.
 	Then, using the <folderFileFilterType></folderFileFilterType> element, [Starts With] can be used to return only files starting with a specific value.
 	Finally, using the <folderFileFilter></folderFileFilter> element, a phrase like the project name can be used to select only files in the selected folder that start with the project name.
+---------------------[ End of Grouped Configuration Settings ]-------------------
 
 In the example configuration file provided above the explanations, two specific test files are being tested, the screen shot folder is specified, 
 a maximum of 5 screenshots will be taken, only the test Chrome browser will be used and it will be visible, the files will be run in the order entered,
 the TestFolderName, FolderFileFilterType and FolderFileFilter have not been specified but would have been disregarded if specified because
-SpecifiyTestFiles is true, meaning only files specifically specified will be used.
+<specifyTestFiles></specifyTestFiles> is true, meaning only files specifically specified will be used.
 The commented test file lines were included to show a means in which different files can be setup but can be commented so that only
 
 In the example configuration file provided below, a folder of test files are being tested, but only the files that contain the phrase "sql"
 will be used, the screen shot folder is specified, but no screenshots will be taken, only the Chrome browser will be used and it will be visible,
-and although test files are specified, they will be ignored because SpecifiyTestFiles is false meaning the folder settings will be used to 
+and although test files are specified, they will be ignored because <specifyTestFiles></specifyTestFiles> is false meaning the folder settings will be used to 
 determine the test files to be used.
 <?xml version="1.0" encoding="UTF-8" ?>
 <automatedTestConfiguration>
@@ -123,6 +154,8 @@ determine the test files to be used.
 	<folderFileFilterType>contains</folderFileFilterType>
 	<folderFileFilter>sql</folderFileFilter>
 </automatedTestConfiguration>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 
 ╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
@@ -173,19 +206,29 @@ Usually, the test file will consist of multiple steps like (navigation, check el
 
 
 ═════════[ NAVIGATION ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Navigation command navigates the browser to the provided URL.
 All Navigation steps should be marked as crucial, as all subsequent checks require that navigation complete successfully!!!
 An assertion does not have to be part of navigation, but it probably should be!!!
 To navigate without checking the URL, remove the expectedValue node completely as displayed in the example below.
+For the Navigation command only, although the arguments should be in the order shown, if they 
+are out of order the application will attempt to discern the order and rearranage them.
 
-To Navigate, without checking the URL to ensure that navigation occurred properly.
+To Navigate, without checking the URL to ensure that navigation occurred properly, 
+to wait 4000 milli-seconds and to set the window dimensions to (800 x 800)
 Please note that making this crucial is irrelevant as no assertions will be made.
 <step>
+	<!-- Command - ALWAYS REQUIRED!!! -->
 	<command>navigate</command>
 	<actionType>write</actionType>
 	<crucial>TRUE</crucial>
 	<arguments>
+		<!-- first argument expected by the command - The URL is required --> 
 		<arg1>https://formy-project.herokuapp.com/form</arg1>
+		<!-- second argument optional - Time Delay - default is 4000 if not included 
+		     but should be included if entering the third parameter --> 
 		<arg2>4000</arg2>
+		<!-- third argument, optional - Window Dimensions width then height separated by space --> 
+		<arg3>w=800 h=800</arg3>
 	</arguments>
 </step>
 
@@ -243,6 +286,7 @@ To Navigate and Authenticate with username and password:
 </step>
 
 ═════════[ LOGIN WITH NAVIGATION ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Login command logs into a site.
 To login and navigate in one step.
 Please note this is for normal passwords which cannot contain spaces or characters that require escaping.
 <step>
@@ -284,6 +328,7 @@ To check a URL without navigating and to make it crucial.  To make it non-crucia
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ CHECK GET REQUEST STATUS WITHOUT NAVIGATION ]═══════════════════════════════════════════════════════════════════════════════════════════════════════
+The CheckGet command checks the response status of a get.
 To check the Get Requests status of a URL without navigating and to make it crucial.  To make it non-crucial change the last parameter to false.
 The Space between check and get is optional as shown below.
 <step>
@@ -310,6 +355,7 @@ Alternative way splitting the words apart.
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ CHECK POST REQUEST STATUS WITHOUT NAVIGATION ]══════════════════════════════════════════════════════════════════════════════════════════════════════
+The CheckPost command checks the response status of a post.
 <!-- Test results unconfirmed!!! Need to find suitable URL that allows posting. -->
 To check the Post Requests status of a URL without navigating and to make it crucial.  To make it non-crucial change the last parameter to false.
 The Space between check and post is optional as shown below.
@@ -336,6 +382,7 @@ Alternative way splitting the words apart.
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ CHECK DOCUMENT READY STATE COMPLETE WITHOUT NAVIGATION AS A POST NAVIGATION STEP]═══════════════════════════════════════════════════════════════════
+The Wait for page command waits until document ready state is complete.
 To check that the document ready state is complete after previously navigating to a new page and to make it crucial. 
 NOTE: The first argument must be n/a as shown below.  
 - Omitting this argument or leaving it empty will result in an invalid format exception.
@@ -367,6 +414,7 @@ To make it non-crucial change the last parameter to false.
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ CHECK AN ANCHOR HREF ]══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Check_A_Href command checks the href attribute of a HyperLink.
 To check an anchor's href url and to make it non-crucial.  To make it crucial change the last parameter to true.
 This will check the value of the href and compare it to the expected value provided.
 <step>
@@ -399,6 +447,7 @@ Alternative way splitting the words.
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ CHECK ALL PAGE LINKS USING URL ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Check Links command checks all Hyperlinks on the page.
 To check all page links and to make it non-crucial.  To make it crucial change the last parameter to true.
 This will check for a status code of 200 for all links on the page, based on the URL in the arg1 node, 
 but will report the status code for all links.
@@ -421,6 +470,7 @@ This will check for a status code of 200 for all links on the current page, but 
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ CHECK THE COUNT OF A SPECIFIC ELEMENT ON A PAGE ]═══════════════════════════════════════════════════════════════════════════════════════════════════
+The Check Count command checks the number of occurrences of a particular element.
 To check the count of a specific element on a page and to make it non-crucial.  To make it crucial change the last parameter to true.
 This will count the number of times an element is found on a page and compare that to the expected value.
 In the example below, the test compares the number of "a" tags on the page with the expected number of 18.
@@ -437,6 +487,7 @@ If the page has 18 "a" tags, the test passes, otherwise it fails.
 </step>
 
 ═════════[ CHECK ALL PAGE IMAGE SRC TAGS WITH SEPARATE NAVIGATION STEP ]═══════════════════════════════════════════════════════════════════════════════════════
+The Check Img Src command checks the src of all image tags.
 To check all page image src tags, on the current page, to ensure a source exists and to make it non-crucial.  To make it crucial change the last parameter to true.
 The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sources but will report the status of all image sources.
 <step>
@@ -458,6 +509,7 @@ The src tag will be checked to see if it exists and if it returns a status code 
 </step>
 
 ═════════[ CHECK ALL PAGE IMAGE ALT TAGS WITH SEPARATE NAVIGATION STEP ]═══════════════════════════════════════════════════════════════════════════════════════
+The Check Image Alt command checks all page image alt tags for text.
 To check all page image alt tags, for ADA compliance and to make it crucial.  To make it non-crucial change the last parameter to false.
 The alt tag will checked to see if it exists and is not empty.  Empty tags will be flagged as failed.
 This is a small part of 508 compliance.
@@ -483,6 +535,7 @@ This is a small part of 508 compliance.
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ WAITING A SPECIFIC AMOUNT OF TIME FOR ITEMS TO BE AVAILABLE ]═══════════════════════════════════════════════════════════════════════════════════════
+The Wait command pauses execution for a specified amount of time to allow for page load completion.
 To wait for a specific amount of time before continuing to allow for page loading or script completion.
 To wait for 5 thousand milli-seconds before continuing onto the next step.
 <step>
@@ -496,10 +549,10 @@ To wait for 5 thousand milli-seconds before continuing onto the next step.
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ WAITING FOR THE PRESENCE OF AN ELEMENT ]════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Wait for Element command waits a maximum amount of time for an element to be available.
 To wait for an element to be present, requires checking for the element using an accessor unlike waiting a specific amount of time.
 To wait for for a maximum of 15 seconds for an element to be present and making this check crucial, use the following.
 To make it non-crucial change the last parameter to false.
-╠/html/body/div[4]/div/div[2]/div[4]/div[1]/div[2]/div ; wait ╬ 15 ; xPath ; true ; true╣
 <step>
 	<command>wait for element</command>
 	<actionType>write</actionType>
@@ -511,6 +564,7 @@ To make it non-crucial change the last parameter to false.
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ WAITING FOR DOCUMENT READY STATE COMPLETE ]═════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Wait for Page command waits for Document Ready State to be Complete.
 To wait for the page to fully load and document state to be complete, use the following command.
 Please note that the accessor is set to page and that an accessor type is present.  Any Accessor Type must be present, although it is not used,
 to distinguish this document ready state complete wait from a time interval wait.
@@ -541,6 +595,7 @@ In the Filling in and SendKeys sections, there are examples of exactly how to us
 Anytime, the character sequence without parenthesis (**_uid_**), is used, that value is replaced with the Unique Identifier.
 
 ═════════[ PERSISTING RETRIEVED TEXT IN A VARIABLE FOR LATER USE ]═════════════════════════════════════════════════════════════════════════════════════════════
+The PersistString command stores the element's text in memory for use later.
 There may be a need to compare the value retrieved from one element with the value of another.
 Unfortunately, this cannot be done directly, but a Persist action can be enacted allowing the storage of 
 an element's value that can then be compared to the value of another element.
@@ -555,7 +610,8 @@ To persist the value of an element, use the following:
 </step>
 
 ═════════[ FILLING IN TEXT FIELDS ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-###  To fill in a field by ID and to make it non-crucial.  To make it crucial change the last parameter to true.
+The SendKeys command sends keystrokes and phrases to form elements and Hyperlink context menus.
+To fill in a field by ID and to make it non-crucial.  To make it crucial change the last parameter to true.
 <step>
 	<command>sendkeys</command>
 	<actionType>write</actionType>
@@ -628,6 +684,7 @@ To fill in a field by ID with the persisted value, add the Unique Id, and to mak
 </step>
 
 To compare the persisted value to an element, use the following:
+The Assert command compares an element's ACTUAL value with the EXPECTED value supplied.
 <step>
 	<command>assert</command>
 	<actionType>read</actionType>
@@ -667,6 +724,7 @@ To send the persisted value to a textbox or textarea form control, use the follo
 
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 ═════════[ CLICK AN ELEMENT IN AN IFRAME ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Switch to iFrame command switches the current scope to the iFrame specified.
 To click an element by xPath in an iFrame.
 Note that the name of the iFrame is the first argument and the action to take is the second argument.
 <step>
@@ -682,6 +740,7 @@ Note that the name of the iFrame is the first argument and the action to take is
 </step>
 
 ═════════[ SELECT AN OPTION FROM AN HTML SELECT ELEMENT ]══════════════════════════════════════════════════════════════════════════════════════════════════════
+The SendKeys command can also be used to select an Option from an HTML Select control.
 To select an option from an HTML Select (drop down/list) element there are two methods.
 Sendkeys can be used to select an item based on its text or Click can be used on the option
 actually being selected.
@@ -707,6 +766,7 @@ Alternate method of selecting an option from an HTML select element.
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ TAKING SCREENSHOTS ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The ScreenShot command takes a screenshot of the current page.
 To take a screen shot/print screen.  The browser will be resized automatically to capture all page content.
 ╠n/a ; ScreenShot ; n/a ; true ; false╣
 <step>
@@ -718,6 +778,7 @@ To take a screen shot/print screen.  The browser will be resized automatically t
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ SWITCHING BROWSER TABS ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Right Click command can be used to access a links context menu to open that link in a new tab and switch to that tab.
 Some actions are related and to avoid unnecessary steps the enter key will be pressed after right clicking and arrowing to a particular item.
 To Right click on an element, move down to the first menu item, click it to open in a new tab and switch to the new tab:
 ╠//*[@id="rso"]/div[1]/div/div[1]/div/div/div[1]/a ; right click ╬ Keys.Arrow_Down ╬ Switch to tab ; xPath ; true ; false╣
@@ -748,6 +809,7 @@ context menu opens a new tab and then the next step switches to the second tab.
 	</arguments>
 </step>
 
+The Switch To Tab command switches to another Tab but if Tab argument is not provided, switches back to the first(parent) tab.
 <step>
 	<command>Switch to tab</command>
 	<actionType>write</actionType>
@@ -775,6 +837,7 @@ Note that this requires 0 (Zero) to be specified in the command.
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ FIND ELEMENTS THAT HAVE SPECIFIC TEXT ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Find command finds elements that have the supplied text.
 There are times when you may need to search for text but do not know the accessor necessary to find that text.
 The Find functionality allows you search all elements regardless of type or just all tags of a specific type for a phrase.
 Additionally, the Find functionality returns the xPath of all elements where the text is found, but when searching 
@@ -831,12 +894,14 @@ To Find element containing text searching all div elements and make this non-cru
 </step>
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ FIND ELEMENTS ON A PAGE TO HELP MAKE A TEST FILE - NOT FOR TESTING BUT FOR HELPING TO CREATE TESTS ]════════════════════════════════════════════════
+═════════[ CREATE TEST PAGE COMMAND TO CREATE PAGE TESTS OR FOR PROVIDING DATA TO HELP CREATE TESTS ]══════════════════════════════════════════════════════════
 IMPORTANT NOTE #1: ANY PARENT ELEMENT WILL CONTAIN THE TEXT OF IT'S CHILD ELEMENT(s) SO TO GET THE ELEMENT THAT ACTUALLY 
-                  CONTAINS THE INFORMATION DESIRED, TRY TO ELIMINATE THE HIERARCHICAL ITEMS ABOVE THAT ARE NOT DESIRED, 
-                  LIKE CONTAINER ELEMENTS.  Examples include (html,head,body,div,table)
-  IMPORTANT NOTE #2: ENSURE THAT YOUR FILE PATH DOES NOT CONTAIN ANY KEYWORD USED FOR ANY OTHER ACTION, OR YOU WILL GET UNEXPECTED RESULTS!!!
+			CONTAINS THE INFORMATION DESIRED, TRY TO ELIMINATE THE HIERARCHICAL ITEMS ABOVE THAT ARE NOT DESIRED, 
+			LIKE CONTAINER ELEMENTS.  Examples include (html,head,body,div,table)
+IMPORTANT NOTE #2: ENSURE THAT YOUR FILE PATH DOES NOT CONTAIN ANY KEYWORD USED FOR ANY OTHER ACTION, OR YOU WILL GET UNEXPECTED RESULTS!!!
   A test file needs to be created and you would like to spare yourself the hassle of looking up elements, associated properties and attributes.
+  This may be especially helpful in the early stages of testing where with development and content updates, test step updates can occur but this
+  process can quickly get the initial test steps created.
   To do this, create a test script, with a Navigate command, to Navigate to the page to be tested and then use the 
   create_test_page command or the create_test_page_formatted command.
   The create_test_page command outputs key value information so that a determination can be made to as to whether an item should be tested and 
@@ -859,14 +924,15 @@ IMPORTANT NOTE #1: ANY PARENT ELEMENT WILL CONTAIN THE TEXT OF IT'S CHILD ELEMEN
 			 -   These would usually be elements that do not have text themselves but contain elements that do have text.
 			 -   Do not include spaces between elements, just a comma as follows: html,head,title,body,div
 			 -   Skip elements are ONLY APPLIED WHEN RETRIEVING ALL ELEMENTS and IGNORED WHEN RETRIEVING A SPECIFIC TAG TYPE.
-  The following two examples gets all page elements, saves them to a file, skips a list of container and other elements.
+  The following examples get all page elements except those container elements listed to skip, save them to a file, 
+  and create test step XML files that can be used immediately.
 <step>
 	<command>create_test_page_formatted</command>
 	<actionType>write</actionType>
 	<crucial>TRUE</crucial>
 	<arguments>
 		<arg1>*</arg1>
-		<arg2>C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\TestPages\Formy-Test.xml</arg2>
+		<arg2>C:\Tests\TestPages\Formy-Test.xml</arg2>
 		<arg3>html,head,title,meta,script,body,style,nav,br,div,form</arg3>
 	</arguments>
 </step>
@@ -879,7 +945,7 @@ The following example gets all anchor tag elements, saves them to a file, and ig
 	<crucial>TRUE</crucial>
 	<arguments>
 		<arg1>a</arg1>
-		<arg2>C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\TestPages\TestFileOutput_A_Only.txt</arg2>
+		<arg2>C:\Tests\TestPages\TestFileOutput_A_Only.txt</arg2>
 		<arg3>html,head,title,meta,script,body,style,nav,br,div,form</arg3>
 	</arguments>
 </step>
@@ -891,15 +957,37 @@ The following example is the correct equivalent of the previous command.
 	<crucial>TRUE</crucial>
 	<arguments>
 		<arg1>a</arg1>
-		<arg2>C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\TestPages\TestFileOutput_A_Only.txt</arg2>
+		<arg2>C:\Tests\TestPages\TestFileOutput_A_Only.txt</arg2>
 	</arguments>
 </step>
+  Alternatively, for checking content or for manually creating tests, using the unformatted command may prove more useful.
+  This command works just like the formatted command except it simply lists the element information, but does not make test steps.
+  Example of some element information: Element Type, xPath, Text, Href, Src, Alt, Visibility.
+  This file type is a plain text file and should be output accordingly.
+  The following example creates an unformatted file(arg2) listing the described element attributes for all elements (arg1)
+  except those in the skipped list (arg3)
+<step>
+	<command>create_test_page</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>*</arg1>
+		<arg2>C:\TestPages\Formy-Unformatted-Test.txt</arg2>
+		<arg3>html,head,title,meta,script,body,style,nav,br,div,form</arg3>
+	</arguments>
+	</step>
+
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ CONNECT TO SQL SERVER DATABASE AND CLOSE THE CONNECTION ]═══════════════════════════════════════════════════════════════════════════════════════════
-There will be times during the course of QAing a site where querying the database can confirm that a value has been 
+The Connect To Database command opens and persists a connection object until it is closed
+There will be times during the course of QA'ing a site where querying the database can confirm that a value has been 
 added or removed.
+NOTE: ALTHOUGH MONGODB IS MENTIONED IN THE COMMENTS BELOW, IT IS NOT FULLY IMPLEMENTED AT THIS TIME
+ONLY SQL SERVER CONNECTIVITY IS CURRENTLY IMPLEMENTED!!!
 IMPORTANT: ENSURE THAT YOU ALWAYS CREATE A CLOSE CONNECTION TEST STEP TO CLOSE THE CONNECTION YOU OPEN!!!!
+An emergency clean up process will attempt to shut down any open connections but it is suggested that 
+you do this with a test step to ensure that connection limits are not exhausted.
 To do this, you must first establish a connection to the database and this is how to do that.
 There are two ways to establish a connection to Sql Server. 
 <step>
@@ -939,6 +1027,7 @@ The alternative method with more control but with more risk of failure.
 </step>
 
 ═════════[ CLOSING THE DATABASE CONNECTION ]═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Close Database Connection command closes an open database connection and destroys the connection object releasing the resource.
 Equally important as opening the database connection object, is closing the database connection object.
 Open connections consume resources and unclosed connections can use up all available memory or an 
 allotment of connections depending on where the connection lives.
@@ -957,6 +1046,7 @@ The close command is simple and as follows:
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ QUERYING THE SQL SERVER DATABASE  ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Sql Server Query command executes a Sql Server Query for a single field value and compares that to the expected value.
 When testing a site, there sometimes needs to be verification that a value was 
 actually written to, or removed from the database.  
 This is the purpose of the Sql Server Query Command.
