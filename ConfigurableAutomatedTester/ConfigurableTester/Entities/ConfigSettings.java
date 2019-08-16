@@ -18,6 +18,7 @@ public class ConfigSettings {
     private int _maxScreenShots;
     private Boolean _sortSpecifiedTestFiles;
 
+
     public ConfigSettings() {
         _testFiles = new ArrayList<>();
     }
@@ -144,4 +145,6 @@ public class ConfigSettings {
     public void set_sortSpecifiedTestFiles(Boolean _sortSpecifiedTestFiles) {
         this._sortSpecifiedTestFiles = _sortSpecifiedTestFiles;
     }
+
+
 }

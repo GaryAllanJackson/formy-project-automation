@@ -8,6 +8,7 @@ public class TestStep {
     private String _accessor;
     private String _accessorType;
     private Boolean _crucial;
+    private Boolean _isConditionalBlock;
 
     public List<Argument> ArgumentList;
 
@@ -64,6 +65,12 @@ public class TestStep {
         this._crucial = _crucial;
     }
 
+    public Boolean get_isConditionalBlock() {
+        return _isConditionalBlock;
+    }
 
+    public void set_isConditionalBlock(Boolean _isConditionalBlock) {
+        this._isConditionalBlock = _isConditionalBlock;
+    }
 
 }

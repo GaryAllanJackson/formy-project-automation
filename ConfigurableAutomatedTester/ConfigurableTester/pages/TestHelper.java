@@ -41,6 +41,16 @@ public class TestHelper{
     private int maxScreenShotsToTake = 0;
     private int defaultMilliSecondsForNavigation = 10000;
 
+    private String navigationMessageIndent;
+    public String getNavigationMessageIndent() {
+        return navigationMessageIndent;
+    }
+
+    public void setNavigationMessageIndent(String navigationMessageIndent) {
+        this.navigationMessageIndent = navigationMessageIndent;
+    }
+
+
     public ConfigSettings ReadConfigurationSettingsXmlFile(String configurationXmlFile, boolean isExecutedFromMain) throws Exception {
 //        DebugDisplay("#1 IN ReadConfigurationSettingsXmlFile method");
         PrintSamples();
@@ -215,7 +225,6 @@ public class TestHelper{
             //optional, but recommended
             //read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
             doc.getDocumentElement().normalize();
-            //UpdateTestResults(AppConstants.ANSI_PURPLE + AppConstants.sectionLeftDown + PrePostPad("[ Start of Reading Test Settings File  ]", "═", 9, 157) + AppConstants.sectionRightDown + AppConstants.ANSI_RESET, false);
             CreateSectionHeader("[ Start of Reading Test Settings File  ]", "", AppConstants.ANSI_PURPLE, true, false, false);
             UpdateTestResults(AppConstants.ANSI_PURPLE + AppConstants.indent5 + "Reading file: " + AppConstants.ANSI_RESET + testXmlFileName, false);
 //            System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
@@ -261,20 +270,31 @@ public class TestHelper{
 
                     //Crucial
                     if (eElement.getElementsByTagName(AppConstants.CrucialCheckNode).item(0) != null) {
-                        if (eElement.getElementsByTagName(AppConstants.CrucialCheckNode).item(0).getTextContent().toLowerCase() == "true") {
+                        if (eElement.getElementsByTagName(AppConstants.CrucialCheckNode).item(0).getTextContent().toLowerCase().equals("true")) {
                             testStep.set_crucial(true);
                         } else {
                             testStep.set_crucial(false);
                         }
-//                        testStep.set_crucial(eElement.getElementsByTagName(AppConstants.CrucialCheckNode).item(0).getTextContent());
                     } else {
                         testStep.set_crucial(null);
                     }
 
+                    //expected value
                     if (eElement.getElementsByTagName(AppConstants.ExpectedValueNode).item(0) != null) {
                         testStep.set_expectedValue(eElement.getElementsByTagName(AppConstants.ExpectedValueNode).item(0).getTextContent());
                     } else {
                         testStep.set_expectedValue(null);
+                    }
+
+                    //Conditional Block Setting
+                    if (eElement.getElementsByTagName(AppConstants.IsConditionalBlockNode).item(0) != null) {
+                        if (eElement.getElementsByTagName(AppConstants.IsConditionalBlockNode).item(0).getTextContent().toLowerCase().equals("true")) {
+                            testStep.set_isConditionalBlock(true);
+                        } else {
+                            testStep.set_isConditionalBlock(false);
+                        }
+                    } else {
+                        testStep.set_isConditionalBlock(null);
                     }
 
                     UpdateTestResults(AppConstants.ANSI_PURPLE + AppConstants.indent5 + "Reading Test Step:" + AppConstants.ANSI_RESET, false);
@@ -282,6 +302,7 @@ public class TestHelper{
                             AppConstants.ANSI_PURPLE + AppConstants.indent8 + "Expected Value: " + AppConstants.ANSI_RESET + testStep.get_expectedValue(), false);
                     UpdateTestResults(AppConstants.ANSI_PURPLE + AppConstants.indent8 + "Accessor Type: " + AppConstants.ANSI_RESET + testStep.get_accessorType() +
                             AppConstants.ANSI_PURPLE + AppConstants.indent8 + "Accessor: " + AppConstants.ANSI_RESET + testStep.get_accessor(), false);
+                    UpdateTestResults(AppConstants.ANSI_PURPLE + AppConstants.indent8 + "Conditional Block Start: " + AppConstants.ANSI_RESET + testStep.get_isConditionalBlock(), false);
 
                     //get all arguments
                     if (eElement.getElementsByTagName(AppConstants.ArgumentsNode).item(0) != null) {
@@ -317,7 +338,6 @@ public class TestHelper{
                     }
                 }
             }
-            //UpdateTestResults(AppConstants.ANSI_PURPLE + AppConstants.sectionLeftUp + PrePostPad("[ End of Reading Test Settings File  ]", "═", 9, 157) + AppConstants.sectionRightUp + AppConstants.ANSI_RESET, false);
             CreateSectionHeader("[ End of Reading Test Settings File  ]", "", AppConstants.ANSI_PURPLE, false, false, false);
         } catch(Exception e) {
             UpdateTestResults("The following error occurred while reading the Test Settings XML file: \r\n" + e.getMessage(), false);
@@ -367,7 +387,8 @@ public class TestHelper{
      * @param webAddress -
      **************************************************************** */
     public void NavigateToPage(WebDriver driver, String webAddress) throws InterruptedException{
-        UpdateTestResults(AppConstants.indent8 + "Waiting the default wait time of " + defaultMilliSecondsForNavigation + " milliseconds for navigation to complete!", false);
+        String indent = getNavigationMessageIndent() != null ? getNavigationMessageIndent() : AppConstants.indent8;
+        UpdateTestResults(indent + "Waiting the default wait time of " + defaultMilliSecondsForNavigation + " milliseconds for navigation to complete!", false);
         driver.get(webAddress);
         Thread.sleep(defaultMilliSecondsForNavigation);
     }
@@ -386,9 +407,7 @@ public class TestHelper{
             UpdateTestResults(AppConstants.indent8 + "Waiting " + milliseconds  + " milliseconds, as directed, for navigation to complete!", false);
             driver.get(webAddress);
             Thread.sleep(milliseconds);
-        }
-        else
-        {
+        } else {
             NavigateToPage(driver, webAddress);
         }
     }
@@ -412,8 +431,7 @@ public class TestHelper{
      * @param screenShotFolder -
      * @param isError -
      **************************************************************** */
-    public void captureScreenShot(WebDriver driver, String screenShotName, String screenShotFolder, boolean isError) {
-        //if ((maxScreenShotsToTake > 0 && screenShotsTaken < maxScreenShotsToTake) || (maxScreenShotsToTake == 0) || isError) {
+    public void captureScreenShot(WebDriver driver, String screenShotName, String screenShotFolder, boolean isError, String fileStepIndex) {
         if ((maxScreenShotsToTake > 0 && screenShotsTaken < maxScreenShotsToTake) || (maxScreenShotsToTake == 0)) {
             try {
                 //get the original dimensions and save them
@@ -430,14 +448,6 @@ public class TestHelper{
                 //take the screen shot
                 TakesScreenshot ts = (TakesScreenshot) driver;
                 File source = ts.getScreenshotAs(OutputType.FILE);
-
-                String fileStepIndex;
-                if (screenShotName.toLowerCase().contains("assert_fail")) {
-                    fileStepIndex = screenShotName.substring(screenShotName.indexOf("_F") + 1, screenShotName.indexOf("_Assert_Fail"));
-                }
-                else {
-                    fileStepIndex = screenShotName.substring(screenShotName.lastIndexOf("_F") + 1, screenShotName.lastIndexOf("_"));
-                }
 
                 if (screenShotFolder != null && !screenShotFolder.isEmpty() && Files.exists(Paths.get(screenShotFolder))) {
                     if (!screenShotFolder.endsWith("\\")) {
@@ -524,7 +534,8 @@ public class TestHelper{
     public void UpdateTestResults(String testMessage, boolean writeToLog) {
         try {
             if (writeToLog) {
-                if (testMessage.contains(AppConstants.sectionRightDown) || testMessage.contains(AppConstants.sectionRightUp)) {
+                if (testMessage.contains(AppConstants.sectionRightDown) || testMessage.contains(AppConstants.sectionRightUp)
+                        || testMessage.contains(AppConstants.subsectionArrowRight)) {
                     WriteToFile(get_logFileName(), PadSection(CleanMessage(testMessage)));
                     if (testMessage.toLowerCase().contains("end") || testMessage.contains(AppConstants.sectionRightUp)) {
                         WriteToFile(get_logFileName(), "");
@@ -541,7 +552,8 @@ public class TestHelper{
         }
 
         if (testMessage.contains("Successful")) {
-            System.out.println(AppConstants.ANSI_GREEN + testMessage + AppConstants.ANSI_RESET);
+            //System.out.println(AppConstants.ANSI_GREEN + testMessage + AppConstants.ANSI_RESET);
+            System.out.println(AppConstants.ANSI_GREEN_BRIGHT + testMessage + AppConstants.ANSI_RESET);
         } else if (testMessage.contains("Failed")) {
             System.out.println(AppConstants.ANSI_RED + testMessage + AppConstants.ANSI_RESET);
         } else if (testMessage.contains("Navigation")) {
@@ -549,7 +561,8 @@ public class TestHelper{
             if (testMessage.toLowerCase().contains("end")) {
                 System.out.println("");
             }
-        } else if (testMessage.contains("[") && ((testMessage.toLowerCase().contains("end") && !testMessage.toLowerCase().contains("send")) || testMessage.toLowerCase().contains("revert"))) {
+        } else if (testMessage.contains("[") && ((testMessage.toLowerCase().contains("end") && !testMessage.toLowerCase().contains("send") && !testMessage.toLowerCase().contains("end conditional"))
+                || testMessage.toLowerCase().contains("revert"))) {
             System.out.println(PadSection(testMessage));
             System.out.println("");
         } else if (testMessage.contains("]") && (testMessage.toLowerCase().contains("start") || testMessage.toLowerCase().contains("begin")
@@ -641,8 +654,123 @@ public class TestHelper{
 
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+            WriteToFile(get_helpFileName(), "║                                              TABLE OF CONTENTS                                                                                                         ║");
+            WriteToFile(get_helpFileName(), "╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), AppConstants.indent5 + PrePostPad( "[ HELP FILE OVERVIEW  ]", "═", 9, 100));
+            WriteToFile(get_helpFileName(), "\t\tAPPLICATION OVERVIEW");
+            WriteToFile(get_helpFileName(), "\t\tHELP FILE SECTIONS");
+            WriteToFile(get_helpFileName(), "\t\tFUTURE FUNCTIONALITY\r\n");
+
+            WriteToFile(get_helpFileName(), AppConstants.indent5 + PrePostPad( "[ Configuration ]", "═", 9, 100));
+            WriteToFile(get_helpFileName(), "\t\tCONFIGURATION OVERVIEW");
+            WriteToFile(get_helpFileName(), "\t\tCONFIGURATION FILE FIELDS AND DESCRIPTIONS");
+            WriteToFile(get_helpFileName(), "\t\tCONFIGURATION FILE EXAMPLES");
+            WriteToFile(get_helpFileName(), "\t\tEXAMPLES EXPLAINED \r\n");
+
+            WriteToFile(get_helpFileName(), AppConstants.indent5 + PrePostPad( "[ Test Steps ]", "═", 9, 100));
+            WriteToFile(get_helpFileName(), "\t\tTEST FILE OVERVIEW");
+            WriteToFile(get_helpFileName(), "\t\tTEST FILE FIELDS AND DESCRIPTIONS");
+            WriteToFile(get_helpFileName(), "\t\tNAVIGATION");
+            WriteToFile(get_helpFileName(), "\t\tNAVIGATION WITH SUCCESSFUL NAVIGATION CONFIRMATION");
+            WriteToFile(get_helpFileName(), "\t\tNAVIGATION WITH AUTHENTICATION WITH AND WITHOUT NAVIGATION CONFIRMATION");
+            WriteToFile(get_helpFileName(), "\t\tLOGIN WITH NAVIGATION");
+            WriteToFile(get_helpFileName(), "\t\tALERT POPUP LOGIN");
+            WriteToFile(get_helpFileName(), "\t\tCHECK URL WITHOUT NAVIGATION");
+            WriteToFile(get_helpFileName(), "\t\tCHECK GET REQUEST STATUS WITHOUT NAVIGATION");
+            WriteToFile(get_helpFileName(), "\t\tCHECK POST REQUEST STATUS WITHOUT NAVIGATION");
+            WriteToFile(get_helpFileName(), "\t\tCHECK DOCUMENT READY STATE COMPLETE WITHOUT NAVIGATION AS A POST NAVIGATION STEP");
+            WriteToFile(get_helpFileName(), "\t\tCHECK DOCUMENT READY STATE COMPLETE WITH NAVIGATION IN A SINGLE STEP");
+            WriteToFile(get_helpFileName(), "\t\tCONDITIONAL BLOCKS");
+            WriteToFile(get_helpFileName(), "\t\tCHECK AN ANCHOR HREF");
+            WriteToFile(get_helpFileName(), "\t\tCHECK ALL PAGE LINKS USING URL");
+            WriteToFile(get_helpFileName(), "\t\tCHECK ALL PAGE LINKS WITHOUT USING URL");
+            WriteToFile(get_helpFileName(), "\t\tCHECK THE COUNT OF A SPECIFIC ELEMENT ON A PAGE");
+            WriteToFile(get_helpFileName(), "\t\tCHECK ALL PAGE IMAGE SRC TAGS WITH SEPARATE NAVIGATION STEP");
+            WriteToFile(get_helpFileName(), "\t\tCHECK ALL PAGE IMAGE SRC TAGS WITH NO SEPARATE NAVIGATION STEP");
+            WriteToFile(get_helpFileName(), "\t\tCHECK ALL PAGE IMAGE ALT TAGS WITH SEPARATE NAVIGATION STEP");
+            WriteToFile(get_helpFileName(), "\t\tCHECK ALL PAGE IMAGE ALT TAGS WITH NO SEPARATE NAVIGATION STEP");
+            WriteToFile(get_helpFileName(), "\t\tWAITING A SPECIFIC AMOUNT OF TIME FOR ITEMS TO BE AVAILABLE");
+            WriteToFile(get_helpFileName(), "\t\tWAITING FOR THE PRESENCE OF AN ELEMENT");
+            WriteToFile(get_helpFileName(), "\t\tWAITING FOR DOCUMENT READY STATE COMPLETE");
+            WriteToFile(get_helpFileName(), "\t\tUNIQUE IDENTIFIER");
+            WriteToFile(get_helpFileName(), "\t\tPERSISTING RETRIEVED TEXT IN A VARIABLE FOR LATER USE");
+            WriteToFile(get_helpFileName(), "\t\tFILLING IN TEXT FIELDS");
+            WriteToFile(get_helpFileName(), "\t\tCLICK AN ELEMENT IN AN IFRAME");
+            WriteToFile(get_helpFileName(), "\t\tSELECT AN OPTION FROM AN HTML SELECT ELEMENT");
+            WriteToFile(get_helpFileName(), "\t\tTAKING SCREENSHOTS");
+            WriteToFile(get_helpFileName(), "\t\tSWITCHING BROWSER TABS");
+            WriteToFile(get_helpFileName(), "\t\tFIND ELEMENTS THAT HAVE SPECIFIC TEXT");
+            WriteToFile(get_helpFileName(), "\t\tFIND ELEMENTS THAT CONTAIN TEXT");
+            WriteToFile(get_helpFileName(), "\t\tCREATE TEST PAGE COMMAND TO CREATE PAGE TESTS OR FOR PROVIDING DATA TO HELP CREATE TESTS");
+            WriteToFile(get_helpFileName(), "\t\tCONNECT TO SQL SERVER DATABASE AND CLOSE THE CONNECTION");
+            WriteToFile(get_helpFileName(), "\t\tCLOSING THE DATABASE CONNECTION");
+            WriteToFile(get_helpFileName(), "\t\tQUERYING THE SQL SERVER DATABASE");
+            WriteToFile(get_helpFileName(), "\t\tRETRIEVING JSON FROM AN API ENDPOINT");
+            WriteToFile(get_helpFileName(), "\t\tQUERYING JSON FROM AN API ENDPOINT");
+            WriteToFile(get_helpFileName(), "\t\tCHECK COLOR CONTRAST  \r\n");
+            WriteToFile(get_helpFileName(), AppConstants.indent5 + PrePostPad("[ Troubleshooting ]", "═", 9, 100));
+            WriteToFile(get_helpFileName(), "\t\tDRIVER ISSUES");
+            WriteToFile(get_helpFileName(), "\t\tURL VALIDATION FAILURE");
+            WriteToFile(get_helpFileName(), "\t\tMISSING CONFIGURATION FILE");
+            WriteToFile(get_helpFileName(), "\t\tUNEXPECTED OUTPUT FROM A TEST STEP");
+            WriteToFile(get_helpFileName(), "\t\tOVERALL TEST RESULT SHOWS FAILURE ALTHOUGH TEST STEPS PASS (LAST TEST STEP PASSED)");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ END OF TABLE OF CONTENTS ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+            WriteToFile(get_helpFileName(), "║                                              HELP FILE OVERVIEW                                                                                                        ║");
+            WriteToFile(get_helpFileName(), "╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "Welcome to the Configurable Automated Tester.");
+            WriteToFile(get_helpFileName(), "This application was designed to perform automated testing using configuration and test step files.");
+            WriteToFile(get_helpFileName(), "It was intended to remove the need for per project automated test coding but grew out of the curiousity to ");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "It covers most testing, including: Navigation, Form Population, Value checking, Value Persistence for use in ");
+            WriteToFile(get_helpFileName(), "upcoming test step comparisons or form populations, context menu access, iFrame access, child tab access, ");
+            WriteToFile(get_helpFileName(), "SQL Server Connectivity and Querying, anchor href and text property checking, image src and alt property");
+            WriteToFile(get_helpFileName(), "checking, checking color contrast, conditional block to run tests only if condition step passes,");
+            WriteToFile(get_helpFileName(), "and unique value generation so that form population tests can be run over and over using this value to ");
+            WriteToFile(get_helpFileName(), "ensure that entry is unique each time.\r\n");
+            WriteToFile(get_helpFileName(), "An added test step configuration can be used to create a test step file for a specific page and while " +
+                                                        "this is not a test, it can make creating test files much faster.");
+            WriteToFile(get_helpFileName(), PrePostPad("[ NOTE ]", "*", 10, 100));
+            WriteToFile(get_helpFileName(), "NOTE: The != operator is currently only supported for the following commands: Assert, Sql Server Query, Check Count.");
+            WriteToFile(get_helpFileName(), "There was no viable use case for implementing this functionality for other commands and the reason it is not supported");
+            WriteToFile(get_helpFileName(), "in the JSON query is explained in the JSON Query section.");
+            WriteToFile(get_helpFileName(), PrePostPad("", "*", 10, 100));
+
+            WriteToFile(get_helpFileName(), "This help file is broken up into 4 separate sections:\r\n");
+            WriteToFile(get_helpFileName(), "\t1.\tHELP FILE OVERVIEW - This section, which provides an overview of the application and this help file.\r\n");
+            WriteToFile(get_helpFileName(), "\t2.\tCONFIGURATION FILE FORMAT  - describes the format of the configuration file and details the use and settings of each field.");
+            WriteToFile(get_helpFileName(), "\t\tTwo example configurations are provided to showcase two different means of configuring the way test files are specified.\r\n");
+            WriteToFile(get_helpFileName(), "\t3.\tTEST FILE FORMAT - describes the format of the test file(s) and details the use and settings of each field.");
+            WriteToFile(get_helpFileName(), "\t\tVarious examples and alternate steps are outlined describing the test settings necessary to perform each test function.\r\n");
+            WriteToFile(get_helpFileName(), "\t4.\tTROUBLESHOOTING - describes common issues and how to address them to get the desired results.\r\n");
+            WriteToFile(get_helpFileName(), "Future functionality to be added to this application:");
+            WriteToFile(get_helpFileName(), "\tGreater Than and Less Than Operator.");
+            WriteToFile(get_helpFileName(), "\t\t-\tThis would be a good addition when used with Condtional Blocks.");
+            WriteToFile(get_helpFileName(), "\tOnly validatable(read actionType) commands can be used for the conditional statement such as an text, src, alt or href assertion or element found.\r\n");
+            WriteToFile(get_helpFileName(), "\tColor Contrast code has been implemented to allow for color contrast checking using this page's formula.");
+            WriteToFile(get_helpFileName(), "\t\t-\thttps://www.w3.org/TR/AERT/#color-contrast");
+            WriteToFile(get_helpFileName(), "\t\t-\tCurrently reviewing and comparing pages to determine whether to implement color contrast using this page:");
+            WriteToFile(get_helpFileName(), "\t\t-\thttps://www.w3.org/TR/WCAG20-TECHS/G17.html\r\n");
+            WriteToFile(get_helpFileName(), "\tMongoDb Connectivity and Querying will be implemented.");
+            WriteToFile(get_helpFileName(), "\t\t-\tThis was partially implemented but abandoned for a later time when there is access to a MongoDB instance.\r\n");
+
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+
+            WriteToFile(get_helpFileName(), "╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
             WriteToFile(get_helpFileName(), "║                                              CONFIGURATION FILE FORMAT                                                                                                 ║");
             WriteToFile(get_helpFileName(), "╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CONFIGURATION OVERVIEW ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "NOTES: The file format is XML, so to make comments use <!-- to begin the comment and --> to end the comment.");
             WriteToFile(get_helpFileName(), "Comments can span lines but comments cannot include other comment blocks.");
             WriteToFile(get_helpFileName(), "Comments are lightly sprinkled in some of the help XML examples below.");
@@ -656,7 +784,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\r\n" +
                     "<automatedTestConfiguration>\r\n" +
                     "\t<!-- folder where screenshots should be saved -->\r\n" +
-                    "\t<screenShotSaveFolder>C:\\Gary\\ScreenShots\\Mashup</screenShotSaveFolder>\r\n" +
+                    "\t<screenShotSaveFolder>C:\\ScreenShots\\Mashup</screenShotSaveFolder>\r\n" +
                     "\t<maxScreenShotsToTake>5</maxScreenShotsToTake>\r\n" +
                     "\t<browserType>Chrome</browserType>\r\n" +
                     "\t<!--<browserType>Firefox</browserType>-->\r\n" +
@@ -757,7 +885,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\r\n" +
                     "<automatedTestConfiguration>\r\n" +
                     "\t<!-- folder where screenshots should be saved -->\r\n" +
-                    "\t<screenShotSaveFolder>C:\\Gary\\ScreenShots\\Mashup</screenShotSaveFolder>\r\n" +
+                    "\t<screenShotSaveFolder>C:\\ScreenShots\\Mashup</screenShotSaveFolder>\r\n" +
                     "\t<maxScreenShotsToTake>5</maxScreenShotsToTake>\r\n" +
                     "\t<browserType>Chrome</browserType>\r\n" +
                     "\t<!--<browserType>Firefox</browserType>-->\r\n" +
@@ -788,17 +916,25 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "The Test file is an xml file, that can include comments just like any xml file.");
             WriteToFile(get_helpFileName(), "It begins with the XML declaration followed by the <testSteps> root element.");
             WriteToFile(get_helpFileName(), "Each test is grouped in <step> elements, which consist of the all or some of the following nodes:\r\n");
-            WriteToFile(get_helpFileName(), "<command>Command to execute</command> - The command node, describes the command to execute and is always required.");
-            WriteToFile(get_helpFileName(), "<actionType>read/write</actionType> - The actionType node can be set to read or write describing this as a read or write action.");
+            WriteToFile(get_helpFileName(), "<command>Command to execute</command> - The command node, describes the command to execute and is always required.\r\n");
+            WriteToFile(get_helpFileName(), "<actionType>read/write</actionType> - The actionType node can be set to read or write describing this as a read or write action.\r\n");
             WriteToFile(get_helpFileName(), "\tAssertions where an element value is being checked against a supplied value is a read.");
             WriteToFile(get_helpFileName(), "\tNavigation, clicking, populating text boxes, selecting select options, accessing context menu etc.. ");
             WriteToFile(get_helpFileName(), "\t\tare write actionTypes because they are performing an action rather than just reading a value.  ");
-            WriteToFile(get_helpFileName(), "<accessor>select-menu</accessor> - The element identifier.");
-            WriteToFile(get_helpFileName(), "<accessorType>ID</accessorType> - The type of element identifier. (xPath, ClassName, CssSelector, Id, TagName)");
+            WriteToFile(get_helpFileName(), "<accessor>select-menu</accessor> - The element identifier.\r\n");
+            WriteToFile(get_helpFileName(), "<accessorType>ID</accessorType> - The type of element identifier. (xPath, ClassName, CssSelector, Id, TagName)\r\n");
             WriteToFile(get_helpFileName(), "<expectedValue>What you expect to retrieve</expectedValue> - The optional expectedValue node, if present, ");
-            WriteToFile(get_helpFileName(), "\tacts as the expected value of the element value being retrieved as the actual value.");
+            WriteToFile(get_helpFileName(), "\tacts as the expected value of the element value being retrieved as the actual value.\r\n");
             WriteToFile(get_helpFileName(), "<crucial>TRUE</crucial> - The crucial node can be set to True or False and determines if testing should stop ");
-            WriteToFile(get_helpFileName(), "\tor proceed if the step fails.  Set to True for stop and False for proceed.");
+            WriteToFile(get_helpFileName(), "\tor proceed if the step fails.  Set to True for stop and False for proceed.\r\n");
+            WriteToFile(get_helpFileName(), "<conditional>true</conditional> - The conditional node is used to start a conditional block of steps.");
+            WriteToFile(get_helpFileName(), "\tAll steps within the block depend upon the success of this step being successful.");
+            WriteToFile(get_helpFileName(), "\tThe Condition node should only ever be used when starting a conditional block of steps.");
+            WriteToFile(get_helpFileName(), "\tA separate commmand is used to end the conditional block, so setting this to false is useless");
+            WriteToFile(get_helpFileName(), "\tThis can only be used on read actionTypes as performing an action is not verifiable.");
+            WriteToFile(get_helpFileName(), "\tWhen applied if successful, all subsequent steps within the block will execute along with all steps after the block.");
+            WriteToFile(get_helpFileName(), "\tWhen applied and unsuccessful for any reason, all subsequent steps within the block will be skipped");
+            WriteToFile(get_helpFileName(), "\t and all steps after the block will execute.\r\n");
             WriteToFile(get_helpFileName(), "<arguments></arguments> - The arguments node is a container of numbered argument nodes.");
             WriteToFile(get_helpFileName(), "\tArgument order is crucial and out of order arguments can have unpredictable results.");
             WriteToFile(get_helpFileName(), "\tSee the help sections below to learn the order of arguments for each command type.");
@@ -806,7 +942,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\t<arg2>Second argument</arg2>\r\n\t<arg3>Third argument</arg3>");
             WriteToFile(get_helpFileName(), "\tGenerally speaking, these numbered arguments are arranged so that the most relevant pieces of information ");
             WriteToFile(get_helpFileName(), "\tare the first items and the less relevant pieces of information are last.");
-            WriteToFile(get_helpFileName(), "\tThe order of the arguments is crucial, while properly numbering is important but improperly numbering is forgivable as long as the xml is valid.");
+            WriteToFile(get_helpFileName(), "\tThe order of the arguments is crucial, while properly numbering is important but improperly numbering is forgivable as long as the xml is valid.\r\n");
             WriteToFile(get_helpFileName(), "There are few, if any, examples that use all nodes, so in the Navigation example below note that this does not use ");
             WriteToFile(get_helpFileName(), "Accessor and AccessorType nodes because it accesses the URL instead of a page element when making an assertion. ");
             WriteToFile(get_helpFileName(), "Also, keep in mind that while this represents the structure of a test file, it consists of only one of many possible test steps.\r\n");
@@ -1011,6 +1147,45 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CONDITIONAL BLOCKS ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "IMPORTANT: CONDITIONAL BLOCKS CAN NOT BE NESTED!!!!\r\n");
+            WriteToFile(get_helpFileName(), "Creating a conditional block is a two step process.");
+            WriteToFile(get_helpFileName(), "1.\tFirst, the conditional block must be started by adding the <conditional>true</conditional> node to a ");
+            WriteToFile(get_helpFileName(), "\t\ttest step that has the actionType set to read (<actionType>read</actionType>).");
+            WriteToFile(get_helpFileName(), "\t\tOnly read actionTypes are allowed to begin a conditional block because read steps ");
+            WriteToFile(get_helpFileName(), "\t\tare checked against an expected value and are validatable.");
+            WriteToFile(get_helpFileName(), "\t\tAny test steps based on the success of this condition can be placed after the condition.");
+            WriteToFile(get_helpFileName(), "\t\tAn example of a conditional block start is shown below.");
+            WriteToFile(get_helpFileName(), "\t\tThis command will be discussed in detail later, but note the presence of the conditional field, ");
+            WriteToFile(get_helpFileName(), "\t\twhich signifies the start of a conditional block.");
+            WriteToFile(get_helpFileName(), "\t\tSimply stated, the following command checks the element using the xPath accessor and validates that the text of that ");
+            WriteToFile(get_helpFileName(), "\t\telement is the expectedValue, and if so, it is marked as successful and block statements will execute, else block");
+            WriteToFile(get_helpFileName(), "\t\tstatements will be skipped.");
+            WriteToFile(get_helpFileName(), "<step>\n" +
+                    "\t<command>assert</command>\r\n" +
+                    "\t<conditional>true</conditional>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<expectedValue>FORMY</expectedValue>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<accessor>/html[1]/body[1]/div[1]/nav[1]/a[1]</accessor>\r\n" +
+                    "\t<accessorType>xPath</accessorType>\r\n" +
+                    "</step>\r\n");
+            WriteToFile(get_helpFileName(), "1.\tSecond, the conditional block must be ended by adding an end condition command.");
+            WriteToFile(get_helpFileName(), "\t\tThe end conditional command node itself is the most important and only required");
+            WriteToFile(get_helpFileName(), "\t\t node of this test step, as shown below.");
+            WriteToFile(get_helpFileName(), "\t\tThis command neither reads nor writes and asserts nothing and therefore, cannot be marked as crucial.");
+            WriteToFile(get_helpFileName(), "\t\tOnce this command is executed, all remaining test steps will not longer dependent upon the condition");
+            WriteToFile(get_helpFileName(), "\t\tand each will be executed as expected.");
+            WriteToFile(get_helpFileName(), "\t\tIf this command is not issued all steps after the start of the Conditional Block start will be considered");
+            WriteToFile(get_helpFileName(), "\t\tpart of the Conditional Block and will be executed or skipped accordingly.");
+            WriteToFile(get_helpFileName(), "The following is the End Conditional command used to end the Conditional Block.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>end conditional</command>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+
             WriteToFile(get_helpFileName(), PrePostPad("[ CHECK AN ANCHOR HREF ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "The Check_A_Href command checks the href attribute of a HyperLink.");
             WriteToFile(get_helpFileName(), "To check an anchor's href url and to make it non-crucial.  To make it crucial change the last parameter to true.");
@@ -1071,6 +1246,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "This will count the number of times an element is found on a page and compare that to the expected value.");
             WriteToFile(get_helpFileName(), "In the example below, the test compares the number of \"a\" tags on the page with the expected number of 18.");
             WriteToFile(get_helpFileName(), "If the page has 18 \"a\" tags, the test passes, otherwise it fails.");
+            WriteToFile(get_helpFileName(), "An optional last argument can be included to use the != operator.");
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>check count</command>\r\n" +
@@ -1667,6 +1843,8 @@ public class TestHelper{
                     "\t\t<arg2>Forum</arg2>\r\n" +
                     "\t\t<!-- where clause - optional -->\r\n" +
                     "\t\t<arg3>where ForumId = 1</arg3>\r\n" +
+                    "\t\t<!-- Optional 4th argument can be used to signify != comparison -->\r\n" +
+                    "\t\t<!--<arg4>!=</arg4>-->\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
@@ -1693,54 +1871,213 @@ public class TestHelper{
                     "\t\t<arg1>Select Top(1) Forum from [POCFISForumV2].[dbo].[Forums]</arg1>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ RETRIEVING JSON FROM AN API ENDPOINT  ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "The Get JSON command like the SQL Server Connection, persists an object for use by subsequent commands.");
+            WriteToFile(get_helpFileName(), "Unlike the SQL Server Connection command, which opens a connection object, the Get JSON command");
+            WriteToFile(get_helpFileName(), "downloads and stores the JSON into a local variable that can later be used to SEARCH for key value pairs.");
+            WriteToFile(get_helpFileName(), "This local variable will contain the retrieved JSON until overwritten by a subsequent Get JSON request or ");
+            WriteToFile(get_helpFileName(), "until the test file executing ends.");
+            WriteToFile(get_helpFileName(), "Each time a test is run this variable is reset to null until populated by the Get JSON command.");
+            WriteToFile(get_helpFileName(), "The Get JSON command is used to retrieve the JSON from either the current page/url or a different page/url.");
+            WriteToFile(get_helpFileName(), "If the optional argument URL is not included, the current page/url will be used to retrieve the JSON.");
+            WriteToFile(get_helpFileName(), "If the URL is included as the command's optional sole argument, it will trigger a navigation event and then");
+            WriteToFile(get_helpFileName(), "that page/url will be used to retrieve the JSON.");
+            WriteToFile(get_helpFileName(), "The preferred way to perform the Get JSON is shown below and requires a previous navigation step.");
+            WriteToFile(get_helpFileName(), "This step should be conditional or crucial depending upon the subsequent steps in the test file.");
+            WriteToFile(get_helpFileName(), "In the example below, JSON is retrieved from the current URL and starts a Conditional Block so that");
+            WriteToFile(get_helpFileName(), "any query statements can be contained within the Conditional Block preventing their execution if this step fails.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<!-- Allows you to retrieve JSON from the current end point.  Make this step crucial or conditional as subsequent steps depend on it's success. -->\r\n" +
+                    "\t<command>Get JSON</command>\r\n" +
+                    "\t<conditional>true</conditional>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "Alternatively, navigation can be included in the same step to first trigger a navigation event and then get the JSON.");
+            WriteToFile(get_helpFileName(), "The only difference between the example below and the one above is that the below example first triggers a navigation event");
+            WriteToFile(get_helpFileName(), "by including the URL as an argument in the test step.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<!-- Allows you to retrieve JSON from a different end point.  Make this step crucial or conditional as subsequent steps depend on it's success.  -->\r\n" +
+                    "\t<command>Get JSON</command>\r\n" +
+                    "\t<conditional>true</conditional>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>http://local.forums.com/?productId=2&amp;id=true</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ QUERYING JSON FROM AN API ENDPOINT ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "A QUICK NOTE ABOUT JSON BEFORE REVIEWING THIS COMMAND");
+            WriteToFile(get_helpFileName(), "\tReturned JSON is a string so numbers are represented without quotation marks while strings");
+            WriteToFile(get_helpFileName(), "\tare represented with quotation marks.");
+            WriteToFile(get_helpFileName(), "\tThis means that 1 and \"1\" are not the same, as the former is a number and the latter is a string representation of that number.");
+            WriteToFile(get_helpFileName(), "\tJSON files are key value pairs where the key is a string and the value is either a number or a string.");
+            WriteToFile(get_helpFileName(), "\tThe Key is like a variable name and the Value holds the value of the variable.");
+            WriteToFile(get_helpFileName(), "The Query JSON command is actually just a CASE SENSITIVE search and not a querying framework like the SQL Query command.");
+            WriteToFile(get_helpFileName(), "For this reason, the != operator is not supported for JSON Queries.");
+            WriteToFile(get_helpFileName(), "The key, which is placed into the <accessor></accessor> node along with the expected value which is placed into the");
+            WriteToFile(get_helpFileName(), "<expectedValue></expectedValue> node are both case sensitive.");
+            WriteToFile(get_helpFileName(), "Additionally, the <expectedValue></expectedValue> node must represent the expected value exactly so include quotes for");
+            WriteToFile(get_helpFileName(), "strings and exclude quotes for numbers.");
+            WriteToFile(get_helpFileName(), "To best determine how to represent the expected value, just copy the text between the colon and the end of the ");
+            WriteToFile(get_helpFileName(), "line excluding the comma, if present.");
+            WriteToFile(get_helpFileName(), "For the following examples, refer to the following JSON excerpt:");
+            WriteToFile(get_helpFileName(), "{\r\n" +
+                    "\"ForumId\": 1,\r\n" +
+                    "\"Forum\": \"General\",\r\n" +
+                    "\"IsActive\": true\r\n" +
+                    "}");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "For the first example, the Query JSON command is being used to find the ForumId value with a numeric value of 1.");
+            WriteToFile(get_helpFileName(), "Notice that the <expectedValue></expectedValue> contains 1 and not \"1\".");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Query JSON</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<accessor>ForumId</accessor>\r\n" +
+                    "\t<accessorType>JSON</accessorType>\r\n" +
+                    "\t<expectedValue>1</expectedValue>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "For the second example, the Query JSON command is being used to find the Forum value with a string value of \"General\".");
+            WriteToFile(get_helpFileName(), "When searching for string values the quotation marks must be used exactly as they are in the JSON returned.");
+            WriteToFile(get_helpFileName(), "Notice that the <expectedValue></expectedValue> contains \"General\" and not General.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Query JSON</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<accessor>Forum</accessor>\r\n" +
+                    "\t<accessorType>JSON</accessorType>\r\n" +
+                    "\t<expectedValue>\"General\"</expectedValue>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
 
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK COLOR CONTRAST  ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "The Check Contrast command compares the forecolor brightness with the backcolor brightness and the color difference between the two.");
+            WriteToFile(get_helpFileName(), "Check contrast uses the formula found on the following page to calculate and compare the foreground and background brightness and color differences:");
+            WriteToFile(get_helpFileName(), "https://www.w3.org/TR/AERT/#color-contrast\r\n");
+            WriteToFile(get_helpFileName(), "When testing a page, one of the most important things to determine is if the color contrast is within acceptable ranges.");
+            WriteToFile(get_helpFileName(), "Good contrast allows users to easily read information without struggling to discern text from background.");
+            WriteToFile(get_helpFileName(), "A site with bad contrast is less likely to maintain interest and even less likely to receive repeat visits.");
+            //WriteToFile(get_helpFileName(), "In the following Check Contrast Test step, the tags being checked are all <p> tags against their container elements.");
+            WriteToFile(get_helpFileName(), "If the background color cannot be found on the container element acting as the background, this method climbs the");
+            WriteToFile(get_helpFileName(), "container's ancestral hierarchy until it finds the color used for the background.");
+            WriteToFile(get_helpFileName(), "In the results if you see ^1 it means that it had to use the parent's backcolor, ^2 is grandparent, ^3 great grand parent etc...");
+            WriteToFile(get_helpFileName(), "If you don't see the ^ sign, the value was taken directly from the element itself.");
+            WriteToFile(get_helpFileName(), "In the partial output example shown below, notice the ^2 following the backcolor listing, this indicates");
+            WriteToFile(get_helpFileName(), "that the grandparent of the container element was used as the source for the element's background color.");
+            WriteToFile(get_helpFileName(), "backcolor(rgba(248, 249, 250, 1))^2 Back-Color Brightness: 248.0\r\n");
+            WriteToFile(get_helpFileName(), "The first argument is the element type that you want to check.");
+            WriteToFile(get_helpFileName(), "It is suggested that you create focused tests targeting the lowest element that actually contains text instead of it's");
+            WriteToFile(get_helpFileName(), "parent element, which will contain that element thus also containing that element's text.");
+            WriteToFile(get_helpFileName(), "It is best to use p for <p> tags, label for <label> tags, span for <span> tags");
+            WriteToFile(get_helpFileName(), "With that said, it is possible to use an asterisk(*) to target all elements.");
+            WriteToFile(get_helpFileName(), "\t-Note that doing so will take a long long time to complete and the results will likely be too much for the terminal display.");
+            WriteToFile(get_helpFileName(), "\t-At the time of writing this, a test using an asterisk ran for over 2 hours for one page and was stopped having tested " +
+                    "only a fraction of the page!!!");
+            WriteToFile(get_helpFileName(), "It is suggested that you never use the overriding arguments but they were included to allow for slightly relaxed requirements.");
+            WriteToFile(get_helpFileName(), "The default brightness contrast which can be overridden in the second argument is 125.");
+            WriteToFile(get_helpFileName(), "The default color contrast which can be overridden in the third argument is 500.");
+            WriteToFile(get_helpFileName(), "In the following Check Contrast Test step, the tags being checked are all <p> tags against their container elements.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>check contrast</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<!-- Type of tag(s) to check contrast on -->\r\n" +
+                    "\t\t<arg1>p</arg1>\r\n" +
+                    "\t\t<!--  [Optional and not recommended] Allows Overriding Acceptable Contrast settings b for color brightness default is (125)-->\r\n" +
+                    "\t\t<arg2>b=86</arg2>\r\n" +
+                    "\t\t<!-- [Optional and not recommended] Allows Overriding Acceptable Contrast settings d for color difference default is (500) -->\r\n" +
+                    "\t\t<arg3>d=450</arg3>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
             WriteToFile(get_helpFileName(), "║                                              TROUBLESHOOTING                                                                                                           ║");
             WriteToFile(get_helpFileName(), "╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
-            WriteToFile(get_helpFileName(), "DRIVER ISSUES");
+            WriteToFile(get_helpFileName(), PrePostPad("[ DRIVER ISSUES ]", "═", 9, 159));
+            //WriteToFile(get_helpFileName(), "DRIVER ISSUES");
             WriteToFile(get_helpFileName(), "If you run the application and the browser briefly opens and then closes:");
             WriteToFile(get_helpFileName(), "Check you local browser version and compare that with the corresponding web driver for that browser.");
             WriteToFile(get_helpFileName(), "If these are not the same, upgrade the web driver for this browser and it should work.");
-            WriteToFile(get_helpFileName(), "═════════════════════════════════════════════════════════");
+            //WriteToFile(get_helpFileName(), "═════════════════════════════════════════════════════════");
+            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "URL VALIDATION FAILURE");
+            //WriteToFile(get_helpFileName(), "URL VALIDATION FAILURE");
+            WriteToFile(get_helpFileName(), PrePostPad("[ URL VALIDATION FAILURE ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "When you enter a url into your web browser although the trailing slash may be there or may not be there, the returned URL from the test app differs.");
             WriteToFile(get_helpFileName(), "Update your test to reflect what the test app is returning as this is the actual URL for this page.");
-            WriteToFile(get_helpFileName(), "═════════════════════════════════════════════════════════");
+            //WriteToFile(get_helpFileName(), "═════════════════════════════════════════════════════════");
+            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "MISSING CONFIGURATION FILE");
+            //WriteToFile(get_helpFileName(), "MISSING CONFIGURATION FILE");
+            WriteToFile(get_helpFileName(), PrePostPad("[ MISSING CONFIGURATION FILE ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "If you are running in JUnit and see the following message, the config file is not in the correct location or has the wrong name.");
             WriteToFile(get_helpFileName(), "Configuration File not found! (Config/ConfigurationSetup.tconfig)");
             WriteToFile(get_helpFileName(), "Place the configuration file in the location above with the name specified and re-run the test.");
             WriteToFile(get_helpFileName(), "Exiting!!!");
             WriteToFile(get_helpFileName(), "configSettings is null!!!");
-            WriteToFile(get_helpFileName(), "═════════════════════════════════════════════════════════");
+            //WriteToFile(get_helpFileName(), "═════════════════════════════════════════════════════════");
+            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "UNEXPECTED OUTPUT FROM A TEST STEP");
+            //WriteToFile(get_helpFileName(), "UNEXPECTED OUTPUT FROM A TEST STEP");
+            WriteToFile(get_helpFileName(), PrePostPad("[ UNEXPECTED OUTPUT FROM A TEST STEP ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "If you have an unexpected output or outcome of a test step, check the Action/Expected value field in your test ");
             WriteToFile(get_helpFileName(), "and ensure that there is no keyword in there that the application may attempt to execute instead of the action intended.");
             WriteToFile(get_helpFileName(), "The test will have to be re-written to account for this.");
             WriteToFile(get_helpFileName(), "A specific SendKeys keyword was added to send text that could be misconstrued because it contains keywords.");
             WriteToFile(get_helpFileName(), "While this particular solution may not be the one you need, there is likely a solution but if not, please document the issue ");
             WriteToFile(get_helpFileName(), "so that it can be addressed in future implementations.");
-            WriteToFile(get_helpFileName(), "═════════════════════════════════════════════════════════");
+            //WriteToFile(get_helpFileName(), "═════════════════════════════════════════════════════════");
+            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
+            //WriteToFile(get_helpFileName(), "OVERALL TEST RESULT SHOWS FAILURE ALTHOUGH TEST STEPS PASS (LAST TEST STEP PASSED)");
+            WriteToFile(get_helpFileName(), PrePostPad("[ OVERALL TEST RESULT SHOWS FAILURE ALTHOUGH TEST STEPS PASS (LAST TEST STEP PASSED) ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "When running tests, if a step marked as crucial does not fail, the overall JUnit test should ");
+            WriteToFile(get_helpFileName(), "show as having passed.");
+            WriteToFile(get_helpFileName(), "If the last step passes but the overall JUnit test shows a failure and the error doesn't point to ");
+            WriteToFile(get_helpFileName(), "anything in the test steps, re-run the test and it will likely show as having passed.");
+            WriteToFile(get_helpFileName(), "This intermittent failure was noticed during testing and while it is believed to have been a race condition");
+            WriteToFile(get_helpFileName(), "that was fixed, this has been added as the exact cause has not been identified.");
+            WriteToFile(get_helpFileName(), "If during testing, this no longer occurs, this tip may be removed.");
+            //WriteToFile(get_helpFileName(), "═════════════════════════════════════════════════════════");
+            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ XML DOCUMENT MUST START WITH AND END WITH THE SAME ELEMENT ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "This means that the start and end element are not proper opening and closing XML tags.");
+            WriteToFile(get_helpFileName(), "1.\tFirst, ensure that the document has the start and end tags.");
+            WriteToFile(get_helpFileName(), "2.\tNext, check that the end tag contains a </ as the first two characters as a common mistake is ");
+            WriteToFile(get_helpFileName(), "\t\tcopying and pasting and forgetting to update.");
+            WriteToFile(get_helpFileName(), "3.\tFinally, check that the spelling, if this was not a copy paste issue as it may have been a typo.");
             WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
-            WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
-            WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
-            WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "");
+//            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
+//            WriteToFile(get_helpFileName(), "");
+//            WriteToFile(get_helpFileName(), "");
+//            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+//            WriteToFile(get_helpFileName(), "");
+//            WriteToFile(get_helpFileName(), "");
+//            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+//            WriteToFile(get_helpFileName(), "");
+//            WriteToFile(get_helpFileName(), "");
+//            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+//            WriteToFile(get_helpFileName(), "");
+//            WriteToFile(get_helpFileName(), "");
         } catch (Exception e) {
 
         }
@@ -1875,7 +2212,8 @@ public class TestHelper{
                 .replace(AppConstants.ANSI_RESET,"").replace(AppConstants.ANSI_CYAN,"")
                 .replace(AppConstants.ANSI_BOLD,"").replace(AppConstants.ANSI_YELLOW_BACKGROUND,"")
                 .replace(AppConstants.ANSI_GREEN_BACKGROUND,"").replace(AppConstants.FRAMED,"")
-                .replace(AppConstants.ANSI_PURPLE_BACKGROUND,"");
+                .replace(AppConstants.ANSI_PURPLE_BACKGROUND,"").replace(AppConstants.ANSI_YELLOW_BRIGHT,"")
+                .replace(AppConstants.ANSI_PURPLE_BRIGHT,"");
 
         return cleanMessage;
     }
@@ -1999,5 +2337,7 @@ public class TestHelper{
         }
         return status;
     }
+
+
 }
 

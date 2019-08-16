@@ -77,9 +77,13 @@
 	</step>
 	<step>
 		<!-- Tested - Good -->
-		<command>Switch to tab 0</command>
+		<!--<command>Switch to tab 0</command>-->
+		<command>Switch to tab</command>
 		<actionType>write</actionType>
 		<crucial>TRUE</crucial>
+		<arguments>
+			<arg1>1</arg1>
+		</arguments>
 	</step>
 	<step>
 		<!-- Tested - Good -->
