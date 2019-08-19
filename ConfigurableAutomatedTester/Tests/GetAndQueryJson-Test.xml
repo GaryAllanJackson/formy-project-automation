@@ -79,6 +79,16 @@
 		<expectedValue>"General"</expectedValue>
 	</step>
 	<step>
+		<command>Save JSON</command>
+		<actionType>read</actionType>
+		<crucial>FALSE</crucial>
+		<arguments>
+			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
+			<arg1>C:\Gary\ScreenShots\JSON\forums.json</arg1>
+			<arg2>false</arg2>
+		</arguments>
+	</step>
+	<step>
 		<command>end conditional</command>
 	</step>
 	<step>

@@ -606,7 +606,7 @@ public class TestCentral {
                 DatabaseQueryController(ts, fileStepIndex);
             } else if (ts.get_command().toLowerCase().contains("find")) {
                 FindPhraseController(ts, fileStepIndex);
-            } else if (ts.get_command().toLowerCase().equals("get json")) {
+            } else if (ts.get_command().toLowerCase().equals("get json") || ts.get_command().toLowerCase().equals("save json") ) {
                 JsonController(ts, fileStepIndex);
             }
         }
@@ -716,10 +716,10 @@ public class TestCentral {
             testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_PURPLE_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End JSON Retrieval and Persistence Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
         } else if (ts.get_command().toLowerCase().equals("query json")) {
             QueryJSON(ts, fileStepIndex);
+        } else if (ts.get_command().toLowerCase().equals("save json")) {
+            SaveJsonToFile(ts, fileStepIndex);
         }
     }
-
-
 
 
     /******************************************************************************
@@ -3019,6 +3019,37 @@ public class TestCentral {
                     assertEquals(searchString, null);
                 }
             }
+        }
+    }
+
+    /*****************************************************************************
+     *
+     * @param ts
+     * @param fileStepIndex
+     *****************************************************************************/
+    private void SaveJsonToFile(TestStep ts, String fileStepIndex) throws Exception {
+        //TODO: Wire this up
+        String errorMessage;
+        String fileName = GetArgumentValue(ts, 0, null);
+        String overWriteExisting = GetArgumentValue(ts, 0, "true");
+        boolean overwriteExistingFile = (overWriteExisting.toLowerCase().equals("true") || overWriteExisting.toLowerCase().equals("overwrite")) ? true : false;
+        testHelper.DebugDisplay("fileName = " + fileName);
+        testHelper.UpdateTestResults("Saving JSON to file:" + fileName + " for step " + fileStepIndex, true);
+
+
+        if (jsonContent != null && !jsonContent.isEmpty() && fileName != null) {
+            if (!overwriteExistingFile) {
+                fileName = testHelper.GetUnusedFileName(fileName);
+            }
+            testHelper.WriteToFile(fileName, jsonContent);
+            testHelper.UpdateTestResults(AppConstants.indent8 + "Successful JSON saved to file " + fileName + " for step " + fileStepIndex, true);
+        } else {
+            if (jsonContent != null && !jsonContent.isEmpty()) {
+                errorMessage = "Aborting!!!  No JSON content was previously retrieved.";
+            } else {
+                errorMessage = "Aborting!!!  No File Name was specified as the destination for the downloaded JSON content.";
+            }
+            testHelper.UpdateTestResults(AppConstants.indent8 + "Failure JSON not saved to file for step " + fileStepIndex + " because: " + errorMessage, true);
         }
     }
     //endregion

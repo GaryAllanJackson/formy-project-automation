@@ -2339,5 +2339,20 @@ public class TestHelper{
     }
 
 
+    public String GetUnusedFileName(String fileName) {
+        File tmpFile = new File(fileName);
+        String checkFileName = fileName;
+        int counter = 1;
+        if (tmpFile.exists()) {
+            while (tmpFile.exists()) {
+                checkFileName = fileName.substring(0,fileName.lastIndexOf(".") - 1) + counter + fileName.substring(fileName.lastIndexOf("."));
+                tmpFile = new File(checkFileName);
+                if (!tmpFile.exists()) {
+                    break;
+                }
+            }
+        }
+        return checkFileName;
+    }
 }
 

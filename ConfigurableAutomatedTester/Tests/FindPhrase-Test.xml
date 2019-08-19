@@ -57,7 +57,7 @@
 		<!-- Tested - Good -->
 		<command>check count</command>
 		<actionType>read</actionType>
-		<expectedValue>18</expectedValue>
+		<expectedValue>17</expectedValue>
 		<crucial>FALSE</crucial>
 		<arguments>
 			<arg1>a</arg1>
