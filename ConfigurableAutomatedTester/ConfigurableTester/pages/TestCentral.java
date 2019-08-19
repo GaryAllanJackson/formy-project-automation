@@ -3,6 +3,8 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.util.JSON;
 import org.apache.xpath.operations.Bool;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.TestInstance;
 import org.openqa.selenium.WebDriver;
 
 import java.sql.*;
@@ -61,6 +63,7 @@ enum BrowserTypes {
     Chrome, Firefox, PhantomJS, Internet_Explorer, Edge
 }
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TestCentral {
 
     //region { NOTES }
@@ -232,6 +235,21 @@ public class TestCentral {
         }
     }
 
+    /***********************************************************
+     * Description: This is the TearDown method that will run
+     *              after all processing to free up resources
+     *              even in the event of a crucial assertion
+     *              failure or an error condition.
+     *
+     * @throws Exception
+     ***********************************************************/
+    @AfterAll
+    private void TearDown() throws Exception {
+        driver.close();
+        driver.quit();
+        PerformCleanup();
+    }
+
 
     /**************************************************************************
      * Description: Default Constructor.  Reads the configuration file
@@ -247,6 +265,7 @@ public class TestCentral {
      ***************************************************************************/
     public void TestCentralStart(boolean isStartedFromMain) throws Exception {
         this.set_executedFromMain(isStartedFromMain);
+        testHelper.set_executedFromMain(isStartedFromMain);
 
         File tmp = new File(configurationFile);
         testHelper.CreateSectionHeader("[ Starting Test Application Initialization ]", AppConstants.FRAMED + AppConstants.ANSI_WHITE_BACKGROUND + AppConstants.ANSI_BOLD, AppConstants.ANSI_BLUE, true, false, false);
@@ -402,9 +421,11 @@ public class TestCentral {
             }
             testHelper.CreateSectionHeader("[ End of Test Script ]", AppConstants.FRAMED + AppConstants.ANSI_PURPLE_BACKGROUND + AppConstants.ANSI_BOLD, AppConstants.ANSI_YELLOW_BRIGHT, false, true, true);
         }
-        driver.close();
-        driver.quit();
-        PerformCleanup();
+        if (is_executedFromMain()) {
+            driver.close();
+            driver.quit();
+            PerformCleanup();
+        }
     }
 
     /*****************************************************************

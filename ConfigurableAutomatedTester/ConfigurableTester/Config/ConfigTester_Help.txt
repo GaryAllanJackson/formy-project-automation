@@ -748,8 +748,7 @@ Please note that the accessor is set to page and that an accessor type is presen
 to distinguish this document ready state complete wait from a time interval wait.
 To wait for for a maximum of 15 seconds for document state complete and to make this check crucial, use the following.
 To make it non-crucial change the last parameter to false.
-╠page ; wait ╬ 15 ; xPath ; true ; true╣
-###  ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 <step>
 	<command>wait for page</command>
 	<actionType>write</actionType>
@@ -901,6 +900,7 @@ To send the persisted value to a textbox or textarea form control, use the follo
 </step>
 
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
 ═════════[ CLICK AN ELEMENT IN AN IFRAME ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 The Switch to iFrame command switches the current scope to the iFrame specified.
 To click an element by xPath in an iFrame.
@@ -946,7 +946,6 @@ Alternate method of selecting an option from an HTML select element.
 ═════════[ TAKING SCREENSHOTS ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 The ScreenShot command takes a screenshot of the current page.
 To take a screen shot/print screen.  The browser will be resized automatically to capture all page content.
-╠n/a ; ScreenShot ; n/a ; true ; false╣
 <step>
 	<command>screenshot</command>
 	<actionType>write</actionType>
@@ -959,7 +958,6 @@ To take a screen shot/print screen.  The browser will be resized automatically t
 The Right Click command can be used to access a links context menu to open that link in a new tab and switch to that tab.
 Some actions are related and to avoid unnecessary steps the enter key will be pressed after right clicking and arrowing to a particular item.
 To Right click on an element, move down to the first menu item, click it to open in a new tab and switch to the new tab:
-╠//*[@id="rso"]/div[1]/div/div[1]/div/div/div[1]/a ; right click ╬ Keys.Arrow_Down ╬ Switch to tab ; xPath ; true ; false╣
 <step>
 	<command>right click</command>
 	<actionType>write</actionType>
@@ -1158,13 +1156,13 @@ The following example is the correct equivalent of the previous command.
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ CONNECT TO SQL SERVER DATABASE AND CLOSE THE CONNECTION ]═══════════════════════════════════════════════════════════════════════════════════════════
-The Connect To Database command opens and persists a connection object until it is closed
+The Connect To Database command opens and persists a connection object until it is closed.
 There will be times during the course of QA'ing a site where querying the database can confirm that a value has been 
 added or removed.
-NOTE: ALTHOUGH MONGODB IS MENTIONED IN THE COMMENTS BELOW, IT IS NOT FULLY IMPLEMENTED AT THIS TIME
-ONLY SQL SERVER CONNECTIVITY IS CURRENTLY IMPLEMENTED!!!
+NOTE: ALTHOUGH MONGODB IS MENTIONED IN THE COMMENTS BELOW, IT IS NOT FULLY IMPLEMENTED.
+AT THIS TIME ONLY SQL SERVER CONNECTIVITY IS CURRENTLY IMPLEMENTED!!!
 IMPORTANT: ENSURE THAT YOU ALWAYS CREATE A CLOSE CONNECTION TEST STEP TO CLOSE THE CONNECTION YOU OPEN!!!!
-An emergency clean up process will attempt to shut down any open connections but it is suggested that 
+An emergency clean up process will attempt to shut down any open connections, but it is recommended that 
 you do this with a test step to ensure that connection limits are not exhausted.
 To do this, you must first establish a connection to the database and this is how to do that.
 There are two ways to establish a connection to Sql Server. 
@@ -1374,8 +1372,9 @@ to the file name and retest until it finds a file name that does not exist.
 The updated name will be used to name the downloaded JSON file and will be reported back via the console and log.
 If the second parameter is missing, the value will be defaulted to false.
 In the example below, the JSON previously retrieved will be saved to the file outlined in <arg1></arg1>,
-but since <arg2></arg2> overwrite is set to false, if that file exists a new name will be created and 
-reported to the tester and saved to the log file.
+but since <arg2></arg2> overwrite is set to false, if that file exists a new name will be created.
+A message indicating that the file existed along with the original file name and the updated file name will be
+reported to the tester via the console and will also be included in the log file.
 <step>
 	<command>Save JSON</command>
 	<actionType>read</actionType>

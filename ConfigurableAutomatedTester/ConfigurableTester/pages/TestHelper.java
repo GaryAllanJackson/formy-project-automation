@@ -50,6 +50,15 @@ public class TestHelper{
         this.navigationMessageIndent = navigationMessageIndent;
     }
 
+    private boolean _executedFromMain;
+    public boolean is_executedFromMain() {
+        return _executedFromMain;
+    }
+
+    public void set_executedFromMain(boolean _executedFromMain) {
+        this._executedFromMain = _executedFromMain;
+    }
+
 
     public ConfigSettings ReadConfigurationSettingsXmlFile(String configurationXmlFile, boolean isExecutedFromMain) throws Exception {
 //        DebugDisplay("#1 IN ReadConfigurationSettingsXmlFile method");
@@ -553,23 +562,47 @@ public class TestHelper{
 
         if (testMessage.contains("Successful")) {
             //System.out.println(AppConstants.ANSI_GREEN + testMessage + AppConstants.ANSI_RESET);
-            System.out.println(AppConstants.ANSI_GREEN_BRIGHT + testMessage + AppConstants.ANSI_RESET);
+            if (!is_executedFromMain()) {
+                System.out.println(AppConstants.ANSI_GREEN_BRIGHT + testMessage + AppConstants.ANSI_RESET);
+            } else {
+                System.out.println(PadSection(CleanMessage(testMessage)));
+            }
         } else if (testMessage.contains("Failed")) {
-            System.out.println(AppConstants.ANSI_RED + testMessage + AppConstants.ANSI_RESET);
+            if (!is_executedFromMain()) {
+                System.out.println(AppConstants.ANSI_RED + testMessage + AppConstants.ANSI_RESET);
+            }else {
+                System.out.println(PadSection(CleanMessage(testMessage)));
+            }
         } else if (testMessage.contains("Navigation")) {
-            System.out.println(AppConstants.ANSI_BLUE + testMessage + AppConstants.ANSI_RESET);
+            if (!is_executedFromMain()) {
+                System.out.println(AppConstants.ANSI_BLUE + testMessage + AppConstants.ANSI_RESET);
+            }else {
+                System.out.println(PadSection(CleanMessage(testMessage)));
+            }
             if (testMessage.toLowerCase().contains("end")) {
                 System.out.println("");
             }
         } else if (testMessage.contains("[") && ((testMessage.toLowerCase().contains("end") && !testMessage.toLowerCase().contains("send") && !testMessage.toLowerCase().contains("end conditional"))
                 || testMessage.toLowerCase().contains("revert"))) {
-            System.out.println(PadSection(testMessage));
+            if (!is_executedFromMain()) {
+                System.out.println(PadSection(testMessage));
+            } else {
+                System.out.println(PadSection(CleanMessage(testMessage)));
+            }
             System.out.println("");
         } else if (testMessage.contains("]") && (testMessage.toLowerCase().contains("start") || testMessage.toLowerCase().contains("begin")
                 || testMessage.toLowerCase().contains("read") || testMessage.toLowerCase().contains("run")))  {
-            System.out.println(PadSection(testMessage));
+            if (!is_executedFromMain()) {
+                System.out.println(PadSection(testMessage));
+            } else {
+                System.out.println(PadSection(CleanMessage(testMessage)));
+            }
         } else {
-            System.out.println(testMessage);
+            if (!is_executedFromMain()) {
+                System.out.println(testMessage);
+            } else {
+                System.out.println(CleanMessage(testMessage));
+            }
         }
     }
 
@@ -1345,8 +1378,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "to distinguish this document ready state complete wait from a time interval wait.");
             WriteToFile(get_helpFileName(), "To wait for for a maximum of 15 seconds for document state complete and to make this check crucial, use the following.");
             WriteToFile(get_helpFileName(), "To make it non-crucial change the last parameter to false.");
-            WriteToFile(get_helpFileName(), "╠page ; wait ╬ 15 ; xPath ; true ; true╣");
-            WriteToFile(get_helpFileName(), "###  " + PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>wait for page</command>\r\n" +
                     "\t<actionType>write</actionType>\r\n" +
@@ -1498,6 +1530,7 @@ public class TestHelper{
                     "</step>");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("[ CLICK AN ELEMENT IN AN IFRAME ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "The Switch to iFrame command switches the current scope to the iFrame specified.");
             WriteToFile(get_helpFileName(), "To click an element by xPath in an iFrame.");
@@ -1539,10 +1572,10 @@ public class TestHelper{
                     "\t<accessorType>CssSelector</accessorType>\r\n");
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
+
             WriteToFile(get_helpFileName(), PrePostPad("[ TAKING SCREENSHOTS ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "The ScreenShot command takes a screenshot of the current page.");
             WriteToFile(get_helpFileName(), "To take a screen shot/print screen.  The browser will be resized automatically to capture all page content.");
-            WriteToFile(get_helpFileName(), "╠n/a ; ScreenShot ; n/a ; true ; false╣");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>screenshot</command>\r\n" +
                     "\t<actionType>write</actionType>\r\n" +
@@ -1551,12 +1584,11 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
+
             WriteToFile(get_helpFileName(), PrePostPad("[ SWITCHING BROWSER TABS ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "The Right Click command can be used to access a links context menu to open that link in a new tab and switch to that tab.");
             WriteToFile(get_helpFileName(), "Some actions are related and to avoid unnecessary steps the enter key will be pressed after right clicking and arrowing to a particular item.");
             WriteToFile(get_helpFileName(), "To Right click on an element, move down to the first menu item, click it to open in a new tab and switch to the new tab:");
-            WriteToFile(get_helpFileName(), "╠//*[@id=\"rso\"]/div[1]/div/div[1]/div/div/div[1]/a ; right click ╬ Keys.Arrow_Down ╬ Switch to tab ; xPath ; true ; false╣");
-
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>right click</command>\r\n" +
                     "\t<actionType>write</actionType>\r\n" +
@@ -1611,6 +1643,7 @@ public class TestHelper{
                     "</step>");
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
+
             WriteToFile(get_helpFileName(), PrePostPad("[ FIND ELEMENTS THAT HAVE SPECIFIC TEXT ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "The Find command finds elements that have the supplied text.");
             WriteToFile(get_helpFileName(), "There are times when you may need to search for text but do not know the accessor necessary to find that text.");
@@ -1651,6 +1684,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
+
             WriteToFile(get_helpFileName(), PrePostPad("[ FIND ELEMENTS THAT CONTAIN TEXT ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "There are times when you may need to search for a portion of text but do not know the accessor necessary to find that text.");
             WriteToFile(get_helpFileName(), "A specific instance might be when searching for text that would be in a paragraph.  ");
@@ -1669,7 +1703,7 @@ public class TestHelper{
                     "</step>");
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
-            //WriteToFile(get_helpFileName(), PrePostPad("[ FIND ELEMENTS ON A PAGE TO HELP MAKE A TEST FILE - NOT FOR TESTING BUT FOR HELPING TO CREATE TESTS ]", "═", 9, 159));
+
             WriteToFile(get_helpFileName(), PrePostPad("[ CREATE TEST PAGE COMMAND TO CREATE PAGE TESTS OR FOR PROVIDING DATA TO HELP CREATE TESTS ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "IMPORTANT NOTE #1: ANY PARENT ELEMENT WILL CONTAIN THE TEXT OF IT'S CHILD ELEMENT(s) SO TO GET THE ELEMENT THAT ACTUALLY ");
             WriteToFile(get_helpFileName(), "\t\t\tCONTAINS THE INFORMATION DESIRED, TRY TO ELIMINATE THE HIERARCHICAL ITEMS ABOVE THAT ARE NOT DESIRED, ");
@@ -1715,7 +1749,6 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "The following example gets all anchor tag elements, saves them to a file, and ignores the skips list because all elements are not being retrieved.");
-            //WriteToFile(get_helpFileName(), "╠n/a ; create_test_page  ╬ a ╬ C:\\MyLocalPath\\MyLocalFolder\\My Test Page Creation Folder\\TestFileOutput_A_Only.txt ╬ html,head,title,meta,script,body,style,a,nav,br,strong,div ; n/a ; true ; false╣");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>create_test_page_formatted</command>\r\n" +
                     "\t<actionType>write</actionType>\r\n" +
@@ -1728,7 +1761,6 @@ public class TestHelper{
                     "</step>");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "The following example is the correct equivalent of the previous command.");
-            //WriteToFile(get_helpFileName(), "╠n/a ; create_test_page  ╬ a ╬ C:\\MyLocalPath\\MyLocalFolder\\My Test Page Creation Folder\\TestFileOutput_A.txt ; n/a ; true ; false╣");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>create_test_page_formatted</command>\r\n" +
                     "\t<actionType>write</actionType>\r\n" +
@@ -1758,13 +1790,13 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("[ CONNECT TO SQL SERVER DATABASE AND CLOSE THE CONNECTION ]", "═", 9, 159));
-            WriteToFile(get_helpFileName(), "The Connect To Database command opens and persists a connection object until it is closed");
+            WriteToFile(get_helpFileName(), "The Connect To Database command opens and persists a connection object until it is closed.");
             WriteToFile(get_helpFileName(), "There will be times during the course of QA'ing a site where querying the database can confirm that a value has been ");
             WriteToFile(get_helpFileName(), "added or removed.");
-            WriteToFile(get_helpFileName(), "NOTE: ALTHOUGH MONGODB IS MENTIONED IN THE COMMENTS BELOW, IT IS NOT FULLY IMPLEMENTED AT THIS TIME");
-            WriteToFile(get_helpFileName(), "ONLY SQL SERVER CONNECTIVITY IS CURRENTLY IMPLEMENTED!!!");
+            WriteToFile(get_helpFileName(), "NOTE: ALTHOUGH MONGODB IS MENTIONED IN THE COMMENTS BELOW, IT IS NOT FULLY IMPLEMENTED.");
+            WriteToFile(get_helpFileName(), "AT THIS TIME ONLY SQL SERVER CONNECTIVITY IS CURRENTLY IMPLEMENTED!!!");
             WriteToFile(get_helpFileName(), "IMPORTANT: ENSURE THAT YOU ALWAYS CREATE A CLOSE CONNECTION TEST STEP TO CLOSE THE CONNECTION YOU OPEN!!!!");
-            WriteToFile(get_helpFileName(), "An emergency clean up process will attempt to shut down any open connections but it is suggested that ");
+            WriteToFile(get_helpFileName(), "An emergency clean up process will attempt to shut down any open connections, but it is recommended that ");
             WriteToFile(get_helpFileName(), "you do this with a test step to ensure that connection limits are not exhausted.");
             WriteToFile(get_helpFileName(), "To do this, you must first establish a connection to the database and this is how to do that.");
             WriteToFile(get_helpFileName(), "There are two ways to establish a connection to Sql Server. ");
@@ -1973,8 +2005,9 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "The updated name will be used to name the downloaded JSON file and will be reported back via the console and log.");
             WriteToFile(get_helpFileName(), "If the second parameter is missing, the value will be defaulted to false.");
             WriteToFile(get_helpFileName(), "In the example below, the JSON previously retrieved will be saved to the file outlined in <arg1></arg1>,");
-            WriteToFile(get_helpFileName(), "but since <arg2></arg2> overwrite is set to false, if that file exists a new name will be created and ");
-            WriteToFile(get_helpFileName(), "reported to the tester and saved to the log file.");
+            WriteToFile(get_helpFileName(), "but since <arg2></arg2> overwrite is set to false, if that file exists a new name will be created.");
+            WriteToFile(get_helpFileName(), "A message indicating that the file existed along with the original file name and the updated file name will be");
+            WriteToFile(get_helpFileName(), "reported to the tester via the console and will also be included in the log file.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>Save JSON</command>\r\n" +
                     "\t<actionType>read</actionType>\r\n" +
@@ -2021,7 +2054,6 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "When testing a page, one of the most important things to determine is if the color contrast is within acceptable ranges.");
             WriteToFile(get_helpFileName(), "Good contrast allows users to easily read information without struggling to discern text from background.");
             WriteToFile(get_helpFileName(), "A site with bad contrast is less likely to maintain interest and even less likely to receive repeat visits.");
-            //WriteToFile(get_helpFileName(), "In the following Check Contrast Test step, the tags being checked are all <p> tags against their container elements.");
             WriteToFile(get_helpFileName(), "If the background color cannot be found on the container element acting as the background, this method climbs the");
             WriteToFile(get_helpFileName(), "container's ancestral hierarchy until it finds the color used for the background.");
             WriteToFile(get_helpFileName(), "In the results if you see ^1 it means that it had to use the parent's backcolor, ^2 is grandparent, ^3 great grand parent etc...");
@@ -2064,31 +2096,27 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "║                                              TROUBLESHOOTING                                                                                                           ║");
             WriteToFile(get_helpFileName(), "╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
             WriteToFile(get_helpFileName(), PrePostPad("[ DRIVER ISSUES ]", "═", 9, 159));
-            //WriteToFile(get_helpFileName(), "DRIVER ISSUES");
             WriteToFile(get_helpFileName(), "If you run the application and the browser briefly opens and then closes:");
             WriteToFile(get_helpFileName(), "Check you local browser version and compare that with the corresponding web driver for that browser.");
             WriteToFile(get_helpFileName(), "If these are not the same, upgrade the web driver for this browser and it should work.");
-            //WriteToFile(get_helpFileName(), "═════════════════════════════════════════════════════════");
             WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
-            //WriteToFile(get_helpFileName(), "URL VALIDATION FAILURE");
+
             WriteToFile(get_helpFileName(), PrePostPad("[ URL VALIDATION FAILURE ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "When you enter a url into your web browser although the trailing slash may be there or may not be there, the returned URL from the test app differs.");
             WriteToFile(get_helpFileName(), "Update your test to reflect what the test app is returning as this is the actual URL for this page.");
-            //WriteToFile(get_helpFileName(), "═════════════════════════════════════════════════════════");
             WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
-            //WriteToFile(get_helpFileName(), "MISSING CONFIGURATION FILE");
+
             WriteToFile(get_helpFileName(), PrePostPad("[ MISSING CONFIGURATION FILE ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "If you are running in JUnit and see the following message, the config file is not in the correct location or has the wrong name.");
             WriteToFile(get_helpFileName(), "Configuration File not found! (Config/ConfigurationSetup.tconfig)");
             WriteToFile(get_helpFileName(), "Place the configuration file in the location above with the name specified and re-run the test.");
             WriteToFile(get_helpFileName(), "Exiting!!!");
             WriteToFile(get_helpFileName(), "configSettings is null!!!");
-            //WriteToFile(get_helpFileName(), "═════════════════════════════════════════════════════════");
             WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
-            //WriteToFile(get_helpFileName(), "UNEXPECTED OUTPUT FROM A TEST STEP");
+
             WriteToFile(get_helpFileName(), PrePostPad("[ UNEXPECTED OUTPUT FROM A TEST STEP ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "If you have an unexpected output or outcome of a test step, check the Action/Expected value field in your test ");
             WriteToFile(get_helpFileName(), "and ensure that there is no keyword in there that the application may attempt to execute instead of the action intended.");
@@ -2096,10 +2124,9 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "A specific SendKeys keyword was added to send text that could be misconstrued because it contains keywords.");
             WriteToFile(get_helpFileName(), "While this particular solution may not be the one you need, there is likely a solution but if not, please document the issue ");
             WriteToFile(get_helpFileName(), "so that it can be addressed in future implementations.");
-            //WriteToFile(get_helpFileName(), "═════════════════════════════════════════════════════════");
             WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
-            //WriteToFile(get_helpFileName(), "OVERALL TEST RESULT SHOWS FAILURE ALTHOUGH TEST STEPS PASS (LAST TEST STEP PASSED)");
+
             WriteToFile(get_helpFileName(), PrePostPad("[ OVERALL TEST RESULT SHOWS FAILURE ALTHOUGH TEST STEPS PASS (LAST TEST STEP PASSED) ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "When running tests, if a step marked as crucial does not fail, the overall JUnit test should ");
             WriteToFile(get_helpFileName(), "show as having passed.");
@@ -2108,7 +2135,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "This intermittent failure was noticed during testing and while it is believed to have been a race condition");
             WriteToFile(get_helpFileName(), "that was fixed, this has been added as the exact cause has not been identified.");
             WriteToFile(get_helpFileName(), "If during testing, this no longer occurs, this tip may be removed.");
-            //WriteToFile(get_helpFileName(), "═════════════════════════════════════════════════════════");
+
             WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("[ XML DOCUMENT MUST START WITH AND END WITH THE SAME ELEMENT ]", "═", 9, 159));
@@ -2264,10 +2291,14 @@ public class TestHelper{
                 .replace(AppConstants.ANSI_RED,"").replace(AppConstants.ANSI_GREEN,"")
                 .replace(AppConstants.ANSI_BLUE, "").replace(AppConstants.ANSI_PURPLE,"")
                 .replace(AppConstants.ANSI_RESET,"").replace(AppConstants.ANSI_CYAN,"")
-                .replace(AppConstants.ANSI_BOLD,"").replace(AppConstants.ANSI_YELLOW_BACKGROUND,"")
-                .replace(AppConstants.ANSI_GREEN_BACKGROUND,"").replace(AppConstants.FRAMED,"")
+                .replace(AppConstants.ANSI_BOLD,"").replace(AppConstants.FRAMED,"")
+                .replace(AppConstants.ANSI_YELLOW_BACKGROUND,"").replace(AppConstants.ANSI_GREEN_BACKGROUND,"")
+                .replace(AppConstants.ANSI_BLUE_BACKGROUND,"").replace(AppConstants.ANSI_PURPLE_BACKGROUND,"")
+                .replace(AppConstants.ANSI_WHITE_BACKGROUND,"")
                 .replace(AppConstants.ANSI_PURPLE_BACKGROUND,"").replace(AppConstants.ANSI_YELLOW_BRIGHT,"")
-                .replace(AppConstants.ANSI_PURPLE_BRIGHT,"");
+                .replace(AppConstants.ANSI_PURPLE_BRIGHT,"").replace(AppConstants.ANSI_RED_BRIGHT,"")
+                .replace(AppConstants.ANSI_GREEN_BRIGHT,"").replace(AppConstants.ANSI_BLUE_BRIGHT,"")
+                .replace(AppConstants.ANSI_GREEN_BACKGROUND_BRIGHT,"").replace(AppConstants.ANSI_WHITE_BACKGROUND_BRIGHT,"");
 
         return cleanMessage;
     }
@@ -2393,6 +2424,17 @@ public class TestHelper{
     }
 
 
+    /************************************************************************************
+     * Description: This method checks to discover if the fileName parameter passed in
+     *              already exists.
+     *              If it does exist, this program iterates checking if the file exists
+     *              while adding an incrementally increasing integer value to the end
+     *              of the origial filename until it finds one that does not exist and
+     *              it returns that value to the calling method.
+     *
+     * @param fileName - Name of the file to check to discover if it exists.
+     * @return - Filename that does not exist.
+     ************************************************************************************/
     public String GetUnusedFileName(String fileName) {
         File tmpFile = new File(fileName);
         String checkFileName = fileName;
