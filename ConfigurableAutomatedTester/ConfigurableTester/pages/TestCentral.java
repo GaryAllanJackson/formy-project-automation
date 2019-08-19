@@ -3031,18 +3031,26 @@ public class TestCentral {
         //TODO: Wire this up
         String errorMessage;
         String fileName = GetArgumentValue(ts, 0, null);
-        String overWriteExisting = GetArgumentValue(ts, 0, "true");
+        String overWriteExisting = GetArgumentValue(ts, 1, "false");
         boolean overwriteExistingFile = (overWriteExisting.toLowerCase().equals("true") || overWriteExisting.toLowerCase().equals("overwrite")) ? true : false;
-        testHelper.DebugDisplay("fileName = " + fileName);
-        testHelper.UpdateTestResults("Saving JSON to file:" + fileName + " for step " + fileStepIndex, true);
-
+        String originalFileName = fileName;
+        String updateFileNameMessage = "";
 
         if (jsonContent != null && !jsonContent.isEmpty() && fileName != null) {
             if (!overwriteExistingFile) {
                 fileName = testHelper.GetUnusedFileName(fileName);
+                if (!originalFileName.equals(fileName)) {
+                    updateFileNameMessage = "A File with the original file name existed.\r\n" +
+                            AppConstants.indent8 + "File name updated from: " + originalFileName + " to " + fileName;
+                    testHelper.UpdateTestResults(AppConstants.indent8 + updateFileNameMessage, true);
+                }
+            } else {
+                testHelper.DeleteFile(fileName);
             }
+
+            testHelper.UpdateTestResults(AppConstants.indent8 + "Saving JSON to file:" + fileName + " for step " + fileStepIndex, true);
             testHelper.WriteToFile(fileName, jsonContent);
-            testHelper.UpdateTestResults(AppConstants.indent8 + "Successful JSON saved to file " + fileName + " for step " + fileStepIndex, true);
+            testHelper.UpdateTestResults("Successful JSON saved to file " + fileName + " for step " + fileStepIndex, true);
         } else {
             if (jsonContent != null && !jsonContent.isEmpty()) {
                 errorMessage = "Aborting!!!  No JSON content was previously retrieved.";

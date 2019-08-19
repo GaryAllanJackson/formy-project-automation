@@ -1313,6 +1313,7 @@ by including the URL as an argument in the test step.
 </step>
 
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
 ═════════[ QUERYING JSON FROM AN API ENDPOINT ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 A QUICK NOTE ABOUT JSON BEFORE REVIEWING THIS COMMAND
 	Returned JSON is a string so numbers are represented without quotation marks while strings
@@ -1357,6 +1358,60 @@ Notice that the <expectedValue></expectedValue> contains "General" and not Gener
 	<accessorType>JSON</accessorType>
 	<expectedValue>"General"</expectedValue>
 </step>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ SAVE JSON TO FILE  ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Save JSON command saves the JSON retrieved with the Get JSON command to the path provided.
+Having the downloaded JSON on hand when testing is important for showing proof when providing feedback.
+The command is a read actionType and not a write actionType as it has to read the JSON before writing it.
+There are two arguments that can be used with this command.
+The first argument is the file path and name where the JSON should be saved and is required.
+The second argument is for overwriting the existing file.
+If set to True or Overwrite, an existing file with the same name will be overwritten.
+If set to False, which is the default, and a file exists with the same name, the application will append an incremental integer value 
+to the file name and retest until it finds a file name that does not exist. 
+The updated name will be used to name the downloaded JSON file and will be reported back via the console and log.
+If the second parameter is missing, the value will be defaulted to false.
+In the example below, the JSON previously retrieved will be saved to the file outlined in <arg1></arg1>,
+but since <arg2></arg2> overwrite is set to false, if that file exists a new name will be created and 
+reported to the tester and saved to the log file.
+<step>
+	<command>Save JSON</command>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<!-- first parameter expected by the command - The file name; it is also required -->
+		<arg1>C:\JSON downloads\forums.json</arg1>
+		<arg2>false</arg2>
+	</arguments>
+</step>
+
+In the below example, <arg2></arg2> has been set to true for overwrite, which will delete an existing file with 
+the same name before saving the file.
+<step>
+	<command>Save JSON</command>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<!-- first parameter expected by the command - The file name; it is also required -->
+		<arg1>C:\JSON downloads\forums.json</arg1>
+		<arg2>true</arg2>
+	</arguments>
+</step>
+
+Alternatively, the previous example could have also been written using the word overwrite, as shown below.
+<step>
+	<command>Save JSON</command>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<!-- first parameter expected by the command - The file name; it is also required -->
+		<arg1>C:\JSON downloads\forums.json</arg1>
+		<arg2>overwrite</arg2>
+	</arguments>
+</step>
+
 
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 

@@ -83,9 +83,9 @@
 		<actionType>read</actionType>
 		<crucial>FALSE</crucial>
 		<arguments>
-			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
+			<!-- first parameter expected by the command - The file name; it is also required -->
 			<arg1>C:\Gary\ScreenShots\JSON\forums.json</arg1>
-			<arg2>false</arg2>
+			<arg2>overwrite</arg2>
 		</arguments>
 	</step>
 	<step>

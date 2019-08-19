@@ -1912,6 +1912,7 @@ public class TestHelper{
                     "</step>");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("[ QUERYING JSON FROM AN API ENDPOINT ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "A QUICK NOTE ABOUT JSON BEFORE REVIEWING THIS COMMAND");
             WriteToFile(get_helpFileName(), "\tReturned JSON is a string so numbers are represented without quotation marks while strings");
@@ -1959,7 +1960,60 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
-
+            WriteToFile(get_helpFileName(), PrePostPad("[ SAVE JSON TO FILE  ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "The Save JSON command saves the JSON retrieved with the Get JSON command to the path provided.");
+            WriteToFile(get_helpFileName(), "Having the downloaded JSON on hand when testing is important for showing proof when providing feedback.");
+            WriteToFile(get_helpFileName(), "The command is a read actionType and not a write actionType as it has to read the JSON before writing it.");
+            WriteToFile(get_helpFileName(), "There are two arguments that can be used with this command.");
+            WriteToFile(get_helpFileName(), "The first argument is the file path and name where the JSON should be saved and is required.");
+            WriteToFile(get_helpFileName(), "The second argument is for overwriting the existing file.");
+            WriteToFile(get_helpFileName(), "If set to True or Overwrite, an existing file with the same name will be overwritten.");
+            WriteToFile(get_helpFileName(), "If set to False, which is the default, and a file exists with the same name, the application will append an incremental integer value ");
+            WriteToFile(get_helpFileName(), "to the file name and retest until it finds a file name that does not exist. ");
+            WriteToFile(get_helpFileName(), "The updated name will be used to name the downloaded JSON file and will be reported back via the console and log.");
+            WriteToFile(get_helpFileName(), "If the second parameter is missing, the value will be defaulted to false.");
+            WriteToFile(get_helpFileName(), "In the example below, the JSON previously retrieved will be saved to the file outlined in <arg1></arg1>,");
+            WriteToFile(get_helpFileName(), "but since <arg2></arg2> overwrite is set to false, if that file exists a new name will be created and ");
+            WriteToFile(get_helpFileName(), "reported to the tester and saved to the log file.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Save JSON</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<!-- first parameter expected by the command - The file name; it is also required -->\r\n" +
+                    "\t\t<arg1>C:\\JSON downloads\\forums.json</arg1>\r\n" +
+                    "\t\t<arg2>false</arg2>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "In the below example, <arg2></arg2> has been set to true for overwrite, which will delete an existing file with ");
+            WriteToFile(get_helpFileName(), "the same name before saving the file.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Save JSON</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<!-- first parameter expected by the command - The file name; it is also required -->\r\n" +
+                    "\t\t<arg1>C:\\JSON downloads\\forums.json</arg1>\r\n" +
+                    "\t\t<arg2>true</arg2>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "Alternatively, the previous example could have also been written using the word overwrite, as shown below.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Save JSON</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<!-- first parameter expected by the command - The file name; it is also required -->\r\n" +
+                    "\t\t<arg1>C:\\JSON downloads\\forums.json</arg1>\r\n" +
+                    "\t\t<arg2>overwrite</arg2>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("[ CHECK COLOR CONTRAST  ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "The Check Contrast command compares the forecolor brightness with the backcolor brightness and the color difference between the two.");
             WriteToFile(get_helpFileName(), "Check contrast uses the formula found on the following page to calculate and compare the foreground and background brightness and color differences:");
@@ -2350,6 +2404,7 @@ public class TestHelper{
                 if (!tmpFile.exists()) {
                     break;
                 }
+                counter++;
             }
         }
         return checkFileName;
