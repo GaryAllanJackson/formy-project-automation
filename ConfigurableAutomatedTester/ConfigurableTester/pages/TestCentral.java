@@ -142,6 +142,8 @@ public class TestCentral {
     private String phantomJsDriverPath = "/Users/gjackson/Downloads/BrowserDrivers/phantomjs.exe";
     private String internetExplorerDriverPath = "/Users/gjackson/Downloads/BrowserDrivers/IEDriverServer.exe";
     private String edgeDriverPath = "/Users/gjackson/Downloads/BrowserDrivers/msedgedriver.exe";
+    private static String OS = System.getProperty("os.name").toLowerCase();
+
 
     //local global variables for values that need to live outside of a single method
     private boolean _executedFromMain = false;
@@ -273,6 +275,7 @@ public class TestCentral {
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 +  "Log File Name = " + AppConstants.ANSI_RESET  + logFileName, false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 +  "Help File Name = " + AppConstants.ANSI_RESET + helpFileName, false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 + "Executed From Main or as JUnit Test = " + AppConstants.ANSI_RESET + (is_executedFromMain() ? "Standalone App" : "JUnit Test"), false);
+        testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 + "Running on "  + AppConstants.ANSI_RESET + (isWindows() ? "Windows" : "Mac"), false);
         testHelper.CreateSectionHeader("[ End Test Application Initialization ]", AppConstants.FRAMED + AppConstants.ANSI_WHITE_BACKGROUND + AppConstants.ANSI_BOLD, AppConstants.ANSI_BLUE, false, false, false);
         testHelper.UpdateTestResults("", false);
 
@@ -422,9 +425,10 @@ public class TestCentral {
             testHelper.CreateSectionHeader("[ End of Test Script ]", AppConstants.FRAMED + AppConstants.ANSI_PURPLE_BACKGROUND + AppConstants.ANSI_BOLD, AppConstants.ANSI_YELLOW_BRIGHT, false, true, true);
         }
         if (is_executedFromMain()) {
-            driver.close();
-            driver.quit();
-            PerformCleanup();
+            TearDown();
+//            driver.close();
+//            driver.quit();
+//            PerformCleanup();
         }
     }
 
@@ -451,12 +455,14 @@ public class TestCentral {
      *      the Chrome Driver currently running on your machine.
      ************************************************************ */
     private void ShutDownChromeDriver(){
-        try {
-            // Execute command
-            String command = "taskkill /im chromedriver.exe /f";
-            Process child = Runtime.getRuntime().exec(command);
-        } catch (IOException e) {
-            testHelper.UpdateTestResults("The following error occurred while trying to shut down ChromeDriver: " + e.getMessage(), true);
+        if (isWindows()) {
+            try {
+                // Execute command
+                String command = "taskkill /im chromedriver.exe /f";
+                Process child = Runtime.getRuntime().exec(command);
+            } catch (IOException e) {
+                testHelper.UpdateTestResults("The following error occurred while trying to shut down ChromeDriver: " + e.getMessage(), true);
+            }
         }
     }
 
@@ -3789,6 +3795,14 @@ public class TestCentral {
                 AppConstants.indent8 + "**********************************************************";
 
         testHelper.UpdateTestResults( AppConstants.indent8 + AppConstants.ANSI_RED + defaultCheckValuesOverridden + AppConstants.ANSI_RESET, true);
+    }
+
+    public static boolean isWindows() {
+        return (OS.indexOf("win") >= 0);
+    }
+
+    public static boolean isMac() {
+        return (OS.indexOf("mac") >= 0);
     }
     //endregion
 
