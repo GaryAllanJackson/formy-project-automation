@@ -714,6 +714,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\t\tCHECK POST REQUEST STATUS WITHOUT NAVIGATION");
             WriteToFile(get_helpFileName(), "\t\tCHECK DOCUMENT READY STATE COMPLETE WITHOUT NAVIGATION AS A POST NAVIGATION STEP");
             WriteToFile(get_helpFileName(), "\t\tCHECK DOCUMENT READY STATE COMPLETE WITH NAVIGATION IN A SINGLE STEP");
+            WriteToFile(get_helpFileName(), "\t\tSWITCH TO IFRAME");
             WriteToFile(get_helpFileName(), "\t\tCONDITIONAL BLOCKS");
             WriteToFile(get_helpFileName(), "\t\tCHECK AN ANCHOR HREF");
             WriteToFile(get_helpFileName(), "\t\tCHECK ALL PAGE LINKS USING URL");
@@ -769,10 +770,15 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "ensure that entry is unique each time.\r\n");
             WriteToFile(get_helpFileName(), "An added test step configuration can be used to create a test step file for a specific page and while " +
                                                         "this is not a test, it can make creating test files much faster.");
-            WriteToFile(get_helpFileName(), PrePostPad("[ NOTE ]", "*", 10, 100));
+            WriteToFile(get_helpFileName(), PrePostPad("[ IMPORTANT NOTES ]", "*", 10, 100));
             WriteToFile(get_helpFileName(), "NOTE: The != operator is currently only supported for the following commands: Assert, Sql Server Query, Check Count.");
-            WriteToFile(get_helpFileName(), "There was no viable use case for implementing this functionality for other commands and the reason it is not supported");
-            WriteToFile(get_helpFileName(), "in the JSON query is explained in the JSON Query section.");
+            WriteToFile(get_helpFileName(), "\tThere was no viable use case for implementing this functionality for other commands ");
+            WriteToFile(get_helpFileName(), "\tand the reason it is not supported in the JSON query is explained in the JSON Query section.\r\n");
+            WriteToFile(get_helpFileName(), "NOTE: For most verifiable operations the success or failure output will be left aligned, regardless of the margin of the ");
+            WriteToFile(get_helpFileName(), "\tprocess it is reporting on.\r\n\tThis was done purposely so that the results are easy to find and always begin with Success or Failure.");
+            WriteToFile(get_helpFileName(), "\tAdditionally, in the console, Successful results are displayed in green, while Failure results are displayed in Red.");
+            WriteToFile(get_helpFileName(), "\tAny item appear in the console in Red means that either the item failed or it was configured improperly or an important item");
+            WriteToFile(get_helpFileName(), "\twas not configured at all.\r\n\tLOOK AT ALL ITEMS IN RED AND MAKE UPDATES ACCORDINGLY!!!");
             WriteToFile(get_helpFileName(), PrePostPad("", "*", 10, 100));
 
             WriteToFile(get_helpFileName(), "This help file is broken up into 4 separate sections:\r\n");
@@ -1180,6 +1186,57 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
+            //SWITCH TO IFRAME"
+            WriteToFile(get_helpFileName(), PrePostPad("[ SWITCHING TO AN IFRAME ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "IMPORTANT: EACH TIME A SWITCH TO IFRAME COMMAND IS ISSUED, THE CONTEXT IS REVERTED TO THE MAIN WINDOW");
+            WriteToFile(get_helpFileName(), "ONCE THAT COMMAND COMPLETES EXECUTION, SO IF SUBSEQUENT TESTS NEED TO ACCESS THE IFRAME, THEY MUST BE");
+            WriteToFile(get_helpFileName(), "ENCAPSULATED WITHIN SWITCH TO IFRAME COMMANDS.");
+            WriteToFile(get_helpFileName(), "The Switch to iFrame command temporarily switches the current context to the iframe mentioned in the firs argument.");
+            WriteToFile(get_helpFileName(), "Since only the command and first argument are needed to switch to the iFrame, the remaining test step elements");
+            WriteToFile(get_helpFileName(), "can be used to perform the desired action within the iframe.");
+            WriteToFile(get_helpFileName(), "The default action when switching to an iFrame is the Assert, which checks the text of an element against the expected");
+            WriteToFile(get_helpFileName(), "value provided, so the assert command need not be used but any other commands should be placed into <arg2></arg2>.");
+            WriteToFile(get_helpFileName(), "Commands that can be used in the iFrame are assert, sendkeys, click, right click, double click, persist values and  check against persisted values.");
+            WriteToFile(get_helpFileName(), "A navigation event cannot be directed to take place in an iFrame.");
+            WriteToFile(get_helpFileName(), "If the arguments are not in the proper order, depending upon the command being performed in the iFrame, an attempt to reorder");
+            WriteToFile(get_helpFileName(), "the arguments will be made.  Unfortunately, some commands can be quite complex and interpreting arguments for reordering can be");
+            WriteToFile(get_helpFileName(), "even more complex, therefore, a message will be displayed indicating that the arguments are out of order so that they can be corrected");
+            WriteToFile(get_helpFileName(), "by the tester in the test steps file.");
+            WriteToFile(get_helpFileName(), "Failing to do so for complex commands may yield unexpected results.");
+            WriteToFile(get_helpFileName(), "The following example is an example of switching to an iframe, specified in <arg1></arg1> and performing an assert");
+            WriteToFile(get_helpFileName(), "to check the element text pointed to by the <accessor></accessor> and <accessorType></accessorType> against the");
+            WriteToFile(get_helpFileName(), "expected value provided in the <expectedValue></expectedValue> element and since <crucial></crucial> is false");
+            WriteToFile(get_helpFileName(), "the status will be reported and subsequent tests will run regardless.");
+            WriteToFile(get_helpFileName(), "Specifically, the test is switching to the iframeResult iFrame, and checking the element specified for the text Tutorial.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Switch to iFrame</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<expectedValue>Tutorials</expectedValue>\r\n" +
+                    "\t<crucial>false</crucial>\r\n" +
+                    "\t<accessor>//button[contains(@id,'menu1')]</accessor>\r\n" +
+                    "\t<accessorType>xPath</accessorType>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>iframeResult</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To switch to an iFrame and perform a click, refer to the following example.");
+            WriteToFile(get_helpFileName(), "Note that you have to specify the command in <arg2></arg2> as click is not the default action.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Switch to iFrame</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>false</crucial>\r\n" +
+                    "\t<accessor>//button[contains(@id,'menu1')]</accessor>\r\n" +
+                    "\t<accessorType>xPath</accessorType>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>iframeResult</arg1>\r\n" +
+                    "\t\t<arg2>click</arg2>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+
+            WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("[ CONDITIONAL BLOCKS ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "IMPORTANT: CONDITIONAL BLOCKS CAN NOT BE NESTED!!!!\r\n");
             WriteToFile(get_helpFileName(), "Creating a conditional block is a two step process.");
@@ -1344,6 +1401,8 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("[ WAITING A SPECIFIC AMOUNT OF TIME FOR ITEMS TO BE AVAILABLE ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "The Wait command pauses execution for a specified amount of time to allow for page load completion.");
+            WriteToFile(get_helpFileName(), "In the event that arguments are not in the correct order, this application attempts to re-order the arguments.");
+            WriteToFile(get_helpFileName(), "If the results are not as expected, refer to the examples in this help file for proper argument order.");
             WriteToFile(get_helpFileName(), "To wait for a specific amount of time before continuing to allow for page loading or script completion.");
             WriteToFile(get_helpFileName(), "To wait for 5 thousand milli-seconds before continuing onto the next step.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
@@ -2414,10 +2473,10 @@ public class TestHelper{
      **********************************************************************************/
     public Boolean CheckIsUrl(String navigateUrl) {
         Boolean status = false;
-        if (navigateUrl.startsWith("http")) {
+        if (navigateUrl != null && navigateUrl.startsWith("http")) {
             status = true;
-        } else if (navigateUrl.contains(".com") || navigateUrl.contains(".net")
-                || navigateUrl.contains(".org") || navigateUrl.contains(".gov")) {
+        } else if (navigateUrl != null && (navigateUrl.contains(".com") || navigateUrl.contains(".net")
+                || navigateUrl.contains(".org") || navigateUrl.contains(".gov"))) {
                     status = true;
         }
         return status;

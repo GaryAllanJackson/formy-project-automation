@@ -27,6 +27,7 @@
 		CHECK POST REQUEST STATUS WITHOUT NAVIGATION
 		CHECK DOCUMENT READY STATE COMPLETE WITHOUT NAVIGATION AS A POST NAVIGATION STEP
 		CHECK DOCUMENT READY STATE COMPLETE WITH NAVIGATION IN A SINGLE STEP
+		SWITCH TO IFRAME
 		CONDITIONAL BLOCKS
 		CHECK AN ANCHOR HREF
 		CHECK ALL PAGE LINKS USING URL
@@ -83,10 +84,18 @@ and unique value generation so that form population tests can be run over and ov
 ensure that entry is unique each time.
 
 An added test step configuration can be used to create a test step file for a specific page and while this is not a test, it can make creating test files much faster.
-**********[ NOTE ]**********************************************************************************
+**********[ IMPORTANT NOTES ]***********************************************************************
 NOTE: The != operator is currently only supported for the following commands: Assert, Sql Server Query, Check Count.
-There was no viable use case for implementing this functionality for other commands and the reason it is not supported
-in the JSON query is explained in the JSON Query section.
+	There was no viable use case for implementing this functionality for other commands 
+	and the reason it is not supported in the JSON query is explained in the JSON Query section.
+
+NOTE: For most verifiable operations the success or failure output will be left aligned, regardless of the margin of the 
+	process it is reporting on.
+	This was done purposely so that the results are easy to find and always begin with Success or Failure.
+	Additionally, in the console, Successful results are displayed in green, while Failure results are displayed in Red.
+	Any item appear in the console in Red means that either the item failed or it was configured improperly or an important item
+	was not configured at all.
+	LOOK AT ALL ITEMS IN RED AND MAKE UPDATES ACCORDINGLY!!!
 ****************************************************************************************************
 This help file is broken up into 4 separate sections:
 
@@ -550,6 +559,55 @@ To make it non-crucial change the last parameter to false.
 
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
+═════════[ SWITCHING TO AN IFRAME ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+IMPORTANT: EACH TIME A SWITCH TO IFRAME COMMAND IS ISSUED, THE CONTEXT IS REVERTED TO THE MAIN WINDOW
+ONCE THAT COMMAND COMPLETES EXECUTION, SO IF SUBSEQUENT TESTS NEED TO ACCESS THE IFRAME, THEY MUST BE
+ENCAPSULATED WITHIN SWITCH TO IFRAME COMMANDS.
+The Switch to iFrame command temporarily switches the current context to the iframe mentioned in the firs argument.
+Since only the command and first argument are needed to switch to the iFrame, the remaining test step elements
+can be used to perform the desired action within the iframe.
+The default action when switching to an iFrame is the Assert, which checks the text of an element against the expected
+value provided, so the assert command need not be used but any other commands should be placed into <arg2></arg2>.
+Commands that can be used in the iFrame are assert, sendkeys, click, right click, double click, persist values and  check against persisted values.
+A navigation event cannot be directed to take place in an iFrame.
+If the arguments are not in the proper order, depending upon the command being performed in the iFrame, an attempt to reorder
+the arguments will be made.  Unfortunately, some commands can be quite complex and interpreting arguments for reordering can be
+even more complex, therefore, a message will be displayed indicating that the arguments are out of order so that they can be corrected
+by the tester in the test steps file.
+Failing to do so for complex commands may yield unexpected results.
+The following example is an example of switching to an iframe, specified in <arg1></arg1> and performing an assert
+to check the element text pointed to by the <accessor></accessor> and <accessorType></accessorType> against the
+expected value provided in the <expectedValue></expectedValue> element and since <crucial></crucial> is false
+the status will be reported and subsequent tests will run regardless.
+Specifically, the test is switching to the iframeResult iFrame, and checking the element specified for the text Tutorial.
+<step>
+	<command>Switch to iFrame</command>
+	<actionType>read</actionType>
+	<expectedValue>Tutorials</expectedValue>
+	<crucial>false</crucial>
+	<accessor>//button[contains(@id,'menu1')]</accessor>
+	<accessorType>xPath</accessorType>
+	<arguments>
+		<arg1>iframeResult</arg1>
+	</arguments>
+</step>
+
+To switch to an iFrame and perform a click, refer to the following example.
+Note that you have to specify the command in <arg2></arg2> as click is not the default action.
+<step>
+	<command>Switch to iFrame</command>
+	<actionType>write</actionType>
+	<crucial>false</crucial>
+	<accessor>//button[contains(@id,'menu1')]</accessor>
+	<accessorType>xPath</accessorType>
+	<arguments>
+		<arg1>iframeResult</arg1>
+		<arg2>click</arg2>
+	</arguments>
+</step>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
 ═════════[ CONDITIONAL BLOCKS ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 IMPORTANT: CONDITIONAL BLOCKS CAN NOT BE NESTED!!!!
 
@@ -714,6 +772,8 @@ This is a small part of 508 compliance.
 
 ═════════[ WAITING A SPECIFIC AMOUNT OF TIME FOR ITEMS TO BE AVAILABLE ]═══════════════════════════════════════════════════════════════════════════════════════
 The Wait command pauses execution for a specified amount of time to allow for page load completion.
+In the event that arguments are not in the correct order, this application attempts to re-order the arguments.
+If the results are not as expected, refer to the examples in this help file for proper argument order.
 To wait for a specific amount of time before continuing to allow for page loading or script completion.
 To wait for 5 thousand milli-seconds before continuing onto the next step.
 <step>

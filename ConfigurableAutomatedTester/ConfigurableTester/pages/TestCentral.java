@@ -1,64 +1,49 @@
-import com.google.gson.JsonObject;
+import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-import com.mongodb.util.JSON;
-import org.apache.xpath.operations.Bool;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.TestInstance;
-import org.openqa.selenium.WebDriver;
-
-import java.sql.*;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import com.mongodb.client.*;
-import com.sun.javafx.geom.Edge;
-import org.apache.commons.lang3.StringUtils;
+import io.restassured.RestAssured;
 import org.bson.BSONObject;
 import org.bson.Document;
-import org.bson.conversions.Bson;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.ie.InternetExplorerOptions;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.support.Color;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.openqa.selenium.edge.*;
-import org.openqa.selenium.ie.*;
-import io.restassured.RestAssured;
-import org.openqa.selenium.support.Color;
 
-//import javax.swing.text.Document;
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.beans.ExceptionListener;
 import java.io.File;
 import java.io.IOException;
-//import java.security.Timestamp;
+import java.sql.*;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import static java.lang.Integer.parseInt;
-import static java.util.stream.LongStream.range;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.mongodb.*;
+//import javax.swing.text.Document;
+//import java.security.Timestamp;
+
+
+//import javax.swing.text.Document;
+//import java.security.Timestamp;
 enum BrowserTypes {
     Chrome, Firefox, PhantomJS, Internet_Explorer, Edge
 }
@@ -137,11 +122,16 @@ public class TestCentral {
             configurationFile.substring(0, configurationFile.lastIndexOf("\\")) + "\\ConfigTester_Help.txt" :
             configurationFile.substring(0, configurationFile.lastIndexOf("/")) + "/ConfigTester_Help.txt";
     List<String> testFiles = new ArrayList<>();
-    private String chromeDriverPath = "/Users/gjackson/Downloads/BrowserDrivers/chromedriver.exe";
-    private String fireFoxDriverPath = "/Users/gjackson/Downloads/BrowserDrivers/geckodriver.exe";
-    private String phantomJsDriverPath = "/Users/gjackson/Downloads/BrowserDrivers/phantomjs.exe";
-    private String internetExplorerDriverPath = "/Users/gjackson/Downloads/BrowserDrivers/IEDriverServer.exe";
-    private String edgeDriverPath = "/Users/gjackson/Downloads/BrowserDrivers/msedgedriver.exe";
+//    private String chromeDriverPath = "/Users/gjackson/Downloads/BrowserDrivers/chromedriver.exe";
+//    private String fireFoxDriverPath = "/Users/gjackson/Downloads/BrowserDrivers/geckodriver.exe";
+//    private String phantomJsDriverPath = "/Users/gjackson/Downloads/BrowserDrivers/phantomjs.exe";
+//    private String internetExplorerDriverPath = "/Users/gjackson/Downloads/BrowserDrivers/IEDriverServer.exe";
+//    private String edgeDriverPath = "/Users/gjackson/Downloads/BrowserDrivers/msedgedriver.exe";
+    private String chromeDriverPath = "/gary/java utilities/BrowserDrivers/chromedriver.exe";
+    private String fireFoxDriverPath = "/gary/java utilities/BrowserDrivers/geckodriver.exe";
+    private String phantomJsDriverPath = "/gary/java utilities/BrowserDrivers/phantomjs.exe";
+    private String internetExplorerDriverPath = "/gary/java utilities/BrowserDrivers/IEDriverServer.exe";
+    private String edgeDriverPath = "/gary/java utilities/BrowserDrivers/msedgedriver.exe";
     private static String OS = System.getProperty("os.name").toLowerCase();
 
 
@@ -399,6 +389,7 @@ public class TestCentral {
                 if ((isConditionalBlock && (conditionalSuccessful || (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()))) || (!isConditionalBlock && !conditionalSuccessful))
                 {
                     if (ts.get_command().toLowerCase().contains("switch to iframe")) {
+                        CheckiFrameArgumentOrder(ts, fileStepIndex);
                         String frameName = GetArgumentValue(ts, 0, null);
                         testHelper.UpdateTestResults(AppConstants.ANSI_CYAN + AppConstants.iFrameSectionTopLeft + testHelper.PrePostPad("[ Switching to iFrame: " + frameName + " for step " + fileStepIndex + " ]", "═", 9, 157) + AppConstants.iFrameSectionTopRight + AppConstants.ANSI_RESET, false);
                         if (frameName != null && !frameName.isEmpty()) {
@@ -440,7 +431,7 @@ public class TestCentral {
     private void PerformCleanup() throws SQLException {
         CloseOpenConnections();
         //if (this.driver.toString().indexOf("Chrome") >= 0) {
-        if (get_selectedBrowserType().equals(BrowserTypes.Chrome)) {
+        if (get_selectedBrowserType().equals(BrowserTypes.Chrome) && isWindows()) {
             ShutDownChromeDriver();
         }
     }
@@ -522,68 +513,7 @@ public class TestCentral {
     }
 
 
-    /**************************************************************************
-     * Description: Retrieves the argument value at the specified index
-     *              and returns it if available or it returns the defaultValue
-     *              parameter passed in.
-     * @param ts
-     * @param index
-     * @param defaultValue
-     * @return
-     **************************************************************************/
-    private String GetArgumentValue(TestStep ts, int index, String defaultValue) {
-        Argument arg  = ts.ArgumentList != null && ts.ArgumentList.size() > index ? ts.ArgumentList.get(index) : null;
 
-        if (arg!=null) {
-            return arg.get_parameter();
-        } else {
-            return defaultValue;
-        }
-    }
-
-    /****************************************************************
-     * Description: This method gets the ArgumentList Parameter String
-     *              property based on the index passed in and if it
-     *              exists, parses that string into an Integer  and
-     *              returns it to the calling method.
-     *              In the event that the value is null, it returns
-     *              the default value passed in.
-     * @param ts - Test Step Object containing all related information
-     *           for the particular test step.
-     * @param index -
-     * @param defaultValue -
-     * @return
-     ****************************************************************/
-    private int GetArgumentNumericValue(TestStep ts, int index, int defaultValue) {
-        Argument arg  = ts.ArgumentList != null && ts.ArgumentList.size() > index ? ts.ArgumentList.get(index) : null;
-
-        if (arg!=null) {
-            return parseInt(arg.get_parameter());
-        } else {
-            return defaultValue;
-        }
-    }
-
-    /*****************************************************************
-     * Description: Checks if the Argument retrieved at the specified
-     *              index is numeric.
-     * @param ts
-     * @param index
-     * @return - True if numeric, else False
-     *****************************************************************/
-    private Boolean CheckArgumentNumeric(TestStep ts, int index) {
-        Argument arg  = ts.ArgumentList != null && ts.ArgumentList.size() > index ? ts.ArgumentList.get(index) : null;
-        int returnValueCheck;
-        Boolean status = true;
-
-        try {
-            returnValueCheck = Integer.parseInt(arg.get_parameter());
-        } catch (NumberFormatException ne){
-            status = false;
-        }
-
-        return status;
-    }
 
 
     /*****************************************************************
@@ -649,6 +579,7 @@ public class TestCentral {
     private void PerformWriteActions(TestStep ts, String fileStepIndex) throws Exception {
         Boolean status;
         //Perform all non read actions below that use an accessor
+        String command = ts.get_command().toLowerCase().equals("switch to iframe") ? GetArgumentValue(ts, 1, null) : null;
 
         if (ts.get_accessorType() != null && (((ts.get_accessorType().toLowerCase().indexOf(xpathCheckValue) >= 0) || (ts.get_accessorType().toLowerCase().indexOf(cssSelectorCheckValue) >= 0) ||
                 (ts.get_accessorType().toLowerCase().indexOf(tagNameCheckValue) >= 0) || (ts.get_accessorType().toLowerCase().indexOf(idCheckValue) >= 0) ||
@@ -656,7 +587,8 @@ public class TestCentral {
                 && (!ts.get_command().toLowerCase().contains("sendkeys") && !ts.get_command().toLowerCase().contains("send keys")
                 && !ts.get_command().toLowerCase().contains("wait") && !ts.get_command().toLowerCase().contains(persistStringCheckValue)))) {
             PerformAccessorActionController(ts, fileStepIndex);
-        }  else if (ts.get_command().toLowerCase().contains("sendkeys") || ts.get_command().toLowerCase().contains("send keys")) {
+        }  else if (ts.get_command().toLowerCase().contains("sendkeys") || ts.get_command().toLowerCase().contains("send keys") ||
+                (command != null && (command.toLowerCase().equals("sendkeys") || command.toLowerCase().equals("send keys")))) {
             SendKeysController(ts, fileStepIndex);
         } else if (ts.get_command().toLowerCase().contains("wait for")) {
             //wait for a speficic element to load
@@ -816,6 +748,16 @@ public class TestCentral {
         testHelper.CreateSectionHeader(AppConstants.indent5 + "[ End Persisting action, but value persisted and usable until end of test file ]", "", AppConstants.ANSI_CYAN, false, false, true);
     }
 
+    private void PersistProvidedValueController(TestStep ts, String valueToPersist, String fileStepIndex) throws Exception {
+        persistedString = null;
+        testHelper.CreateSectionHeader(AppConstants.indent5 + "[ Start Persisting Sub-command Element Value ]", "", AppConstants.ANSI_CYAN, true, false, true);
+        testHelper.UpdateTestResults(AppConstants.indent8 + "Persisting value as part of command:" + ts.get_command() + " found by: " + ts.get_accessorType() + " accessor: " + ts.get_accessor(), true);
+        persistedString = valueToPersist;
+        testHelper.UpdateTestResults(AppConstants.indent8 + "Persisted value = (" + persistedString + ")", true);
+        conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock() && persistedString != null) ? true : false;
+        testHelper.CreateSectionHeader(AppConstants.indent5 + "[ End Persisting Sub-command action, but value persisted and usable until end of test file ]", "", AppConstants.ANSI_CYAN, false, false, true);
+    }
+
 
     /*********************************************************************************************
      * DESCRIPTION: Control method for performing all non-read actions that have an Accessor.
@@ -881,6 +823,8 @@ public class TestCentral {
         }
     }
 
+
+
     /******************************************************************************
      * DESCRIPTION: Control method used to Check the count of a specific element type.
      * @param ts
@@ -891,6 +835,7 @@ public class TestCentral {
         Boolean isNumeric = false;
         String item;
         int timeDelay = 400;
+        int counter = 0;
 
         isNumeric = CheckArgumentNumeric(ts, ts.ArgumentList.size() -1);
         if (isNumeric && (ts.get_command().toLowerCase().contains("sendkeys") || ts.get_command().toLowerCase().contains("send keys")))
@@ -900,10 +845,15 @@ public class TestCentral {
 
         for (Argument argument : ts.ArgumentList) {
             item = argument.get_parameter();
-            if (!item.toLowerCase().contains("sendkeys")) {
-                status = PerformAction(ts, item, fileStepIndex);
-                DelayCheck(timeDelay, fileStepIndex);
+            //if this is a switch to iframe command skip the first argument.
+            if ((ts.get_command().toLowerCase().equals("switch to iframe") && counter > 0) || !ts.get_command().toLowerCase().equals("switch to iframe")) {
+                //if this is a switch to iframe command skip the "sendkeys" subcommand
+                if (!item.toLowerCase().contains("sendkeys")) {
+                    status = PerformAction(ts, item, fileStepIndex);
+                    DelayCheck(timeDelay, fileStepIndex);
+                }
             }
+            counter++;
         }
     }
 
@@ -1416,7 +1366,7 @@ public class TestCentral {
         }
         String comparisonType = CheckComparisonOperator(GetArgumentValue(ts, ts.ArgumentList.size()-1, "="));
 
-        testHelper.DebugDisplay("comparisonType = " + comparisonType + " checkElement" + checkElement + " url = " + url);
+        //testHelper.DebugDisplay("comparisonType = " + comparisonType + " checkElement" + checkElement + " url = " + url);
 
         List<WebElement> elements = driver.findElements(By.cssSelector(checkElement));
         actualCount = elements.size();
@@ -1463,6 +1413,7 @@ public class TestCentral {
     public String CheckElementWithXPath(TestStep ts, String fileStepIndex) throws Exception {
         String actualValue = null;
         String accessor = ts.get_accessor();
+        String command = ts.get_command().toLowerCase().equals("switch to iframe") ? GetArgumentValue(ts, 1, null) : null;
 
         try {
             String typeOfElement = this.driver.findElement(By.xpath(accessor)).getAttribute("type");
@@ -1485,6 +1436,9 @@ public class TestCentral {
                 if (actualValue == null || actualValue.isEmpty()) {
                     actualValue = this.driver.findElement(By.xpath(accessor)).getAttribute("value");
                 }
+                if (command != null && command.toLowerCase().equals(persistStringCheckValue)) {
+                    PersistProvidedValueController(ts, actualValue, fileStepIndex);
+                }
 
                 //region {Wait for element code - not being used but an idea that could be implemented}
                 //testHelper.DebugDisplay("actualValue = " + actualValue);
@@ -1492,7 +1446,8 @@ public class TestCentral {
                 //actualValue = (new WebDriverWait(driver,10)).until(ExpectedConditions.presenceOfElementLocated(By.xpath(accessor))).getText();
                 //endregion
             }
-            if (!ts.get_command().toLowerCase().contains(persistStringCheckValue)) {
+            //testHelper.DebugDisplay("command = " + command);
+            if (!ts.get_command().toLowerCase().contains(persistStringCheckValue) && (command == null || !command.toLowerCase().contains(persistStringCheckValue))) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Checking element by XPath: " + ElementTypeLookup(accessor) + " for script " + fileStepIndex + " Actual Value: \"" + actualValue + "\"", true);
             } else {
                 testHelper.UpdateTestResults(AppConstants.indent8 + "Retrieving element text by XPath: " + ElementTypeLookup(accessor) + " for script " + fileStepIndex + " Actual Value: \"" + actualValue + "\"", true);
@@ -1523,6 +1478,7 @@ public class TestCentral {
     public String CheckElementWithCssSelector(TestStep ts, String fileStepIndex) throws Exception {
         String accessor = ts.get_accessor();
         String actualValue = null;
+        String command = ts.get_command().toLowerCase().equals("switch to iframe") ? GetArgumentValue(ts, 1, null) : null;
 
         try {
             String typeOfElement = this.driver.findElement(By.cssSelector(accessor)).getAttribute("type");
@@ -1542,8 +1498,13 @@ public class TestCentral {
                 if (actualValue == null || actualValue.isEmpty()) {
                     actualValue = this.driver.findElement(By.cssSelector(accessor)).getAttribute("value");
                 }
+                if (command != null && command.toLowerCase().equals(persistStringCheckValue)) {
+                    PersistProvidedValueController(ts, actualValue, fileStepIndex);
+                }
             }
-            if (!ts.get_expectedValue().toLowerCase().contains(persistStringCheckValue)) {
+
+            //if (!ts.get_expectedValue().toLowerCase().contains(persistStringCheckValue)) {
+            if (!ts.get_command().toLowerCase().contains(persistStringCheckValue) && (command == null || !command.toLowerCase().contains(persistStringCheckValue))) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Checking element by CssSelector: " + accessor + " for script " + fileStepIndex + " Actual Value: " + actualValue, true);
             } else {
                 testHelper.UpdateTestResults(AppConstants.indent8 + "Retrieving element text by CssSelector: " + ElementTypeLookup(accessor) + " for script " + fileStepIndex + " Actual Value: " + actualValue, true);
@@ -1571,6 +1532,7 @@ public class TestCentral {
     public String CheckElementWithTagName(TestStep ts, String fileStepIndex) throws Exception {
         String accessor = ts.get_accessor();
         String actualValue = null;
+        String command = ts.get_command().toLowerCase().equals("switch to iframe") ? GetArgumentValue(ts, 1, null) : null;
 
         try {
             String typeOfElement = this.driver.findElement(By.tagName(accessor)).getAttribute("type");
@@ -1590,8 +1552,13 @@ public class TestCentral {
                 if (actualValue == null || actualValue.isEmpty()) {
                     actualValue = this.driver.findElement(By.tagName(accessor)).getAttribute("value");
                 }
+                if (command != null && command.toLowerCase().equals(persistStringCheckValue)) {
+                    PersistProvidedValueController(ts, actualValue, fileStepIndex);
+                }
+
             }
-            if (!ts.get_expectedValue().toLowerCase().contains(persistStringCheckValue)) {
+            //if (!ts.get_expectedValue().toLowerCase().contains(persistStringCheckValue)) {
+            if (!ts.get_command().toLowerCase().contains(persistStringCheckValue) && (command == null || !command.toLowerCase().contains(persistStringCheckValue))) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Checking element by TagName: " + ElementTypeLookup(accessor) + " for script " + fileStepIndex + " Actual Value: \"" + actualValue + "\"", true);
             } else {
                 testHelper.UpdateTestResults(AppConstants.indent8 + "Retrieving element text by TagName: " + ElementTypeLookup(accessor) + " for script " + fileStepIndex + " Actual Value: " + actualValue, true);
@@ -1619,6 +1586,7 @@ public class TestCentral {
     private String CheckElementWithClassName(TestStep ts, String fileStepIndex) throws Exception {
         String accessor = ts.get_accessor();
         String actualValue = null;
+        String command = ts.get_command().toLowerCase().equals("switch to iframe") ? GetArgumentValue(ts, 1, null) : null;
 
         try {
             String typeOfElement = this.driver.findElement(By.className(accessor)).getAttribute("type");
@@ -1638,8 +1606,13 @@ public class TestCentral {
                 if (actualValue == null || actualValue.isEmpty()) {
                     actualValue = this.driver.findElement(By.className(accessor)).getAttribute("value");
                 }
+                if (command != null && command.toLowerCase().equals(persistStringCheckValue)) {
+                    PersistProvidedValueController(ts, actualValue, fileStepIndex);
+                }
+
             }
-            if (!ts.get_expectedValue().toLowerCase().contains(persistStringCheckValue)) {
+            //if (!ts.get_expectedValue().toLowerCase().contains(persistStringCheckValue)) {
+            if (!ts.get_command().toLowerCase().contains(persistStringCheckValue) && (command == null || !command.toLowerCase().contains(persistStringCheckValue))) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Checking element by ClassName: " + accessor + " for script " + fileStepIndex + " Actual Value: \"" + actualValue + "\"", true);
             }  else {
                 testHelper.UpdateTestResults(AppConstants.indent8 + "Retrieving element text by ClassName: " + accessor + " for script " + fileStepIndex + " Actual Value: " + actualValue, true);
@@ -1667,6 +1640,7 @@ public class TestCentral {
     public String CheckElementWithId(TestStep ts, String fileStepIndex)  throws Exception {
         String accessor = ts.get_accessor();
         String actualValue = null;
+        String command = ts.get_command().toLowerCase().equals("switch to iframe") ? GetArgumentValue(ts, 1, null) : null;
 
         try {
             String typeOfElement = this.driver.findElement(By.id(accessor)).getAttribute("type");
@@ -1687,8 +1661,11 @@ public class TestCentral {
                 if (actualValue == null || actualValue.isEmpty()) {
                     actualValue = this.driver.findElement(By.id(accessor)).getAttribute("value");
                 }
+                if (command != null && command.toLowerCase().equals(persistStringCheckValue)) {
+                    PersistProvidedValueController(ts, actualValue, fileStepIndex);
+                }
             }
-            if (ts.get_expectedValue() != null && !ts.get_expectedValue().toLowerCase().contains(persistStringCheckValue)) {
+            if (!ts.get_command().toLowerCase().contains(persistStringCheckValue) && (command == null || !command.toLowerCase().contains(persistStringCheckValue))) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Checking element by ID: " + accessor + " for script " + fileStepIndex + " Actual Value: \"" + actualValue + "\"", true);
             } else {
                 testHelper.UpdateTestResults(AppConstants.indent8 + "Retrieving element text by ID: " + accessor + " for script " + fileStepIndex + " Actual Value: " + actualValue, true);
@@ -1903,19 +1880,22 @@ public class TestCentral {
                     if (!command.toLowerCase().contains(rightClick)) {
                         if (!command.toLowerCase().contains(doubleClick)) {
                             this.driver.findElement(By.xpath(ts.get_accessor())).click();
-                            testHelper.UpdateTestResults("Click performed!", false);
+                            testHelper.UpdateTestResults("Successful - Click performed!", false);
                         } else {
                             //doubleclick
                             Actions action = new Actions(driver);
                             action.doubleClick(driver.findElement(By.xpath(ts.get_accessor()))).build().perform();
+                            testHelper.UpdateTestResults("Successful - Double Click performed!", false);
                         }
                     } else {  //right click element
                         Actions action = new Actions(driver);
                         if (command.toLowerCase().contains(keys)) {
                             action.contextClick(driver.findElement(By.xpath(ts.get_accessor()))).build().perform();
+                            testHelper.UpdateTestResults("Successful - Right Click performed!", false);
                         } else {
                             action.contextClick(driver.findElement(By.xpath(ts.get_accessor()))).build().perform();
                             SelectFromContextMenu(ts, fileStepIndex);
+                            testHelper.UpdateTestResults("Successful - Right Click and Context menu sendkeys performed!", false);
                         }
                     }
                 }
@@ -1924,18 +1904,22 @@ public class TestCentral {
                         if (!command.toLowerCase().contains(doubleClick)) {
                             //click
                             this.driver.findElement(By.id(ts.get_accessor())).click();
+                            testHelper.UpdateTestResults("Successful - Click performed!", false);
                         } else {
                             //doubleclick
                             Actions action = new Actions(driver);
                             action.doubleClick(driver.findElement(By.id(ts.get_accessor()))).build().perform();
+                            testHelper.UpdateTestResults("Successful - Double Click performed!", false);
                         }
                     } else {  //right click element
                         Actions action = new Actions(driver);
                         if (!command.toLowerCase().contains(keys)) {
                             action.contextClick(this.driver.findElement(By.id(ts.get_accessor()))).build().perform();
+                            testHelper.UpdateTestResults("Successful - Right Click performed!", false);
                         } else {
                             action.contextClick(driver.findElement(By.id(ts.get_accessor()))).build().perform();
                             SelectFromContextMenu(ts, fileStepIndex);
+                            testHelper.UpdateTestResults("Successful - Right Click and Context menu sendkeys performed!", false);
                         }
                     }
                 } else if (ts.get_accessorType().toLowerCase().equals(classNameCheckValue)) {
@@ -1943,18 +1927,22 @@ public class TestCentral {
                         if (!command.toLowerCase().contains(doubleClick)) {
                             //click
                             this.driver.findElement(By.className(ts.get_accessor())).click();
+                            testHelper.UpdateTestResults("Successful - Click performed!", false);
                         } else {
                             //doubleclick
                             Actions action = new Actions(driver);
                             action.doubleClick(driver.findElement(By.className(ts.get_accessor()))).build().perform();
+                            testHelper.UpdateTestResults("Successful - Double Click performed!", false);
                         }
                     } else {  //right click element
                         Actions action = new Actions(driver);
                         if (!command.toLowerCase().contains(keys)) {
                             action.contextClick(this.driver.findElement(By.className(ts.get_accessor()))).build().perform();
+                            testHelper.UpdateTestResults("Successful - Right Click performed!", false);
                         } else {
                             action.contextClick(driver.findElement(By.className(ts.get_accessor()))).build().perform();
                             SelectFromContextMenu(ts, fileStepIndex);
+                            testHelper.UpdateTestResults("Successful - Right Click and Context menu sendkeys performed!", false);
                         }
                     }
                 } else if (ts.get_accessorType().toLowerCase().equals(cssSelectorCheckValue)) {
@@ -1962,18 +1950,22 @@ public class TestCentral {
                         if (!command.toLowerCase().contains(doubleClick)) {
                             //click
                             this.driver.findElement(By.cssSelector(ts.get_accessor())).click();
+                            testHelper.UpdateTestResults("Successful - Click performed!", false);
                         } else {
                             //doubleclick
                             Actions action = new Actions(driver);
                             action.doubleClick(driver.findElement(By.cssSelector(ts.get_accessor()))).build().perform();
+                            testHelper.UpdateTestResults("Successful - Double Click performed!", false);
                         }
                     } else {  //right click element
                         Actions action = new Actions(driver);
                         if (!command.toLowerCase().contains(keys)) {
                             action.contextClick(this.driver.findElement(By.cssSelector(ts.get_accessor()))).build().perform();
+                            testHelper.UpdateTestResults("Successful - Right Click performed!", false);
                         } else {
                             action.contextClick(driver.findElement(By.cssSelector(ts.get_accessor()))).build().perform();
                             SelectFromContextMenu(ts, fileStepIndex);
+                            testHelper.UpdateTestResults("Successful - Right Click and Context menu sendkeys performed!", false);
                         }
                     }
                 } else if (ts.get_accessorType().toLowerCase().equals(tagNameCheckValue)) {
@@ -1981,18 +1973,22 @@ public class TestCentral {
                         if (!command.toLowerCase().contains(doubleClick)) {
                             //click
                             this.driver.findElement(By.tagName(ts.get_accessor())).click();
+                            testHelper.UpdateTestResults("Successful - Click performed!", false);
                         } else {
                             //doubleclick
                             Actions action = new Actions(driver);
                             action.doubleClick(driver.findElement(By.tagName(ts.get_accessor()))).build().perform();
+                            testHelper.UpdateTestResults("Successful - Double Click performed!", false);
                         }
                     } else {  //right click element
                         Actions action = new Actions(driver);
                         if (!command.toLowerCase().contains(keys)) {
                             action.contextClick(this.driver.findElement(By.tagName(ts.get_accessor()))).build().perform();
+                            testHelper.UpdateTestResults("Successful - Right Click performed!", false);
                         } else {
                             action.contextClick(driver.findElement(By.tagName(ts.get_accessor()))).build().perform();
                             SelectFromContextMenu(ts, fileStepIndex);
+                            testHelper.UpdateTestResults("Successful - Right Click and Context menu sendkeys performed!", false);
                         }
                     }
                 }
@@ -2239,6 +2235,7 @@ public class TestCentral {
         Boolean pageLoadComplete = false;
         String accessorType = ts.get_accessorType() != null ? ts.get_accessorType().toLowerCase().trim() : null;
         String accessor = ts.get_accessor()!= null ? ts.get_accessor().trim() : null;
+        CheckWaitArgumentOrder(ts, fileStepIndex);
         String elementIdentifier = ts.get_command().toLowerCase().trim().contains("page") ? GetArgumentValue(ts, 0, "n/a") : GetArgumentValue(ts, 0, null);
         int maxTimeInSeconds = GetArgumentNumericValue(ts, 1, AppConstants.DefaultElementWaitTimeInSeconds);
 
@@ -2310,6 +2307,8 @@ public class TestCentral {
             }
         }
     }
+
+
 
 
     /***********************************************************************
@@ -2434,6 +2433,7 @@ public class TestCentral {
             treeClimb = 0;
             color = element.getCssValue("color").trim();
             backColor = element.getCssValue("background-color").trim();
+
 
             cHex = Color.fromString(color).asHex();
             bHex = Color.fromString(backColor).asHex();
@@ -3050,12 +3050,12 @@ public class TestCentral {
     }
 
     /*****************************************************************************
-     *
+     * Description: Saves previously retrieved JSON to the file specified in the
+     *              command argument.
      * @param ts
      * @param fileStepIndex
      *****************************************************************************/
     private void SaveJsonToFile(TestStep ts, String fileStepIndex) throws Exception {
-        //TODO: Wire this up
         String errorMessage;
         String fileName = GetArgumentValue(ts, 0, null);
         String overWriteExisting = GetArgumentValue(ts, 1, "false");
@@ -3642,6 +3642,69 @@ public class TestCentral {
         return null;
     }
 
+    /**************************************************************************
+     * Description: Retrieves the argument value at the specified index
+     *              and returns it if available or it returns the defaultValue
+     *              parameter passed in.
+     * @param ts
+     * @param index
+     * @param defaultValue
+     * @return
+     **************************************************************************/
+    private String GetArgumentValue(TestStep ts, int index, String defaultValue) {
+        Argument arg  = ts.ArgumentList != null && ts.ArgumentList.size() > index ? ts.ArgumentList.get(index) : null;
+
+        if (arg!=null) {
+            return arg.get_parameter();
+        } else {
+            return defaultValue;
+        }
+    }
+
+    /****************************************************************
+     * Description: This method gets the ArgumentList Parameter String
+     *              property based on the index passed in and if it
+     *              exists, parses that string into an Integer  and
+     *              returns it to the calling method.
+     *              In the event that the value is null, it returns
+     *              the default value passed in.
+     * @param ts - Test Step Object containing all related information
+     *           for the particular test step.
+     * @param index -
+     * @param defaultValue -
+     * @return
+     ****************************************************************/
+    private int GetArgumentNumericValue(TestStep ts, int index, int defaultValue) {
+        Argument arg  = ts.ArgumentList != null && ts.ArgumentList.size() > index ? ts.ArgumentList.get(index) : null;
+
+        if (arg!=null) {
+            return parseInt(arg.get_parameter());
+        } else {
+            return defaultValue;
+        }
+    }
+
+    /*****************************************************************
+     * Description: Checks if the Argument retrieved at the specified
+     *              index is numeric.
+     * @param ts
+     * @param index
+     * @return - True if numeric, else False
+     *****************************************************************/
+    private Boolean CheckArgumentNumeric(TestStep ts, int index) {
+        Argument arg  = ts.ArgumentList != null && ts.ArgumentList.size() > index ? ts.ArgumentList.get(index) : null;
+        int returnValueCheck;
+        Boolean status = true;
+
+        try {
+            returnValueCheck = Integer.parseInt(arg.get_parameter());
+        } catch (NumberFormatException ne){
+            status = false;
+        }
+
+        return status;
+    }
+
     /*****************************************************************************
      * Description: This method sorts the Arguments in the Navigation Command.
      *              It is called when it is determined that the arguments are
@@ -3666,8 +3729,14 @@ public class TestCentral {
                     windowDimensions = navigateUrl;
                     navigateUrl = tempValue;
                     UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
-                } else if (windowDimensions.toLowerCase().contains("w=") || windowDimensions.toLowerCase().contains("h=")) {
+                    //navigateUrl in delayTime, delayTime in NavigateUrl, windowDimensions in windowDimensions
+                } else if (windowDimensions != null && (windowDimensions.toLowerCase().contains("w=") || windowDimensions.toLowerCase().contains("h="))) {
                     //delayTime in navigateUrl, navigateUrl in delayTime, windowDimension in windowDimension
+                    delayTime = navigateUrl;
+                    navigateUrl = tempValue;
+                    UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
+                    //navigateUrl in delayTime, delaytime in navigateURL, no windowDimensions provided
+                } else if (testHelper.tryParse(navigateUrl) != null) {
                     delayTime = navigateUrl;
                     navigateUrl = tempValue;
                     UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
@@ -3722,6 +3791,7 @@ public class TestCentral {
      * @param windowDimensions
      ************************************************************************/
     private void UpdateNavigationTestStepArguments(TestStep ts, String navigateUrl, String delayTime, String windowDimensions) {
+        testHelper.UpdateTestResults( AppConstants.ANSI_RED_BRIGHT + "Navigation command arguments out of order!!!  Attempting to reorder.  Refer to the help file for the proper oder, shown below!!! \r\n<arg1>>Navigation Url</arg1>\r\n<arg2>Delay Time</arg2>\r\n<arg3>Browser Window Dimensions</arg3>" + AppConstants.ANSI_RESET, true);
         ts.ArgumentList = new ArrayList<>();
         Argument item = new Argument();
         item.set_parameter(navigateUrl);
@@ -3734,6 +3804,77 @@ public class TestCentral {
         ts.ArgumentList.add(item);
     }
 
+    /***************************************************************************************
+     * Description: This method tests the Wait command arguments to determine if they are
+     *              out of order.
+     * @param ts
+     * @param fileStepIndex
+     ***************************************************************************************/
+    private void CheckWaitArgumentOrder(TestStep ts, String fileStepIndex) {
+        String value1 = GetArgumentValue(ts, 0, null);
+        String value2 = GetArgumentValue(ts, 1, null);
+
+        if (testHelper.tryParse(value2) == null) {
+            if (testHelper.tryParse(value1) != null) {
+                testHelper.UpdateTestResults( AppConstants.ANSI_RED_BRIGHT + "Wait command arguments our of order!!!  Attempting to reorder.  Refer to the help file for the proper oder!!!" + AppConstants.ANSI_RESET, true);
+                RearrangeWaitArguments(ts, value1, value2);
+            }
+        }
+        if (testHelper.CheckIsUrl(value2)) {
+            testHelper.UpdateTestResults( AppConstants.ANSI_RED_BRIGHT + "Wait command arguments our of order!!!  Attempting to reorder.  Refer to the help file for the proper oder!!!" + AppConstants.ANSI_RESET, true);
+            RearrangeWaitArguments(ts, value1, value2);
+        }
+    }
+
+    /*****************************************************************************************
+     * Description: This method rearranges the arguments, given 2 values as they have been
+     *              found to be out of order.
+     * @param ts
+     * @param value1
+     * @param value2
+     ******************************************************************************************/
+    private void RearrangeWaitArguments(TestStep ts, String value1, String value2) {
+        ts.ArgumentList = new ArrayList<>();
+        Argument item = new Argument();
+        item.set_parameter(value2);
+        ts.ArgumentList.add(item);
+        item = new Argument();
+        item.set_parameter(value1);
+        ts.ArgumentList.add(item);
+    }
+
+    private void CheckiFrameArgumentOrder(TestStep ts, String fileStepIndex) {
+        //TODO: WORKING HERE 8-21-2019
+        String value1 = GetArgumentValue(ts, 0, null);
+        String value2 = GetArgumentValue(ts, 1, null);
+        List<Argument> remainingItems;
+        remainingItems = ts.ArgumentList;
+
+        //testHelper.DebugDisplay("In CheckiFrameArgumentOrder");
+
+        if (value1.contains("click") || value1.equals("assert") || (value1.contains("send") && value1.contains("keys"))
+            || value1.equals(persistStringCheckValue)) {
+            testHelper.UpdateTestResults( AppConstants.ANSI_RED_BRIGHT +
+                    "Switch to IFrame arguments out of order!!!  Attempting to reorder.\r\n" +
+                    "Refer to the help file for the proper order!!!\r\n" +
+                    "Argument 1 is always required, the remaining arguments depend upon the sub command.\r\n" +
+                    "<arg1>IFrame Name</arg1>\r\n<arg2>sub command</arg2>\r\n<arg3>depends on subcommand</arg3>" + AppConstants.ANSI_RESET, true);
+            RearrangeWaitArguments(ts, value1, value2);
+        }
+
+        //testHelper.DebugDisplay("remainingItems.size() = " + remainingItems.size());
+        //if this is an iframe it could have 1 or many arguments, get any past the initial 2 and reappend them after the rearrangement
+        if (remainingItems.size() > 2) {
+            Argument item;
+            int arraySize = remainingItems.size();
+            for (int x=2;x < arraySize ;x++) {
+                //testHelper.DebugDisplay("remainingItems.get(" + x + ") = " + remainingItems.get(x).get_parameter());
+                item = new Argument();
+                item.set_parameter(remainingItems.get(x).get_parameter());
+                ts.ArgumentList.add(item);
+            }
+        }
+    }
 
     /**************************************************************
      * DESCRIPTION:  Check to see if an Alert window is present.
