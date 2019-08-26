@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="SCOPE_TYPE" value="3" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="49794caf-59e9-4ae7-8fe8-d853aa382371" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/../../05_03/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../05_03/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Gary_01/TestDavita/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_api_5_4_0_M1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Gary_01/TestDavita/.idea/libraries/Maven__org_junit_platform_junit_platform_commons_1_4_0_M1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Gary_01/TestDavita/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../Gary_01/TestDavita/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Gary_01/TestDavita/Entities/TestSettings.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../Gary_01/TestDavita/Entities/TestSettings.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Gary_01/TestDavita/Form.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../../Gary_01/TestDavita/Form.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Gary_01/TestDavita/pages/HomePage.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../Gary_01/TestDavita/pages/HomePage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Gary_01/TestDavita/pages/PageHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../Gary_01/TestDavita/pages/PageHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Gary_01/TestDavita/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../Gary_01/TestDavita/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Gary_01/TestDavita/target/classes/BrowserType.class" beforeDir="false" afterPath="$PROJECT_DIR$/../../Gary_01/TestDavita/target/classes/BrowserType.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Gary_01/TestDavita/target/classes/HomePage.class" beforeDir="false" afterPath="$PROJECT_DIR$/../../Gary_01/TestDavita/target/classes/HomePage.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Gary_01/TestDavita/target/classes/PageHelper.class" beforeDir="false" afterPath="$PROJECT_DIR$/../../Gary_01/TestDavita/target/classes/PageHelper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Gary_01/TestDavita/target/classes/TestSettings.class" beforeDir="false" afterPath="$PROJECT_DIR$/../../Gary_01/TestDavita/target/classes/TestSettings.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Gary_01/TestDavita/target/test-classes/Form.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Gary_01/TestDavita/test/Form.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../Gary_01/TestDavita/test/Form.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Gary_01/TestFiles/TestSettingsFile.txt" beforeDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CodeInsightWorkspaceSettings">
+    <option name="optimizeImportsOnTheFly" value="true" />
+  </component>
+  <component name="CodeStyleSettingsInfer">
+    <option name="done" value="true" />
+  </component>
+  <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/TestDavita$HomePage_TestHomePage.ic" NAME="HomePage.TestHomePage Coverage Results" MODIFIED="1552682953760" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+  </component>
+  <component name="DefaultGradleProjectSettings">
+    <option name="isMigrated" value="true" />
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="TestDavita" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JUnit5 Test Class" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="importAutomatically" value="true" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="1" />
+  </component>
+  <component name="ProjectId" id="1PhUMcviCkFLIYLF0KA0mLTEUMM" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1560775412775" />
+    <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="JUnit5" />
+    <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5" value="" />
+    <property name="extract.method.default.visibility" value="private" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\06_02\start\pages" />
+    </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="JUnit.TestCentral.ConfigurableTestController">
+    <configuration default="true" type="Applet">
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TestCentral (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Form" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="TestCentral" />
+      <option name="METHOD_NAME" value="ConfigurableTestController" />
+      <option name="TEST_OBJECT" value="uniqueId" />
+      <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
+      <uniqueIds>
+        <uniqueId value="[engine:junit-jupiter]/[class:TestCentral]" />
+      </uniqueIds>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TestCentral (2)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Form" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="TestCentral" />
+      <option name="METHOD_NAME" value="ConfigurableTestController" />
+      <option name="TEST_OBJECT" value="uniqueId" />
+      <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
+      <uniqueIds>
+        <uniqueId value="[engine:junit-jupiter]/[class:TestCentral]" />
+      </uniqueIds>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TestCentral (3)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Form" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="TestCentral" />
+      <option name="METHOD_NAME" value="ConfigurableTestController" />
+      <option name="TEST_OBJECT" value="uniqueId" />
+      <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
+      <uniqueIds>
+        <uniqueId value="[engine:junit-jupiter]/[class:TestCentral]" />
+      </uniqueIds>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TestCentral" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Form" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="TestCentral" />
+      <option name="METHOD_NAME" value="ConfigurableTestController" />
+      <option name="TEST_OBJECT" value="uniqueId" />
+      <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
+      <uniqueIds>
+        <uniqueId value="[engine:junit-jupiter]/[class:TestCentral]" />
+      </uniqueIds>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TestCentral.ConfigurableTestController" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Form" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="TestCentral" />
+      <option name="METHOD_NAME" value="ConfigurableTestController" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <option name="TEST_OBJECT" value="class" />
+      <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="TestNG">
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
+      <properties />
+      <listeners />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType">
+      <module name="" />
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
+      <option name="PROGRAM_PARAMETERS" />
+      <predefined_log_file enabled="true" id="idea.log" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.TestCentral.ConfigurableTestController" />
+        <item itemvalue="JUnit.TestCentral" />
+        <item itemvalue="JUnit.TestCentral (3)" />
+        <item itemvalue="JUnit.TestCentral (2)" />
+        <item itemvalue="JUnit.TestCentral (1)" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="49794caf-59e9-4ae7-8fe8-d853aa382371" name="Default" comment="" />
+      <created>1522557109151</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1522557109151</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/pages/TestCentral.java</url>
+          <line>3934</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/pages/TestCentral.java</url>
+          <line>1803</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/pages/TestCentral.java</url>
+          <line>1791</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/pages/TestCentral.java</url>
+          <line>3099</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/ConfigurableTester$TestCentral_ConfigurableTestController.ic" NAME="TestCentral.ConfigurableTestController Coverage Results" MODIFIED="1566580806026" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+  </component>
+</project>

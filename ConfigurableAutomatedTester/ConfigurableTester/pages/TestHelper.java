@@ -326,11 +326,11 @@ public class TestHelper{
                                     argCount = argCount + 1;
                                     argument.set_parameter(argNode.getTextContent());
                                     if (argCount % 2 == 0) {
-                                        argumentMessage = argumentMessage + "\t\t" + AppConstants.ANSI_PURPLE + argNode.getNodeName() + ": " + AppConstants.ANSI_RESET + argument.get_parameter();
+                                        argumentMessage = argumentMessage + "\t\t " + AppConstants.ANSI_PURPLE + argNode.getNodeName() + ": " + AppConstants.ANSI_RESET + argument.get_parameter();
                                         UpdateTestResults(argumentMessage, false);
                                         argumentMessage = null;
                                     } else {
-                                        argumentMessage = AppConstants.ANSI_PURPLE + AppConstants.indent8 + "Argument " + argNode.getNodeName() + ": " + AppConstants.ANSI_RESET + argument.get_parameter();
+                                        argumentMessage = AppConstants.ANSI_PURPLE + AppConstants.indent8 + "Argument " + argNode.getNodeName() + ": " + AppConstants.ANSI_RESET + argument.get_parameter() + ((argument.get_parameter().length() > 60) ? "\r\n\t\t " : "");
                                     }
                                     argumentList.add(argument);
                                 }

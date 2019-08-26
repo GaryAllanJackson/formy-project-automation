@@ -601,6 +601,8 @@ public class TestCentral {
             } else if (databaseType.toLowerCase().contains("sql server")) {
                 //establish a connection to a sql server database - connection lives until closed or end of the test
                 SetSqlServerClient(ts, fileStepIndex);
+            } else {
+                ArgumentOrderErrorMessage(ts, "connect to database");
             }
         } else if (ts.get_command().toLowerCase().equals("close database connection") || ts.get_command().toLowerCase().equals("close database") ) {
             String databaseType = GetArgumentValue(ts, 0, null);
@@ -640,15 +642,22 @@ public class TestCentral {
                 String userId = GetArgumentValue(ts, 0, null);
                 String password = GetArgumentValue(ts, 1, null);
                 String url = GetArgumentValue(ts, 2, "n/a");
-                Login(url, userId, password, fileStepIndex);
-                testHelper.UpdateTestResults(AppConstants.indent5 + "Login complete for step " + fileStepIndex, true);
+                if (testHelper.CheckIsUrl(url)) {
+                    Login(url, userId, password, fileStepIndex);
+                    testHelper.UpdateTestResults(AppConstants.indent5 + "Login complete for step " + fileStepIndex, true);
+                } else {
+                    ArgumentOrderErrorMessage(ts, "login");
+                }
             } else if (ts.get_command().toLowerCase().contains("create_test_page") || ts.get_command().toLowerCase().contains("create test page")) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Performing Create Test Page for step " + fileStepIndex, true);
+                CheckCreateTestFileArgumentOrder(ts, fileStepIndex);
                 String createTestFileName = CreateTestPage(ts, fileStepIndex);
                 testHelper.UpdateTestResults("Create Test Page results written to file: " + createTestFileName, false);
             }
         }
     }
+
+
 
 
     //region { Controller Methods, used to control the program flow for the complicated items }
@@ -849,6 +858,7 @@ public class TestCentral {
             if ((ts.get_command().toLowerCase().equals("switch to iframe") && counter > 0) || !ts.get_command().toLowerCase().equals("switch to iframe")) {
                 //if this is a switch to iframe command skip the "sendkeys" subcommand
                 if (!item.toLowerCase().contains("sendkeys")) {
+                    testHelper.DebugDisplay("item = " + item);
                     status = PerformAction(ts, item, fileStepIndex);
                     DelayCheck(timeDelay, fileStepIndex);
                 }
@@ -873,12 +883,19 @@ public class TestCentral {
      * @param fileStepIndex
      ****************************************************************************** */
     private void ColorContrastController(TestStep ts, String fileStepIndex) {
+        CheckColorContrastArgumentOrder(ts, fileStepIndex);
+        for(int x=0; x < ts.ArgumentList.size();x++) {
+            testHelper.DebugDisplay("For loop ts.ArgumentList.get(" + x + ").get_parameter() = " + ts.ArgumentList.get(x).get_parameter());
+        }
         String tagType = GetArgumentValue(ts, 0, null);
         String bContrast = GetArgumentValue(ts, 1, null);
         String dContrast = GetArgumentValue(ts, 2, null);
+
         testHelper.UpdateTestResults(AppConstants.indent5 + "Checking color contrast of " + tagType + " on page " + testPage, false);
         CheckColorContrast(ts, fileStepIndex);
     }
+
+
 
 
     /********************************************************************************
@@ -2527,6 +2544,17 @@ public class TestCentral {
         String [] skipTags = tagsToSkip.split(",");
         boolean formatted = ts.get_command().toLowerCase().contains("format") ? true : false;
 
+        //region { add feature - additional argument that allows existing file to be overwritten or kept and a new filename created if file exists }
+        //String updateFileNameMessage;
+
+//        String fileName = testHelper.GetUnusedFileName(newFileName);
+//        if (!newFileName.equals(fileName)) {
+//            updateFileNameMessage = "A File with the original file name existed.\r\n" +
+//                    AppConstants.indent8 + "File name updated from: " + newFileName + " to " + fileName;
+//            testHelper.UpdateTestResults(AppConstants.indent8 + updateFileNameMessage, true);
+//        }
+        //endregion
+
         //delete this file if it exists
         try {
             testHelper.DeleteFile(newFileName);
@@ -2615,6 +2643,7 @@ public class TestCentral {
                     } else if (elementType.equals("a")) {
                         elementHref = element.getAttribute("href");
                         if (formatted && !elementHref.isEmpty()) {  //make sure that this is not an anchor
+                            outputDescription += outputDescription.contains(">assert<") ? "\r\n" : "";
                             outputDescription += CreateAHrefReadActionXmlTestStep(elementXPath, elementHref, "FALSE");
                         } else if (!elementHref.isEmpty()) {
                             outputDescription += " - Element Href: " + elementHref;
@@ -2754,7 +2783,7 @@ public class TestCentral {
                     "\t\t<crucial>" + isCrucial + "</crucial>\r\n" +
                     "\t\t<!-- the accessor is the target element where the key strokes will be sent -->\r\n" +
                     "\t\t<accessor>" + elementXPath + "</accessor>\r\n" +
-                    "\t\t<accessorType>xPath</accessorType>" +
+                    "\t\t<accessorType>xPath</accessorType>\r\n" +
                     "\t</step>";
         }
         return returnValue;
@@ -2801,7 +2830,8 @@ public class TestCentral {
     private String CreateAHrefReadActionXmlTestStep(String elementXPath, String elementHref, String isCrucial) {
         String returnValue = "";
         if (elementXPath != null && !elementXPath.isEmpty() && elementHref != null && !elementHref.isEmpty()) {
-            returnValue = "\r\n\t<step>\r\n" +
+            //returnValue = "\r\n\t<step>\r\n" +
+            returnValue = "\t<step>\r\n" +
                     "\t\t<!-- Compares the href of the anchor link element using the accessor against the expectedValue -->\r\n" +
                     "\t\t<!--<command>CHECK A HREF</command>-->\r\n" +
                     "\t\t<command>CHECK A HREF</command>\r\n" +
@@ -2934,6 +2964,10 @@ public class TestCentral {
         String actual = null;
         String comparisonType = CheckComparisonOperator(GetArgumentValue(ts, ts.ArgumentList.size()-1, "="));
 
+        if (sqlTable.toLowerCase().contains("where ") || (sqlField != null &&  sqlField.toLowerCase().contains("where "))) {
+            ArgumentOrderErrorMessage(ts, "sql server query");
+            return;
+        }
 
         if (sqlConnection == null) {
             testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed to find active Sql Server connection to the SQL Server for step " + fileStepIndex + AppConstants.ANSI_RESET, true);
@@ -3062,6 +3096,17 @@ public class TestCentral {
         boolean overwriteExistingFile = (overWriteExisting.toLowerCase().equals("true") || overWriteExisting.toLowerCase().equals("overwrite")) ? true : false;
         String originalFileName = fileName;
         String updateFileNameMessage = "";
+
+        if (overWriteExisting.contains("\\") || overWriteExisting.contains("//")) {
+            ArgumentOrderErrorMessage(ts, "save json");
+            String [] items = {fileName, overWriteExisting};
+            RearrangeArgumentOrder(ts, items, ts.get_command());
+           // RearrangeWaitArguments(ts, fileName, overWriteExisting);
+            fileName = GetArgumentValue(ts, 0, null);
+            originalFileName = fileName;
+            overWriteExisting = GetArgumentValue(ts, 1, "false");
+            overwriteExistingFile = (overWriteExisting.toLowerCase().equals("true") || overWriteExisting.toLowerCase().equals("overwrite")) ? true : false;
+        }
 
         if (jsonContent != null && !jsonContent.isEmpty() && fileName != null) {
             if (!overwriteExistingFile) {
@@ -3719,6 +3764,7 @@ public class TestCentral {
      *****************************************************************************/
     private void SortNavigationArguments(TestStep ts, String navigateUrl, String delayTime, String windowDimensions, String sortField) {
         String tempValue;
+        String [] items;
 
         if (sortField.toLowerCase().equals("navigate")) {
             if (delayTime != null && !delayTime.isEmpty() && testHelper.CheckIsUrl(delayTime)) {
@@ -3728,39 +3774,51 @@ public class TestCentral {
                     delayTime = windowDimensions;
                     windowDimensions = navigateUrl;
                     navigateUrl = tempValue;
-                    UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
+                    //UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
+                    items = new String[] {navigateUrl, delayTime, windowDimensions};
+                    RearrangeArgumentOrder(ts, items, ts.get_command());
                     //navigateUrl in delayTime, delayTime in NavigateUrl, windowDimensions in windowDimensions
                 } else if (windowDimensions != null && (windowDimensions.toLowerCase().contains("w=") || windowDimensions.toLowerCase().contains("h="))) {
                     //delayTime in navigateUrl, navigateUrl in delayTime, windowDimension in windowDimension
                     delayTime = navigateUrl;
                     navigateUrl = tempValue;
-                    UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
+                    //UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
+                    items = new String[] {navigateUrl, delayTime, windowDimensions};
+                    RearrangeArgumentOrder(ts, items, ts.get_command());
                     //navigateUrl in delayTime, delaytime in navigateURL, no windowDimensions provided
                 } else if (testHelper.tryParse(navigateUrl) != null) {
                     delayTime = navigateUrl;
                     navigateUrl = tempValue;
-                    UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
+                    items = new String[] {navigateUrl, delayTime, windowDimensions};
+                    RearrangeArgumentOrder(ts, items, ts.get_command());
+                    //UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
                 }
             } else if (windowDimensions != null && !windowDimensions.isEmpty() && testHelper.CheckIsUrl(windowDimensions)) {
 //                testHelper.DebugDisplay("IN windowdimensions has URL");
                 tempValue = windowDimensions;
                 if (navigateUrl.toLowerCase().contains("w=") || navigateUrl.toLowerCase().contains("h=")) {
-//                    testHelper.DebugDisplay("IN windowdimensions has URL - navigateURL has window dimensions");
+                    //windowdimensions has URL - navigateURL has window dimensions");
                     windowDimensions = navigateUrl;
                     navigateUrl = tempValue;
-                    UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
+                    items = new String[] {navigateUrl, delayTime, windowDimensions};
+                    RearrangeArgumentOrder(ts, items, ts.get_command());
+                    //UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
                 } else {
                     windowDimensions = delayTime;
                     delayTime = navigateUrl;
                     navigateUrl = tempValue;
-                    UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
+                    items = new String[] {navigateUrl, delayTime, windowDimensions};
+                    RearrangeArgumentOrder(ts, items, ts.get_command());
+                    //UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
                 }
             } else if (testHelper.tryParse(delayTime) != null) {
                 //delayTime in delayTime, navigateUrl in windowDimensions, windowDimensions in navigateUrl
                 tempValue = windowDimensions;
                 windowDimensions = navigateUrl;
                 navigateUrl = tempValue;
-                UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
+                items = new String[] {navigateUrl, delayTime, windowDimensions};
+                RearrangeArgumentOrder(ts, items, ts.get_command());
+                //UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
             }
         } else if (sortField.toLowerCase().equals("delay")) {
             //if delay is the sort field that means the navigation field is correct.
@@ -3769,11 +3827,15 @@ public class TestCentral {
                     tempValue = windowDimensions;
                     windowDimensions = delayTime;
                     delayTime = tempValue;
-                    UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
+                    items = new String[] {navigateUrl, delayTime, windowDimensions};
+                    RearrangeArgumentOrder(ts, items, ts.get_command());
+                    //UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
                 } else {
                     windowDimensions = delayTime;
                     delayTime = Integer.toString(AppConstants.DefaultTimeDelay);
-                    UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
+                    items = new String[] {navigateUrl, delayTime, windowDimensions};
+                    RearrangeArgumentOrder(ts, items, ts.get_command());
+                    //UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
                 }
             }
         }
@@ -3791,7 +3853,7 @@ public class TestCentral {
      * @param windowDimensions
      ************************************************************************/
     private void UpdateNavigationTestStepArguments(TestStep ts, String navigateUrl, String delayTime, String windowDimensions) {
-        testHelper.UpdateTestResults( AppConstants.ANSI_RED_BRIGHT + "Navigation command arguments out of order!!!  Attempting to reorder.  Refer to the help file for the proper oder, shown below!!! \r\n<arg1>>Navigation Url</arg1>\r\n<arg2>Delay Time</arg2>\r\n<arg3>Browser Window Dimensions</arg3>" + AppConstants.ANSI_RESET, true);
+        ArgumentOrderErrorMessage(ts, "navigate");
         ts.ArgumentList = new ArrayList<>();
         Argument item = new Argument();
         item.set_parameter(navigateUrl);
@@ -3813,16 +3875,19 @@ public class TestCentral {
     private void CheckWaitArgumentOrder(TestStep ts, String fileStepIndex) {
         String value1 = GetArgumentValue(ts, 0, null);
         String value2 = GetArgumentValue(ts, 1, null);
+        String [] items = {value2, value1};
 
         if (testHelper.tryParse(value2) == null) {
-            if (testHelper.tryParse(value1) != null) {
-                testHelper.UpdateTestResults( AppConstants.ANSI_RED_BRIGHT + "Wait command arguments our of order!!!  Attempting to reorder.  Refer to the help file for the proper oder!!!" + AppConstants.ANSI_RESET, true);
-                RearrangeWaitArguments(ts, value1, value2);
+            if (testHelper.tryParse(value1) != null && ts.get_command().toLowerCase().contains("page")) {
+//                ArgumentOrderErrorMessage(ts, "wait");
+//                RearrangeWaitArguments(ts, value1, value2);
+                RearrangeArgumentOrder(ts, items, ts.get_command());
             }
         }
-        if (testHelper.CheckIsUrl(value2)) {
-            testHelper.UpdateTestResults( AppConstants.ANSI_RED_BRIGHT + "Wait command arguments our of order!!!  Attempting to reorder.  Refer to the help file for the proper oder!!!" + AppConstants.ANSI_RESET, true);
-            RearrangeWaitArguments(ts, value1, value2);
+        if (testHelper.CheckIsUrl(value2) && ts.get_command().toLowerCase().contains("page")) {
+//            ArgumentOrderErrorMessage(ts, "wait");
+//            RearrangeWaitArguments(ts, value1, value2);
+            RearrangeArgumentOrder(ts, items, ts.get_command());
         }
     }
 
@@ -3833,48 +3898,182 @@ public class TestCentral {
      * @param value1
      * @param value2
      ******************************************************************************************/
-    private void RearrangeWaitArguments(TestStep ts, String value1, String value2) {
-        ts.ArgumentList = new ArrayList<>();
-        Argument item = new Argument();
-        item.set_parameter(value2);
-        ts.ArgumentList.add(item);
-        item = new Argument();
-        item.set_parameter(value1);
-        ts.ArgumentList.add(item);
-    }
+//    private void RearrangeWaitArguments(TestStep ts, String value1, String value2) {
+//        ts.ArgumentList = new ArrayList<>();
+//        Argument item = new Argument();
+//        item.set_parameter(value2);
+//        ts.ArgumentList.add(item);
+//        item = new Argument();
+//        item.set_parameter(value1);
+//        ts.ArgumentList.add(item);
+//    }
 
+    /********************************************************************************
+     *  Description: This method checks the order of the Switch to Iframe command
+     *               arguments to ensure that they are in the correct order.
+     * @param ts
+     * @param fileStepIndex
+     ********************************************************************************/
     private void CheckiFrameArgumentOrder(TestStep ts, String fileStepIndex) {
-        //TODO: WORKING HERE 8-21-2019
         String value1 = GetArgumentValue(ts, 0, null);
         String value2 = GetArgumentValue(ts, 1, null);
         List<Argument> remainingItems;
         remainingItems = ts.ArgumentList;
 
-        //testHelper.DebugDisplay("In CheckiFrameArgumentOrder");
-
         if (value1.contains("click") || value1.equals("assert") || (value1.contains("send") && value1.contains("keys"))
             || value1.equals(persistStringCheckValue)) {
-            testHelper.UpdateTestResults( AppConstants.ANSI_RED_BRIGHT +
-                    "Switch to IFrame arguments out of order!!!  Attempting to reorder.\r\n" +
-                    "Refer to the help file for the proper order!!!\r\n" +
-                    "Argument 1 is always required, the remaining arguments depend upon the sub command.\r\n" +
-                    "<arg1>IFrame Name</arg1>\r\n<arg2>sub command</arg2>\r\n<arg3>depends on subcommand</arg3>" + AppConstants.ANSI_RESET, true);
-            RearrangeWaitArguments(ts, value1, value2);
+            //ArgumentOrderErrorMessage(ts, "switch to iframe");
+            //RearrangeWaitArguments(ts, value1, value2);
+            String [] items = {value2, value1};
+            RearrangeArgumentOrder(ts, items, ts.get_command());
         }
 
-        //testHelper.DebugDisplay("remainingItems.size() = " + remainingItems.size());
         //if this is an iframe it could have 1 or many arguments, get any past the initial 2 and reappend them after the rearrangement
         if (remainingItems.size() > 2) {
             Argument item;
             int arraySize = remainingItems.size();
             for (int x=2;x < arraySize ;x++) {
-                //testHelper.DebugDisplay("remainingItems.get(" + x + ") = " + remainingItems.get(x).get_parameter());
                 item = new Argument();
                 item.set_parameter(remainingItems.get(x).get_parameter());
+                testHelper.DebugDisplay("remainingItems.get(x).get_parameter() = " + remainingItems.get(x).get_parameter());
                 ts.ArgumentList.add(item);
             }
         }
     }
+
+    /*********************************************************************************
+     * Description: This method checks the order of the Create Test File command
+     *              arguments to ensure that they are in the correct order.
+     * @param ts
+     * @param fileStepIndex
+     *********************************************************************************/
+    private void CheckCreateTestFileArgumentOrder(TestStep ts, String fileStepIndex) {
+        String selector = GetArgumentValue(ts, 0, "*");
+        String fileName = GetArgumentValue(ts, 1, null);
+        String exclusionList = GetArgumentValue(ts, 2, null);
+        //place the filename into temp
+        String tempFileName = selector.contains(".") || selector.contains("\\") || selector.contains("//") ? selector :
+                exclusionList.contains(".") || exclusionList.contains("\\") || exclusionList.contains("//") ?
+                        exclusionList : fileName;
+        String tempExclusionList = selector.contains(",") ? selector : fileName.contains(",") ? fileName : exclusionList;
+        String tempSelector = (tempFileName == fileName && tempExclusionList == exclusionList) ? selector :
+                (tempFileName == exclusionList  && tempExclusionList == fileName) ? selector :
+                        (tempFileName == selector  && tempExclusionList == fileName) ? exclusionList :
+                        (tempFileName == exclusionList  && tempExclusionList == selector) ? fileName : "*";
+
+        if (fileName == null || fileName.isEmpty() || !fileName.equals(tempFileName) || !exclusionList.equals(tempExclusionList)
+                || (selector != null && !selector.equals(tempSelector))) {
+            String [] items = {tempSelector, tempFileName, tempExclusionList};
+            //RearrangeCreateTestFileArguments(ts, tempSelector, tempFileName, tempExclusionList);
+            RearrangeArgumentOrder(ts, items, ts.get_command());
+        }
+    }
+
+
+    /***********************************************************************************
+     * Description: This method checks the order of arguments for the Check Contrast
+     *              command to ensure that they are in the correct order.
+     * @param ts
+     * @param fileStepIndex
+     ***********************************************************************************/
+    private void CheckColorContrastArgumentOrder(TestStep ts, String fileStepIndex) {
+        String tagType = GetArgumentValue(ts, 0, null);
+        String bContrast = GetArgumentValue(ts, 1, null);
+        String dContrast = GetArgumentValue(ts, 2, null);
+        String tempTagType = !tagType.contains("=") ? tagType : !bContrast.contains("=") ? bContrast : dContrast;
+        String tempbContrast = (tagType.contains("b") && tagType.contains("=")) ? tagType : (bContrast.contains("b") && bContrast.contains("=")) ? bContrast
+                : (dContrast.contains("b") && dContrast.contains("=")) ? dContrast : null;
+        String tempdContrast = (tagType.contains("d") && tagType.contains("=")) ? tagType : (bContrast.contains("d") && bContrast.contains("=")) ? bContrast
+                : (dContrast.contains("d") && dContrast.contains("=")) ? dContrast : null;
+
+        if (tagType.contains("=") || (bContrast != null && bContrast.toLowerCase().contains("d=")) || (dContrast != null && dContrast.toLowerCase().contains("b="))) {
+            String [] items = {tempTagType, tempbContrast, tempdContrast};
+            RearrangeArgumentOrder(ts, items, ts.get_command());
+        }
+    }
+
+    /*************************************************************************************
+     * Description: This method takes an array of arguments and updaates the TestStep's
+     *              Argument List placing arguments in the proper order when it is determined
+     *              by a check argument order method that they are out of order.
+     * @param ts
+     * @param items
+     * @param command
+     *************************************************************************************/
+    private void RearrangeArgumentOrder(TestStep ts, String[] items, String command) {
+        ArgumentOrderErrorMessage(ts, command);
+        Argument item;
+        ts.ArgumentList = new ArrayList<>();
+        for (String currentItem: items) {
+            testHelper.DebugDisplay("currentItem = " + currentItem);
+            item = new Argument();
+            item.set_parameter(currentItem);
+            ts.ArgumentList.add(item);
+        }
+    }
+
+
+
+    /*******************************************************************************
+     * Description: Displays an Argument Order Error Message based on the command
+     *              found in the ts if present or the command string variable.
+     * @param ts
+     * @param command
+     *******************************************************************************/
+    private void ArgumentOrderErrorMessage(TestStep ts, String command) {
+        String problemCommand = ts != null ? ts.get_command() : command;
+        String errorStartDecorator = testHelper.PrePostPad("[ Argument Order Error!!! - Attempting to reorder ]", "*", 9, 100) + "\r\n";
+        String errorEndDecorator = "\r\n" + testHelper.PrePostPad("*", "*", 9, 100) ;
+        String errorMessage = "";
+        if (problemCommand.toLowerCase().equals("navigate")) {
+            errorMessage = "Navigation command arguments out of order!!! \r\n" +
+                            "Refer to the help file for the proper oder, shown below!!!\r\n" +
+                            "\t<arg1>>Navigation Url</arg1>\r\n\t<arg2>Delay Time</arg2>\r\n\t<arg3>Browser Window Dimensions</arg3>";
+        } else if (problemCommand.toLowerCase().equals("switch to iframe")) {
+            errorMessage = "Switch to IFrame arguments out of order!!!\r\n" +
+                    "Refer to the help file for the proper order!!!\r\n" +
+                    "Argument 1 is always required, the remaining arguments depend upon the sub command.\r\n" +
+                    "\t<arg1>IFrame Name</arg1>\r\n\t<arg2>sub command</arg2>\r\n\t<arg3>depends on subcommand</arg3>";
+        } else if (problemCommand.toLowerCase().contains("wait for page")) {
+            errorMessage =  "Wait for Page command arguments out of order!!!\r\n" +
+                    "Refer to the help file for the proper oder!!!\r\n" +
+                    "\t<arg1>Navigate URL or n/a</arg1>\r\n\t<arg2>wait time</arg2>";
+        } else if (problemCommand.toLowerCase().contains("login")) {
+            errorMessage =  "Login command arguments out of order, ABORTING!!!!\r\n" +
+                    "Refer to the help file for the proper oder!!!\r\n" +
+                    "This application will not attempt to try to distinguish between the user name and password!";
+            errorStartDecorator = errorStartDecorator.replace("Attempting to reorder", "Not Attempting to reorder");
+        } else if (problemCommand.toLowerCase().contains("create") && problemCommand.toLowerCase().contains("test")) {
+            errorMessage = "Create Test Page arguments out of order!!!\r\n" +
+                    "Refer to the help file for the proper order!!!\r\n" +
+                    "Arguments 1 and 2 are always required but argument 3 is optional.\r\n" +
+                    "\t<arg1>Selector which is Tag Type or * for all tags</arg1>\r\n\t<arg2>File name for test file being created</arg2>\r\n\t<arg3>html elements to exclude if argument 1 is *</arg3>";
+        } else if (problemCommand.toLowerCase().contains("connect to database")) {
+            errorMessage = "Connect to Database arguments out of order, ABORTING!!!!\r\n" +
+                    "Refer to the help file for the proper oder!!!\r\n" +
+                    "This application will not attempt to try to distinguish between the arguments for this command!";
+            errorStartDecorator = errorStartDecorator.replace("Attempting to reorder", "Not Attempting to reorder");
+        } else if (problemCommand.toLowerCase().contains("sql server query")) {
+            errorMessage = "Sql Server Query arguments out of order, ABORTING!!!!\r\n" +
+                    "Refer to the help file for the proper oder!!!\r\n" +
+                    "This application will not attempt to try to distinguish between the arguments for this command!";
+            errorStartDecorator = errorStartDecorator.replace("Attempting to reorder", "Not Attempting to reorder");
+        } else if (problemCommand.toLowerCase().contains("save json")) {
+            errorMessage = "Save JSON arguments out of order!!!!\r\n" +
+                    "Refer to the help file for the proper oder!!!\r\n" +
+                    "Arguments 1, the file name is always required but argument 2 is optional.\r\n" +
+                    "\t<arg1>JSON filename</arg1>\r\n\t<arg2>overwrite or true or false to create a new file name</arg2>";
+        } else if (problemCommand.toLowerCase().contains("check contrast")) {
+            errorMessage = "Check Contrast arguments out of order!!!!\r\n" +
+                    "Refer to the help file for the proper oder!!!\r\n" +
+                    "Arguments 1, the element to check against the background is always required but arguments 2 and 3 are optional.\r\n" +
+                    "\t<arg1>HTML TagName or * for all tags</arg1>\r\n\t<arg2>b=integer - color brightness</arg2>\r\n\t<arg3>d=integer - color difference</arg3>";
+        }
+
+        testHelper.UpdateTestResults( AppConstants.ANSI_RED_BRIGHT + errorStartDecorator +
+                errorMessage + errorEndDecorator + AppConstants.ANSI_RESET, true);
+    }
+
 
     /**************************************************************
      * DESCRIPTION:  Check to see if an Alert window is present.
@@ -3938,10 +4137,20 @@ public class TestCentral {
         testHelper.UpdateTestResults( AppConstants.indent8 + AppConstants.ANSI_RED + defaultCheckValuesOverridden + AppConstants.ANSI_RESET, true);
     }
 
+    /****************************************************************
+     * Description: Checks the OS and Returns true if Windows else
+     *              false.
+     * @return - True if Windows, else false
+     ****************************************************************/
     public static boolean isWindows() {
         return (OS.indexOf("win") >= 0);
     }
 
+    /****************************************************************
+     * Description: Checks the OS and Returns true if iOS else
+     *      *              false.
+     * @return - True if iOS, else false
+     ****************************************************************/
     public static boolean isMac() {
         return (OS.indexOf("mac") >= 0);
     }
@@ -4095,5 +4304,29 @@ public class TestCentral {
 
     }
 
+
+    //region { Refactored these items and removed the methods below }
+    /********************************************************************************
+     * Description: This method rearranges the Argument List variables using the
+     *              variables passed in.
+     * @param ts
+     * @param tempSelector
+     * @param tempFileName
+     * @param tempExclusionList
+     ********************************************************************************/
+//    private void RearrangeCreateTestFileArguments(TestStep ts, String tempSelector, String tempFileName, String tempExclusionList) {
+//        ArgumentOrderErrorMessage(ts, "create test page");
+//        ts.ArgumentList = new ArrayList<>();
+//        Argument item = new Argument();
+//        item.set_parameter(tempSelector);
+//        ts.ArgumentList.add(item);
+//        item = new Argument();
+//        item.set_parameter(tempFileName);
+//        ts.ArgumentList.add(item);
+//        item = new Argument();
+//        item.set_parameter(tempExclusionList);
+//        ts.ArgumentList.add(item);
+//    }
+    //endregion
 
 }
