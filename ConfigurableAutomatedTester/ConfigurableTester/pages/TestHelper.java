@@ -1645,8 +1645,9 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "");
 
             WriteToFile(get_helpFileName(), PrePostPad("[ SWITCHING BROWSER TABS ]", "═", 9, 159));
-            WriteToFile(get_helpFileName(), "The Right Click command can be used to access a links context menu to open that link in a new tab and switch to that tab.");
+            WriteToFile(get_helpFileName(), "The Right Click command can be used to access a link's context menu to open that link in a new tab and switch to that tab.");
             WriteToFile(get_helpFileName(), "Some actions are related and to avoid unnecessary steps the enter key will be pressed after right clicking and arrowing to a particular item.");
+            WriteToFile(get_helpFileName(), "When running tests that access the context menu, the mouse and keyboard should not be used as they can change the context and cause the test to fail.");
             WriteToFile(get_helpFileName(), "To Right click on an element, move down to the first menu item, click it to open in a new tab and switch to the new tab:");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>right click</command>\r\n" +
@@ -1657,6 +1658,7 @@ public class TestHelper{
                     "\t<arguments>\r\n" +
                     "\t\t<arg1>Keys.Arrow_Down</arg1>\r\n" +
                     "\t\t<arg2>Keys.Enter</arg2>\r\n" +
+                    "\t\t<!-- the following line switches to the new tab, if this is the first new tab opened, for subsequent tabs used the switch to tab command -->\r\n" +
                     "\t\t<arg3>switch to tab</arg3>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
@@ -1682,8 +1684,15 @@ public class TestHelper{
                     "\t<crucial>TRUE</crucial>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "Alternate Switch to tab command with the tab specified as an argument.");
-            WriteToFile(get_helpFileName(), "Currently, 1 and 0 are the only acceptable values as only one child tab should be opened per test");
-            WriteToFile(get_helpFileName(), "and to switch to the child tab use 1.  To switch to the main (parent) tab use 0.");
+            //WriteToFile(get_helpFileName(), "Currently, 1 and 0 are the only acceptable values as only one child tab should be opened per test");
+            //WriteToFile(get_helpFileName(), "and to switch to the child tab use 1.  To switch to the main (parent) tab use 0.");
+            WriteToFile(get_helpFileName(), "Recently updated, this method allows switching between all open tabs by passing the tab index as <arg1>.");
+            WriteToFile(get_helpFileName(), "The parent tab, where the test originated is tab 0, the first child is tab 1, etc...");
+            WriteToFile(get_helpFileName(), "If you open a tab from the parent and then open another tab from the parent, the first is tab 1 and the second is tab 2,");
+            WriteToFile(get_helpFileName(), "however, switching to child tabs and opening tabs betwen the current child and the last child may have unexpected results.");
+            WriteToFile(get_helpFileName(), "As a rule of thumb, open the tabs manually testing the layout of the tabs before attempting to automate this functionality.");
+            WriteToFile(get_helpFileName(), "The following command switches to the first child tab and is an alternate way of doing this separating the functionality from the");
+            WriteToFile(get_helpFileName(), "right click command allowing more granual control of switching between tabs.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>Switch to tab</command>\r\n" +
                     "\t<actionType>write</actionType>\r\n" +
@@ -1693,8 +1702,28 @@ public class TestHelper{
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "The following command switches to the second child tab.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Switch to tab</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>2</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "To Switch back to the first tab after switching to the second tab.");
-            WriteToFile(get_helpFileName(), "Note that this requires 0 (Zero) to be specified in the command.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Switch to tab 0</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>0</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "An alternative to the above command allows the tab number argument to be excluded, as the default is tab 0 - the parent tab.");
+            WriteToFile(get_helpFileName(), "Note that this has no argument and is relying upon the default setting to return to the first tab.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>Switch to tab 0</command>\r\n" +
                     "\t<actionType>write</actionType>\r\n" +
@@ -2204,6 +2233,13 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\t\tcopying and pasting and forgetting to update.");
             WriteToFile(get_helpFileName(), "3.\tFinally, check that the spelling, if this was not a copy paste issue as it may have been a typo.");
             WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CONTEXT MENU TAB SWITCHING IS FAILING ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "If a test is running that accesses the context menu or switches tabs, the mouse and keyboard cannot be used");
+            WriteToFile(get_helpFileName(), "while the test is in progress or it will change the context and thus cause the test step to fail, which may in turn");
+            WriteToFile(get_helpFileName(), "cause subsequent test steps to fail.");
+            WriteToFile(get_helpFileName(), "Keep hands off mouse and keyboard while running context menu and tab switching tests and when possible, when running any other type of test.");
             WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 //            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));

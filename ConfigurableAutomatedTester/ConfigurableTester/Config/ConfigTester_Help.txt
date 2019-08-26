@@ -1015,8 +1015,9 @@ To take a screen shot/print screen.  The browser will be resized automatically t
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ SWITCHING BROWSER TABS ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-The Right Click command can be used to access a links context menu to open that link in a new tab and switch to that tab.
+The Right Click command can be used to access a link's context menu to open that link in a new tab and switch to that tab.
 Some actions are related and to avoid unnecessary steps the enter key will be pressed after right clicking and arrowing to a particular item.
+When running tests that access the context menu, the mouse and keyboard should not be used as they can change the context and cause the test to fail.
 To Right click on an element, move down to the first menu item, click it to open in a new tab and switch to the new tab:
 <step>
 	<command>right click</command>
@@ -1027,6 +1028,7 @@ To Right click on an element, move down to the first menu item, click it to open
 	<arguments>
 		<arg1>Keys.Arrow_Down</arg1>
 		<arg2>Keys.Enter</arg2>
+		<!-- the following line switches to the new tab, if this is the first new tab opened, for subsequent tabs used the switch to tab command -->
 		<arg3>switch to tab</arg3>
 	</arguments>
 </step>
@@ -1052,8 +1054,13 @@ The Switch To Tab command switches to another Tab but if Tab argument is not pro
 	<crucial>TRUE</crucial>
 </step>
 Alternate Switch to tab command with the tab specified as an argument.
-Currently, 1 and 0 are the only acceptable values as only one child tab should be opened per test
-and to switch to the child tab use 1.  To switch to the main (parent) tab use 0.
+Recently updated, this method allows switching between all open tabs by passing the tab index as <arg1>.
+The parent tab, where the test originated is tab 0, the first child is tab 1, etc...
+If you open a tab from the parent and then open another tab from the parent, the first is tab 1 and the second is tab 2,
+however, switching to child tabs and opening tabs betwen the current child and the last child may have unexpected results.
+As a rule of thumb, open the tabs manually testing the layout of the tabs before attempting to automate this functionality.
+The following command switches to the first child tab and is an alternate way of doing this separating the functionality from the
+right click command allowing more granual control of switching between tabs.
 <step>
 	<command>Switch to tab</command>
 	<actionType>write</actionType>
@@ -1063,8 +1070,28 @@ and to switch to the child tab use 1.  To switch to the main (parent) tab use 0.
 	</arguments>
 </step>
 
+The following command switches to the second child tab.
+<step>
+	<command>Switch to tab</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>2</arg1>
+	</arguments>
+</step>
+
 To Switch back to the first tab after switching to the second tab.
-Note that this requires 0 (Zero) to be specified in the command.
+<step>
+	<command>Switch to tab 0</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>0</arg1>
+	</arguments>
+</step>
+
+An alternative to the above command allows the tab number argument to be excluded, as the default is tab 0 - the parent tab.
+Note that this has no argument and is relying upon the default setting to return to the first tab.
 <step>
 	<command>Switch to tab 0</command>
 	<actionType>write</actionType>
@@ -1567,5 +1594,12 @@ This means that the start and end element are not proper opening and closing XML
 		copying and pasting and forgetting to update.
 3.	Finally, check that the spelling, if this was not a copy paste issue as it may have been a typo.
 
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ CONTEXT MENU TAB SWITCHING IS FAILING ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════
+If a test is running that accesses the context menu or switches tabs, the mouse and keyboard cannot be used
+while the test is in progress or it will change the context and thus cause the test step to fail, which may in turn
+cause subsequent test steps to fail.
+Keep hands off mouse and keyboard while running context menu and tab switching tests and when possible, when running any other type of test.
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 

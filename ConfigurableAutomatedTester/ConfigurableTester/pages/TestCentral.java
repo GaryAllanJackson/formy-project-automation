@@ -631,12 +631,17 @@ public class TestCentral {
             } else if (ts.get_command().toLowerCase().indexOf("url") >= 0) {
                 CheckUrlWithoutNavigation(ts, fileStepIndex);
             } else if (ts.get_command().toLowerCase().contains("switch to tab")) {
-                boolean isChild = (GetArgumentNumericValue(ts, 0, 1) == 1) ? true : false;
-                if (ts.get_command().toLowerCase().contains("0") || !isChild) {
-                    SwitchToTab(false, fileStepIndex);
-                } else {
-                    SwitchToTab(true, fileStepIndex);
-                }
+                int tabNumber = GetArgumentNumericValue(ts, 0, 1);
+                SwitchToTab(ts, fileStepIndex);
+                //boolean isChild = (GetArgumentNumericValue(ts, 0, 1) == 1) ? true : false;
+//                boolean isChild = (tabNumber == 1) ? true : false;
+//                if (ts.get_command().toLowerCase().contains("0") || !isChild) {
+//                    SwitchToTab(false, fileStepIndex);
+//                } else if (isChild)   {
+//                    SwitchToTab(true, fileStepIndex);
+//                } else {
+//                    SwitchToTab(ts, fileStepIndex);
+//                }
             } else if (ts.get_command().toLowerCase().contains("login")) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Performing login for step " + fileStepIndex, true);
                 String userId = GetArgumentValue(ts, 0, null);
@@ -2326,11 +2331,10 @@ public class TestCentral {
     }
 
 
-
-
     /***********************************************************************
      * DESCRIPTION: Switches to a different tab either the child or
-     *      the parent tab.
+     *      the parent tab.  This method is only used with the Right click
+     *      context menu if specified as an argument.
      * @param isChild -
      * @param fileStepIndex - the file index and the step index.
      ********************************************************************* */
@@ -2339,10 +2343,35 @@ public class TestCentral {
         ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());
         tab = isChild ? 1 : 0;
         //String handleName = tabs.get(1);
+//        testHelper.DebugDisplay("isChild = " + isChild + " - tab = " + tab);
         String handleName = tabs.get(tab);
+//        testHelper.DebugDisplay("handleName = " + handleName);
         driver.switchTo().window(handleName);
         System.setProperty("current.window.handle", handleName);
         testHelper.UpdateTestResults(AppConstants.indent5 + "Switched to New tab with url = " + driver.getCurrentUrl(), true);
+    }
+
+
+    /*************************************************************************************
+     * Description: This method allows for switching between any of the open tabs.
+     * @param ts
+     * @param fileStepIndex
+     *************************************************************************************/
+    private void SwitchToTab(TestStep ts, String fileStepIndex) {
+        int tab = GetArgumentNumericValue(ts, 0, 0);
+        ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());
+        int tabsSize = tabs.size();
+        if (tabsSize > tab) {
+            String handleName = tabs.get(tab);
+            driver.switchTo().window(handleName);
+            System.setProperty("current.window.handle", handleName);
+            testHelper.UpdateTestResults(AppConstants.indent5 + "Switched to New tab with url = " + driver.getCurrentUrl(), true);
+        } else {
+            testHelper.UpdateTestResults(AppConstants.indent5 + AppConstants.ANSI_RED_BRIGHT + "Unable to switch to tab!!!  Either the Tab does not exist or the mouse changed the context while attempting to access the context menu.\r\n" +
+                    "Both the keyboard and mouse must not be used when attempting to access context menus or when switching tabs.\r\n" +
+                    "It is also possible the a notification event switched the context such as email receipt or an OS notification.\r\n" +
+                    "If this continues to be a problem, open just 1 tab per test and use the switch to tab argument in the right click command that accesses the context menu." + AppConstants.ANSI_RESET, true);
+        }
     }
 
 
@@ -2386,7 +2415,6 @@ public class TestCentral {
      * @param fileStepIndex - the file index and the step index.
      ******************************************************************** */
     private void CheckUrlWithoutNavigation(TestStep ts, String fileStepIndex) throws InterruptedException {
-        //check url without navigation
         String expectedUrl = ts.get_expectedValue();
 
         if (ts.ArgumentList != null && ts.ArgumentList.size() > 0) {
@@ -2435,7 +2463,6 @@ public class TestCentral {
         String color_hex[];
         String backColor_hex[];
         String cHex, bHex;
-        //String defaultCheckValuesOverridden = null;
         int brightnessStandard = bContrast.equals("125") ? 125 : parseInt(bContrast);
         int contrastStandard = dContrast.equals("500") ? 500 : parseInt(dContrast);
         boolean anyFailure = false;
@@ -3033,7 +3060,7 @@ public class TestCentral {
      * @param ts - Test Step Object containing all related information
      *           for the particular test step.
      * @param fileStepIndex - the file index and the step index.
-     * @return
+     * @return - the retrieved JSON if successful else null
      * @throws Exception
      ****************************************************************************/
     private String GetJsonContent(TestStep ts, String fileStepIndex)throws Exception {
@@ -3047,7 +3074,7 @@ public class TestCentral {
 
         //JsonObject jsonObject = (JSON)driver.getPageSource();
         jsonResponse = driver.getPageSource();
-        //testHelper.UpdateTestResults("jsonResponse = " + jsonResponse, false);
+
         if (jsonResponse != null && !jsonResponse.isEmpty()) {
             return jsonResponse;
         }
@@ -3086,8 +3113,9 @@ public class TestCentral {
     /*****************************************************************************
      * Description: Saves previously retrieved JSON to the file specified in the
      *              command argument.
-     * @param ts
-     * @param fileStepIndex
+     * @param ts - Test Step Object containing all related information
+     *           for the particular test step.
+     * @param fileStepIndex - the file index and the step index.
      *****************************************************************************/
     private void SaveJsonToFile(TestStep ts, String fileStepIndex) throws Exception {
         String errorMessage;
@@ -3101,7 +3129,6 @@ public class TestCentral {
             ArgumentOrderErrorMessage(ts, "save json");
             String [] items = {fileName, overWriteExisting};
             RearrangeArgumentOrder(ts, items, ts.get_command());
-           // RearrangeWaitArguments(ts, fileName, overWriteExisting);
             fileName = GetArgumentValue(ts, 0, null);
             originalFileName = fileName;
             overWriteExisting = GetArgumentValue(ts, 1, "false");
@@ -3602,12 +3629,12 @@ public class TestCentral {
      * DESCRIPTION: Looks up the Key code equivalent for the key code
      *              string passed in.
      * @param value - the key code string
-     * @param fileStepIndex - the file and step index for reference.
-     * @return
+     * @param fileStepIndex - the file index and the step index.
+     * @return - Corresponding Key object variable.
      ***************************************************************/
     private CharSequence GetKeyValue(String value, String fileStepIndex) {
         value = value.toLowerCase().trim();
-       testHelper.UpdateTestResults(AppConstants.indent5 + "Replacing (" + value + ") with corresponding Key value keyword for step " + fileStepIndex, false);
+        testHelper.UpdateTestResults(AppConstants.indent5 + "Replacing (" + value + ") with corresponding Key value keyword for step " + fileStepIndex, false);
 
         if (value.equals("keys.enter"))
         {
@@ -3691,10 +3718,11 @@ public class TestCentral {
      * Description: Retrieves the argument value at the specified index
      *              and returns it if available or it returns the defaultValue
      *              parameter passed in.
-     * @param ts
-     * @param index
-     * @param defaultValue
-     * @return
+     * @param ts - Test Step Object containing all related information
+     *           for the particular test step.
+     * @param index - index of the argument list element to retrieve
+     * @param defaultValue - value to use if retrieved value is null.
+     * @return - retrieved value if not null else defaultValue passed in.
      **************************************************************************/
     private String GetArgumentValue(TestStep ts, int index, String defaultValue) {
         Argument arg  = ts.ArgumentList != null && ts.ArgumentList.size() > index ? ts.ArgumentList.get(index) : null;
@@ -3715,9 +3743,9 @@ public class TestCentral {
      *              the default value passed in.
      * @param ts - Test Step Object containing all related information
      *           for the particular test step.
-     * @param index -
-     * @param defaultValue -
-     * @return
+     * @param index - index of the argument list element to retrieve
+     * @param defaultValue - value to use if retrieved value is null.
+     * @return - retrieved value if not null else defaultValue passed in.
      ****************************************************************/
     private int GetArgumentNumericValue(TestStep ts, int index, int defaultValue) {
         Argument arg  = ts.ArgumentList != null && ts.ArgumentList.size() > index ? ts.ArgumentList.get(index) : null;
@@ -3732,8 +3760,9 @@ public class TestCentral {
     /*****************************************************************
      * Description: Checks if the Argument retrieved at the specified
      *              index is numeric.
-     * @param ts
-     * @param index
+     * @param ts - Test Step Object containing all related information
+     *           for the particular test step.
+     * @param index - index of the argument list element to check.
      * @return - True if numeric, else False
      *****************************************************************/
     private Boolean CheckArgumentNumeric(TestStep ts, int index) {
@@ -3757,10 +3786,10 @@ public class TestCentral {
      *              in the proper order.
      * @param ts - Test Step Object containing all related information
      *           for the particular test step.
-     * @param navigateUrl
-     * @param delayTime
-     * @param windowDimensions
-     * @param sortField
+     * @param navigateUrl - URL to navigate to
+     * @param delayTime     - time to wait for navigation to complete
+     * @param windowDimensions - window dimensions to set for the browser
+     * @param sortField - field found to be out of argument order
      *****************************************************************************/
     private void SortNavigationArguments(TestStep ts, String navigateUrl, String delayTime, String windowDimensions, String sortField) {
         String tempValue;
@@ -3774,7 +3803,6 @@ public class TestCentral {
                     delayTime = windowDimensions;
                     windowDimensions = navigateUrl;
                     navigateUrl = tempValue;
-                    //UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
                     items = new String[] {navigateUrl, delayTime, windowDimensions};
                     RearrangeArgumentOrder(ts, items, ts.get_command());
                     //navigateUrl in delayTime, delayTime in NavigateUrl, windowDimensions in windowDimensions
@@ -3782,7 +3810,6 @@ public class TestCentral {
                     //delayTime in navigateUrl, navigateUrl in delayTime, windowDimension in windowDimension
                     delayTime = navigateUrl;
                     navigateUrl = tempValue;
-                    //UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
                     items = new String[] {navigateUrl, delayTime, windowDimensions};
                     RearrangeArgumentOrder(ts, items, ts.get_command());
                     //navigateUrl in delayTime, delaytime in navigateURL, no windowDimensions provided
@@ -3791,10 +3818,9 @@ public class TestCentral {
                     navigateUrl = tempValue;
                     items = new String[] {navigateUrl, delayTime, windowDimensions};
                     RearrangeArgumentOrder(ts, items, ts.get_command());
-                    //UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
                 }
             } else if (windowDimensions != null && !windowDimensions.isEmpty() && testHelper.CheckIsUrl(windowDimensions)) {
-//                testHelper.DebugDisplay("IN windowdimensions has URL");
+                //windowDimensions has URL, navigateUrl has windowDimensions
                 tempValue = windowDimensions;
                 if (navigateUrl.toLowerCase().contains("w=") || navigateUrl.toLowerCase().contains("h=")) {
                     //windowdimensions has URL - navigateURL has window dimensions");
@@ -3802,14 +3828,12 @@ public class TestCentral {
                     navigateUrl = tempValue;
                     items = new String[] {navigateUrl, delayTime, windowDimensions};
                     RearrangeArgumentOrder(ts, items, ts.get_command());
-                    //UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
                 } else {
                     windowDimensions = delayTime;
                     delayTime = navigateUrl;
                     navigateUrl = tempValue;
                     items = new String[] {navigateUrl, delayTime, windowDimensions};
                     RearrangeArgumentOrder(ts, items, ts.get_command());
-                    //UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
                 }
             } else if (testHelper.tryParse(delayTime) != null) {
                 //delayTime in delayTime, navigateUrl in windowDimensions, windowDimensions in navigateUrl
@@ -3818,7 +3842,6 @@ public class TestCentral {
                 navigateUrl = tempValue;
                 items = new String[] {navigateUrl, delayTime, windowDimensions};
                 RearrangeArgumentOrder(ts, items, ts.get_command());
-                //UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
             }
         } else if (sortField.toLowerCase().equals("delay")) {
             //if delay is the sort field that means the navigation field is correct.
@@ -3829,48 +3852,24 @@ public class TestCentral {
                     delayTime = tempValue;
                     items = new String[] {navigateUrl, delayTime, windowDimensions};
                     RearrangeArgumentOrder(ts, items, ts.get_command());
-                    //UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
                 } else {
                     windowDimensions = delayTime;
                     delayTime = Integer.toString(AppConstants.DefaultTimeDelay);
                     items = new String[] {navigateUrl, delayTime, windowDimensions};
                     RearrangeArgumentOrder(ts, items, ts.get_command());
-                    //UpdateNavigationTestStepArguments(ts, navigateUrl, delayTime, windowDimensions);
                 }
             }
         }
     }
 
-    /************************************************************************
-     * Description: This method, takes the corrected navigation argument values
-     *              and updates the TestStep Argument List placing the
-     *              arguments values into the Argument List in the proper
-     *              order.
-     * @param ts - Test Step Object containing all related information
-     *           for the particular test step.
-     * @param navigateUrl
-     * @param delayTime
-     * @param windowDimensions
-     ************************************************************************/
-    private void UpdateNavigationTestStepArguments(TestStep ts, String navigateUrl, String delayTime, String windowDimensions) {
-        ArgumentOrderErrorMessage(ts, "navigate");
-        ts.ArgumentList = new ArrayList<>();
-        Argument item = new Argument();
-        item.set_parameter(navigateUrl);
-        ts.ArgumentList.add(item);
-        item = new Argument();
-        item.set_parameter(delayTime);
-        ts.ArgumentList.add(item);
-        item = new Argument();
-        item.set_parameter(windowDimensions);
-        ts.ArgumentList.add(item);
-    }
+
 
     /***************************************************************************************
      * Description: This method tests the Wait command arguments to determine if they are
      *              out of order.
-     * @param ts
-     * @param fileStepIndex
+     * @param ts - Test Step Object containing all related information
+     *           for the particular test step.
+     * @param fileStepIndex - the file index and the step index.
      ***************************************************************************************/
     private void CheckWaitArgumentOrder(TestStep ts, String fileStepIndex) {
         String value1 = GetArgumentValue(ts, 0, null);
@@ -3879,40 +3878,22 @@ public class TestCentral {
 
         if (testHelper.tryParse(value2) == null) {
             if (testHelper.tryParse(value1) != null && ts.get_command().toLowerCase().contains("page")) {
-//                ArgumentOrderErrorMessage(ts, "wait");
-//                RearrangeWaitArguments(ts, value1, value2);
                 RearrangeArgumentOrder(ts, items, ts.get_command());
             }
         }
         if (testHelper.CheckIsUrl(value2) && ts.get_command().toLowerCase().contains("page")) {
-//            ArgumentOrderErrorMessage(ts, "wait");
-//            RearrangeWaitArguments(ts, value1, value2);
             RearrangeArgumentOrder(ts, items, ts.get_command());
         }
     }
 
-    /*****************************************************************************************
-     * Description: This method rearranges the arguments, given 2 values as they have been
-     *              found to be out of order.
-     * @param ts
-     * @param value1
-     * @param value2
-     ******************************************************************************************/
-//    private void RearrangeWaitArguments(TestStep ts, String value1, String value2) {
-//        ts.ArgumentList = new ArrayList<>();
-//        Argument item = new Argument();
-//        item.set_parameter(value2);
-//        ts.ArgumentList.add(item);
-//        item = new Argument();
-//        item.set_parameter(value1);
-//        ts.ArgumentList.add(item);
-//    }
+
 
     /********************************************************************************
      *  Description: This method checks the order of the Switch to Iframe command
      *               arguments to ensure that they are in the correct order.
-     * @param ts
-     * @param fileStepIndex
+     * @param ts - Test Step Object containing all related information
+     *           for the particular test step.
+     * @param fileStepIndex - the file index and the step index.
      ********************************************************************************/
     private void CheckiFrameArgumentOrder(TestStep ts, String fileStepIndex) {
         String value1 = GetArgumentValue(ts, 0, null);
@@ -3922,8 +3903,6 @@ public class TestCentral {
 
         if (value1.contains("click") || value1.equals("assert") || (value1.contains("send") && value1.contains("keys"))
             || value1.equals(persistStringCheckValue)) {
-            //ArgumentOrderErrorMessage(ts, "switch to iframe");
-            //RearrangeWaitArguments(ts, value1, value2);
             String [] items = {value2, value1};
             RearrangeArgumentOrder(ts, items, ts.get_command());
         }
@@ -3941,11 +3920,13 @@ public class TestCentral {
         }
     }
 
+
     /*********************************************************************************
      * Description: This method checks the order of the Create Test File command
      *              arguments to ensure that they are in the correct order.
-     * @param ts
-     * @param fileStepIndex
+     * @param ts - Test Step Object containing all related information
+     *           for the particular test step.
+     * @param fileStepIndex - the file index and the step index.
      *********************************************************************************/
     private void CheckCreateTestFileArgumentOrder(TestStep ts, String fileStepIndex) {
         String selector = GetArgumentValue(ts, 0, "*");
@@ -3964,7 +3945,6 @@ public class TestCentral {
         if (fileName == null || fileName.isEmpty() || !fileName.equals(tempFileName) || !exclusionList.equals(tempExclusionList)
                 || (selector != null && !selector.equals(tempSelector))) {
             String [] items = {tempSelector, tempFileName, tempExclusionList};
-            //RearrangeCreateTestFileArguments(ts, tempSelector, tempFileName, tempExclusionList);
             RearrangeArgumentOrder(ts, items, ts.get_command());
         }
     }
@@ -3973,8 +3953,9 @@ public class TestCentral {
     /***********************************************************************************
      * Description: This method checks the order of arguments for the Check Contrast
      *              command to ensure that they are in the correct order.
-     * @param ts
-     * @param fileStepIndex
+     * @param ts - Test Step Object containing all related information
+     *           for the particular test step.
+     * @param fileStepIndex - the file index and the step index.
      ***********************************************************************************/
     private void CheckColorContrastArgumentOrder(TestStep ts, String fileStepIndex) {
         String tagType = GetArgumentValue(ts, 0, null);
@@ -3992,11 +3973,13 @@ public class TestCentral {
         }
     }
 
+
     /*************************************************************************************
      * Description: This method takes an array of arguments and updaates the TestStep's
      *              Argument List placing arguments in the proper order when it is determined
      *              by a check argument order method that they are out of order.
-     * @param ts
+     * @param ts - Test Step Object containing all related information
+     *           for the particular test step.
      * @param items
      * @param command
      *************************************************************************************/
@@ -4017,7 +4000,8 @@ public class TestCentral {
     /*******************************************************************************
      * Description: Displays an Argument Order Error Message based on the command
      *              found in the ts if present or the command string variable.
-     * @param ts
+     * @param ts - Test Step Object containing all related information
+     *           for the particular test step.
      * @param command
      *******************************************************************************/
     private void ArgumentOrderErrorMessage(TestStep ts, String command) {
@@ -4148,7 +4132,7 @@ public class TestCentral {
 
     /****************************************************************
      * Description: Checks the OS and Returns true if iOS else
-     *      *              false.
+     *               false.
      * @return - True if iOS, else false
      ****************************************************************/
     public static boolean isMac() {
@@ -4305,28 +4289,8 @@ public class TestCentral {
     }
 
 
-    //region { Refactored these items and removed the methods below }
-    /********************************************************************************
-     * Description: This method rearranges the Argument List variables using the
-     *              variables passed in.
-     * @param ts
-     * @param tempSelector
-     * @param tempFileName
-     * @param tempExclusionList
-     ********************************************************************************/
-//    private void RearrangeCreateTestFileArguments(TestStep ts, String tempSelector, String tempFileName, String tempExclusionList) {
-//        ArgumentOrderErrorMessage(ts, "create test page");
-//        ts.ArgumentList = new ArrayList<>();
-//        Argument item = new Argument();
-//        item.set_parameter(tempSelector);
-//        ts.ArgumentList.add(item);
-//        item = new Argument();
-//        item.set_parameter(tempFileName);
-//        ts.ArgumentList.add(item);
-//        item = new Argument();
-//        item.set_parameter(tempExclusionList);
-//        ts.ArgumentList.add(item);
-//    }
+
     //endregion
+
 
 }
