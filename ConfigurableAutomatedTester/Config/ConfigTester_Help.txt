@@ -1,0 +1,1571 @@
+
+╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                              TABLE OF CONTENTS                                                                                                         ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+     ═════════[ HELP FILE OVERVIEW  ]════════════════════════════════════════════════════════════════════
+		APPLICATION OVERVIEW
+		HELP FILE SECTIONS
+		FUTURE FUNCTIONALITY
+
+     ═════════[ Configuration ]══════════════════════════════════════════════════════════════════════════
+		CONFIGURATION OVERVIEW
+		CONFIGURATION FILE FIELDS AND DESCRIPTIONS
+		CONFIGURATION FILE EXAMPLES
+		EXAMPLES EXPLAINED 
+
+     ═════════[ Test Steps ]═════════════════════════════════════════════════════════════════════════════
+		TEST FILE OVERVIEW
+		TEST FILE FIELDS AND DESCRIPTIONS
+		NAVIGATION
+		NAVIGATION WITH SUCCESSFUL NAVIGATION CONFIRMATION
+		NAVIGATION WITH AUTHENTICATION WITH AND WITHOUT NAVIGATION CONFIRMATION
+		LOGIN WITH NAVIGATION
+		ALERT POPUP LOGIN
+		CHECK URL WITHOUT NAVIGATION
+		CHECK GET REQUEST STATUS WITHOUT NAVIGATION
+		CHECK POST REQUEST STATUS WITHOUT NAVIGATION
+		CHECK DOCUMENT READY STATE COMPLETE WITHOUT NAVIGATION AS A POST NAVIGATION STEP
+		CHECK DOCUMENT READY STATE COMPLETE WITH NAVIGATION IN A SINGLE STEP
+		SWITCH TO IFRAME
+		CONDITIONAL BLOCKS
+		CHECK AN ANCHOR HREF
+		CHECK ALL PAGE LINKS USING URL
+		CHECK ALL PAGE LINKS WITHOUT USING URL
+		CHECK THE COUNT OF A SPECIFIC ELEMENT ON A PAGE
+		CHECK ALL PAGE IMAGE SRC TAGS WITH SEPARATE NAVIGATION STEP
+		CHECK ALL PAGE IMAGE SRC TAGS WITH NO SEPARATE NAVIGATION STEP
+		CHECK ALL PAGE IMAGE ALT TAGS WITH SEPARATE NAVIGATION STEP
+		CHECK ALL PAGE IMAGE ALT TAGS WITH NO SEPARATE NAVIGATION STEP
+		WAITING A SPECIFIC AMOUNT OF TIME FOR ITEMS TO BE AVAILABLE
+		WAITING FOR THE PRESENCE OF AN ELEMENT
+		WAITING FOR DOCUMENT READY STATE COMPLETE
+		UNIQUE IDENTIFIER
+		PERSISTING RETRIEVED TEXT IN A VARIABLE FOR LATER USE
+		FILLING IN TEXT FIELDS
+		CLICK AN ELEMENT IN AN IFRAME
+		SELECT AN OPTION FROM AN HTML SELECT ELEMENT
+		TAKING SCREENSHOTS
+		SWITCHING BROWSER TABS
+		FIND ELEMENTS THAT HAVE SPECIFIC TEXT
+		FIND ELEMENTS THAT CONTAIN TEXT
+		CREATE TEST PAGE COMMAND TO CREATE PAGE TESTS OR FOR PROVIDING DATA TO HELP CREATE TESTS
+		CONNECT TO SQL SERVER DATABASE AND CLOSE THE CONNECTION
+		CLOSING THE DATABASE CONNECTION
+		QUERYING THE SQL SERVER DATABASE
+		RETRIEVING JSON FROM AN API ENDPOINT
+		QUERYING JSON FROM AN API ENDPOINT
+		CHECK COLOR CONTRAST  
+
+     ═════════[ Troubleshooting ]════════════════════════════════════════════════════════════════════════
+		DRIVER ISSUES
+		URL VALIDATION FAILURE
+		MISSING CONFIGURATION FILE
+		UNEXPECTED OUTPUT FROM A TEST STEP
+		OVERALL TEST RESULT SHOWS FAILURE ALTHOUGH TEST STEPS PASS (LAST TEST STEP PASSED)
+
+═════════[ END OF TABLE OF CONTENTS ]══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+
+
+╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                              HELP FILE OVERVIEW                                                                                                        ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+Welcome to the Configurable Automated Tester.
+This application was designed to perform automated testing using configuration and test step files.
+It was intended to remove the need for per project automated test coding but grew out of the curiousity to 
+
+It covers most testing, including: Navigation, Form Population, Value checking, Value Persistence for use in 
+upcoming test step comparisons or form populations, context menu access, iFrame access, child tab access, 
+SQL Server Connectivity and Querying, anchor href and text property checking, image src and alt property
+checking, checking color contrast, conditional block to run tests only if condition step passes,
+and unique value generation so that form population tests can be run over and over using this value to 
+ensure that entry is unique each time.
+
+An added test step configuration can be used to create a test step file for a specific page and while this is not a test, it can make creating test files much faster.
+**********[ IMPORTANT NOTES ]***********************************************************************
+NOTE: The != operator is currently only supported for the following commands: Assert, Sql Server Query, Check Count.
+	There was no viable use case for implementing this functionality for other commands 
+	and the reason it is not supported in the JSON query is explained in the JSON Query section.
+
+NOTE: For most verifiable operations the success or failure output will be left aligned, regardless of the margin of the 
+	process it is reporting on.
+	This was done purposely so that the results are easy to find and always begin with Success or Failure.
+	Additionally, in the console, Successful results are displayed in green, while Failure results are displayed in Red.
+	Any item appear in the console in Red means that either the item failed or it was configured improperly or an important item
+	was not configured at all.
+	LOOK AT ALL ITEMS IN RED AND MAKE UPDATES ACCORDINGLY!!!
+****************************************************************************************************
+This help file is broken up into 4 separate sections:
+
+	1.	HELP FILE OVERVIEW - This section, which provides an overview of the application and this help file.
+
+	2.	CONFIGURATION FILE FORMAT  - describes the format of the configuration file and details the use and settings of each field.
+		Two example configurations are provided to showcase two different means of configuring the way test files are specified.
+
+	3.	TEST FILE FORMAT - describes the format of the test file(s) and details the use and settings of each field.
+		Various examples and alternate steps are outlined describing the test settings necessary to perform each test function.
+
+	4.	TROUBLESHOOTING - describes common issues and how to address them to get the desired results.
+
+Future functionality to be added to this application:
+	Greater Than and Less Than Operator.
+		-	This would be a good addition when used with Condtional Blocks.
+	Only validatable(read actionType) commands can be used for the conditional statement such as an text, src, alt or href assertion or element found.
+
+	Color Contrast code has been implemented to allow for color contrast checking using this page's formula.
+		-	https://www.w3.org/TR/AERT/#color-contrast
+		-	Currently reviewing and comparing pages to determine whether to implement color contrast using this page:
+		-	https://www.w3.org/TR/WCAG20-TECHS/G17.html
+
+	MongoDb Connectivity and Querying will be implemented.
+		-	This was partially implemented but abandoned for a later time when there is access to a MongoDB instance.
+
+
+
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+
+╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                              CONFIGURATION FILE FORMAT                                                                                                 ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+═════════[ CONFIGURATION OVERVIEW ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+NOTES: The file format is XML, so to make comments use <!-- to begin the comment and --> to end the comment.
+Comments can span lines but comments cannot include other comment blocks.
+Comments are lightly sprinkled in some of the help XML examples below.
+	THIS APPLICATION IGNORES ALL COMMENTS.
+COMMENTS ARE FOR THE USER.
+Some of the comments are descriptive and some show alternative options, but it is suggested that you read the help file
+to best understand how to use this Configurable Automated Testing Application.
+Refer to an XML guide for proper commenting.  Google it!!!!
+Both configuration file examples can be used as starting points, just substitute values accordingly.
+The terms element and node may be used interchangeably below to refer to the same thing.
+The following is an example of a configuration file which will be explained below.
+<?xml version="1.0" encoding="UTF-8" ?>
+<automatedTestConfiguration>
+	<!-- folder where screenshots should be saved -->
+	<screenShotSaveFolder>C:\ScreenShots\Mashup</screenShotSaveFolder>
+	<maxScreenShotsToTake>5</maxScreenShotsToTake>
+	<browserType>Chrome</browserType>
+	<!--<browserType>Firefox</browserType>-->
+	<runHeadless>false</runHeadless>
+	<testAllBrowsers>false</testAllBrowsers>
+	<specifyTestFiles>true</specifyTestFiles>
+	<sortSpecifiedTestFiles>false</sortSpecifiedTestFiles>
+	<!-- Individual File Settings -->
+	<testFiles>
+		<!--<testFileName1>C:\ConfigurableAutomatedTester\Tests\SqlServerAccess-Test.xml</testFileName1>
+		<testFileName2>C:\ConfigurableAutomatedTester\Tests\RunSqlQueries_Alternate-Test.xml</testFileName2>-->
+		<testFileName1>C:\ConfigurableAutomatedTester\Tests\Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1>
+		<testFileName2>C:\ConfigurableAutomatedTester\Tests\CheckImageSource-Test.xml</testFileName2>
+	</testFiles>
+	<!-- Folder Testing Settings -->
+	<testFolderName></testFolderName>
+	<folderFileFilterType></folderFileFilterType>
+	<folderFileFilter></folderFileFilter>
+</automatedTestConfiguration>
+
+The first line is an XML file declaration and must be present as is.
+All elements are required but not all elements have to have a value.  Read on.
+The <automatedTestConfiguration> is the root element in which all configuration elements are contained.
+	It contains no text itself.
+
+<!-- folder where screenshots should be saved --> is a comment and was purposely included to demonstrate how to add comments.
+	Comments were added to describe the function of the element that follows it.
+	Subsequent comments will not be described.
+
+The <screenShotSaveFolder></screenShotSaveFolder> element specifies the location where Screen Shots will be saved.
+	This folder must already exist!
+
+The <maxScreenShotsToTake></maxScreenShotsToTake> element specifies the maximum number of Screen Shots to take.
+	This allows the user to understand any hard drive space limitations and prevent screenshots from eating up space.
+	In the event that tests fail, this setting can be changed to try to target the issue with a screenshot if the 
+	reported error is insufficient for troubleshooting thoroughly.
+		-   When -1, no screen shots will be taken even if an error occurs.
+		-   When 0, there is no limit and all screenshots will be taken.
+		-   When any other number, that number of screenshots or less will be taken depending upon the test and the max value set.
+		-   Errors like, Element not found, will create a screenshot to allow you to see the page the application was on when 
+			the error occurred.
+
+The <browserType></browserType> element specifies the type of browser to use when running the test(s).
+	-Valid values are: Firefox, Chrome, PhantomJS
+
+The <runHeadless></runHeadless> element specifies whether to run the test(s) in headless mode.
+		-	This is a boolean field and can be true or false.  The case does not matter.
+	Headless mode means that the browser does not display on-screen and is used with automation servers
+	to allow running automated tests as part of the build process.
+		-	PhantomJS always runs headless if selected regardless of the runHeadless setting.
+		-	To watch the test, use Chrome or Firefox.
+		-	If not specified, Chrome is the default and will be used.
+
+The <testAllBrowsers></testAllBrowsers> element specifies whether the test(s) should run in all browsers or just the selected browser.
+		-	This is a boolean field and can be true or false.  The case does not matter.
+		-	If false, BrowserType must be set and only that browser will be used when running tests.
+		-	If true, BrowserType is ignored and the program will cycle through all browsers.
+
+The <specifyTestFiles></specifyTestFiles> element specifies whether or not the configuration file will list the test files to be used.
+		-	This is a boolean field and can be true or false.  The case does not matter.
+		-	If true, the files specified will be used in the order in which they are listed.
+		-	If false, the files will be ignored as this indicates that the folder settings will be used instead.
+
+The <sortSpecifiedTestFiles></sortSpecifiedTestFiles> element specifies whether or not to sort the test files.
+	This setting made sense in the old system but makes much less sense now that files are physically listed numerically.
+	The number no longer has meaning in the sort as each entry should be entered in numerical order, so the number will not be used for sorting.
+		-	If false, files are taken in the order in which they are physically listed, which should be numerically.
+		-	If true, files will be sorted alphabetically and re-listed on the screen to show the order in which they will execute.
+
+The <testFiles></testFiles> element is a container element for the testFileName elements and has no textual content of its own.
+
+The <testFileName1></testFileName1> element specifies the test file to use for the test and each element should end with an incremental numeric value.
+	Example:
+		<testFileName1></testFileName1>
+		<testFileName2></testFileName2>
+
+	It should be noted that while this ending numeric value should be incremental, the application will read all 
+	testFileName nodes in the order they are entered regardless of the numbering.
+	To avoid any possible issues related to this, it is suggested that you follow the best practice and number appropriately, as described.
+	The commented test file lines were included to show a means in which different files can be setup but can be commented so that only 
+	the intended test files run.
+
+---------------------[ Start of Grouped Configuration Settings ]-------------------
+The following three settings need to be talked about together since they work together to provide a particularly useful piece of functionality.
+Together, the following settings allow for filtering a particular folder for the files used for testing.
+If a common naming convention is used for test files that include the project name, these settings allow for running 
+Just one Project's test files, just some of a Project's test files or just one test file in a project or one type of test file across all test projects.
+
+The <testFolderName></testFolderName> element specifies the folder where test files are located to allow for reading a folder of 
+	test files instead of naming each test file individually.
+
+The <folderFileFilterType></folderFileFilterType> element specifies the type of filtering to perform on the files in the folder.  Options are: 
+	-	[Starts With], [Contains] and [Ends With] 
+		-	[Starts With] - will select only the test files starting with the filter entered
+		-	[Contains] - will select only test files containing the filter entered
+		-	[Ends With] - will select only test files ending with the filter entered
+
+The <folderFileFilter></folderFileFilter> element specifies the phrase to use to when selecting files in the specified folder.
+
+	When used with the other folder settings, a folder containing a multitude of test files can be pointed to using the <testFolderName></testFolderName> element.
+	Then, using the <folderFileFilterType></folderFileFilterType> element, [Starts With] can be used to return only files starting with a specific value.
+	Finally, using the <folderFileFilter></folderFileFilter> element, a phrase like the project name can be used to select only files in the selected folder that start with the project name.
+---------------------[ End of Grouped Configuration Settings ]-------------------
+
+In the example configuration file provided above the explanations, two specific test files are being tested, the screen shot folder is specified, 
+a maximum of 5 screenshots will be taken, only the test Chrome browser will be used and it will be visible, the files will be run in the order entered,
+the TestFolderName, FolderFileFilterType and FolderFileFilter have not been specified but would have been disregarded if specified because
+<specifyTestFiles></specifyTestFiles> is true, meaning only files specifically specified will be used.
+The commented test file lines were included to show a means in which different files can be setup but can be commented so that only
+
+In the example configuration file provided below, a folder of test files are being tested, but only the files that contain the phrase "sql"
+will be used, the screen shot folder is specified, but no screenshots will be taken, only the Chrome browser will be used and it will be visible,
+and although test files are specified, they will be ignored because <specifyTestFiles></specifyTestFiles> is false meaning the folder settings will be used to 
+determine the test files to be used.
+<?xml version="1.0" encoding="UTF-8" ?>
+<automatedTestConfiguration>
+	<!-- folder where screenshots should be saved -->
+	<screenShotSaveFolder>C:\ScreenShots\Mashup</screenShotSaveFolder>
+	<maxScreenShotsToTake>5</maxScreenShotsToTake>
+	<browserType>Chrome</browserType>
+	<!--<browserType>Firefox</browserType>-->
+	<runHeadless>false</runHeadless>
+	<testAllBrowsers>false</testAllBrowsers>
+	<specifyTestFiles>false</specifyTestFiles>
+	<sortSpecifiedTestFiles>true</sortSpecifiedTestFiles>
+	<!-- Individual File Settings -->
+	<testFiles>
+		<!--<testFileName1>C:\ConfigurableAutomatedTester\Tests\SqlServerAccess-Test.xml</testFileName1>
+		<testFileName2>C:\ConfigurableAutomatedTester\Tests\RunSqlQueries_Alternate-Test.xml</testFileName2>-->
+		<testFileName1>C:\ConfigurableAutomatedTester\Tests\Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1>
+		<testFileName2>C:\ConfigurableAutomatedTester\Tests\CheckImageSource-Test.xml</testFileName2>
+	</testFiles>
+	<!-- Folder Testing Settings -->
+	<testFolderName>C:\ConfigurableAutomatedTester\Tests\</testFolderName>
+	<folderFileFilterType>contains</folderFileFilterType>
+	<folderFileFilter>sql</folderFileFilter>
+</automatedTestConfiguration>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+
+╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                              TEST FILE FORMAT                                                                                                          ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+The Test file is an xml file, that can include comments just like any xml file.
+It begins with the XML declaration followed by the <testSteps> root element.
+Each test is grouped in <step> elements, which consist of the all or some of the following nodes:
+
+<command>Command to execute</command> - The command node, describes the command to execute and is always required.
+
+<actionType>read/write</actionType> - The actionType node can be set to read or write describing this as a read or write action.
+
+	Assertions where an element value is being checked against a supplied value is a read.
+	Navigation, clicking, populating text boxes, selecting select options, accessing context menu etc.. 
+		are write actionTypes because they are performing an action rather than just reading a value.  
+<accessor>select-menu</accessor> - The element identifier.
+
+<accessorType>ID</accessorType> - The type of element identifier. (xPath, ClassName, CssSelector, Id, TagName)
+
+<expectedValue>What you expect to retrieve</expectedValue> - The optional expectedValue node, if present, 
+	acts as the expected value of the element value being retrieved as the actual value.
+
+<crucial>TRUE</crucial> - The crucial node can be set to True or False and determines if testing should stop 
+	or proceed if the step fails.  Set to True for stop and False for proceed.
+
+<conditional>true</conditional> - The conditional node is used to start a conditional block of steps.
+	All steps within the block depend upon the success of this step being successful.
+	The Condition node should only ever be used when starting a conditional block of steps.
+	A separate commmand is used to end the conditional block, so setting this to false is useless
+	This can only be used on read actionTypes as performing an action is not verifiable.
+	When applied if successful, all subsequent steps within the block will execute along with all steps after the block.
+	When applied and unsuccessful for any reason, all subsequent steps within the block will be skipped
+	 and all steps after the block will execute.
+
+<arguments></arguments> - The arguments node is a container of numbered argument nodes.
+	Argument order is crucial and out of order arguments can have unpredictable results.
+	See the help sections below to learn the order of arguments for each command type.
+<arg1>First argument</arg1> The numbered arguments vary greatly depending upon the type of command.
+	<arg2>Second argument</arg2>
+	<arg3>Third argument</arg3>
+	Generally speaking, these numbered arguments are arranged so that the most relevant pieces of information 
+	are the first items and the less relevant pieces of information are last.
+	The order of the arguments is crucial, while properly numbering is important but improperly numbering is forgivable as long as the xml is valid.
+
+There are few, if any, examples that use all nodes, so in the Navigation example below note that this does not use 
+Accessor and AccessorType nodes because it accesses the URL instead of a page element when making an assertion. 
+Also, keep in mind that while this represents the structure of a test file, it consists of only one of many possible test steps.
+
+Usually, the test file will consist of multiple steps like (navigation, check element values(multiple steps) click element...etc...
+<?xml version="1.0" encoding="UTF-8" ?>
+<testSteps>
+	<step>
+	<command>navigate</command>
+	<actionType>write</actionType>
+	<expectedValue>https://www.marvel.com/</expectedValue>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>https://www.marvel.com</arg1>
+		<arg2>1000</arg2>
+	</arguments>
+	</step>
+</testSteps>
+
+
+═════════[ NAVIGATION ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Navigation command navigates the browser to the provided URL.
+All Navigation steps should be marked as crucial, as all subsequent checks require that navigation complete successfully!!!
+An assertion does not have to be part of navigation, but it probably should be!!!
+To navigate without checking the URL, remove the expectedValue node completely as displayed in the example below.
+For the Navigation command only, although the arguments should be in the order shown, if they 
+are out of order the application will attempt to discern the order and rearranage them.
+
+To Navigate, without checking the URL to ensure that navigation occurred properly, 
+to wait 4000 milli-seconds and to set the window dimensions to (800 x 800)
+Please note that making this crucial is irrelevant as no assertions will be made.
+<step>
+	<!-- Command - ALWAYS REQUIRED!!! -->
+	<command>navigate</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<!-- first argument expected by the command - The URL is required --> 
+		<arg1>https://formy-project.herokuapp.com/form</arg1>
+		<!-- second argument optional - Time Delay - default is 4000 if not included 
+		     but should be included if entering the third parameter --> 
+		<arg2>4000</arg2>
+		<!-- third argument, optional - Window Dimensions width then height separated by space --> 
+		<arg3>w=800 h=800</arg3>
+	</arguments>
+</step>
+
+═════════[ NAVIGATION WITH SUCCESSFUL NAVIGATION CONFIRMATION ]════════════════════════════════════════════════════════════════════════════════════════════════
+To Navigate, assert that the URL is what is in the expectedValue node and to wait 4 thousand milli-seconds before making the assertion to allow the page to load:
+PLEASE NOTE: Asserting that the URL is correct does not mean that a server transfer didn't redirect the URL to a different page but leave the URL untouched. 
+<step>
+	<command>navigate</command>
+	<actionType>write</actionType>
+	<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>https://formy-project.herokuapp.com/form</arg1>
+		<arg2>4000</arg2>
+	</arguments>
+</step>
+
+To Navigate, assert that the URL is as expected, add a time delay and set the browser dimensions to 800 width by 800 height:
+<step>
+	<command>navigate</command>
+	<actionType>write</actionType>
+	<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>https://formy-project.herokuapp.com/form</arg1>
+		<arg2>4000</arg2>
+		<arg3>w=800 h=800</arg3>
+	</arguments>
+</step>
+
+═════════[ NAVIGATION WITH AUTHENTICATION WITH AND WITHOUT NAVIGATION CONFIRMATION ]═══════════════════════════════════════════════════════════════════════════
+
+To Navigate and Authenticate with username and password and assert that the URL is in the expectedValue node and to wait 4 thousand milli-seconds 
+before making the assertion to allow the page to load:
+<step>
+	<command>navigate</command>
+	<actionType>write</actionType>
+	<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>https://username:password@formy-project.herokuapp.com/form</arg1>
+		<arg2>4000</arg2>
+	</arguments>
+</step>
+
+To Navigate and Authenticate with username and password:
+<step>
+	<command>navigate</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>https://username:password@formy-project.herokuapp.com/form</arg1>
+		<arg2>4000</arg2>
+	</arguments>
+</step>
+
+═════════[ LOGIN WITH NAVIGATION ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Login command logs into a site.
+To login and navigate in one step.
+Please note this is for normal passwords which cannot contain spaces or characters that require escaping.
+<step>
+	<command>login</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>username</arg1>
+		<arg2>password</arg2>
+		<arg3>http://www.myCoolPage.com</arg3>
+	</arguments>
+</step>
+
+═════════[ ALERT POPUP LOGIN ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+To login when presented with an alert style popup, which could happen upon landing on the site or after the site redirects you, and to make this crucial.
+Please note this is for normal passwords which cannot contain spaces or characters that require escaping.
+<step>
+	<command>login</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>username</arg1>
+		<arg2>password</arg2>
+	</arguments>
+</step>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ CHECK URL WITHOUT NAVIGATION ]══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+To check a URL without navigating and to make it crucial.  To make it non-crucial change the last parameter to false.
+<step>
+	<command>check url</command>
+	<actionType>write</actionType>
+	<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>
+	<crucial>TRUE</crucial>
+</step>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ CHECK GET REQUEST STATUS WITHOUT NAVIGATION ]═══════════════════════════════════════════════════════════════════════════════════════════════════════
+The CheckGet command checks the response status of a get.
+To check the Get Requests status of a URL without navigating and to make it crucial.  To make it non-crucial change the last parameter to false.
+The Space between check and get is optional as shown below.
+<step>
+	<command>checkget</command>
+	<actionType>read</actionType>
+	<expectedValue>200</expectedValue>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<arg1>https://www.swtestacademy.com/about-software-test-academy/ </arg1>
+	</arguments>
+</step>
+
+Alternative way splitting the words apart.
+<step>
+	<command>check get</command>
+	<actionType>read</actionType>
+	<expectedValue>200</expectedValue>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<arg1>https://www.swtestacademy.com/about-software-test-academy/ </arg1>
+	</arguments>
+</step>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ CHECK POST REQUEST STATUS WITHOUT NAVIGATION ]══════════════════════════════════════════════════════════════════════════════════════════════════════
+The CheckPost command checks the response status of a post.
+<!-- Test results unconfirmed!!! Need to find suitable URL that allows posting. -->
+To check the Post Requests status of a URL without navigating and to make it crucial.  To make it non-crucial change the last parameter to false.
+The Space between check and post is optional as shown below.
+<step>
+	<command>checkpost</command>
+	<actionType>read</actionType>
+	<expectedValue>200</expectedValue>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<arg1>https://www.swtestacademy.com/about-software-test-academy/ </arg1>
+	</arguments>
+</step>
+
+Alternative way splitting the words apart.
+<step>
+	<command>check post</command>
+	<actionType>read</actionType>
+	<expectedValue>200</expectedValue>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<arg1>https://www.swtestacademy.com/about-software-test-academy/ </arg1>
+	</arguments>
+</step>
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ CHECK DOCUMENT READY STATE COMPLETE WITHOUT NAVIGATION AS A POST NAVIGATION STEP]═══════════════════════════════════════════════════════════════════
+The Wait for page command waits until document ready state is complete.
+To check that the document ready state is complete after previously navigating to a new page and to make it crucial. 
+NOTE: The first argument must be n/a as shown below.  
+- Omitting this argument or leaving it empty will result in an invalid format exception.
+To make it non-crucial change the last parameter to false.
+This will be most useful for triggered navigation.
+<step>
+	<command>wait for page</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>n/a</arg1>
+		<arg2>30</arg2>
+	</arguments>
+</step>
+
+═════════[ CHECK DOCUMENT READY STATE COMPLETE WITH NAVIGATION IN A SINGLE STEP]═══════════════════════════════════════════════════════════════════════════════
+To check that the document ready state is complete after navigating to a new page and to make it crucial. 
+To make it non-crucial change the last parameter to false.
+<step>
+	<command>wait for page</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>https://formy-project.herokuapp.com/form</arg1>
+		<arg2>30</arg2>
+	</arguments>
+</step>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ SWITCHING TO AN IFRAME ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+IMPORTANT: EACH TIME A SWITCH TO IFRAME COMMAND IS ISSUED, THE CONTEXT IS REVERTED TO THE MAIN WINDOW
+ONCE THAT COMMAND COMPLETES EXECUTION, SO IF SUBSEQUENT TESTS NEED TO ACCESS THE IFRAME, THEY MUST BE
+ENCAPSULATED WITHIN SWITCH TO IFRAME COMMANDS.
+The Switch to iFrame command temporarily switches the current context to the iframe mentioned in the firs argument.
+Since only the command and first argument are needed to switch to the iFrame, the remaining test step elements
+can be used to perform the desired action within the iframe.
+The default action when switching to an iFrame is the Assert, which checks the text of an element against the expected
+value provided, so the assert command need not be used but any other commands should be placed into <arg2></arg2>.
+Commands that can be used in the iFrame are assert, sendkeys, click, right click, double click, persist values and  check against persisted values.
+A navigation event cannot be directed to take place in an iFrame.
+If the arguments are not in the proper order, depending upon the command being performed in the iFrame, an attempt to reorder
+the arguments will be made.  Unfortunately, some commands can be quite complex and interpreting arguments for reordering can be
+even more complex, therefore, a message will be displayed indicating that the arguments are out of order so that they can be corrected
+by the tester in the test steps file.
+Failing to do so for complex commands may yield unexpected results.
+The following example is an example of switching to an iframe, specified in <arg1></arg1> and performing an assert
+to check the element text pointed to by the <accessor></accessor> and <accessorType></accessorType> against the
+expected value provided in the <expectedValue></expectedValue> element and since <crucial></crucial> is false
+the status will be reported and subsequent tests will run regardless.
+Specifically, the test is switching to the iframeResult iFrame, and checking the element specified for the text Tutorial.
+<step>
+	<command>Switch to iFrame</command>
+	<actionType>read</actionType>
+	<expectedValue>Tutorials</expectedValue>
+	<crucial>false</crucial>
+	<accessor>//button[contains(@id,'menu1')]</accessor>
+	<accessorType>xPath</accessorType>
+	<arguments>
+		<arg1>iframeResult</arg1>
+	</arguments>
+</step>
+
+To switch to an iFrame and perform a click, refer to the following example.
+Note that you have to specify the command in <arg2></arg2> as click is not the default action.
+<step>
+	<command>Switch to iFrame</command>
+	<actionType>write</actionType>
+	<crucial>false</crucial>
+	<accessor>//button[contains(@id,'menu1')]</accessor>
+	<accessorType>xPath</accessorType>
+	<arguments>
+		<arg1>iframeResult</arg1>
+		<arg2>click</arg2>
+	</arguments>
+</step>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ CONDITIONAL BLOCKS ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+IMPORTANT: CONDITIONAL BLOCKS CAN NOT BE NESTED!!!!
+
+Creating a conditional block is a two step process.
+1.	First, the conditional block must be started by adding the <conditional>true</conditional> node to a 
+		test step that has the actionType set to read (<actionType>read</actionType>).
+		Only read actionTypes are allowed to begin a conditional block because read steps 
+		are checked against an expected value and are validatable.
+		Any test steps based on the success of this condition can be placed after the condition.
+		An example of a conditional block start is shown below.
+		This command will be discussed in detail later, but note the presence of the conditional field, 
+		which signifies the start of a conditional block.
+		Simply stated, the following command checks the element using the xPath accessor and validates that the text of that 
+		element is the expectedValue, and if so, it is marked as successful and block statements will execute, else block
+		statements will be skipped.
+<step>
+	<command>assert</command>
+	<conditional>true</conditional>
+	<actionType>read</actionType>
+	<expectedValue>FORMY</expectedValue>
+	<crucial>FALSE</crucial>
+	<accessor>/html[1]/body[1]/div[1]/nav[1]/a[1]</accessor>
+	<accessorType>xPath</accessorType>
+</step>
+
+1.	Second, the conditional block must be ended by adding an end condition command.
+		The end conditional command node itself is the most important and only required
+		 node of this test step, as shown below.
+		This command neither reads nor writes and asserts nothing and therefore, cannot be marked as crucial.
+		Once this command is executed, all remaining test steps will not longer dependent upon the condition
+		and each will be executed as expected.
+		If this command is not issued all steps after the start of the Conditional Block start will be considered
+		part of the Conditional Block and will be executed or skipped accordingly.
+The following is the End Conditional command used to end the Conditional Block.
+<step>
+	<command>end conditional</command>
+</step>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ CHECK AN ANCHOR HREF ]══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Check_A_Href command checks the href attribute of a HyperLink.
+To check an anchor's href url and to make it non-crucial.  To make it crucial change the last parameter to true.
+This will check the value of the href and compare it to the expected value provided.
+<step>
+	<command>check_a_href</command>
+	<actionType>read</actionType>
+	<expectedValue>https://www.swtestacademy.com/about-software-test-academy/ </expectedValue>
+	<crucial>FALSE</crucial>
+	<accessor>//*[@id="menu-item-21"]/a</accessor>
+	<accessorType>xPath</accessorType>
+	<arguments>
+		<arg1>alt</arg1>
+	</arguments>
+</step>
+
+
+Alternative way splitting the words.
+<step>
+	<command>check a href</command>
+	<actionType>read</actionType>
+	<expectedValue>https://www.swtestacademy.com/about-software-test-academy/ </expectedValue>
+	<crucial>FALSE</crucial>
+	<accessor>//*[@id="menu-item-21"]/a</accessor>
+	<accessorType>xPath</accessorType>
+	<arguments>
+		<arg1>alt</arg1>
+	</arguments>
+</step>
+
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ CHECK ALL PAGE LINKS USING URL ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Check Links command checks all Hyperlinks on the page.
+To check all page links and to make it non-crucial.  To make it crucial change the last parameter to true.
+This will check for a status code of 200 for all links on the page, based on the URL in the arg1 node, 
+but will report the status code for all links.
+<step>
+	<command>check links</command>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<arg1>https://nutrish.com/</arg1>
+	</arguments>
+</step>
+
+═════════[ CHECK ALL PAGE LINKS WITHOUT USING URL ]════════════════════════════════════════════════════════════════════════════════════════════════════════════
+This will check for a status code of 200 for all links on the current page, but will report the status code for all links.
+<step>
+	<command>check links</command>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+</step>
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ CHECK THE COUNT OF A SPECIFIC ELEMENT ON A PAGE ]═══════════════════════════════════════════════════════════════════════════════════════════════════
+The Check Count command checks the number of occurrences of a particular element.
+To check the count of a specific element on a page and to make it non-crucial.  To make it crucial change the last parameter to true.
+This will count the number of times an element is found on a page and compare that to the expected value.
+In the example below, the test compares the number of "a" tags on the page with the expected number of 18.
+If the page has 18 "a" tags, the test passes, otherwise it fails.
+An optional last argument can be included to use the != operator.
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+<step>
+	<command>check count</command>
+	<actionType>read</actionType>
+	<expectedValue>18</expectedValue>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<arg1>a</arg1>
+	</arguments>
+</step>
+
+═════════[ CHECK ALL PAGE IMAGE SRC TAGS WITH SEPARATE NAVIGATION STEP ]═══════════════════════════════════════════════════════════════════════════════════════
+The Check Img Src command checks the src of all image tags.
+To check all page image src tags, on the current page, to ensure a source exists and to make it non-crucial.  To make it crucial change the last parameter to true.
+The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sources but will report the status of all image sources.
+<step>
+	<command>check images src</command>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+</step>
+
+═════════[ CHECK ALL PAGE IMAGE SRC TAGS WITH NO SEPARATE NAVIGATION STEP ]════════════════════════════════════════════════════════════════════════════════════
+To check all page image src tags, on the page specified in the arg1 node, to ensure a source exists and to make it non-crucial.  To make it crucial change the last parameter to true.
+The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sources but will report the status of all image sources.
+<step>
+	<command>check images src</command>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<arg1>https://semantic-ui.com/modules/dropdown.html</arg1>
+	</arguments>
+</step>
+
+═════════[ CHECK ALL PAGE IMAGE ALT TAGS WITH SEPARATE NAVIGATION STEP ]═══════════════════════════════════════════════════════════════════════════════════════
+The Check Image Alt command checks all page image alt tags for text.
+To check all page image alt tags, for ADA compliance and to make it crucial.  To make it non-crucial change the last parameter to false.
+The alt tag will checked to see if it exists and is not empty.  Empty tags will be flagged as failed.
+This is a small part of 508 compliance.
+<step>
+	<command>check images alt</command>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+</step>
+
+═════════[ CHECK ALL PAGE IMAGE ALT TAGS WITH NO SEPARATE NAVIGATION STEP ]════════════════════════════════════════════════════════════════════════════════════
+To check all page image alt tags, for ADA compliance and to make it crucial.  To make it non-crucial change the last parameter to false.
+The alt tag will checked to see if it exists and is not empty.  Empty tags will be flagged as failed.
+This is a small part of 508 compliance.
+<step>
+	<command>check images alt</command>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<arg1>https://semantic-ui.com/modules/dropdown.html</arg1>
+	</arguments>
+</step>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ WAITING A SPECIFIC AMOUNT OF TIME FOR ITEMS TO BE AVAILABLE ]═══════════════════════════════════════════════════════════════════════════════════════
+The Wait command pauses execution for a specified amount of time to allow for page load completion.
+In the event that arguments are not in the correct order, this application attempts to re-order the arguments.
+If the results are not as expected, refer to the examples in this help file for proper argument order.
+To wait for a specific amount of time before continuing to allow for page loading or script completion.
+To wait for 5 thousand milli-seconds before continuing onto the next step.
+<step>
+	<command>wait</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>10000</arg1>
+	</arguments>
+</step>
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ WAITING FOR THE PRESENCE OF AN ELEMENT ]════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Wait for Element command waits a maximum amount of time for an element to be available.
+To wait for an element to be present, requires checking for the element using an accessor unlike waiting a specific amount of time.
+To wait for for a maximum of 15 seconds for an element to be present and making this check crucial, use the following.
+To make it non-crucial change the last parameter to false.
+<step>
+	<command>wait for element</command>
+	<actionType>write</actionType>
+	<crucial>FALSE</crucial>
+	<accessor>//*[@id="slider-3"]/div/div[1]/div/h3</accessor>
+	<accessorType>xPath</accessorType>
+</step>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ WAITING FOR DOCUMENT READY STATE COMPLETE ]═════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Wait for Page command waits for Document Ready State to be Complete.
+To wait for the page to fully load and document state to be complete, use the following command.
+Please note that the accessor is set to page and that an accessor type is present.  Any Accessor Type must be present, although it is not used,
+to distinguish this document ready state complete wait from a time interval wait.
+To wait for for a maximum of 15 seconds for document state complete and to make this check crucial, use the following.
+To make it non-crucial change the last parameter to false.
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+<step>
+	<command>wait for page</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>https://www.marvel.com/</arg1>
+		<arg2>30</arg2>
+	</arguments>
+</step>
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ UNIQUE IDENTIFIER ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Before explaining how to fill in text fields, we need to cover the Unique Identifier.
+By default, every time a test is run, a unique identifier is created.
+This unique identifier is composed of the date and time with no delimiters.
+The purpose of this Unique Identifier is to allow rerunning the same tests and generating unique 
+values by appending this Unique Identifier to the string, thus creating a unique data set each test run.
+The Unique Identifier is 17 characters long and has the following format (yyyyMMddHHmmssSSS) ie.(20190402095619991).
+ -  4 digit year, 2 digit month, 2 digit day, 2 digit hours, 2 digit minutes, 2 digit seconds, 3 digit milliseconds 
+In the Filling in and SendKeys sections, there are examples of exactly how to use this.
+Anytime, the character sequence without parenthesis (**_uid_**), is used, that value is replaced with the Unique Identifier.
+
+═════════[ PERSISTING RETRIEVED TEXT IN A VARIABLE FOR LATER USE ]═════════════════════════════════════════════════════════════════════════════════════════════
+The PersistString command stores the element's text in memory for use later.
+There may be a need to compare the value retrieved from one element with the value of another.
+Unfortunately, this cannot be done directly, but a Persist action can be enacted allowing the storage of 
+an element's value that can then be compared to the value of another element.
+This accomplishes comparing one element value with another.
+To persist the value of an element, use the following:
+<step>
+	<command>PersistString</command>
+	<accessor>/html/body/div/h1</accessor>
+	<accessorType>xPath</accessorType>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+</step>
+
+═════════[ FILLING IN TEXT FIELDS ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The SendKeys command sends keystrokes and phrases to form elements and Hyperlink context menus.
+To fill in a field by ID and to make it non-crucial.  To make it crucial change the last parameter to true.
+<step>
+	<command>sendkeys</command>
+	<actionType>write</actionType>
+	<crucial>FALSE</crucial>
+	<accessor>first-name</accessor>
+	<accessorType>ID</accessorType>
+	<arguments>
+		<arg1>John</arg1>
+	</arguments>
+</step>
+
+To fill in a field by ID, appending the Unique Identifier to the name John, and to make it non-crucial.  To make it crucial change the last parameter to true.
+<step>
+	<command>sendkeys</command>
+	<actionType>write</actionType>
+	<crucial>FALSE</crucial>
+	<accessor>first-name</accessor>
+	<accessorType>ID</accessorType>
+	<arguments>
+		<arg1>John**_uid_**</arg1>
+	</arguments>
+</step>
+
+To fill in a field by ID and to make it non-crucial when it contains a reserved command like click.  To make it crucial change the last parameter to true.
+<step>
+	<command>sendkeys</command>
+	<actionType>write</actionType>
+	<crucial>FALSE</crucial>
+	<accessor>first-name</accessor>
+	<accessorType>ID</accessorType>
+	<arguments>
+		<arg1>click</arg1>
+	</arguments>
+</step>
+
+To fill in a field using the value you persisted in an earlier step use the following.
+<step>
+	<command>sendkeys</command>
+	<actionType>write</actionType>
+	<crucial>FALSE</crucial>
+	<accessor>first-name</accessor>
+	<accessorType>ID</accessorType>
+	<arguments>
+		<arg1>PersistedString</arg1>
+	</arguments>
+</step>
+
+To fill in a field by ID, add the Unique Id, and to make it non-crucial when it contains a reserved command like click.  To make it crucial change the last parameter to true.
+<step>
+	<command>sendkeys</command>
+	<actionType>write</actionType>
+	<crucial>FALSE</crucial>
+	<accessor>first-name</accessor>
+	<accessorType>ID</accessorType>
+	<arguments>
+		<arg1>click**_uid_**</arg1>
+	</arguments>
+</step>
+
+To fill in a field by ID with the persisted value, add the Unique Id, and to make it non-crucial.  To make it crucial change the last parameter to true.
+<step>
+	<command>sendkeys</command>
+	<actionType>write</actionType>
+	<crucial>FALSE</crucial>
+	<accessor>first-name</accessor>
+	<accessorType>ID</accessorType>
+	<arguments>
+		<arg1>PersistedString**_uid_**</arg1>
+	</arguments>
+</step>
+
+To compare the persisted value to an element, use the following:
+The Assert command compares an element's ACTUAL value with the EXPECTED value supplied.
+<step>
+	<command>assert</command>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+	<accessor>/html[1]/body[1]/div[1]/form[1]/div[1]/div[4]/div[1]</accessor>
+	<accessorType>xPath</accessorType>
+	<expectedValue>PersistedString</expectedValue>
+</step>
+
+To retrieve the text of an element by xPath and compare it to the persisted value and assert that it is not equal.
+<step>
+	<command>assert</command>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+	<accessor>/html[1]/body[1]/div[1]/form[1]/div[1]/div[4]/div[1]</accessor>
+	<accessorType>xPath</accessorType>
+	<expectedValue>PersistedString</expectedValue>
+	<arguments>
+		<arg1>!=</arg1>
+	</arguments>
+</step>
+
+Although the following can be found in the sendkeys section, in an effort to group all persistence in one 
+location it is duplicated here.
+There may be a need to send a persisted value to a control and that can be done as follows.
+To send the persisted value to a textbox or textarea form control, use the following:
+<step>
+	<command>sendkeys</command>
+	<actionType>write</actionType>
+	<crucial>FALSE</crucial>
+	<accessor>first-name</accessor>
+	<accessorType>ID</accessorType>
+	<arguments>
+		<arg1>PersistedString</arg1>
+	</arguments>
+</step>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ CLICK AN ELEMENT IN AN IFRAME ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Switch to iFrame command switches the current scope to the iFrame specified.
+To click an element by xPath in an iFrame.
+Note that the name of the iFrame is the first argument and the action to take is the second argument.
+<step>
+	<command>Switch to iFrame</command>
+	<actionType>write</actionType>
+	<crucial>false</crucial>
+	<accessor>//button[contains(@id,'menu1')]</accessor>
+	<accessorType>xPath</accessorType>
+	<arguments>
+		<arg1>iframeResult</arg1>
+		<arg2>click</arg2>
+	</arguments>
+</step>
+
+═════════[ SELECT AN OPTION FROM AN HTML SELECT ELEMENT ]══════════════════════════════════════════════════════════════════════════════════════════════════════
+The SendKeys command can also be used to select an Option from an HTML Select control.
+To select an option from an HTML Select (drop down/list) element there are two methods.
+Sendkeys can be used to select an item based on its text or Click can be used on the option
+actually being selected.
+<step>
+	<command>sendkeys</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<accessor>select-menu</accessor>
+	<accessorType>ID</accessorType>
+	<arguments>
+		<arg1>0-1</arg1>
+	</arguments>
+</step>
+
+Alternate method of selecting an option from an HTML select element.
+<step>
+	<command>click</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<accessor>option[value='1']</accessor>
+	<accessorType>CssSelector</accessorType>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ TAKING SCREENSHOTS ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The ScreenShot command takes a screenshot of the current page.
+To take a screen shot/print screen.  The browser will be resized automatically to capture all page content.
+<step>
+	<command>screenshot</command>
+	<actionType>write</actionType>
+	<crucial>false</crucial>
+</step>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ SWITCHING BROWSER TABS ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Right Click command can be used to access a links context menu to open that link in a new tab and switch to that tab.
+Some actions are related and to avoid unnecessary steps the enter key will be pressed after right clicking and arrowing to a particular item.
+To Right click on an element, move down to the first menu item, click it to open in a new tab and switch to the new tab:
+<step>
+	<command>right click</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<accessor>//*[@id="block-menu-menu-dc-menu"]/div/div/ul/li[2]/a</accessor>
+	<accessorType>xPath</accessorType>
+	<arguments>
+		<arg1>Keys.Arrow_Down</arg1>
+		<arg2>Keys.Enter</arg2>
+		<arg3>switch to tab</arg3>
+	</arguments>
+</step>
+
+Alternatively, the steps can be separated into two separate steps where the 
+context menu opens a new tab and then the next step switches to the second tab.
+<step>
+	<command>right click</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<accessor>//*[@id="block-menu-menu-dc-menu"]/div/div/ul/li[2]/a</accessor>
+	<accessorType>xPath</accessorType>
+	<arguments>
+		<arg1>Keys.Arrow_Down</arg1>
+		<arg2>Keys.Enter</arg2>
+	</arguments>
+</step>
+
+The Switch To Tab command switches to another Tab but if Tab argument is not provided, switches back to the first(parent) tab.
+<step>
+	<command>Switch to tab</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+</step>
+Alternate Switch to tab command with the tab specified as an argument.
+Currently, 1 and 0 are the only acceptable values as only one child tab should be opened per test
+and to switch to the child tab use 1.  To switch to the main (parent) tab use 0.
+<step>
+	<command>Switch to tab</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>1</arg1>
+	</arguments>
+</step>
+
+To Switch back to the first tab after switching to the second tab.
+Note that this requires 0 (Zero) to be specified in the command.
+<step>
+	<command>Switch to tab 0</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+</step>
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ FIND ELEMENTS THAT HAVE SPECIFIC TEXT ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Find command finds elements that have the supplied text.
+There are times when you may need to search for text but do not know the accessor necessary to find that text.
+The Find functionality allows you search all elements regardless of type or just all tags of a specific type for a phrase.
+Additionally, the Find functionality returns the xPath of all elements where the text is found, but when searching 
+for text without specifying a tag, only the actual tag containing the text is returned, not elements in the upper 
+hierarchy; however, when using a specific tag, if a child tag of that tag contains the text, the searched tag will be returned 
+as successfully containing that text. 
+To Find text searching all elements and make this non-crucial, use the following.
+<step>
+	<command>find</command>
+	<actionType>read</actionType>
+	<expectedValue>Highest level of education</expectedValue>
+	<crucial>FALSE</crucial>
+</step>
+
+To Find text searching all div elements and make this non-crucial, use the following.
+<step>
+	<command>find</command>
+	<actionType>read</actionType>
+	<expectedValue>Highest level of education</expectedValue>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<arg1>div</arg1>
+	</arguments>
+</step>
+
+To Find text searching all label elements and make this non-crucial, use the following.
+<step>
+	<command>find</command>
+	<actionType>read</actionType>
+	<expectedValue>Highest level of education</expectedValue>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<arg1>label</arg1>
+	</arguments>
+</step>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ FIND ELEMENTS THAT CONTAIN TEXT ]═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+There are times when you may need to search for a portion of text but do not know the accessor necessary to find that text.
+A specific instance might be when searching for text that would be in a paragraph.  
+You wouldn't want to add the entire paragraph when you can add a snippet to verify that part of it is there. 
+Additionally, the Find functionality returns the xPath of all elements where the text is found.
+To Find element containing text searching all div elements and make this non-crucial, use the following.
+<step>
+	<command>find</command>
+	<actionType>read</actionType>
+	<expectedValue>Highest level</expectedValue>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<arg1>div</arg1>
+		<arg1>contains</arg1>
+	</arguments>
+</step>
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ CREATE TEST PAGE COMMAND TO CREATE PAGE TESTS OR FOR PROVIDING DATA TO HELP CREATE TESTS ]══════════════════════════════════════════════════════════
+IMPORTANT NOTE #1: ANY PARENT ELEMENT WILL CONTAIN THE TEXT OF IT'S CHILD ELEMENT(s) SO TO GET THE ELEMENT THAT ACTUALLY 
+			CONTAINS THE INFORMATION DESIRED, TRY TO ELIMINATE THE HIERARCHICAL ITEMS ABOVE THAT ARE NOT DESIRED, 
+			LIKE CONTAINER ELEMENTS.  Examples include (html,head,body,div,table)
+IMPORTANT NOTE #2: ENSURE THAT YOUR FILE PATH DOES NOT CONTAIN ANY KEYWORD USED FOR ANY OTHER ACTION, OR YOU WILL GET UNEXPECTED RESULTS!!!
+  A test file needs to be created and you would like to spare yourself the hassle of looking up elements, associated properties and attributes.
+  This may be especially helpful in the early stages of testing where with development and content updates, test step updates can occur but this
+  process can quickly get the initial test steps created.
+  To do this, create a test script, with a Navigate command, to Navigate to the page to be tested and then use the 
+  create_test_page command or the create_test_page_formatted command.
+  The create_test_page command outputs key value information so that a determination can be made to as to whether an item should be tested and 
+  it provides all of the information to create the test command but it is not formatted as a test command.
+  The create_test_page_formatted command outputs the element information in a test command format allowing for quick copy and paste to a test file.
+  Both files indicate if an element is visible, if an a tag is acting as an anchor or a link.
+  The Formatted File, will create tests for a tags that check text and href, for images that check src, for text fields it create tests that compare text 
+	 provided with the element text, for text input it creates a sendkeys, for buttons, checkboxes and radio buttons it creates a click, 
+	 and for selects it creates a select command, allowing the user to enter one of the option values that is to be selected.
+  The create_test_page command and the create_test_page_formatted command take the following test parameters:
+   - arg1 is the Tag Type.  Use * for all tags, or div for just div tags etc...
+		 -    Element Type: A single element with * being all elements and the default if left empty.
+			 -   Elements Include but are not limited to: *, html, head, title, body, a, ol, ul, li, select, input etc...
+			 -   If omitted, this will be * for all elements.
+   - arg2 is the File where the Tags will be written.
+		 -    File Path and File Name: This is where the results will be written.
+			 -   If omitted, this will be written to the config folder. (/config/newTestFile.txt)
+   - arg3 is the comma delimited list of Tags to exclude.
+		 -    A comma delimited list of elements to skip when retrieving all element (*) information.
+			 -   These would usually be elements that do not have text themselves but contain elements that do have text.
+			 -   Do not include spaces between elements, just a comma as follows: html,head,title,body,div
+			 -   Skip elements are ONLY APPLIED WHEN RETRIEVING ALL ELEMENTS and IGNORED WHEN RETRIEVING A SPECIFIC TAG TYPE.
+  The following examples get all page elements except those container elements listed to skip, save them to a file, 
+  and create test step XML files that can be used immediately.
+<step>
+	<command>create_test_page_formatted</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>*</arg1>
+		<arg2>C:\Tests\TestPages\Formy-Test.xml</arg2>
+		<arg3>html,head,title,meta,script,body,style,nav,br,div,form</arg3>
+	</arguments>
+</step>
+
+
+The following example gets all anchor tag elements, saves them to a file, and ignores the skips list because all elements are not being retrieved.
+<step>
+	<command>create_test_page_formatted</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>a</arg1>
+		<arg2>C:\Tests\TestPages\TestFileOutput_A_Only.txt</arg2>
+		<arg3>html,head,title,meta,script,body,style,nav,br,div,form</arg3>
+	</arguments>
+</step>
+
+The following example is the correct equivalent of the previous command.
+<step>
+	<command>create_test_page_formatted</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>a</arg1>
+		<arg2>C:\Tests\TestPages\TestFileOutput_A_Only.txt</arg2>
+	</arguments>
+</step>
+  Alternatively, for checking content or for manually creating tests, using the unformatted command may prove more useful.
+  This command works just like the formatted command except it simply lists the element information, but does not make test steps.
+  Example of some element information: Element Type, xPath, Text, Href, Src, Alt, Visibility.
+  This file type is a plain text file and should be output accordingly.
+  The following example creates an unformatted file(arg2) listing the described element attributes for all elements (arg1)
+  except those in the skipped list (arg3)
+<step>
+	<command>create_test_page</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>*</arg1>
+		<arg2>C:\TestPages\Formy-Unformatted-Test.txt</arg2>
+		<arg3>html,head,title,meta,script,body,style,nav,br,div,form</arg3>
+	</arguments>
+	</step>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ CONNECT TO SQL SERVER DATABASE AND CLOSE THE CONNECTION ]═══════════════════════════════════════════════════════════════════════════════════════════
+The Connect To Database command opens and persists a connection object until it is closed.
+There will be times during the course of QA'ing a site where querying the database can confirm that a value has been 
+added or removed.
+NOTE: ALTHOUGH MONGODB IS MENTIONED IN THE COMMENTS BELOW, IT IS NOT FULLY IMPLEMENTED.
+AT THIS TIME ONLY SQL SERVER CONNECTIVITY IS CURRENTLY IMPLEMENTED!!!
+IMPORTANT: ENSURE THAT YOU ALWAYS CREATE A CLOSE CONNECTION TEST STEP TO CLOSE THE CONNECTION YOU OPEN!!!!
+An emergency clean up process will attempt to shut down any open connections, but it is recommended that 
+you do this with a test step to ensure that connection limits are not exhausted.
+To do this, you must first establish a connection to the database and this is how to do that.
+There are two ways to establish a connection to Sql Server. 
+<step>
+	<!-- Open Connection to Sql Server -->
+	<command>Connect to Database</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<!-- Type of Database (MongoDb, Sql Server)-->
+		<arg1>SQL Server</arg1>
+		<!-- Database to connect to -->
+		<arg2>PocFisForumV2</arg2>
+		<!-- user name -->
+		<arg3>forum_user</arg3>
+		<!-- password -->
+		<arg4>forum_user</arg4>
+		<!-- connection type - not currently used -->
+		<arg5>local</arg5>
+	</arguments>
+</step>
+
+The alternative method with more control but with more risk of failure.
+<step>
+	<command>Connect to Database</command>
+	<actionType>write</actionType>
+	<crucial>true</crucial>
+	<arguments>
+		<!-- Type of Database (MongoDb, Sql Server)-->
+		<arg1>SQL Server</arg1>
+		<!-- Connection String or Close to close the connection -->
+		<!-- when using a uri, escape all illegal xml characters (escape: ampersands with &amp;) -->
+		<arg2>jdbc:sqlserver://localhost:1433;database=PocFisForumV2;user=forum_user;password=forum_user;encrypt=false;trustServerCertificate=true;loginTimeout=30;</arg2>
+		<!-- arg2>jdbc:sqlserver://local.database.windows.net:1433;database=PocFisForumV2;user=forum_user;password=forum_user;encrypt=true;trustServerCertificate=false;loginTimeout=30;</arg2 -->
+		<!-- currently not implemented but created to distinguish between local and non-local SQL databases -->
+		<arg3>local</arg3>
+	</arguments>
+</step>
+
+═════════[ CLOSING THE DATABASE CONNECTION ]═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Close Database Connection command closes an open database connection and destroys the connection object releasing the resource.
+Equally important as opening the database connection object, is closing the database connection object.
+Open connections consume resources and unclosed connections can use up all available memory or an 
+allotment of connections depending on where the connection lives.
+To avoid this, always write a close connection command whenever writing an open connection command.
+The close command is simple and as follows:
+<step>
+	<command>Close Database Connection</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>SQL Server</arg1>
+	</arguments>
+</step>
+
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ QUERYING THE SQL SERVER DATABASE  ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Sql Server Query command executes a Sql Server Query for a single field value and compares that to the expected value.
+When testing a site, there sometimes needs to be verification that a value was 
+actually written to, or removed from the database.  
+This is the purpose of the Sql Server Query Command.
+There are two ways to query the database.
+First option: Specify the Table, Field and Where clause separately.
+The last argument is the comparison type and must be included for != test steps, 
+but is optional for = test steps.
+<step>
+	<command>Sql Server Query</command>
+	<actionType>read</actionType>
+	<expectedValue>General</expectedValue>
+	<crucial>false</crucial>
+	<arguments>
+		<!-- Table to query or select statement -->
+		<arg1>[POCFISForumV2].[dbo].[Forums]</arg1>
+		<!-- Field to query -->
+		<arg2>Forum</arg2>
+		<!-- where clause - optional -->
+		<arg3>where ForumId = 1</arg3>
+		<!-- Optional 4th argument can be used to signify != comparison -->
+		<!--<arg4>!=</arg4>-->
+	</arguments>
+</step>
+
+Second Option: Specify the entire Select statement.
+<step>
+	<command>Sql Server Query</command>
+	<actionType>read</actionType>
+	<expectedValue>FAQ</expectedValue>
+	<crucial>false</crucial>
+	<arguments>
+		<!-- Table to query or select statement -->
+		<arg1>Select Forum from [POCFISForumV2].[dbo].[Forums] where ForumId = 2</arg1>
+	</arguments>
+</step>
+
+Second Option Alternative type of SQL Select Statement: Specify the entire Select statement.
+<step>
+	<command>Sql Server Query</command>
+	<actionType>read</actionType>
+	<expectedValue>FAQ</expectedValue>
+	<crucial>false</crucial>
+	<arguments>
+		<!-- Table to query or select statement -->
+		<arg1>Select Top(1) Forum from [POCFISForumV2].[dbo].[Forums]</arg1>
+	</arguments>
+</step>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ RETRIEVING JSON FROM AN API ENDPOINT  ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Get JSON command like the SQL Server Connection, persists an object for use by subsequent commands.
+Unlike the SQL Server Connection command, which opens a connection object, the Get JSON command
+downloads and stores the JSON into a local variable that can later be used to SEARCH for key value pairs.
+This local variable will contain the retrieved JSON until overwritten by a subsequent Get JSON request or 
+until the test file executing ends.
+Each time a test is run this variable is reset to null until populated by the Get JSON command.
+The Get JSON command is used to retrieve the JSON from either the current page/url or a different page/url.
+If the optional argument URL is not included, the current page/url will be used to retrieve the JSON.
+If the URL is included as the command's optional sole argument, it will trigger a navigation event and then
+that page/url will be used to retrieve the JSON.
+The preferred way to perform the Get JSON is shown below and requires a previous navigation step.
+This step should be conditional or crucial depending upon the subsequent steps in the test file.
+In the example below, JSON is retrieved from the current URL and starts a Conditional Block so that
+any query statements can be contained within the Conditional Block preventing their execution if this step fails.
+<step>
+	<!-- Allows you to retrieve JSON from the current end point.  Make this step crucial or conditional as subsequent steps depend on it's success. -->
+	<command>Get JSON</command>
+	<conditional>true</conditional>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+</step>
+
+Alternatively, navigation can be included in the same step to first trigger a navigation event and then get the JSON.
+The only difference between the example below and the one above is that the below example first triggers a navigation event
+by including the URL as an argument in the test step.
+<step>
+	<!-- Allows you to retrieve JSON from a different end point.  Make this step crucial or conditional as subsequent steps depend on it's success.  -->
+	<command>Get JSON</command>
+	<conditional>true</conditional>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<arg1>http://local.forums.com/?productId=2&amp;id=true</arg1>
+	</arguments>
+</step>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ QUERYING JSON FROM AN API ENDPOINT ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+A QUICK NOTE ABOUT JSON BEFORE REVIEWING THIS COMMAND
+	Returned JSON is a string so numbers are represented without quotation marks while strings
+	are represented with quotation marks.
+	This means that 1 and "1" are not the same, as the former is a number and the latter is a string representation of that number.
+	JSON files are key value pairs where the key is a string and the value is either a number or a string.
+	The Key is like a variable name and the Value holds the value of the variable.
+The Query JSON command is actually just a CASE SENSITIVE search and not a querying framework like the SQL Query command.
+For this reason, the != operator is not supported for JSON Queries.
+The key, which is placed into the <accessor></accessor> node along with the expected value which is placed into the
+<expectedValue></expectedValue> node are both case sensitive.
+Additionally, the <expectedValue></expectedValue> node must represent the expected value exactly so include quotes for
+strings and exclude quotes for numbers.
+To best determine how to represent the expected value, just copy the text between the colon and the end of the 
+line excluding the comma, if present.
+For the following examples, refer to the following JSON excerpt:
+{
+"ForumId": 1,
+"Forum": "General",
+"IsActive": true
+}
+
+For the first example, the Query JSON command is being used to find the ForumId value with a numeric value of 1.
+Notice that the <expectedValue></expectedValue> contains 1 and not "1".
+<step>
+	<command>Query JSON</command>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+	<accessor>ForumId</accessor>
+	<accessorType>JSON</accessorType>
+	<expectedValue>1</expectedValue>
+</step>
+
+For the second example, the Query JSON command is being used to find the Forum value with a string value of "General".
+When searching for string values the quotation marks must be used exactly as they are in the JSON returned.
+Notice that the <expectedValue></expectedValue> contains "General" and not General.
+<step>
+	<command>Query JSON</command>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+	<accessor>Forum</accessor>
+	<accessorType>JSON</accessorType>
+	<expectedValue>"General"</expectedValue>
+</step>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ SAVE JSON TO FILE  ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Save JSON command saves the JSON retrieved with the Get JSON command to the path provided.
+Having the downloaded JSON on hand when testing is important for showing proof when providing feedback.
+The command is a read actionType and not a write actionType as it has to read the JSON before writing it.
+There are two arguments that can be used with this command.
+The first argument is the file path and name where the JSON should be saved and is required.
+The second argument is for overwriting the existing file.
+If set to True or Overwrite, an existing file with the same name will be overwritten.
+If set to False, which is the default, and a file exists with the same name, the application will append an incremental integer value 
+to the file name and retest until it finds a file name that does not exist. 
+The updated name will be used to name the downloaded JSON file and will be reported back via the console and log.
+If the second parameter is missing, the value will be defaulted to false.
+In the example below, the JSON previously retrieved will be saved to the file outlined in <arg1></arg1>,
+but since <arg2></arg2> overwrite is set to false, if that file exists a new name will be created.
+A message indicating that the file existed along with the original file name and the updated file name will be
+reported to the tester via the console and will also be included in the log file.
+<step>
+	<command>Save JSON</command>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<!-- first parameter expected by the command - The file name; it is also required -->
+		<arg1>C:\JSON downloads\forums.json</arg1>
+		<arg2>false</arg2>
+	</arguments>
+</step>
+
+In the below example, <arg2></arg2> has been set to true for overwrite, which will delete an existing file with 
+the same name before saving the file.
+<step>
+	<command>Save JSON</command>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<!-- first parameter expected by the command - The file name; it is also required -->
+		<arg1>C:\JSON downloads\forums.json</arg1>
+		<arg2>true</arg2>
+	</arguments>
+</step>
+
+Alternatively, the previous example could have also been written using the word overwrite, as shown below.
+<step>
+	<command>Save JSON</command>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<!-- first parameter expected by the command - The file name; it is also required -->
+		<arg1>C:\JSON downloads\forums.json</arg1>
+		<arg2>overwrite</arg2>
+	</arguments>
+</step>
+
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ CHECK COLOR CONTRAST  ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Check Contrast command compares the forecolor brightness with the backcolor brightness and the color difference between the two.
+Check contrast uses the formula found on the following page to calculate and compare the foreground and background brightness and color differences:
+https://www.w3.org/TR/AERT/#color-contrast
+
+When testing a page, one of the most important things to determine is if the color contrast is within acceptable ranges.
+Good contrast allows users to easily read information without struggling to discern text from background.
+A site with bad contrast is less likely to maintain interest and even less likely to receive repeat visits.
+If the background color cannot be found on the container element acting as the background, this method climbs the
+container's ancestral hierarchy until it finds the color used for the background.
+In the results if you see ^1 it means that it had to use the parent's backcolor, ^2 is grandparent, ^3 great grand parent etc...
+If you don't see the ^ sign, the value was taken directly from the element itself.
+In the partial output example shown below, notice the ^2 following the backcolor listing, this indicates
+that the grandparent of the container element was used as the source for the element's background color.
+backcolor(rgba(248, 249, 250, 1))^2 Back-Color Brightness: 248.0
+
+The first argument is the element type that you want to check.
+It is suggested that you create focused tests targeting the lowest element that actually contains text instead of it's
+parent element, which will contain that element thus also containing that element's text.
+It is best to use p for <p> tags, label for <label> tags, span for <span> tags
+With that said, it is possible to use an asterisk(*) to target all elements.
+	-Note that doing so will take a long long time to complete and the results will likely be too much for the terminal display.
+	-At the time of writing this, a test using an asterisk ran for over 2 hours for one page and was stopped having tested only a fraction of the page!!!
+It is suggested that you never use the overriding arguments but they were included to allow for slightly relaxed requirements.
+The default brightness contrast which can be overridden in the second argument is 125.
+The default color contrast which can be overridden in the third argument is 500.
+In the following Check Contrast Test step, the tags being checked are all <p> tags against their container elements.
+<step>
+	<command>check contrast</command>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<!-- Type of tag(s) to check contrast on -->
+		<arg1>p</arg1>
+		<!--  [Optional and not recommended] Allows Overriding Acceptable Contrast settings b for color brightness default is (125)-->
+		<arg2>b=86</arg2>
+		<!-- [Optional and not recommended] Allows Overriding Acceptable Contrast settings d for color difference default is (500) -->
+		<arg3>d=450</arg3>
+	</arguments>
+</step>
+
+
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                              TROUBLESHOOTING                                                                                                           ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+═════════[ DRIVER ISSUES ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+If you run the application and the browser briefly opens and then closes:
+Check you local browser version and compare that with the corresponding web driver for that browser.
+If these are not the same, upgrade the web driver for this browser and it should work.
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ URL VALIDATION FAILURE ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+When you enter a url into your web browser although the trailing slash may be there or may not be there, the returned URL from the test app differs.
+Update your test to reflect what the test app is returning as this is the actual URL for this page.
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ MISSING CONFIGURATION FILE ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+If you are running in JUnit and see the following message, the config file is not in the correct location or has the wrong name.
+Configuration File not found! (Config/ConfigurationSetup.tconfig)
+Place the configuration file in the location above with the name specified and re-run the test.
+Exiting!!!
+configSettings is null!!!
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ UNEXPECTED OUTPUT FROM A TEST STEP ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+If you have an unexpected output or outcome of a test step, check the Action/Expected value field in your test 
+and ensure that there is no keyword in there that the application may attempt to execute instead of the action intended.
+The test will have to be re-written to account for this.
+A specific SendKeys keyword was added to send text that could be misconstrued because it contains keywords.
+While this particular solution may not be the one you need, there is likely a solution but if not, please document the issue 
+so that it can be addressed in future implementations.
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ OVERALL TEST RESULT SHOWS FAILURE ALTHOUGH TEST STEPS PASS (LAST TEST STEP PASSED) ]════════════════════════════════════════════════════════════════
+When running tests, if a step marked as crucial does not fail, the overall JUnit test should 
+show as having passed.
+If the last step passes but the overall JUnit test shows a failure and the error doesn't point to 
+anything in the test steps, re-run the test and it will likely show as having passed.
+This intermittent failure was noticed during testing and while it is believed to have been a race condition
+that was fixed, this has been added as the exact cause has not been identified.
+If during testing, this no longer occurs, this tip may be removed.
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ XML DOCUMENT MUST START WITH AND END WITH THE SAME ELEMENT ]════════════════════════════════════════════════════════════════════════════════════════
+This means that the start and end element are not proper opening and closing XML tags.
+1.	First, ensure that the document has the start and end tags.
+2.	Next, check that the end tag contains a </ as the first two characters as a common mistake is 
+		copying and pasting and forgetting to update.
+3.	Finally, check that the spelling, if this was not a copy paste issue as it may have been a typo.
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+

@@ -1,0 +1,122 @@
+Currently, there are two separate Projects as part of this application.
+THE INITIAL PROJECT:
+	The initial project used ANSI delimiters along with spaces and semi-colons in the test file while using two forward slashes in the 
+	Configuration file for comments and 
+	and became quite complex to understand and explain to others.
+	To use the initial project, be sure to update the HomePage.java file below and reverse the commented calls in the Form.Java.
+	Run the TestHomePage() method using JUnit to run this part of the application. 
+	This part of the project will be removed in the next version.
+
+THE UPDATED PROJECT:  (Default currently setup to run.)
+	The Updated Project uses XML to describe the configuration file and the Test Settings files.  
+	This uniform approach allows for easier understanding because there is a common template for constructing both file types.
+	This project has more functionality than the initial project such as Sql Server connectivity and querying.
+	To use the updated project, be sure to update the TestCentral.java file below. 
+	Run the ConfigurableTestController() method using JUnit to run this part of the application.
+
+FOR BOTH PROJECTS PARTS:  SETTING UP THE PROJECT
+	The following instructions are for setting up the project for use with IntelliJ IDEA.
+	For Eclipse or another Java IDE, translate the following accordingly.
+	SQL Server and JSON interactivity as well as some other functionality is only available in the 
+	updated project.
+	
+DOWNLOADING THE JAVA SDK:	
+	Before beginning, download the Java SE Development Kit from the link provided below or Google it.    
+	http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+	
+BACKING UP THE IMPORTS:
+	Before opening the project, open the TestCentral.java file in NotePad++ and copy the imports from the top of the file.
+	(You can also copy the imports from the top of the HomePage.java file if you are using the legacy project.)
+	
+DOWNLOADING IntelliJ:	
+	Also, download the Community version of IntelliJ accept the defaults and when the project is opened, install the latest version of JUnit.
+
+OPENING THE PROJECT IN IntelliJ FOR THE FIRST TIME:
+	Open the ConfigurableAutomatedTester\ConfigurableTester folder in IntelliJ.  
+	Don't open the parent folder ConfigurableAutomatedTester as all references will be incorrect if you do.
+	If prompted:
+	Setup the Project SDK in Project Structure to: 1.8.0_221 (Java verson "1.8.0_221")
+	Setup the output path to: [Current Path]\ConfigurableAutomatedTester\ConfigurableTester\out
+	
+	When initially opened or after specifying the SDK, the project may display a lot of errors.
+	Look at the bottom of the environment and see if any process are running.  If so, they are attempting to resolve any issues related to code use and the associated library.
+	Wait patiently until these processes stop running.
+	Compare the imports at the top of the TestCentral.java file with the imports you copied earlier.
+	If they differ, copy the ones that you copied earlier over the ones in the current TestCentral.java file.
+	This means that IntelliJ tried to find the corresponding import libraries but is using different libraries than originally imported and this can have unforeseen effects!!!
+	All errors should disappear.  (Errors are indicated by red on the right side of the code page, which represents the code status of each line of code.)
+	Do not build yet!!!!!
+
+CONFIGURING THE APPLICATION TO ALLOW IT TO BUILD:
+	Follow the instructions below.
+	
+	1.  First, open your Chrome and FireFox help and find out the version of each that you have.  
+		This will determine which associated driver version you will need to download.
+	
+	2.	Next, download the same driver version as your current browser version.  
+		Don't download a version that is earlier or later because the application will not work!!!
+		It must be the same version number!!!
+		For FireFox - download the gecko driver.
+		For Chrome - download the ChromeDriver.
+		Download the latest PhantomJS driver.
+		It is suggested that you place all of the executables in one location for easier mapping and updating.
+
+	3.  It may be a good idea at this time to also create folders for the Test Files, and for saving Screenshots and JSON files.
+		This application will not create paths so mapping to a path that doesn't exist will throw an exception.
+		Screenshots are mapped in the Configuration File and the folder MUST exist before running any test.
+		If the Screenshots folder does not exist, screenshots will be saved in the project's Config folder.
+		JSON files are mapped as part of the Test File, so these folders can be created anytime before running the test.
+		Optionally, it may be desireable to create a Test File output folder to store tests files created by the application.
+		Output Test Files are mapped as part of the Test File, so these folders can be created anytime before running the test.
+		
+	4. 	Next, open the TestCentral.java and HomePage.java files and update hardcoded paths for the config file, 
+		log file, as well as the paths for the Chrome, Firefox and PhantomJs drivers and the Screenshots folder.		
+
+	5.	Next, mark the Pages, test and Entities folders as Sources Root folders.
+
+	6.	Next, make sure that your Java JDK/JRE version is 1.8 so that you can compile.
+
+	7. 	Optionally, you may choose to change the default name and or path of the Configuration file, the log file or the help file, 
+		all of which can be changed in the TestCentral.java and HomePage.java files.
+		
+	8. 	Build the project in one of the following ways.  
+		A. 	Either click on the green hammer.
+		B.	Select Build Project from the Build menu.
+		C.	Ctrl + F9
+		
+	9.	Now that the project is built, you need to setup the Configuration file and one or more Test Files by following the instructions below.
+		
+
+SETTING UP A NEW PROJECT FOR TESTING:
+	1.	For the following steps, refer to the Help file which is in the Config folder.  
+		There are explanations of each Configuration File field and Test Step File field along with examples of each. 
+	
+	2.	Create the Configuration file and save it to the projects Config folder.  
+		The Configuration file must exist in this location or the path for the configuration file must be changed 
+		in the TestCentral.java and HomePage.java files.
+		Two configuration files are part of this project and can be found in the Config project folder.
+		It is suggested that you make a backup of these files to ensure that you do not lose the structure.
+		For the Updated Project: ConfigurationSetup.xml
+		For the Legacy Project: ConfigurationSetup.tconfig
+		The Help file will output a sample of the Configuration file that can be used as a starting point if the included Configuration file was overwritten.
+		
+	2. 	Create one or more test files and save them to the Test Files folder that was created in Step 3 of SETTING UP THE PROJECT.
+		
+	3.	Return to the Configuration file and either Point to the individual Test Files or the the folder containing the Test Files and set the 
+		<specifyTestFiles></specifyTestFiles> value accordingly.
+		
+	4.  Open the Project in IntelliJ, go to the TestCentral.java or HomePage.java file.
+		If using the updated code in TestCentral.java goto the ConfigurableTestController() method marked with the @Test attribute, 
+		right click the method and select Run ConfigurableTestController() or hit (Ctrl + Shift + F10).
+		
+		If using the old code in HomePage.java goto the TestHomePage() method marked with the @Test attribute, 
+		right click the method and select Run TestHomePage() or hit (Ctrl + Shift + F10).
+		
+	5.	Look at the Terminal window and follow along as the tests run. 
+		Once the tests are complete a log file will be generated with all of the Test steps and the associated Success or Failure of each test step 
+		with the exception of a Crucial step that fails, as a failed Crucial step will end the program immediately after writing to the console.
+		
+
+
+
+
