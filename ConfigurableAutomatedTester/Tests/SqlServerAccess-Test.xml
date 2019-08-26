@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testSteps>
+	<step>
+		<!-- Tested - Good -->
+		<!-- Open Connection to Sql Server -->
+		<command>Connect to Database</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<arguments>
+			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
+			<arg1>SQL Server</arg1>
+			<arg2>PocFisForumV2</arg2>
+			<arg3>forum_user</arg3>
+			<arg4>forum_user</arg4>
+			<arg5>local</arg5>
+		</arguments>
+	</step>	
+	<step>
+		<command>Sql Server Query</command>
+		<actionType>read</actionType>
+		<expectedValue>General</expectedValue>
+		<crucial>false</crucial>
+		<arguments>
+			<!-- Table to query or select statement -->
+			<arg1>[POCFISForumV2].[dbo].[Forums]</arg1>
+			<!-- Field to query -->
+			<arg2>Forum</arg2>
+			<!-- where clause - optional -->
+			<arg3>where ForumId = 1</arg3>
+			<arg3>=</arg3>
+		</arguments>
+	</step>
+	<step>
+		<command>Sql Server Query</command>
+		<actionType>read</actionType>
+		<expectedValue>FAQ</expectedValue>
+		<crucial>false</crucial>
+		<arguments>
+			<!-- Table to query or select statement -->
+			<arg1>Select Forum from [POCFISForumV2].[dbo].[Forums] where ForumId = 2</arg1>
+		</arguments>
+	</step>
+	<step>
+		<command>Sql Server Query</command>
+		<actionType>read</actionType>
+		<expectedValue>FAQ</expectedValue>
+		<crucial>false</crucial>
+		<arguments>
+			<!-- Table to query or select statement -->
+			<arg1>Select Top(1) Forum from [POCFISForumV2].[dbo].[Forums]</arg1>
+			<arg2>!=</arg2>
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- multiple keystroke command... SENDKEYS! -->
+		<command>Close Database Connection</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<arguments>
+			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
+			<arg1>SQL Server</arg1>
+		</arguments>
+	</step>	
+</testSteps>
