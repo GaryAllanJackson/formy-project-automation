@@ -125,6 +125,37 @@
 		<accessor>//*[@id="block-system-main"]/div/div/div[2]/div[1]/div/div/div/div[1]/h2</accessor>
 		<accessorType>xPath</accessorType>
 	</step>
+	<!--<step>
+		<command>Close Child tab</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<arguments>
+			<arg1>2</arg1>
+		</arguments>
+	</step>
+	<step>
+		<command>Close Child tab</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<arguments>
+			<arg1>1</arg1>
+		</arguments>
+	</step>-->
+	<step>
+		<command>Close Child tab</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- Normal hardcoded wait time -->
+		<command>wait</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<arguments>
+			<arg1>5000</arg1>
+		</arguments>
+	</step>
 	<step>
 		<!-- Tested - Good -->
 		<!--<command>Switch to tab 0</command>-->

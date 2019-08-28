@@ -734,6 +734,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\t\tSELECT AN OPTION FROM AN HTML SELECT ELEMENT");
             WriteToFile(get_helpFileName(), "\t\tTAKING SCREENSHOTS");
             WriteToFile(get_helpFileName(), "\t\tSWITCHING BROWSER TABS");
+            WriteToFile(get_helpFileName(), "\t\tCLOSE ONE OR ALL OPEN TABS");
             WriteToFile(get_helpFileName(), "\t\tFIND ELEMENTS THAT HAVE SPECIFIC TEXT");
             WriteToFile(get_helpFileName(), "\t\tFIND ELEMENTS THAT CONTAIN TEXT");
             WriteToFile(get_helpFileName(), "\t\tCREATE TEST PAGE COMMAND TO CREATE PAGE TESTS OR FOR PROVIDING DATA TO HELP CREATE TESTS");
@@ -742,6 +743,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\t\tQUERYING THE SQL SERVER DATABASE");
             WriteToFile(get_helpFileName(), "\t\tRETRIEVING JSON FROM AN API ENDPOINT");
             WriteToFile(get_helpFileName(), "\t\tQUERYING JSON FROM AN API ENDPOINT");
+            WriteToFile(get_helpFileName(), "\t\tSAVE JSON TO FILE");
             WriteToFile(get_helpFileName(), "\t\tCHECK COLOR CONTRAST  \r\n");
             WriteToFile(get_helpFileName(), AppConstants.indent5 + PrePostPad("[ Troubleshooting ]", "═", 9, 100));
             WriteToFile(get_helpFileName(), "\t\tDRIVER ISSUES");
@@ -749,6 +751,9 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\t\tMISSING CONFIGURATION FILE");
             WriteToFile(get_helpFileName(), "\t\tUNEXPECTED OUTPUT FROM A TEST STEP");
             WriteToFile(get_helpFileName(), "\t\tOVERALL TEST RESULT SHOWS FAILURE ALTHOUGH TEST STEPS PASS (LAST TEST STEP PASSED)");
+            WriteToFile(get_helpFileName(), "\t\tXML DOCUMENT MUST START WITH AND END WITH THE SAME ELEMENT");
+            WriteToFile(get_helpFileName(), "\t\tCONTEXT MENU TAB SWITCHING IS FAILING");
+            WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("[ END OF TABLE OF CONTENTS ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "");
@@ -769,7 +774,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "and unique value generation so that form population tests can be run over and over using this value to ");
             WriteToFile(get_helpFileName(), "ensure that entry is unique each time.\r\n");
             WriteToFile(get_helpFileName(), "An added test step configuration can be used to create a test step file for a specific page and while " +
-                                                        "this is not a test, it can make creating test files much faster.");
+                                                        "this is not a test, it can make creating test files much faster.\r\n");
             WriteToFile(get_helpFileName(), PrePostPad("[ IMPORTANT NOTES ]", "*", 10, 100));
             WriteToFile(get_helpFileName(), "NOTE: The != operator is currently only supported for the following commands: Assert, Sql Server Query, Check Count.");
             WriteToFile(get_helpFileName(), "\tThere was no viable use case for implementing this functionality for other commands ");
@@ -779,7 +784,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\tAdditionally, in the console, Successful results are displayed in green, while Failure results are displayed in Red.");
             WriteToFile(get_helpFileName(), "\tAny item appear in the console in Red means that either the item failed or it was configured improperly or an important item");
             WriteToFile(get_helpFileName(), "\twas not configured at all.\r\n\tLOOK AT ALL ITEMS IN RED AND MAKE UPDATES ACCORDINGLY!!!");
-            WriteToFile(get_helpFileName(), PrePostPad("", "*", 10, 100));
+            WriteToFile(get_helpFileName(), PrePostPad("", "*", 30, 100) + "\r\n");
 
             WriteToFile(get_helpFileName(), "This help file is broken up into 4 separate sections:\r\n");
             WriteToFile(get_helpFileName(), "\t1.\tHELP FILE OVERVIEW - This section, which provides an overview of the application and this help file.\r\n");
@@ -952,7 +957,27 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
             WriteToFile(get_helpFileName(), "║                                              TEST FILE FORMAT                                                                                                          ║");
             WriteToFile(get_helpFileName(), "╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ TEST FILE OVERVIEW ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "The Test file is an xml file, that can include comments just like any xml file.");
+            WriteToFile(get_helpFileName(), "A test file can consist of one or more test steps and there are currently no known limitations as some tests have contained");
+            WriteToFile(get_helpFileName(), "tens of thousands of steps.");
+            WriteToFile(get_helpFileName(), "The drawback to having large test files is that at some point the display will cut off older messages, and the log file will be the ");
+            WriteToFile(get_helpFileName(), "only way to track the status of all test steps.");
+            WriteToFile(get_helpFileName(), "Below, there are compound commands that allow for completing a step without creating a separate Navigation step.");
+            WriteToFile(get_helpFileName(), "While this functionality was added for convenience, we strongly suggest using the separate Navigation step and making it crucial ");
+            WriteToFile(get_helpFileName(), "as will be explained later.");
+            WriteToFile(get_helpFileName(), "The test file allows for:");
+            WriteToFile(get_helpFileName(), "1.\tCertain steps to be a point of failure for the entire test if it fails to prevent dependant steps from ");
+            WriteToFile(get_helpFileName(), "  \tattempting to execute if the prerequisite step fails, such as Navigation, Establishing a Database connection or Getting JSON from an endpoint.");
+            WriteToFile(get_helpFileName(), "2.\tCertain steps to be decisional so that steps based on the success of the prerequesite step only execute if ");
+            WriteToFile(get_helpFileName(), "  \tthe prerequisite step is successful, otherwise dependent steps are skipped and steps subsequent to this block are executed.");
+            WriteToFile(get_helpFileName(), "3. Comments to be plentiful.  Comments can be used to document, or to comment out steps or step values for quickly switching");
+            WriteToFile(get_helpFileName(), "  \tbetween different values when running tests over and over to try to track down a specific behavior.");
+            WriteToFile(get_helpFileName(), "4.\tTest files are run one after another and most objects are scoped to just the test that required them so");
+            WriteToFile(get_helpFileName(), "  \tPersisted Values, JSON object and SQL Connecton object will all be reset and the Unique Identifiers will be reinitialized to a new value.");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ TEST FILE FIELDS AND DESCRIPTIONS ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "It begins with the XML declaration followed by the <testSteps> root element.");
             WriteToFile(get_helpFileName(), "Each test is grouped in <step> elements, which consist of the all or some of the following nodes:\r\n");
             WriteToFile(get_helpFileName(), "<command>Command to execute</command> - The command node, describes the command to execute and is always required.\r\n");
@@ -1047,7 +1072,12 @@ public class TestHelper{
                     "</step>");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("[ NAVIGATION WITH AUTHENTICATION WITH AND WITHOUT NAVIGATION CONFIRMATION ]", "═", 9, 159));
-            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "The Navigate command can be used to authenticate while navigating.");
+            WriteToFile(get_helpFileName(), "This is done by passing the username and password as part of the url delimited by a : and ending with the @ symbol.");
+            WriteToFile(get_helpFileName(), "It should be mentioned that this does not work for all authentication which is why there are different authentication methods.");
+            WriteToFile(get_helpFileName(), "Additionally, it should be mentioned that the Authentication and Login commands are not for form based authentication but ");
+            WriteToFile(get_helpFileName(), "rather for alert style login popups.");
+            WriteToFile(get_helpFileName(), "For logging into a page that has two input text type form fields, use the send keys command coupled with the click command.");
             WriteToFile(get_helpFileName(), "To Navigate and Authenticate with username and password and assert that the URL is in the expectedValue node and to wait 4 thousand milli-seconds ");
             WriteToFile(get_helpFileName(), "before making the assertion to allow the page to load:");
             WriteToFile(get_helpFileName(), "<step>\r\n\t<command>navigate</command>\r\n\t<actionType>write</actionType>\r\n" +
@@ -1067,6 +1097,12 @@ public class TestHelper{
 
             WriteToFile(get_helpFileName(), PrePostPad("[ LOGIN WITH NAVIGATION ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "The Login command logs into a site.");
+            WriteToFile(get_helpFileName(), "This command is intended for sites that have alert style popup login forms.");
+            WriteToFile(get_helpFileName(), "There may be instances in which one or more Login/Authentication commands do not work");
+            WriteToFile(get_helpFileName(), "on a particular operating system, like iOs.");
+            WriteToFile(get_helpFileName(), "A mixed approach may work, but there is no guarantee.");
+            WriteToFile(get_helpFileName(), "Although the login command is a compound command there are instances in which ");
+            WriteToFile(get_helpFileName(), "having it work in this manner actually makes a difference over separate steps.");
             WriteToFile(get_helpFileName(), "To login and navigate in one step.");
             WriteToFile(get_helpFileName(), "Please note this is for normal passwords which cannot contain spaces or characters that require escaping.");
             WriteToFile(get_helpFileName(), "<step>\r\n\t<command>login</command>\r\n\t<actionType>write</actionType>\r\n" +
@@ -1078,7 +1114,9 @@ public class TestHelper{
                     "</step>");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("[ ALERT POPUP LOGIN ]", "═", 9, 159));
-            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "The following Login command does not include the navigation step.");
+            WriteToFile(get_helpFileName(), "As mentioned earlier, there may be isseus with logging in related to the operating system or alert type.");
+            WriteToFile(get_helpFileName(), "Try different methods if failures happen as one approach may work best for a specific scenario.");
             WriteToFile(get_helpFileName(), "To login when presented with an alert style popup, which could happen upon landing on the site or after the site redirects you, and to make this crucial.");
             WriteToFile(get_helpFileName(), "Please note this is for normal passwords which cannot contain spaces or characters that require escaping.");
             WriteToFile(get_helpFileName(), "<step>\r\n\t<command>login</command>\r\n\t<actionType>write</actionType>\r\n" +
@@ -1090,6 +1128,11 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("[ CHECK URL WITHOUT NAVIGATION ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "The Check URL command allows for checking the current page's URL without the need to navigate.");
+            WriteToFile(get_helpFileName(), "When an command, like a button or link click occurs that navigates to a new page, there is no need to");
+            WriteToFile(get_helpFileName(), "perform a navigation command but there is a need to check that the page is where expected before further testing.");
+            WriteToFile(get_helpFileName(), "NOTE: The <actionType></actionType> for this command is write, not a read.");
+            WriteToFile(get_helpFileName(), "This command is designed to work with event navigation to ensure that the navigation has occurred prior to subsequent testing.");
             WriteToFile(get_helpFileName(), "To check a URL without navigating and to make it crucial.  To make it non-crucial change the last parameter to false.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>check url</command>\r\n" +
@@ -1337,7 +1380,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "In the example below, the test compares the number of \"a\" tags on the page with the expected number of 18.");
             WriteToFile(get_helpFileName(), "If the page has 18 \"a\" tags, the test passes, otherwise it fails.");
             WriteToFile(get_helpFileName(), "An optional last argument can be included to use the != operator.");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>check count</command>\r\n" +
                     "\t<actionType>read</actionType>\r\n" +
@@ -1347,6 +1390,8 @@ public class TestHelper{
                     "\t\t<arg1>a</arg1>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("[ CHECK ALL PAGE IMAGE SRC TAGS WITH SEPARATE NAVIGATION STEP ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "The Check Img Src command checks the src of all image tags.");
@@ -1729,6 +1774,32 @@ public class TestHelper{
                     "\t<actionType>write</actionType>\r\n" +
                     "\t<crucial>TRUE</crucial>\r\n" +
                     "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CLOSE ONE OR ALL OPEN TABS ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "The Close Child Tab command closes one or all child tabs but not the main tab");
+            WriteToFile(get_helpFileName(), "If the test that is being run opens multiple tabs, at some point before all tests end, there may be a need to close one or all open child tabs.");
+            WriteToFile(get_helpFileName(), "The most important reason to do this would be to avoid confusion as opening multiple tabs and keeping track of multiple tabs can become");
+            WriteToFile(get_helpFileName(), "quite complex, whereas, closing and opening new tabs may be far less complex.");
+            WriteToFile(get_helpFileName(), "Tabs are numbered 0 for main, 1 for first child(left most tab), 2 for second child etc...");
+            WriteToFile(get_helpFileName(), "The Close Child Tab command takes one optional argument which is the tab number.");
+            WriteToFile(get_helpFileName(), "If this optional argument is missing or set to the 0, which is the main tab, all child tabs are closed.");
+            WriteToFile(get_helpFileName(), "The following command closes the first child tab specified by the supplied argument.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Close Child tab</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>1</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "The following command closes all tabs because no specific child tab was provided.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Close Child tab</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
@@ -1890,6 +1961,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "There are two ways to establish a connection to Sql Server. ");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<!-- Open Connection to Sql Server -->\r\n" +
+                    "\t<!-- Allows you to connect to a SQL Server database.  Make this step crucial or conditional as subsequent steps depend on it's success. -->\r\n" +
                     "\t<command>Connect to Database</command>\r\n" +
                     "\t<actionType>write</actionType>\r\n" +
                     "\t<crucial>TRUE</crucial>\r\n" +
@@ -1909,6 +1981,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "The alternative method with more control but with more risk of failure.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<!-- Allows you to connect to a SQL Server database.  Make this step crucial or conditional as subsequent steps depend on it's success. -->\r\n" +
                     "\t<command>Connect to Database</command>\r\n" +
                     "\t<actionType>write</actionType>\r\n" +
                     "\t<crucial>true</crucial>\r\n" +

@@ -360,6 +360,7 @@ public class TestCentral {
             jsonContent = null;
             isConditionalBlock = false;
             conditionalSuccessful = false;
+            CloseOpenConnections();
             //End - reset this for each test file
             testHelper.CreateSectionHeader("[ Running Test Script ]", AppConstants.FRAMED + AppConstants.ANSI_PURPLE_BACKGROUND + AppConstants.ANSI_BOLD, AppConstants.ANSI_YELLOW_BRIGHT, true, true, true);
             testHelper.UpdateTestResults(AppConstants.ANSI_YELLOW_BRIGHT + "Running Test Script file: " + AppConstants.ANSI_RESET + testFileName, true);
@@ -628,7 +629,7 @@ public class TestCentral {
                 //scheduled screenshot capture action
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Taking Screenshot for step " + fileStepIndex, false);
                 PerformScreenShotCapture(GetBrowserUsed() + "_" + ts.get_expectedValue() + "_" + fileStepIndex + "_", fileStepIndex);
-            } else if (ts.get_command().toLowerCase().indexOf("url") >= 0) {
+            } else if (ts.get_command().toLowerCase().contains("check") && ts.get_command().toLowerCase().contains("url")) {
                 CheckUrlWithoutNavigation(ts, fileStepIndex);
             } else if (ts.get_command().toLowerCase().contains("switch to tab")) {
                 int tabNumber = GetArgumentNumericValue(ts, 0, 1);
@@ -658,6 +659,9 @@ public class TestCentral {
                 CheckCreateTestFileArgumentOrder(ts, fileStepIndex);
                 String createTestFileName = CreateTestPage(ts, fileStepIndex);
                 testHelper.UpdateTestResults("Create Test Page results written to file: " + createTestFileName, false);
+            } else if (ts.get_command().toLowerCase().equals("close child tab")) {
+
+                CloseOpenChildTab(ts, fileStepIndex);
             }
         }
     }
@@ -2374,6 +2378,68 @@ public class TestCentral {
         }
     }
 
+    /*********************************************************************************
+     * Description: This method closes the open tab specified by the argument.
+     *              If the main tab or a non-existent tab number is passed in
+     *              it calls an error message display method to display the issue
+     * @param ts
+     * @param fileStepIndex
+     ********************************************************************************/
+    private void CloseOpenChildTab(TestStep ts, String fileStepIndex) {
+        int tab = GetArgumentNumericValue(ts, 0, 0);
+        ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());
+        try {
+            if (tab > 0 && tab < tabs.size()) {
+                testHelper.UpdateTestResults(AppConstants.indent5 + "Closing Child tab for step " + fileStepIndex, true);
+                String handleName = tabs.get(tab);
+                driver.switchTo().window(handleName);
+                driver.close();
+                testHelper.UpdateTestResults("Successful Closing of Child tab (" + tab + ") for step " + fileStepIndex, true);
+            } else {
+                //display error message
+                //ArgumentOrderErrorMessage(ts, ts.get_command());
+                CloseAllOpenChildTabs(ts, fileStepIndex);
+            }
+        }catch (Exception ex) {
+            testHelper.UpdateTestResults("Failed Closing of Child tab (" + tab + ") for step " + fileStepIndex + "\r\n" + ex.getMessage(), true);
+        }
+    }
+
+    /*********************************************************************************
+     * Description: This method closes all open tabs besides the main tab.
+     * @param ts
+     * @param fileStepIndex
+     ********************************************************************************/
+    private void CloseAllOpenChildTabs(TestStep ts, String fileStepIndex) {
+        testHelper.UpdateTestResults(AppConstants.indent5 + "Closing All Child tabs for step " + fileStepIndex, true);
+        ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());
+        String originalHandle = tabs.get(0);
+
+        try {
+            if (tabs.size() > 1) {
+                for (int index = tabs.size() - 1; index > 0; index--) {
+                    String handleName = tabs.get(index);
+                    driver.switchTo().window(handleName);
+                    driver.close();
+                }
+                testHelper.UpdateTestResults("Successful Closing of All Child tabs for step " + fileStepIndex, true);
+            }
+            //region {original method but what if this was issued when on a child tab }
+//        String originalHandle = driver.getWindowHandle();
+            //Do something to open new tabs
+
+//        for(String handle : driver.getWindowHandles()) {
+//            if (!handle.equals(originalHandle)) {
+//                driver.switchTo().window(handle);
+//                driver.close();
+//            }
+//        }
+            //endregion
+            driver.switchTo().window(originalHandle);
+        } catch (Exception ex) {
+            testHelper.UpdateTestResults("Failed Closing of All Child tabs for step " + fileStepIndex + "\r\n" + ex.getMessage(), true);
+        }
+    }
 
     /*************************************************************
      * DESCRIPTION: Performs a screen shot capture by calling the
@@ -3988,7 +4054,7 @@ public class TestCentral {
         Argument item;
         ts.ArgumentList = new ArrayList<>();
         for (String currentItem: items) {
-            testHelper.DebugDisplay("currentItem = " + currentItem);
+            //testHelper.DebugDisplay("currentItem = " + currentItem);
             item = new Argument();
             item.set_parameter(currentItem);
             ts.ArgumentList.add(item);
@@ -4052,6 +4118,15 @@ public class TestCentral {
                     "Refer to the help file for the proper oder!!!\r\n" +
                     "Arguments 1, the element to check against the background is always required but arguments 2 and 3 are optional.\r\n" +
                     "\t<arg1>HTML TagName or * for all tags</arg1>\r\n\t<arg2>b=integer - color brightness</arg2>\r\n\t<arg3>d=integer - color difference</arg3>";
+        } else if (problemCommand.toLowerCase().contains("close child tab")) {
+            errorStartDecorator = errorStartDecorator.replace("Argument Order Error!!! - Attempting to reorder", "Argument Error!!! - Skipping invalid command!!!");
+            errorMessage = "The tab number argument was either not supplied, was too large, or was for the main tab." +
+                    "1.\tThe tab to be closed must always be specified!!!!\r\n" +
+                    "2.\tA tab that does not exist cannot be closed!!!!\r\n" +
+                    "3.\tThe main tab cannot be closed until the test ends!!!!\r\n" +
+                    "This test step has been aborted but any subsequent test steps will execute!\r\n" +
+                    "Valid values for this command are 1 or higher, but ensure that the tab exists.\r\n" +
+                    "Do not attempt to close a tab that does not exist!!!";
         }
 
         testHelper.UpdateTestResults( AppConstants.ANSI_RED_BRIGHT + errorStartDecorator +

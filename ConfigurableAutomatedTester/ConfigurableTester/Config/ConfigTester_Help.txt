@@ -47,6 +47,7 @@
 		SELECT AN OPTION FROM AN HTML SELECT ELEMENT
 		TAKING SCREENSHOTS
 		SWITCHING BROWSER TABS
+		CLOSE ONE OR ALL OPEN TABS
 		FIND ELEMENTS THAT HAVE SPECIFIC TEXT
 		FIND ELEMENTS THAT CONTAIN TEXT
 		CREATE TEST PAGE COMMAND TO CREATE PAGE TESTS OR FOR PROVIDING DATA TO HELP CREATE TESTS
@@ -55,6 +56,7 @@
 		QUERYING THE SQL SERVER DATABASE
 		RETRIEVING JSON FROM AN API ENDPOINT
 		QUERYING JSON FROM AN API ENDPOINT
+		SAVE JSON TO FILE
 		CHECK COLOR CONTRAST  
 
      ═════════[ Troubleshooting ]════════════════════════════════════════════════════════════════════════
@@ -291,7 +293,27 @@ determine the test files to be used.
 ╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 ║                                              TEST FILE FORMAT                                                                                                          ║
 ╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+═════════[ TEST FILE OVERVIEW ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 The Test file is an xml file, that can include comments just like any xml file.
+A test file can consist of one or more test steps and there are currently no known limitations as some tests have contained
+tens of thousands of steps.
+The drawback to having large test files is that at some point the display will cut off older messages, and the log file will be the 
+only way to track the status of all test steps.
+Below, there are compound commands that allow for completing a step without creating a separate Navigation step.
+While this functionality was added for convenience, we strongly suggest using the separate Navigation step and making it crucial 
+as will be explained later.
+The test file allows for:
+1.	Certain steps to be a point of failure for the entire test if it fails to prevent dependant steps from 
+  	attempting to execute if the prerequisite step fails, such as Navigation, Establishing a Database connection or Getting JSON from an endpoint.
+2.	Certain steps to be decisional so that steps based on the success of the prerequesite step only execute if 
+  	the prerequisite step is successful, otherwise dependent steps are skipped and steps subsequent to this block are executed.
+3. Comments to be plentiful.  Comments can be used to document, or to comment out steps or step values for quickly switching
+  	between different values when running tests over and over to try to track down a specific behavior.
+4.	Test files are run one after another and most objects are scoped to just the test that required them so
+  	Persisted Values, JSON object and SQL Connecton object will all be reset and the Unique Identifiers will be reinitialized to a new value.
+
+═════════[ TEST FILE FIELDS AND DESCRIPTIONS ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 It begins with the XML declaration followed by the <testSteps> root element.
 Each test is grouped in <step> elements, which consist of the all or some of the following nodes:
 
@@ -406,7 +428,12 @@ To Navigate, assert that the URL is as expected, add a time delay and set the br
 </step>
 
 ═════════[ NAVIGATION WITH AUTHENTICATION WITH AND WITHOUT NAVIGATION CONFIRMATION ]═══════════════════════════════════════════════════════════════════════════
-
+The Navigate command can be used to authenticate while navigating.
+This is done by passing the username and password as part of the url delimited by a : and ending with the @ symbol.
+It should be mentioned that this does not work for all authentication which is why there are different authentication methods.
+Additionally, it should be mentioned that the Authentication and Login commands are not for form based authentication but 
+rather for alert style login popups.
+For logging into a page that has two input text type form fields, use the send keys command coupled with the click command.
 To Navigate and Authenticate with username and password and assert that the URL is in the expectedValue node and to wait 4 thousand milli-seconds 
 before making the assertion to allow the page to load:
 <step>
@@ -433,6 +460,12 @@ To Navigate and Authenticate with username and password:
 
 ═════════[ LOGIN WITH NAVIGATION ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 The Login command logs into a site.
+This command is intended for sites that have alert style popup login forms.
+There may be instances in which one or more Login/Authentication commands do not work
+on a particular operating system, like iOs.
+A mixed approach may work, but there is no guarantee.
+Although the login command is a compound command there are instances in which 
+having it work in this manner actually makes a difference over separate steps.
 To login and navigate in one step.
 Please note this is for normal passwords which cannot contain spaces or characters that require escaping.
 <step>
@@ -447,7 +480,9 @@ Please note this is for normal passwords which cannot contain spaces or characte
 </step>
 
 ═════════[ ALERT POPUP LOGIN ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-
+The following Login command does not include the navigation step.
+As mentioned earlier, there may be isseus with logging in related to the operating system or alert type.
+Try different methods if failures happen as one approach may work best for a specific scenario.
 To login when presented with an alert style popup, which could happen upon landing on the site or after the site redirects you, and to make this crucial.
 Please note this is for normal passwords which cannot contain spaces or characters that require escaping.
 <step>
@@ -463,6 +498,11 @@ Please note this is for normal passwords which cannot contain spaces or characte
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ CHECK URL WITHOUT NAVIGATION ]══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Check URL command allows for checking the current page's URL without the need to navigate.
+When an command, like a button or link click occurs that navigates to a new page, there is no need to
+perform a navigation command but there is a need to check that the page is where expected before further testing.
+NOTE: The <actionType></actionType> for this command is write, not a read.
+This command is designed to work with event navigation to ensure that the navigation has occurred prior to subsequent testing.
 To check a URL without navigating and to make it crucial.  To make it non-crucial change the last parameter to false.
 <step>
 	<command>check url</command>
@@ -711,7 +751,6 @@ This will count the number of times an element is found on a page and compare th
 In the example below, the test compares the number of "a" tags on the page with the expected number of 18.
 If the page has 18 "a" tags, the test passes, otherwise it fails.
 An optional last argument can be included to use the != operator.
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 <step>
 	<command>check count</command>
 	<actionType>read</actionType>
@@ -721,6 +760,8 @@ An optional last argument can be included to use the != operator.
 		<arg1>a</arg1>
 	</arguments>
 </step>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ CHECK ALL PAGE IMAGE SRC TAGS WITH SEPARATE NAVIGATION STEP ]═══════════════════════════════════════════════════════════════════════════════════════
 The Check Img Src command checks the src of all image tags.
@@ -1097,6 +1138,32 @@ Note that this has no argument and is relying upon the default setting to return
 	<actionType>write</actionType>
 	<crucial>TRUE</crucial>
 </step>
+
+═════════[ CLOSE ONE OR ALL OPEN TABS ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Close Child Tab command closes one or all child tabs but not the main tab
+If the test that is being run opens multiple tabs, at some point before all tests end, there may be a need to close one or all open child tabs.
+The most important reason to do this would be to avoid confusion as opening multiple tabs and keeping track of multiple tabs can become
+quite complex, whereas, closing and opening new tabs may be far less complex.
+Tabs are numbered 0 for main, 1 for first child(left most tab), 2 for second child etc...
+The Close Child Tab command takes one optional argument which is the tab number.
+If this optional argument is missing or set to the 0, which is the main tab, all child tabs are closed.
+The following command closes the first child tab specified by the supplied argument.
+<step>
+	<command>Close Child tab</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>1</arg1>
+	</arguments>
+</step>
+
+The following command closes all tabs because no specific child tab was provided.
+<step>
+	<command>Close Child tab</command>
+	<actionType>write</actionType>
+	<crucial>TRUE</crucial>
+</step>
+
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ FIND ELEMENTS THAT HAVE SPECIFIC TEXT ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -1255,6 +1322,7 @@ To do this, you must first establish a connection to the database and this is ho
 There are two ways to establish a connection to Sql Server. 
 <step>
 	<!-- Open Connection to Sql Server -->
+	<!-- Allows you to connect to a SQL Server database.  Make this step crucial or conditional as subsequent steps depend on it's success. -->
 	<command>Connect to Database</command>
 	<actionType>write</actionType>
 	<crucial>TRUE</crucial>
@@ -1274,6 +1342,7 @@ There are two ways to establish a connection to Sql Server.
 
 The alternative method with more control but with more risk of failure.
 <step>
+	<!-- Allows you to connect to a SQL Server database.  Make this step crucial or conditional as subsequent steps depend on it's success. -->
 	<command>Connect to Database</command>
 	<actionType>write</actionType>
 	<crucial>true</crucial>
