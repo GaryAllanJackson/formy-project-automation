@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testSteps>
+	<step>
+		<!-- compares two images -->
+		<command>compare images</command>
+		<actionType>write</actionType>
+		<crucial>FALSE</crucial>
+		<arguments>
+			<!-- first argument is the comp image filename. It is Required!!! -->
+			<arg1>C:\Gary\Java Utilities\ScreenShots\Gerrett\Baseline\BaseLineImage.png</arg1>
+			<!-- second argument, is the actual image filename.   It is Required!!! -->
+			<arg2>C:\Gary\Java Utilities\ScreenShots\Gerrett\Actual\ActualImage.png</arg2> 
+			<!-- third argument the name of the Difference filename. It is Required!!!   -->
+			<arg3>C:\Gary\Java Utilities\ScreenShots\Gerrett\Difference\DifferenceImage.png</arg3> 
+		</arguments>
+	</step>
+</testSteps>

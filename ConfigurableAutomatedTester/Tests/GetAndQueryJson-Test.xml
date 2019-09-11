@@ -84,10 +84,11 @@
 		<actionType>read</actionType>
 		<crucial>FALSE</crucial>
 		<arguments>
-		<arg2>overwrite</arg2>
 			<!-- first parameter expected by the command - The file name; it is also required -->
 			<arg1>C:\Gary\Java Utilities\ScreenShots\JSON\forums.json</arg1>
-			
+			<!-- second parameter is optional can be overwrite or true to overwrite existing file or 
+				 false to create a new file name using the filename and appending an integer to the end of the name before the extension -->
+			<arg2>overwrite</arg2>
 		</arguments>
 	</step>
 	<step>

@@ -60,6 +60,7 @@ public class TestHelper{
     }
 
 
+
     public ConfigSettings ReadConfigurationSettingsXmlFile(String configurationXmlFile, boolean isExecutedFromMain) throws Exception {
 //        DebugDisplay("#1 IN ReadConfigurationSettingsXmlFile method");
         PrintSamples();
@@ -632,7 +633,9 @@ public class TestHelper{
             //writer.close();
         }
         catch(Exception ex) {
-            UpdateTestResults(AppConstants.ANSI_RED + AppConstants.ANSI_BOLD + "The following error occurred when attempting to write to the test log file:" + ex.getMessage(), false);
+            if (ex != null && ex.getMessage() != null) {
+                UpdateTestResults(AppConstants.ANSI_RED + AppConstants.ANSI_BOLD + "The following error occurred when attempting to write to the test log file:" + ex.getMessage(), false);
+            }
         }
     }
 
@@ -2260,21 +2263,27 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "If you run the application and the browser briefly opens and then closes:");
             WriteToFile(get_helpFileName(), "Check you local browser version and compare that with the corresponding web driver for that browser.");
             WriteToFile(get_helpFileName(), "If these are not the same, upgrade the web driver for this browser and it should work.");
+            WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
             WriteToFile(get_helpFileName(), PrePostPad("[ URL VALIDATION FAILURE ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "When you enter a url into your web browser although the trailing slash may be there or may not be there, the returned URL from the test app differs.");
             WriteToFile(get_helpFileName(), "Update your test to reflect what the test app is returning as this is the actual URL for this page.");
+            WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
             WriteToFile(get_helpFileName(), PrePostPad("[ MISSING CONFIGURATION FILE ]", "═", 9, 159));
-            WriteToFile(get_helpFileName(), "If you are running in JUnit and see the following message, the config file is not in the correct location or has the wrong name.");
-            WriteToFile(get_helpFileName(), "Configuration File not found! (Config/ConfigurationSetup.tconfig)");
+            WriteToFile(get_helpFileName(), "If you are running in JUnit and see the following message:\r\n" +
+                    " the config file is not in the correct location or has the wrong name.");
+            WriteToFile(get_helpFileName(), "Configuration File not found! (Config/ConfigurationSetup.xml)");
             WriteToFile(get_helpFileName(), "Place the configuration file in the location above with the name specified and re-run the test.");
             WriteToFile(get_helpFileName(), "Exiting!!!");
             WriteToFile(get_helpFileName(), "configSettings is null!!!");
+            WriteToFile(get_helpFileName(), "Although the reported error seems self explanatory, this means that the configuration file is not where");
+            WriteToFile(get_helpFileName(), "the application expects it to be, so place it into the correct location, specified in the error message, and re-run the test.");
+            WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
@@ -2285,6 +2294,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "A specific SendKeys keyword was added to send text that could be misconstrued because it contains keywords.");
             WriteToFile(get_helpFileName(), "While this particular solution may not be the one you need, there is likely a solution but if not, please document the issue ");
             WriteToFile(get_helpFileName(), "so that it can be addressed in future implementations.");
+            WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
@@ -2296,9 +2306,10 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "This intermittent failure was noticed during testing and while it is believed to have been a race condition");
             WriteToFile(get_helpFileName(), "that was fixed, this has been added as the exact cause has not been identified.");
             WriteToFile(get_helpFileName(), "If during testing, this no longer occurs, this tip may be removed.");
-
+            WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
+
             WriteToFile(get_helpFileName(), PrePostPad("[ XML DOCUMENT MUST START WITH AND END WITH THE SAME ELEMENT ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "This means that the start and end element are not proper opening and closing XML tags.");
             WriteToFile(get_helpFileName(), "1.\tFirst, ensure that the document has the start and end tags.");
@@ -2308,11 +2319,22 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
+
             WriteToFile(get_helpFileName(), PrePostPad("[ CONTEXT MENU TAB SWITCHING IS FAILING ]", "═", 9, 159));
-            WriteToFile(get_helpFileName(), "If a test is running that accesses the context menu or switches tabs, the mouse and keyboard cannot be used");
-            WriteToFile(get_helpFileName(), "while the test is in progress or it will change the context and thus cause the test step to fail, which may in turn");
+            WriteToFile(get_helpFileName(), "If a test is running that accesses the context menu or switches tabs, the MOUSE and KEYBOARD CANNOT BE USED");
+            WriteToFile(get_helpFileName(), "WHILE THE TEST IS IN PROGRESS or it will change the context and thus cause the test step to fail, which may in turn");
             WriteToFile(get_helpFileName(), "cause subsequent test steps to fail.");
             WriteToFile(get_helpFileName(), "Keep hands off mouse and keyboard while running context menu and tab switching tests and when possible, when running any other type of test.");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+
+            WriteToFile(get_helpFileName(), PrePostPad("[ SCREENSHOTS SAVING TO CONFIG FOLDER INSTEAD OF CONFIGURATION FILE SETTING  ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "If a <screenShotSaveFolder></screenShotSaveFolder> setting was added to the configuration file but");
+            WriteToFile(get_helpFileName(), "the screenshots are not being saved there, check that the entire specified folder structure exists!!!");
+            WriteToFile(get_helpFileName(), "The most likely cause of this issue is that all or part of the path specified does not exist.");
+            WriteToFile(get_helpFileName(), "Copy the path from Windows Explorer or File Explorer and paste it into the  <screenShotSaveFolder></screenShotSaveFolder> setting.");
+            WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 //            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));

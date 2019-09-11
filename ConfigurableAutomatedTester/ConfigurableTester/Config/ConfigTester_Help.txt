@@ -65,6 +65,9 @@
 		MISSING CONFIGURATION FILE
 		UNEXPECTED OUTPUT FROM A TEST STEP
 		OVERALL TEST RESULT SHOWS FAILURE ALTHOUGH TEST STEPS PASS (LAST TEST STEP PASSED)
+		XML DOCUMENT MUST START WITH AND END WITH THE SAME ELEMENT
+		CONTEXT MENU TAB SWITCHING IS FAILING
+
 
 ═════════[ END OF TABLE OF CONTENTS ]══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
@@ -86,6 +89,7 @@ and unique value generation so that form population tests can be run over and ov
 ensure that entry is unique each time.
 
 An added test step configuration can be used to create a test step file for a specific page and while this is not a test, it can make creating test files much faster.
+
 **********[ IMPORTANT NOTES ]***********************************************************************
 NOTE: The != operator is currently only supported for the following commands: Assert, Sql Server Query, Check Count.
 	There was no viable use case for implementing this functionality for other commands 
@@ -99,6 +103,7 @@ NOTE: For most verifiable operations the success or failure output will be left 
 	was not configured at all.
 	LOOK AT ALL ITEMS IN RED AND MAKE UPDATES ACCORDINGLY!!!
 ****************************************************************************************************
+
 This help file is broken up into 4 separate sections:
 
 	1.	HELP FILE OVERVIEW - This section, which provides an overview of the application and this help file.
@@ -1622,19 +1627,25 @@ In the following Check Contrast Test step, the tags being checked are all <p> ta
 If you run the application and the browser briefly opens and then closes:
 Check you local browser version and compare that with the corresponding web driver for that browser.
 If these are not the same, upgrade the web driver for this browser and it should work.
+
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ URL VALIDATION FAILURE ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 When you enter a url into your web browser although the trailing slash may be there or may not be there, the returned URL from the test app differs.
 Update your test to reflect what the test app is returning as this is the actual URL for this page.
+
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ MISSING CONFIGURATION FILE ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-If you are running in JUnit and see the following message, the config file is not in the correct location or has the wrong name.
-Configuration File not found! (Config/ConfigurationSetup.tconfig)
+If you are running in JUnit and see the following message:
+ the config file is not in the correct location or has the wrong name.
+Configuration File not found! (Config/ConfigurationSetup.xml)
 Place the configuration file in the location above with the name specified and re-run the test.
 Exiting!!!
 configSettings is null!!!
+Although the reported error seems self explanatory, this means that the configuration file is not where
+the application expects it to be, so place it into the correct location, specified in the error message, and re-run the test.
+
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ UNEXPECTED OUTPUT FROM A TEST STEP ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -1644,6 +1655,7 @@ The test will have to be re-written to account for this.
 A specific SendKeys keyword was added to send text that could be misconstrued because it contains keywords.
 While this particular solution may not be the one you need, there is likely a solution but if not, please document the issue 
 so that it can be addressed in future implementations.
+
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ OVERALL TEST RESULT SHOWS FAILURE ALTHOUGH TEST STEPS PASS (LAST TEST STEP PASSED) ]════════════════════════════════════════════════════════════════
@@ -1654,6 +1666,7 @@ anything in the test steps, re-run the test and it will likely show as having pa
 This intermittent failure was noticed during testing and while it is believed to have been a race condition
 that was fixed, this has been added as the exact cause has not been identified.
 If during testing, this no longer occurs, this tip may be removed.
+
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ XML DOCUMENT MUST START WITH AND END WITH THE SAME ELEMENT ]════════════════════════════════════════════════════════════════════════════════════════
@@ -1666,9 +1679,18 @@ This means that the start and end element are not proper opening and closing XML
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ CONTEXT MENU TAB SWITCHING IS FAILING ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════
-If a test is running that accesses the context menu or switches tabs, the mouse and keyboard cannot be used
-while the test is in progress or it will change the context and thus cause the test step to fail, which may in turn
+If a test is running that accesses the context menu or switches tabs, the MOUSE and KEYBOARD CANNOT BE USED
+WHILE THE TEST IS IN PROGRESS or it will change the context and thus cause the test step to fail, which may in turn
 cause subsequent test steps to fail.
 Keep hands off mouse and keyboard while running context menu and tab switching tests and when possible, when running any other type of test.
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ SCREENSHOTS SAVING TO CONFIG FOLDER INSTEAD OF CONFIGURATION FILE SETTING  ]════════════════════════════════════════════════════════════════════════
+If a <screenShotSaveFolder></screenShotSaveFolder> setting was added to the configuration file but
+the screenshots are not being saved there, check that the entire specified folder structure exists!!!
+The most likely cause of this issue is that all or part of the path specified does not exist.
+Copy the path from Windows Explorer or File Explorer and paste it into the  <screenShotSaveFolder></screenShotSaveFolder> setting.
+
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 

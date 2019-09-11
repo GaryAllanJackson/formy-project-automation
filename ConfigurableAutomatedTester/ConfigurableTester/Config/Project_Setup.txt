@@ -1,4 +1,6 @@
 Currently, there are two separate Projects as part of this application.
+
+
 THE INITIAL PROJECT:
 	The initial project used ANSI delimiters along with spaces and semi-colons in the test file while using two forward slashes in the 
 	Configuration file for comments and 
@@ -30,6 +32,17 @@ BACKING UP THE IMPORTS:
 	
 DOWNLOADING IntelliJ:	
 	Also, download the Community version of IntelliJ accept the defaults and when the project is opened, install the latest version of JUnit.
+	
+DOWNLOADING ImageMagick:
+	ImageMagick allows for image comparison to visually see the difference between screenshots.
+	http://www.imagemagick.org/script/download.php
+	
+****[ImageMagick Notes]*****************
+Find the path where ImageMagick installed.  
+It should be something like: C:\Program Files\ImageMagick-7.0.8-Q16
+Copy this path and open the HelperUtilities Class and look in the CompareImagesWithImageMagick(...) method for the following line, and paste it over the path that appears in quotes:
+ProcessStarter.setGlobalSearchPath("C:\\Program Files\\ImageMagick-7.0.8-Q16");
+	
 
 OPENING THE PROJECT IN IntelliJ FOR THE FIRST TIME:
 	Open the ConfigurableAutomatedTester\ConfigurableTester folder in IntelliJ.  
@@ -39,11 +52,12 @@ OPENING THE PROJECT IN IntelliJ FOR THE FIRST TIME:
 	Setup the output path to: [Current Path]\ConfigurableAutomatedTester\ConfigurableTester\out
 	
 	When initially opened or after specifying the SDK, the project may display a lot of errors.
-	Look at the bottom of the environment and see if any process are running.  If so, they are attempting to resolve any issues related to code use and the associated library.
-	Wait patiently until these processes stop running.
+	Look at the bottom of the environment and see if any process are running.  
+		- 	If so, they are attempting to resolve any issues related to code use and the associated library.
+		-	Wait patiently until these processes stop running.
 	Compare the imports at the top of the TestCentral.java file with the imports you copied earlier.
-	If they differ, copy the ones that you copied earlier over the ones in the current TestCentral.java file.
-	This means that IntelliJ tried to find the corresponding import libraries but is using different libraries than originally imported and this can have unforeseen effects!!!
+		-	If they differ, copy the ones that you copied earlier over the ones in the current TestCentral.java file.
+		-	This means that IntelliJ tried to find the corresponding import libraries but is using different libraries than originally imported and this can have unforeseen effects!!!
 	All errors should disappear.  (Errors are indicated by red on the right side of the code page, which represents the code status of each line of code.)
 	Do not build yet!!!!!
 

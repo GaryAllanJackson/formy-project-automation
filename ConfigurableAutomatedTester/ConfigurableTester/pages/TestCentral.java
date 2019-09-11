@@ -110,6 +110,7 @@ public class TestCentral {
 
     private WebDriver driver;
     private TestHelper testHelper = new TestHelper();
+    private HelperUtilities helperUtilities = new HelperUtilities();
     private boolean testAllBrowsers = false;  //true;
     List<TestStep> testSteps = new ArrayList<TestStep>();
     private String testFileName;
@@ -132,7 +133,7 @@ public class TestCentral {
     private String phantomJsDriverPath = "/gary/java utilities/BrowserDrivers/phantomjs.exe";
     private String internetExplorerDriverPath = "/gary/java utilities/BrowserDrivers/IEDriverServer.exe";
     private String edgeDriverPath = "/gary/java utilities/BrowserDrivers/msedgedriver.exe";
-    private static String OS = System.getProperty("os.name").toLowerCase();
+    //private static String OS = System.getProperty("os.name").toLowerCase();
 
 
     //local global variables for values that need to live outside of a single method
@@ -265,7 +266,7 @@ public class TestCentral {
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 +  "Log File Name = " + AppConstants.ANSI_RESET  + logFileName, false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 +  "Help File Name = " + AppConstants.ANSI_RESET + helpFileName, false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 + "Executed From Main or as JUnit Test = " + AppConstants.ANSI_RESET + (is_executedFromMain() ? "Standalone App" : "JUnit Test"), false);
-        testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 + "Running on "  + AppConstants.ANSI_RESET + (isWindows() ? "Windows" : "Mac"), false);
+        testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 + "Running on "  + AppConstants.ANSI_RESET + (helperUtilities.isWindows() ? "Windows" : "Mac"), false);
         testHelper.CreateSectionHeader("[ End Test Application Initialization ]", AppConstants.FRAMED + AppConstants.ANSI_WHITE_BACKGROUND + AppConstants.ANSI_BOLD, AppConstants.ANSI_BLUE, false, false, false);
         testHelper.UpdateTestResults("", false);
 
@@ -432,7 +433,7 @@ public class TestCentral {
     private void PerformCleanup() throws SQLException {
         CloseOpenConnections();
         //if (this.driver.toString().indexOf("Chrome") >= 0) {
-        if (get_selectedBrowserType().equals(BrowserTypes.Chrome) && isWindows()) {
+        if (get_selectedBrowserType().equals(BrowserTypes.Chrome) && helperUtilities.isWindows()) {
             ShutDownChromeDriver();
         }
     }
@@ -447,7 +448,7 @@ public class TestCentral {
      *      the Chrome Driver currently running on your machine.
      ************************************************************ */
     private void ShutDownChromeDriver(){
-        if (isWindows()) {
+        if (helperUtilities.isWindows()) {
             try {
                 // Execute command
                 String command = "taskkill /im chromedriver.exe /f";
@@ -634,6 +635,7 @@ public class TestCentral {
             } else if (ts.get_command().toLowerCase().contains("switch to tab")) {
                 int tabNumber = GetArgumentNumericValue(ts, 0, 1);
                 SwitchToTab(ts, fileStepIndex);
+                //region { reformatted to allow for multiple tabs }
                 //boolean isChild = (GetArgumentNumericValue(ts, 0, 1) == 1) ? true : false;
 //                boolean isChild = (tabNumber == 1) ? true : false;
 //                if (ts.get_command().toLowerCase().contains("0") || !isChild) {
@@ -643,6 +645,7 @@ public class TestCentral {
 //                } else {
 //                    SwitchToTab(ts, fileStepIndex);
 //                }
+                //endregion
             } else if (ts.get_command().toLowerCase().contains("login")) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Performing login for step " + fileStepIndex, true);
                 String userId = GetArgumentValue(ts, 0, null);
@@ -660,8 +663,9 @@ public class TestCentral {
                 String createTestFileName = CreateTestPage(ts, fileStepIndex);
                 testHelper.UpdateTestResults("Create Test Page results written to file: " + createTestFileName, false);
             } else if (ts.get_command().toLowerCase().equals("close child tab")) {
-
                 CloseOpenChildTab(ts, fileStepIndex);
+            }  else if (ts.get_command().toLowerCase().equals("compare images")) {
+                CompareImagesController(ts, fileStepIndex);
             }
         }
     }
@@ -939,6 +943,31 @@ public class TestCentral {
         } catch(SQLException e) {
             testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failure in DatabaseQueryController for step " + fileStepIndex  + "\r\n" + e.getMessage() + AppConstants.ANSI_RESET, true);
         }
+    }
+
+
+    private void CompareImagesController(TestStep ts, String fileStepIndex) throws Exception {
+        String baseLineImage = GetArgumentValue(ts,0, null);
+        String actualImage = GetArgumentValue(ts, 1, null);
+        String differenceImage = GetArgumentValue(ts, 2, null);
+
+        if (!IsNullOrEmpty(baseLineImage) && !IsNullOrEmpty(actualImage) && !IsNullOrEmpty(differenceImage)) {
+            testHelper.CreateSectionHeader("[ Start Image Comparison Test ]", "", AppConstants.ANSI_CYAN, true, false, true);
+            testHelper.UpdateTestResults(AppConstants.indent5 + "Performing Image Comparison for step " + fileStepIndex + "\r\n" +
+                    AppConstants.indent8 + "(Baseline)Expected Image:" + baseLineImage + "\r\n" +
+                    AppConstants.indent8 +  "Actual Image: " + actualImage, true);
+            helperUtilities.differenceFileForParent = new File(GetArgumentValue(ts, 3, helperUtilities.GetParentFolder(differenceImage).toString()));
+            helperUtilities.CompareImagesWithImageMagick(baseLineImage, actualImage, differenceImage);
+            testHelper.CreateSectionHeader("[ End Image Comparison Test ]", "", AppConstants.ANSI_CYAN, false, false, true);
+        }
+    }
+
+    private boolean IsNullOrEmpty(String testString) {
+        boolean status = false;
+        if (testString == null || testString.isEmpty()) {
+            status = true;
+        }
+        return status;
     }
     //endregion
 
@@ -4201,18 +4230,19 @@ public class TestCentral {
      *              false.
      * @return - True if Windows, else false
      ****************************************************************/
-    public static boolean isWindows() {
-        return (OS.indexOf("win") >= 0);
-    }
+//    public static boolean isWindows() {
+//        return (OS.indexOf("win") >= 0);
+//    }
+
 
     /****************************************************************
      * Description: Checks the OS and Returns true if iOS else
      *               false.
      * @return - True if iOS, else false
      ****************************************************************/
-    public static boolean isMac() {
-        return (OS.indexOf("mac") >= 0);
-    }
+//    public static boolean isMac() {
+//        return (OS.indexOf("mac") >= 0);
+//    }
     //endregion
 
 
