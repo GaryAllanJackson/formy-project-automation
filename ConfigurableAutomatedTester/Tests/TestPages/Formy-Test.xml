@@ -17,6 +17,11 @@
 		</arguments>
 	</step>
 	<step>
+		<command>screenshot</command>
+		<actionType>write</actionType>
+		<crucial>FALSE</crucial>
+	</step>
+	<step>
 		<command>assert</command>
 		<actionType>read</actionType>
 		<expectedValue>FORMY</expectedValue>
