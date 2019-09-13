@@ -629,7 +629,12 @@ public class TestCentral {
             } else if (ts.get_command().toLowerCase().indexOf("screenshot") >= 0) {
                 //scheduled screenshot capture action
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Taking Screenshot for step " + fileStepIndex, false);
-                PerformScreenShotCapture(GetBrowserUsed() + "_" + ts.get_expectedValue() + "_" + fileStepIndex + "_", fileStepIndex);
+                String fileName = GetArgumentValue(ts, 0, null);
+                if (fileName == null) {
+                    PerformScreenShotCapture(GetBrowserUsed() + "_" + ts.get_expectedValue() + "_" + fileStepIndex + "_", fileStepIndex);
+                }else {
+                    PerformScreenShotCapture(fileName, fileStepIndex);
+                }
             } else if (ts.get_command().toLowerCase().contains("check") && ts.get_command().toLowerCase().contains("url")) {
                 CheckUrlWithoutNavigation(ts, fileStepIndex);
             } else if (ts.get_command().toLowerCase().contains("switch to tab")) {
@@ -2054,6 +2059,7 @@ public class TestCentral {
         } else if (command.toLowerCase().indexOf("screenshot") >= 0) {
             try {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Taking Screenshot for step " + fileStepIndex, true);
+                subAction = GetArgumentValue(ts, 0, subAction);
                 PerformScreenShotCapture(subAction, fileStepIndex);
                 status = true;
             } catch (Exception e) {
@@ -2477,7 +2483,14 @@ public class TestCentral {
      * @param fileStepIndex - the file index and the step index.
      ************************************************************ */
     private void PerformScreenShotCapture(String value, String fileStepIndex) {
-        testHelper.captureScreenShot(driver, value, screenShotSaveFolder, false, fileStepIndex);
+        String delimiter = System.getProperty("file.separator");
+        if (!value.contains(delimiter)) {
+            testHelper.captureScreenShot(driver, value, screenShotSaveFolder, false, fileStepIndex);
+        } else {
+            String folder = value.substring(0, value.lastIndexOf(delimiter));
+            String fileName = value.substring(value.lastIndexOf(delimiter));
+            testHelper.captureScreenShot(driver, fileName, folder, false, fileStepIndex);
+        }
     }
 
 
@@ -2706,6 +2719,7 @@ public class TestCentral {
             if (formatted) {
                 testHelper.WriteToFile(newFileName, CreateXmlFileStartAndEnd(true));
                 testHelper.WriteToFile(newFileName, CreateNavigationXmlTestStep(testPage, "TRUE"));
+                testHelper.WriteToFile(newFileName, CreateScreenShotTestStep("FALSE"));
             } else {
                 testHelper.WriteToFile(newFileName, "URL being used: " + testPage);
             }
@@ -2805,6 +2819,7 @@ public class TestCentral {
         return newFileName;
     }
 
+
     /**************************************************************************
      * Description: This Creates the start and end XML tags that contain the
      *              Test Steps.
@@ -2853,8 +2868,32 @@ public class TestCentral {
                     "\t\t</arguments>\n" +
                     "\t</step>";
         }
+        testHelper.UpdateTestResults(returnValue, true);
+
         return returnValue;
     }
+
+    /***************************************************************************
+     * Description: This method Creates the ScreenShot test step.
+     * @param isCrucial
+     * @return
+     **************************************************************************/
+    private String CreateScreenShotTestStep(String isCrucial) {
+        String returnValue = "";
+
+        if (testPage != null && !testPage.isEmpty()) {
+            returnValue = "\t<step>\n" +
+                    "\t\t<command>screenshot</command>\r\n" +
+                    "\t\t<actionType>write</actionType>\r\n" +
+                    "\t\t<crucial>" + isCrucial + "</crucial>\r\n" +
+                    "\t</step>";
+        }
+
+        testHelper.UpdateTestResults(returnValue, true);
+        return returnValue;
+    }
+
+
 
     /**************************************************************************
      * Description: This Creates a Test Step that Selects an Option from
@@ -3565,6 +3604,7 @@ public class TestCentral {
         System.setProperty("phantomjs.binary.path", src.getAbsolutePath());
         this.driver = new PhantomJSDriver(capabilities);
         driver.manage().window().maximize(); //added 8-14-2019
+        testHelper.set_is_Maximized(true);
     }
 
     /****************************************************************************
@@ -3584,9 +3624,11 @@ public class TestCentral {
             options.setAcceptInsecureCerts(true);
             options.setPageLoadStrategy(PageLoadStrategy.NONE);
             driver = new ChromeDriver(options);
+            testHelper.set_is_Maximized(false);
         } else {
             driver = new ChromeDriver();
             driver.manage().window().maximize(); //added 8-14-2019
+            testHelper.set_is_Maximized(true);
         }
     }
 
@@ -3608,9 +3650,11 @@ public class TestCentral {
             firefoxBinary.addCommandLineOptions("-headless");
             options.setBinary(firefoxBinary);
             driver = new FirefoxDriver(options);
+            testHelper.set_is_Maximized(false);
         } else {
             driver = new FirefoxDriver();
             driver.manage().window().maximize(); //added 8-14-2019
+            testHelper.set_is_Maximized(true);
         }
     }
 

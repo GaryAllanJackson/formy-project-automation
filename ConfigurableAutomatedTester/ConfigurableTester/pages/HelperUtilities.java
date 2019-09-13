@@ -92,7 +92,13 @@ public class HelperUtilities {
         } else {
             testHelper.UpdateTestResults("Failure something may have gone wrong as no difference image was created.", true);
         }
-        GetPercentageDifference(expected, actual, difference);
+        try {
+            GetPercentageDifference(expected, actual, difference);
+        } catch(IllegalArgumentException ia) {
+            if (ia.getMessage().contains("Images must have the same dimensions:")) {
+                testHelper.UpdateTestResults("Failure Unable to get difference percentage of images with different dimensions", true);
+            }
+        }
     }
 
     /********************************************************************************************

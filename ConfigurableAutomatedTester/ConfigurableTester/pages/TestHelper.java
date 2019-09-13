@@ -1,19 +1,27 @@
 //import com.sun.java.util.jar.pack.Attribute;
+
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
 import static java.lang.Integer.parseInt;
 
 public class TestHelper{
@@ -59,6 +67,9 @@ public class TestHelper{
         this._executedFromMain = _executedFromMain;
     }
 
+    private boolean _is_Maximized;
+    public boolean get_is_Maximized() {return _is_Maximized; }
+    public void set_is_Maximized(boolean _is_Maximized) { this._is_Maximized = _is_Maximized ;}
 
 
     public ConfigSettings ReadConfigurationSettingsXmlFile(String configurationXmlFile, boolean isExecutedFromMain) throws Exception {
@@ -448,12 +459,22 @@ public class TestHelper{
                 Dimension originalDimension = driver.manage().window().getSize();
                 int height = originalDimension.height;
                 int width = originalDimension.width;
+                //region { This is how to get the screen dimensions but found that the maximized value and screen dimensions didn't match }
+//                java.awt.Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//                int screenHeight = screenSize.height;
+//                int screenWidth = screenSize.width;
+//                DebugDisplay("height = " + height);
+//                DebugDisplay("width = " + width);
+//                DebugDisplay("screenHeight = " + screenHeight);
+//                DebugDisplay("screenWidth = " + screenWidth);
+                //endregion
 
                 //reset the browser dimensions to capture all content
                 Dimension dimension = GetWindowContentDimensions(driver);
                 driver.manage().window().setSize(dimension);
 
                 screenShotName = MakeValidFileName(screenShotName);
+                String fileExtension = screenShotName.endsWith(".png") ? "" : ".png";
 
                 //take the screen shot
                 TakesScreenshot ts = (TakesScreenshot) driver;
@@ -463,12 +484,15 @@ public class TestHelper{
                     if (!screenShotFolder.endsWith("\\")) {
                         screenShotFolder = screenShotFolder + "\\";
                     }
-                    FileUtils.copyFile(source, new File(screenShotFolder + screenShotName + ".png"));
+
+                    //FileUtils.copyFile(source, new File(screenShotFolder + screenShotName + ".png"));
+                    FileUtils.copyFile(source, new File(screenShotFolder + screenShotName + fileExtension));
                 } else { //this will never happen, as the configuration folder is set in the calling method for errors
                     if (!Files.exists(Paths.get("Config/ScreenShots"))) {
                         Files.createDirectory(Paths.get("Config/ScreenShots"));
                     }
-                    FileUtils.copyFile(source, new File("Config/ScreenShots/" + screenShotName + ".png"));
+                    //FileUtils.copyFile(source, new File("Config/ScreenShots/" + screenShotName + ".png"));
+                    FileUtils.copyFile(source, new File("Config/ScreenShots/" + screenShotName + fileExtension));
                 }
 
                 if (!isError) {
@@ -479,7 +503,11 @@ public class TestHelper{
                 }
 
                 //resize the browser to the original dimensions
-                driver.manage().window().setSize(originalDimension);
+                if (get_is_Maximized()) {
+                    driver.manage().window().maximize();
+                } else {
+                    driver.manage().window().setSize(originalDimension);
+                }
                 //increment the counter only for non-error conditions
 //                if (!isError) {
                 screenShotsTaken++;
@@ -519,7 +547,7 @@ public class TestHelper{
      *                       will be saved.
      ***************************************************************** */
     private String MakeValidFileName(String screenShotName) {
-        String allowedCharacters = "abcdefghijklmnopqrstuvwxyz1234567890_-";
+        String allowedCharacters = "abcdefghijklmnopqrstuvwxyz1234567890_-.";
         String cleanValue = "";
 
         for (int x=0;x<=(screenShotName.length()-1);x++)
@@ -748,6 +776,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\t\tQUERYING JSON FROM AN API ENDPOINT");
             WriteToFile(get_helpFileName(), "\t\tSAVE JSON TO FILE");
             WriteToFile(get_helpFileName(), "\t\tCHECK COLOR CONTRAST  \r\n");
+            WriteToFile(get_helpFileName(), "\t\tCOMPARE IMAGES AND CREATE DIFFERENCE IMAGE \r\n");
             WriteToFile(get_helpFileName(), AppConstants.indent5 + PrePostPad("[ Troubleshooting ]", "═", 9, 100));
             WriteToFile(get_helpFileName(), "\t\tDRIVER ISSUES");
             WriteToFile(get_helpFileName(), "\t\tURL VALIDATION FAILURE");
@@ -766,16 +795,19 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "║                                              HELP FILE OVERVIEW                                                                                                        ║");
             WriteToFile(get_helpFileName(), "╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "Welcome to the Configurable Automated Tester.");
+            WriteToFile(get_helpFileName(), "WELCOME TO THE CONFIGURABLE AUTOMATED TEST APPLICATION!!!");
             WriteToFile(get_helpFileName(), "This application was designed to perform automated testing using configuration and test step files.");
-            WriteToFile(get_helpFileName(), "It was intended to remove the need for per project automated test coding but grew out of the curiousity to ");
-            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "It was intended to remove the need for per project automated test coding, but grew out of the curiosity to ");
+            WriteToFile(get_helpFileName(), "learn more about headless testing with Java and Selenium.\r\n");
             WriteToFile(get_helpFileName(), "It covers most testing, including: Navigation, Form Population, Value checking, Value Persistence for use in ");
-            WriteToFile(get_helpFileName(), "upcoming test step comparisons or form populations, context menu access, iFrame access, child tab access, ");
+            WriteToFile(get_helpFileName(), "upcoming test step comparisons or form populations, context menu access, iFrame access, switching  browser tabs, ");
             WriteToFile(get_helpFileName(), "SQL Server Connectivity and Querying, anchor href and text property checking, image src and alt property");
-            WriteToFile(get_helpFileName(), "checking, checking color contrast, conditional block to run tests only if condition step passes,");
+            WriteToFile(get_helpFileName(), "checking, checking color contrast, conditional block to run tests only if a condition step passes,");
             WriteToFile(get_helpFileName(), "and unique value generation so that form population tests can be run over and over using this value to ");
             WriteToFile(get_helpFileName(), "ensure that entry is unique each time.\r\n");
+            WriteToFile(get_helpFileName(), "Additionally, it includes waiting a specific length of time, for document state complete, for a specific element, ");
+            WriteToFile(get_helpFileName(), "taking screenshots and comparing images using ImageMagick and getting a pixel difference percentage along with a.");
+            WriteToFile(get_helpFileName(), "difference image with the differences highlighted.");
             WriteToFile(get_helpFileName(), "An added test step configuration can be used to create a test step file for a specific page and while " +
                                                         "this is not a test, it can make creating test files much faster.\r\n");
             WriteToFile(get_helpFileName(), PrePostPad("[ IMPORTANT NOTES ]", "*", 10, 100));
@@ -799,7 +831,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "Future functionality to be added to this application:");
             WriteToFile(get_helpFileName(), "\tGreater Than and Less Than Operator.");
             WriteToFile(get_helpFileName(), "\t\t-\tThis would be a good addition when used with Condtional Blocks.");
-            WriteToFile(get_helpFileName(), "\tOnly validatable(read actionType) commands can be used for the conditional statement such as an text, src, alt or href assertion or element found.\r\n");
+            WriteToFile(get_helpFileName(), "\t\t-\tCurrently, only validatable(read actionType) commands can be used for the conditional statement such as an text, src, alt or href assertion or element found.\r\n");
             WriteToFile(get_helpFileName(), "\tColor Contrast code has been implemented to allow for color contrast checking using this page's formula.");
             WriteToFile(get_helpFileName(), "\t\t-\thttps://www.w3.org/TR/AERT/#color-contrast");
             WriteToFile(get_helpFileName(), "\t\t-\tCurrently reviewing and comparing pages to determine whether to implement color contrast using this page:");
@@ -1677,18 +1709,55 @@ public class TestHelper{
                     "\t<crucial>TRUE</crucial>\r\n" +
                     "\t<accessor>option[value='1']</accessor>\r\n" +
                     "\t<accessorType>CssSelector</accessorType>\r\n");
+            WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
             WriteToFile(get_helpFileName(), PrePostPad("[ TAKING SCREENSHOTS ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "The ScreenShot command takes a screenshot of the current page.");
-            WriteToFile(get_helpFileName(), "To take a screen shot/print screen.  The browser will be resized automatically to capture all page content.");
+            WriteToFile(get_helpFileName(), "To take a screen shot/print screen, the browser will be resized automatically to capture all page content.");
+            WriteToFile(get_helpFileName(), "This command allows for overriding the configured screenshot folder and dynamic filename creation and either saving ");
+            WriteToFile(get_helpFileName(), "the images with a specified name in the configured screenshot folder or saving the images to a file naame and path ");
+            WriteToFile(get_helpFileName(), "specified as <arg1></arg1> but if <arg1></arg1> is not provided a name is constructed and the file is saved in the ");
+            WriteToFile(get_helpFileName(), "configured folder.");
+            WriteToFile(get_helpFileName(), "The ability to name the screenshot allows for executing subsequent Image Comparison steps and speficying the file names");
+            WriteToFile(get_helpFileName(), "based on the screenshots being taken.");
+            WriteToFile(get_helpFileName(), "In the following example, a default name will be provided for the  screenshot consisting of the browser used and the test step");
+            WriteToFile(get_helpFileName(), "where the command was called. (This is the default functionality.)");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>screenshot</command>\r\n" +
                     "\t<actionType>write</actionType>\r\n" +
                     "\t<crucial>false</crucial>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "Alternatively, including the filename as an argument will allow you to save the Screenshot with the name of your choosing.");
+            WriteToFile(get_helpFileName(), "If a full path is included with the file name, and the folder structure exists, the screenshot will be saved to the location");
+            WriteToFile(get_helpFileName(), "provided, otherwise the screenshot will be saved to the configured screenshots folder with the file name provided.");
+            WriteToFile(get_helpFileName(), "In the following example, the screenshot will be saved to the configured screenshots folder with the file name provided.");
+            WriteToFile(get_helpFileName(), "This functionality allows for pointing to the file for subsequent image comparison.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>screenshot</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>false</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>MyScreenShot.png</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "In the following example, the screenshot will be saved to the folder and file name provided.");
+            WriteToFile(get_helpFileName(), "This functionality allows for pointing to the file for subsequent image comparisons.");
+            WriteToFile(get_helpFileName(), "This is the preferred command structure when subsequently performing image comparisons.");
+            WriteToFile(get_helpFileName(), "This structure allows for separation of images into separate folders for quickly referencing differences.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>screenshot</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>false</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>c:\\myScreehShots\\Actual\\MyScreenShot.png</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
@@ -2250,12 +2319,58 @@ public class TestHelper{
                     "\t\t<arg3>d=450</arg3>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
-
-            WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
+
+            WriteToFile(get_helpFileName(), PrePostPad("[ COMPARE IMAGES AND CREATE DIFFERENCE IMAGE  ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "The Compare Images command, uses ImageMagick to compares 2 images on your local system and creates a difference image");
+            WriteToFile(get_helpFileName(), "outlining all things that differ between the images whether it is spacing, item dimensions, fonts, colors or anything");
+            WriteToFile(get_helpFileName(), "else that is not pixel exact.");
+            WriteToFile(get_helpFileName(), "The difference image can be used to quickly see all differences and use it to provide feedback to other teams.");
+            WriteToFile(get_helpFileName(), "This command also provides a numeric Pixel percentage of difference between the two images.");
+            WriteToFile(get_helpFileName(), "If the images are exactly the same, the percentage of difference will be 0.0 and will be displayed in green to ");
+            WriteToFile(get_helpFileName(), "indicate that the images are identical.");
+            WriteToFile(get_helpFileName(), "If the images are not exactly the same, the percentage of difference will be more than 0.0 and will be displayed in red");
+            WriteToFile(get_helpFileName(), "to indicate that there are differences between the images.");
+            WriteToFile(get_helpFileName(), "It is suggested that you create the following three folders when comparing images: Baseline, Actual, Difference");
+            WriteToFile(get_helpFileName(), "\tThe Baseline folder - This is where your comp image should be stored and images within this folder act as the");
+            WriteToFile(get_helpFileName(), "\t\tbase line images that the actual images should match.");
+            WriteToFile(get_helpFileName(), "\t\tThis image must exist in the file system!");
+            WriteToFile(get_helpFileName(), "\tThe Actual folder - This is where your captured screenshots can be saved to compare against the Baseline folder images.");
+            WriteToFile(get_helpFileName(), "\t\tHaving the images separated avoids confusion and allows for saving over previously saved actual images for continued comparisons.");
+            WriteToFile(get_helpFileName(), "\t\tThis image must exist in the file system!");
+            WriteToFile(get_helpFileName(), "\tThe Difference folder - This is where your difference images can be stored, separated from other images to allow for quickly ");
+            WriteToFile(get_helpFileName(), "\t\treviewing the differences.");
+            WriteToFile(get_helpFileName(), "\t\tThis image will be created in the file system and need not exist prior to running the test.");
+            WriteToFile(get_helpFileName(), "IMPORTANT!!! If tests are rerun, difference images will be overwritten!!");
+            WriteToFile(get_helpFileName(), "Take time to backup needed difference images prior to rerunning tests or the previous difference image state will be lost.");
+            WriteToFile(get_helpFileName(), "The following command compares the baseline image in <arg1></arg1> with the actual image in <arg2></arg2> and ");
+            WriteToFile(get_helpFileName(), "creates the difference image <arg3></arg3> where specified.");
+            WriteToFile(get_helpFileName(), "Additionally, this command reports the numeric percentage of difference for a quick reference so that the tester can identify");
+            WriteToFile(get_helpFileName(), "which images need further examination to detail the differences to the corresponding team members.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<!-- compares two images -->\r\n" +
+                    "\t<command>compare images</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<!-- first argument is the comp image filename. It is Required!!! -->\r\n" +
+                    "\t\t<arg1>C:\\ScreenShots\\Mashup\\MyScreenShot.png</arg1>\r\n" +
+                    "\t\t<!-- second argument, is the actual image filename.   It is Required!!! -->\r\n" +
+                    "\t\t<arg2>C:\\ScreenShots\\Mashup\\Actual\\MyScreenShot.png</arg2>\r\n" +
+                    "\t\t<!-- third argument the name of the Difference filename. It is Required!!!   -->\r\n" +
+                    "\t\t<arg3>C:\\ScreenShots\\Mashup\\Difference\\MyScreenShot-DifferenceImage.png</arg3>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+
             WriteToFile(get_helpFileName(), "╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
             WriteToFile(get_helpFileName(), "║                                              TROUBLESHOOTING                                                                                                           ║");
             WriteToFile(get_helpFileName(), "╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");

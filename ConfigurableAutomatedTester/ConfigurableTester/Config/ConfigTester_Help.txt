@@ -59,6 +59,8 @@
 		SAVE JSON TO FILE
 		CHECK COLOR CONTRAST  
 
+		COMPARE IMAGES AND CREATE DIFFERENCE IMAGE 
+
      ═════════[ Troubleshooting ]════════════════════════════════════════════════════════════════════════
 		DRIVER ISSUES
 		URL VALIDATION FAILURE
@@ -77,17 +79,21 @@
 ║                                              HELP FILE OVERVIEW                                                                                                        ║
 ╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-Welcome to the Configurable Automated Tester.
+WELCOME TO THE CONFIGURABLE AUTOMATED TEST APPLICATION!!!
 This application was designed to perform automated testing using configuration and test step files.
-It was intended to remove the need for per project automated test coding but grew out of the curiousity to 
+It was intended to remove the need for per project automated test coding, but grew out of the curiosity to 
+learn more about headless testing with Java and Selenium.
 
 It covers most testing, including: Navigation, Form Population, Value checking, Value Persistence for use in 
-upcoming test step comparisons or form populations, context menu access, iFrame access, child tab access, 
+upcoming test step comparisons or form populations, context menu access, iFrame access, switching  browser tabs, 
 SQL Server Connectivity and Querying, anchor href and text property checking, image src and alt property
-checking, checking color contrast, conditional block to run tests only if condition step passes,
+checking, checking color contrast, conditional block to run tests only if a condition step passes,
 and unique value generation so that form population tests can be run over and over using this value to 
 ensure that entry is unique each time.
 
+Additionally, it includes waiting a specific length of time, for document state complete, for a specific element, 
+taking screenshots and comparing images using ImageMagick and getting a pixel difference percentage along with a.
+difference image with the differences highlighted.
 An added test step configuration can be used to create a test step file for a specific page and while this is not a test, it can make creating test files much faster.
 
 **********[ IMPORTANT NOTES ]***********************************************************************
@@ -119,7 +125,7 @@ This help file is broken up into 4 separate sections:
 Future functionality to be added to this application:
 	Greater Than and Less Than Operator.
 		-	This would be a good addition when used with Condtional Blocks.
-	Only validatable(read actionType) commands can be used for the conditional statement such as an text, src, alt or href assertion or element found.
+		-	Currently, only validatable(read actionType) commands can be used for the conditional statement such as an text, src, alt or href assertion or element found.
 
 	Color Contrast code has been implemented to allow for color contrast checking using this page's formula.
 		-	https://www.w3.org/TR/AERT/#color-contrast
@@ -1047,15 +1053,51 @@ Alternate method of selecting an option from an HTML select element.
 	<accessor>option[value='1']</accessor>
 	<accessorType>CssSelector</accessorType>
 
+
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ TAKING SCREENSHOTS ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 The ScreenShot command takes a screenshot of the current page.
-To take a screen shot/print screen.  The browser will be resized automatically to capture all page content.
+To take a screen shot/print screen, the browser will be resized automatically to capture all page content.
+This command allows for overriding the configured screenshot folder and dynamic filename creation and either saving 
+the images with a specified name in the configured screenshot folder or saving the images to a file naame and path 
+specified as <arg1></arg1> but if <arg1></arg1> is not provided a name is constructed and the file is saved in the 
+configured folder.
+The ability to name the screenshot allows for executing subsequent Image Comparison steps and speficying the file names
+based on the screenshots being taken.
+In the following example, a default name will be provided for the  screenshot consisting of the browser used and the test step
+where the command was called. (This is the default functionality.)
 <step>
 	<command>screenshot</command>
 	<actionType>write</actionType>
 	<crucial>false</crucial>
+</step>
+
+Alternatively, including the filename as an argument will allow you to save the Screenshot with the name of your choosing.
+If a full path is included with the file name, and the folder structure exists, the screenshot will be saved to the location
+provided, otherwise the screenshot will be saved to the configured screenshots folder with the file name provided.
+In the following example, the screenshot will be saved to the configured screenshots folder with the file name provided.
+This functionality allows for pointing to the file for subsequent image comparison.
+<step>
+	<command>screenshot</command>
+	<actionType>write</actionType>
+	<crucial>false</crucial>
+	<arguments>
+		<arg1>MyScreenShot.png</arg1>
+	</arguments>
+</step>
+
+In the following example, the screenshot will be saved to the folder and file name provided.
+This functionality allows for pointing to the file for subsequent image comparisons.
+This is the preferred command structure when subsequently performing image comparisons.
+This structure allows for separation of images into separate folders for quickly referencing differences.
+<step>
+	<command>screenshot</command>
+	<actionType>write</actionType>
+	<crucial>false</crucial>
+	<arguments>
+		<arg1>c:\myScreehShots\Actual\MyScreenShot.png</arg1>
+	</arguments>
 </step>
 
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -1617,8 +1659,53 @@ In the following Check Contrast Test step, the tags being checked are all <p> ta
 </step>
 
 
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ COMPARE IMAGES AND CREATE DIFFERENCE IMAGE  ]═══════════════════════════════════════════════════════════════════════════════════════════════════════
+The Compare Images command, uses ImageMagick to compares 2 images on your local system and creates a difference image
+outlining all things that differ between the images whether it is spacing, item dimensions, fonts, colors or anything
+else that is not pixel exact.
+The difference image can be used to quickly see all differences and use it to provide feedback to other teams.
+This command also provides a numeric Pixel percentage of difference between the two images.
+If the images are exactly the same, the percentage of difference will be 0.0 and will be displayed in green to 
+indicate that the images are identical.
+If the images are not exactly the same, the percentage of difference will be more than 0.0 and will be displayed in red
+to indicate that there are differences between the images.
+It is suggested that you create the following three folders when comparing images: Baseline, Actual, Difference
+	The Baseline folder - This is where your comp image should be stored and images within this folder act as the
+		base line images that the actual images should match.
+		This image must exist in the file system!
+	The Actual folder - This is where your captured screenshots can be saved to compare against the Baseline folder images.
+		Having the images separated avoids confusion and allows for saving over previously saved actual images for continued comparisons.
+		This image must exist in the file system!
+	The Difference folder - This is where your difference images can be stored, separated from other images to allow for quickly 
+		reviewing the differences.
+		This image will be created in the file system and need not exist prior to running the test.
+IMPORTANT!!! If tests are rerun, difference images will be overwritten!!
+Take time to backup needed difference images prior to rerunning tests or the previous difference image state will be lost.
+The following command compares the baseline image in <arg1></arg1> with the actual image in <arg2></arg2> and 
+creates the difference image <arg3></arg3> where specified.
+Additionally, this command reports the numeric percentage of difference for a quick reference so that the tester can identify
+which images need further examination to detail the differences to the corresponding team members.
+<step>
+	<!-- compares two images -->
+	<command>compare images</command>
+	<actionType>write</actionType>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<!-- first argument is the comp image filename. It is Required!!! -->
+		<arg1>C:\ScreenShots\Mashup\MyScreenShot.png</arg1>
+		<!-- second argument, is the actual image filename.   It is Required!!! -->
+		<arg2>C:\ScreenShots\Mashup\Actual\MyScreenShot.png</arg2>
+		<!-- third argument the name of the Difference filename. It is Required!!!   -->
+		<arg3>C:\ScreenShots\Mashup\Difference\MyScreenShot-DifferenceImage.png</arg3>
+	</arguments>
+</step>
+
 
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+
 
 ╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 ║                                              TROUBLESHOOTING                                                                                                           ║
