@@ -124,18 +124,11 @@ public class TestCentral {
             configurationFile.substring(0, configurationFile.lastIndexOf("\\")) + "\\ConfigTester_Help.txt" :
             configurationFile.substring(0, configurationFile.lastIndexOf("/")) + "/ConfigTester_Help.txt";
     List<String> testFiles = new ArrayList<>();
-//    private String chromeDriverPath = "/Users/gjackson/Downloads/BrowserDrivers/chromedriver.exe";
-//    private String fireFoxDriverPath = "/Users/gjackson/Downloads/BrowserDrivers/geckodriver.exe";
-//    private String phantomJsDriverPath = "/Users/gjackson/Downloads/BrowserDrivers/phantomjs.exe";
-//    private String internetExplorerDriverPath = "/Users/gjackson/Downloads/BrowserDrivers/IEDriverServer.exe";
-//    private String edgeDriverPath = "/Users/gjackson/Downloads/BrowserDrivers/msedgedriver.exe";
     private String chromeDriverPath = "/gary/java utilities/BrowserDrivers/chromedriver.exe";
     private String fireFoxDriverPath = "/gary/java utilities/BrowserDrivers/geckodriver.exe";
     private String phantomJsDriverPath = "/gary/java utilities/BrowserDrivers/phantomjs.exe";
     private String internetExplorerDriverPath = "/gary/java utilities/BrowserDrivers/IEDriverServer.exe";
     private String edgeDriverPath = "/gary/java utilities/BrowserDrivers/msedgedriver.exe";
-    //private static String OS = System.getProperty("os.name").toLowerCase();
-
 
     //local global variables for values that need to live outside of a single method
     private boolean _executedFromMain = false;
@@ -913,7 +906,6 @@ public class TestCentral {
             if ((ts.get_command().toLowerCase().equals(AppCommands.Switch_To_IFrame) && counter > 0) || !ts.get_command().toLowerCase().equals(AppCommands.Switch_To_IFrame)) {
                 //if this is a switch to iframe command skip the "sendkeys" subcommand
                 if (!item.toLowerCase().contains(AppCommands.SendKeys) && !item.toLowerCase().contains(AppCommands.Send_Keys)) {
-                    //testHelper.DebugDisplay("item = " + item);
                     status = PerformAction(ts, item, fileStepIndex);
                     DelayCheck(timeDelay, fileStepIndex);
                 }
@@ -939,9 +931,11 @@ public class TestCentral {
      ****************************************************************************** */
     private void ColorContrastController(TestStep ts, String fileStepIndex) {
         CheckColorContrastArgumentOrder(ts, fileStepIndex);
+        //region { Debugging - Looping to see all arguments }
 //        for(int x=0; x < ts.ArgumentList.size();x++) {
 //            testHelper.DebugDisplay("For loop ts.ArgumentList.get(" + x + ").get_parameter() = " + ts.ArgumentList.get(x).get_parameter());
 //        }
+        //endregion
         String tagType = GetArgumentValue(ts, 0, null);
         String bContrast = GetArgumentValue(ts, 1, null);
         String dContrast = GetArgumentValue(ts, 2, null);
@@ -1462,8 +1456,6 @@ public class TestCentral {
         }
         String comparisonType = CheckComparisonOperator(GetArgumentValue(ts, ts.ArgumentList.size()-1, "="));
 
-        //testHelper.DebugDisplay("comparisonType = " + comparisonType + " checkElement" + checkElement + " url = " + url);
-
         List<WebElement> elements = driver.findElements(By.cssSelector(checkElement));
         actualCount = elements.size();
 
@@ -1875,11 +1867,6 @@ public class TestCentral {
             windowDimensions = GetArgumentValue(ts, 2, null);
         }
 
-        //region { Debugging re-sorting results }
-//        testHelper.DebugDisplay("navigateUrl = " + navigateUrl);
-//        testHelper.DebugDisplay("delayTime = " + delayTime);
-//        testHelper.DebugDisplay("windowDimensions = " + windowDimensions);
-        //endregion
         if (delayTime != null && testHelper.tryParse(delayTime) == null) {
             SortNavigationArguments(ts, navigateUrl, delayTime, windowDimensions, "delay");
             navigateUrl =  GetArgumentValue(ts, 0, null);
@@ -3852,7 +3839,7 @@ public class TestCentral {
         }
         else
         {
-            testHelper.UpdateTestResults(PageHelper.ANSI_RED + "Key: " + value + " " + fileStepIndex + " not mapped!" + AppConstants.ANSI_RESET, true);
+            testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Key: " + value + " " + fileStepIndex + " not mapped!" + AppConstants.ANSI_RESET, true);
         }
         return value;
     }

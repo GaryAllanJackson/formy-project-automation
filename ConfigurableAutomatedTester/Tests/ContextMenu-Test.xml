@@ -49,6 +49,16 @@
 	</step>	
 	<step>
 		<!-- Tested - Good -->
+		<!-- Normal hardcoded wait time -->
+		<command>wait</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<arguments>
+			<arg1>1000</arg1>
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
 		<command>Switch to tab</command>
 		<actionType>write</actionType>
 		<crucial>TRUE</crucial>

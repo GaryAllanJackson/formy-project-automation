@@ -1,65 +1,72 @@
-Currently, there are two separate Projects as part of this application.
 
-
-THE INITIAL PROJECT:
-	The initial project used ANSI delimiters along with spaces and semi-colons in the test file while using two forward slashes in the 
-	Configuration file for comments and 
-	and became quite complex to understand and explain to others.
-	To use the initial project, be sure to update the HomePage.java file below and reverse the commented calls in the Form.Java.
-	Run the TestHomePage() method using JUnit to run this part of the application. 
-	This part of the project will be removed in the next version.
-
-THE UPDATED PROJECT:  (Default currently setup to run.)
-	The Updated Project uses XML to describe the configuration file and the Test Settings files.  
+THE CONFIGURABLE AUTOMATED TESTER PROJECT:  
+	The CONFIGURABLE AUTOMATED TESTER APPLICATION uses XML to describe the configuration file and the Test Settings files.  
 	This uniform approach allows for easier understanding because there is a common template for constructing both file types.
-	This project has more functionality than the initial project such as Sql Server connectivity and querying.
-	To use the updated project, be sure to update the TestCentral.java file below. 
-	Run the ConfigurableTestController() method using JUnit to run this part of the application.
+	This project has a ton of functionality, including checking text, href, src, alt values, populating form controls, accessing items in IFrames, 
+	logging into sites with popup alert style logins as well as form logins, using the context menu, opening and closing new tabs, sending keystrokes, 
+	connecting to and querying Sql Server, accessing API endpoints and downloading JSON to search and save the JSON to a file, creating Test files, 
+	reading directories of test files and filtering that to select a subset of test files and taking screenshots, limiting the number of screenshots, 
+	comparing image files(screenshots) and much much more.
+	It can be run from the command line as an application or in IntelliJ using JUnit and possibly any other Java IDE.
+	To use this application, be sure to update the TestCentral.java file below. 
+	Run the ConfigurableTestController() method using JUnit to run this application.
 
-FOR BOTH PROJECTS PARTS:  SETTING UP THE PROJECT
+SETTING UP THE PROJECT
 	The following instructions are for setting up the project for use with IntelliJ IDEA.
 	For Eclipse or another Java IDE, translate the following accordingly.
-	SQL Server and JSON interactivity as well as some other functionality is only available in the 
-	updated project.
 	
 DOWNLOADING THE JAVA SDK:	
 	Before beginning, download the Java SE Development Kit from the link provided below or Google it.    
 	http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 	
-BACKING UP THE IMPORTS:
-	Before opening the project, open the TestCentral.java file in NotePad++ and copy the imports from the top of the file.
+BACKING UP THE IMPORTS!!!:
+	Before opening the project, open the TestCentral.java file in NotePad++, or some other plain text editor, and copy the imports from the top of the file.
 	(You can also copy the imports from the top of the HomePage.java file if you are using the legacy project.)
+	During the initial processing of the code, IntelliJ tries to resolve all code to the corresponding library and may incorrectly identify the library for a 
+	line of code that may cause a subsequent use of that object to be reported as an error and prevent compiling.  
+	Backing up the Imports allow you to ensure that your code is using the correct set of libraries specified by the developer of the application and not the 
+	JAVA IDE's library resolver.
+	Failing to do this will likely result in errors when the resolver process completes.
 	
 DOWNLOADING IntelliJ:	
 	Also, download the Community version of IntelliJ accept the defaults and when the project is opened, install the latest version of JUnit.
 	
-DOWNLOADING ImageMagick:
+DOWNLOADING and Installing ImageMagick: (See instructions below on when to download and install this application.)
 	ImageMagick allows for image comparison to visually see the difference between screenshots.
+	On Windows, download the 32 bit version of ImageMagick as the 64 bit version has some library registration issue.
+	On Mac, download the Mac version.  No known MAC issues were found when researching the library registration issue on Windows.
+	Select all options except the "Install PerlMagick for Strawberry Perl vX.xx".
+	Additionally, rename the compare.exe file to compare_old.exe and then copy the magick.exe and rename the copy to compare.exe.
 	http://www.imagemagick.org/script/download.php
+	
 	
 ****[ImageMagick Notes]*****************
 Find the path where ImageMagick installed.  
-It should be something like: C:\Program Files\ImageMagick-7.0.8-Q16
+It should be something like: 
+	C:\Program Files (x86)\ImageMagick-7.0.8-Q16-HDRI 		- This is 32 bit version and the preferred Windows version to use.
+	C:\Program Files\ImageMagick-7.0.8-Q16 					- This is the 64 bit version and had library registration issues at the time of this writing.
+	
 Copy this path and open the HelperUtilities Class and look in the CompareImagesWithImageMagick(...) method for the following line, and paste it over the path that appears in quotes:
-ProcessStarter.setGlobalSearchPath("C:\\Program Files\\ImageMagick-7.0.8-Q16");
+ProcessStarter.setGlobalSearchPath("C:\\Program Files (x86)\\ImageMagick-7.0.8-Q16-HDRI");
 	
 
 OPENING THE PROJECT IN IntelliJ FOR THE FIRST TIME:
 	Open the ConfigurableAutomatedTester\ConfigurableTester folder in IntelliJ.  
 	Don't open the parent folder ConfigurableAutomatedTester as all references will be incorrect if you do.
 	If prompted:
-	Setup the Project SDK in Project Structure to: 1.8.0_221 (Java verson "1.8.0_221")
-	Setup the output path to: [Current Path]\ConfigurableAutomatedTester\ConfigurableTester\out
+		Setup the Project SDK in Project Structure to: 1.8.0_221 (Java verson "1.8.0_221")
+		Setup the output path to: [Current Path]\ConfigurableAutomatedTester\ConfigurableTester\out
 	
 	When initially opened or after specifying the SDK, the project may display a lot of errors.
-	Look at the bottom of the environment and see if any process are running.  
-		- 	If so, they are attempting to resolve any issues related to code use and the associated library.
+	Look at the bottom of the environment and see if any processes are running.  
+		- 	If so, they are attempting to resolve any issues related to code use and the associated libraries.
 		-	Wait patiently until these processes stop running.
 	Compare the imports at the top of the TestCentral.java file with the imports you copied earlier.
 		-	If they differ, copy the ones that you copied earlier over the ones in the current TestCentral.java file.
 		-	This means that IntelliJ tried to find the corresponding import libraries but is using different libraries than originally imported and this can have unforeseen effects!!!
 	All errors should disappear.  (Errors are indicated by red on the right side of the code page, which represents the code status of each line of code.)
 	Do not build yet!!!!!
+	
 
 CONFIGURING THE APPLICATION TO ALLOW IT TO BUILD:
 	Follow the instructions below.
@@ -78,27 +85,41 @@ CONFIGURING THE APPLICATION TO ALLOW IT TO BUILD:
 	3.  It may be a good idea at this time to also create folders for the Test Files, and for saving Screenshots and JSON files.
 		This application will not create paths so mapping to a path that doesn't exist will throw an exception.
 		Screenshots are mapped in the Configuration File and the folder MUST exist before running any test.
-		If the Screenshots folder does not exist, screenshots will be saved in the project's Config folder.
+			By default, ScreenShots are given a name that includes the browser used and the test step that created the screenshot.
+			If the Screenshots folder does not exist, screenshots will be saved in the project's Config folder.
+			Although the ScreenShots folder is configured in the Configuaration file, ScreenShots can take File Path and File Name arguments.
+			Adding a file name as an argument will save the ScreenShot to the configured folder but with the name specified instead of the dynamically created name.
+			Adding a file name including the file path allows for saving the screenshot anywhere on your computer or mapped drives.
+			For Image Comparison, it is suggested that you create the following three separate folders:
+				Baseline - for Comps to serve as the Source of Truth.
+				Actual - For ScreenShots to compare to the Source of Truth images.
+				Difference - For Difference Images that highlight differences between the Baseline and Actual images.				
 		JSON files are mapped as part of the Test File, so these folders can be created anytime before running the test.
 		Optionally, it may be desireable to create a Test File output folder to store tests files created by the application.
-		Output Test Files are mapped as part of the Test File, so these folders can be created anytime before running the test.
+			Output Test Files are mapped as part of the Test File, so these folders can be created anytime before running the test.
 		
-	4. 	Next, open the TestCentral.java and HomePage.java files and update hardcoded paths for the config file, 
-		log file, as well as the paths for the Chrome, Firefox and PhantomJs drivers and the Screenshots folder.		
+	4. 	Next, open the TestCentral.java file and update hardcoded paths for the Chrome, Firefox and PhantomJs drivers.
 
 	5.	Next, mark the Pages, test and Entities folders as Sources Root folders.
 
 	6.	Next, make sure that your Java JDK/JRE version is 1.8 so that you can compile.
+		To check this on Windows, open a command window (Windows button + R then type cmd).
+		Then type the following in the command window and press enter: java -version
 
 	7. 	Optionally, you may choose to change the default name and or path of the Configuration file, the log file or the help file, 
-		all of which can be changed in the TestCentral.java and HomePage.java files.
+		all of which can be changed in the TestCentral.java file.
+		While, the hard coded paths for the Configuration file, log file and help file can be changed it is suggested that 
+		you leave them relatively mapped to the application's Config folder, but changing these should not cause the application to perform differently.
 		
-	8. 	Build the project in one of the following ways.  
+	8.  Download and install ImageMagick.   
+		Follow the directions in the above section entitled: DOWNLOADING and Installing ImageMagick.
+		
+	9. 	Build the project in one of the following ways.  
 		A. 	Either click on the green hammer.
 		B.	Select Build Project from the Build menu.
 		C.	Ctrl + F9
 		
-	9.	Now that the project is built, you need to setup the Configuration file and one or more Test Files by following the instructions below.
+	10.	Now that the project is built, you need to setup the Configuration file and one or more Test Files by following the instructions below.
 		
 
 SETTING UP A NEW PROJECT FOR TESTING:
@@ -114,23 +135,51 @@ SETTING UP A NEW PROJECT FOR TESTING:
 		For the Legacy Project: ConfigurationSetup.tconfig
 		The Help file will output a sample of the Configuration file that can be used as a starting point if the included Configuration file was overwritten.
 		
-	2. 	Create one or more test files and save them to the Test Files folder that was created in Step 3 of SETTING UP THE PROJECT.
+	3. 	Create one or more test files and save them to the Test Files folder that was created in Step 3 of SETTING UP THE PROJECT.
 		
-	3.	Return to the Configuration file and either Point to the individual Test Files or the the folder containing the Test Files and set the 
+	4.	Return to the Configuration file and either Point to the individual Test Files or the the folder containing the Test Files and set the 
 		<specifyTestFiles></specifyTestFiles> value accordingly.
 		
-	4.  Open the Project in IntelliJ, go to the TestCentral.java or HomePage.java file.
-		If using the updated code in TestCentral.java goto the ConfigurableTestController() method marked with the @Test attribute, 
+	5.  Open the Project in IntelliJ, go to the TestCentral.java file.
+		In the TestCentral.java file go to the ConfigurableTestController() method marked with the @Test attribute, 
 		right click the method and select Run ConfigurableTestController() or hit (Ctrl + Shift + F10).
 		
-		If using the old code in HomePage.java goto the TestHomePage() method marked with the @Test attribute, 
-		right click the method and select Run TestHomePage() or hit (Ctrl + Shift + F10).
-		
-	5.	Look at the Terminal window and follow along as the tests run. 
+	6.	Look at the Terminal window and follow along as the tests run. 
 		Once the tests are complete a log file will be generated with all of the Test steps and the associated Success or Failure of each test step 
 		with the exception of a Crucial step that fails, as a failed Crucial step will end the program immediately after writing to the console.
 		
 
+RUNNING THE CONFIGURABLE AUTOMATED TESTER AS A STANDALONE APPLICATION ON WINDOWS MACHINES
+	The easist way to run this program from the command line is to create a Windows batch file, so that it can be repeatedly run from the command line.
+	If the application is moved, the following steps will have to be followed to get the updated paths to run the application.
+	First, open the Form.java file, right click on the main method and select Run 'Form.main()'.
+	DO NOT COPY THE LINE THAT APPEARS WHEN RUNNING THE APPLICATION FROM THE Run 'ConfigurableTestController()'.  
+		- If this is done, strange characters will be displayed, as the application will not know that it has been started from the command line.
+		- The strange characters are ANSI codes for color, framing, font weight and resetting those codes.
+		
+	1.	Once the program is initially run using the step above, the first line will appear within quotes and end with an elipsis.
+	2.	Click on the Elipsis to expand that line and copy the expanded text.
+		- Either choose to continue using the preferred method in Steps 3, 3a, and 3b or the more complicated method in Steps 3 and 4.		
+	3.  Open NotePad or NotePadd++, paste in the copied text and save this to a file with the .bat extension.
+		3a. Above the pasted text you can add cd commands to first navigate to the ConfigurableAutomatedTester\ConfigurableTester folder so that 
+			you can execute the batch file from anywhere, as shown below:
+			cd\
+			cd c:\the_full_path_to_the_folder_ConfigurableAutomatedTester\ConfigurableTester
+		3b. Open the cmd window, and either type the full path of the batch file, or navigate to the folder containing the batch file and type the batch file name to execute the batch file.
+			- This, in turn, will execute the Application and run whatever tests are configured and output the test steps to the command window.
+			- The command window will not display the colors like the IntelliJ terminal but all content will be the same.	
+	4.  If, you did not opt to add the change directory commands to the batch file you must do the following:
+		- Open the cmd window, navigate to the ConfigurableAutomatedTester\ConfigurableTester folder.
+		- The batch file must be executed from this folder to execute the application. 
+		- Now, type the relative or full path of the batch file that you just created.    
+			- This, in turn, will execute the Application and run whatever tests are configured and output the test steps to the command window.
+			- The command window will not display the colors like the IntelliJ terminal but all content will be the same.	
+			
+	5.  If executed properly, in the Starting Test Application Initialization section should have a line that reads:
+		Executed From Main or as JUnit Test = Standalone App
+		
+		If instead you see the following line, you copied the line you were told not to copy (Follow the directions in this section to copy the proper line.):
+		Executed From Main or as JUnit Test = JUnit Test
 
 
 

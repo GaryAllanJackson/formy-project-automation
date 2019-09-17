@@ -1827,6 +1827,9 @@ public class TestHelper{
                     "</step>");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "The Switch To Tab command switches to another Tab but if Tab argument is not provided, switches back to the first(parent) tab.");
+            WriteToFile(get_helpFileName(), "When opening a new tab and using a separate Switch to Tab command, remember to use a wait between the commands to allow for the tab");
+            WriteToFile(get_helpFileName(), "to fully load before attempting to switch to it, or the number of tags will not be properly reported to the application and the ");
+            WriteToFile(get_helpFileName(), "Switch to Tab command will fail.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>Switch to tab</command>\r\n" +
                     "\t<actionType>write</actionType>\r\n" +
@@ -2473,6 +2476,13 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "cause subsequent test steps to fail.");
             WriteToFile(get_helpFileName(), "Keep hands off mouse and keyboard while running context menu and tab switching tests and when possible, when running any other type of test.");
             WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "An additional consideration is the time it takes for the tab to open. ");
+            WriteToFile(get_helpFileName(), "Be sure to place a wait step between the opening of a new tab and the Switch to Tab command to allow for the tab to load.");
+            WriteToFile(get_helpFileName(), "Attempting to switch to a tab before the tab loads will cause improper reporting the the number of open tabs to the application ");
+            WriteToFile(get_helpFileName(), "causing the Switch to Tab command to fail.");
+            WriteToFile(get_helpFileName(), "While the wait doesn't have to be long it needs to be long enough for the tab to register in the number of reported tabs for this to work.");
+            WriteToFile(get_helpFileName(), "If performing these steps separately continues to be an issue, try extending the wait time or adding the switch to tab argument to the ");
+            WriteToFile(get_helpFileName(), "context menu command that opens the new tab.");
             WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
 
