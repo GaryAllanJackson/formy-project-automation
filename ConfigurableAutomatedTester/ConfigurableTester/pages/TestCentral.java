@@ -9,6 +9,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.openqa.selenium.*;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxBinary;
@@ -376,7 +377,7 @@ public class TestCentral {
                 if (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) {
                     isConditionalBlock = ts.get_isConditionalBlock();
                     testHelper.UpdateTestResults(AppConstants.ANSI_YELLOW_BRIGHT + AppConstants.iFrameSectionTopLeft + testHelper.PrePostPad("[ Start of Conditional Block ]", "═", 9, 157) + AppConstants.iFrameSectionTopRight + AppConstants.ANSI_RESET, false);
-                } else if (ts.get_command().toLowerCase().equals("end conditional")) {
+                } else if (ts.get_command().toLowerCase().equals(AppCommands.End_Conditional)) {
                     isConditionalBlock = false;
                     conditionalSuccessful = false;
                     testHelper.UpdateTestResults(AppConstants.ANSI_YELLOW_BRIGHT + AppConstants.iFrameSectionBottomLeft + testHelper.PrePostPad("[ End of Conditional Block ]", "═", 9, 157) + AppConstants.iFrameSectionBottomRight + AppConstants.ANSI_RESET, false);
@@ -390,7 +391,7 @@ public class TestCentral {
 
                 if ((isConditionalBlock && (conditionalSuccessful || (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()))) || (!isConditionalBlock && !conditionalSuccessful))
                 {
-                    if (ts.get_command().toLowerCase().contains("switch to iframe")) {
+                    if (ts.get_command().toLowerCase().contains(AppCommands.Switch_To_IFrame)) {
                         CheckiFrameArgumentOrder(ts, fileStepIndex);
                         String frameName = GetArgumentValue(ts, 0, null);
                         testHelper.UpdateTestResults(AppConstants.ANSI_CYAN + AppConstants.iFrameSectionTopLeft + testHelper.PrePostPad("[ Switching to iFrame: " + frameName + " for step " + fileStepIndex + " ]", "═", 9, 157) + AppConstants.iFrameSectionTopRight + AppConstants.ANSI_RESET, false);
@@ -492,11 +493,13 @@ public class TestCentral {
         if (databaseConnectionType == AppConstants.SqlServer) {
             if (sqlConnection != null) {
                 sqlConnection.close();
+                sqlConnection = null;
                 testHelper.UpdateTestResults("Successful closing of open Sql Server Connection for step " + fileStepIndex, true);
             }
         } else if (databaseConnectionType == AppConstants.MongoDb) {
             if (mongoClient != null) {
                 mongoClient.close();
+                mongoClient = null;
                 testHelper.UpdateTestResults("Successful closing of open MongoDb Connection for step " + fileStepIndex, true);
             }
         }
@@ -527,45 +530,43 @@ public class TestCentral {
     private void PerformReadActions(TestStep ts, String fileStepIndex) throws Exception {
         if (ts.get_accessorType() != null && !ts.get_accessorType().toLowerCase().equals("n/a")) {
             //add different types of element checks here like img src, img alt, a href
-            if (ts.get_command().toLowerCase().contains("check_image") || ts.get_command().toLowerCase().contains("check image") ) {
+            if (ts.get_command().toLowerCase().contains(AppCommands.CheckImage) || ts.get_command().toLowerCase().contains(AppCommands.Check_Image) ) {
                 CheckImageSrcAlt(ts, fileStepIndex);
-            } else if (ts.get_command().toLowerCase().contains("check_a_href") || ts.get_command().toLowerCase().contains("check a href")) {
+            } else if (ts.get_command().toLowerCase().contains(AppCommands.CheckAHref) || ts.get_command().toLowerCase().contains(AppCommands.Check_A_Href)) {
                 CheckAnchorHref(ts, fileStepIndex);
-            } else if (ts.get_command().toLowerCase().equals("persiststring") || ts.get_command().toLowerCase().equals("persist string")) {
+            } else if (ts.get_command().toLowerCase().equals(AppCommands.PersistString) || ts.get_command().toLowerCase().equals(AppCommands.Persist_String)) {
                 PersistValueController(ts, fileStepIndex);
-            } else if (ts.get_command().toLowerCase().equals("query json")) {
+            } else if (ts.get_command().toLowerCase().equals(AppCommands.Query_JSON)) {
                 JsonController(ts, fileStepIndex);
             } else {
                 CheckElementText(ts, fileStepIndex);
             }
         } else {
-            if (ts.get_command().toLowerCase().contains("check") && (ts.get_command().toLowerCase().contains("post") ||
-                    ts.get_command().toLowerCase().contains("get"))) {
+            if (ts.get_command().toLowerCase().contains(AppCommands.Check) && (ts.get_command().toLowerCase().contains(AppCommands.Post) ||
+                    ts.get_command().toLowerCase().contains(AppCommands.Get))) {
                 //refactored and moved to separate method
                 CheckGetPostStatus(ts, fileStepIndex);
-            } else if (ts.get_command().toLowerCase().contains("check") && ts.get_command().toLowerCase().contains("links")) {
+            } else if (ts.get_command().toLowerCase().contains(AppCommands.Check) && ts.get_command().toLowerCase().contains(AppCommands.Links)) {
                 String url = GetArgumentValue(ts, 0, testPage);
-
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Checking page links for " + url, false);
                 CheckBrokenLinks(ts, url);
-            } else if (ts.get_command().toLowerCase().contains("check") && ts.get_command().toLowerCase().contains("image"))
-            {
+            } else if (ts.get_command().toLowerCase().contains(AppCommands.Check) && ts.get_command().toLowerCase().contains(AppCommands.Image))  {
                 String url = GetArgumentValue(ts, 0, null);
-                if (ts.get_command().toLowerCase().contains("alt")) {
-                    CheckADAImages(ts, url, "alt");
-                } else if (ts.get_command().toLowerCase().contains("src")) {
-                    CheckADAImages(ts, url, "src");
+                if (ts.get_command().toLowerCase().contains(AppCommands.Alt)) {
+                    CheckADAImages(ts, url, AppCommands.Alt);
+                } else if (ts.get_command().toLowerCase().contains(AppCommands.Src)) {
+                    CheckADAImages(ts, url, AppCommands.Src);
                 }
-            } else if (ts.get_command().toLowerCase().contains("check") && ts.get_command().toLowerCase().contains("count")) {
+            } else if (ts.get_command().toLowerCase().contains(AppCommands.Check) && ts.get_command().toLowerCase().contains(AppCommands.Count)) {
                 CheckElementCountController(ts, fileStepIndex);
-            } else if (ts.get_command().toLowerCase().contains("check") && ts.get_command().toLowerCase().contains("contrast")) {
+            } else if (ts.get_command().toLowerCase().contains(AppCommands.Check) && ts.get_command().toLowerCase().contains(AppCommands.Contrast)) {
                 ColorContrastController(ts, fileStepIndex);
-            } else if (ts.get_command().toLowerCase().contains("query")) {
+            } else if (ts.get_command().toLowerCase().contains(AppCommands.Query)) {
                 //perform a database query
                 DatabaseQueryController(ts, fileStepIndex);
-            } else if (ts.get_command().toLowerCase().contains("find")) {
+            } else if (ts.get_command().toLowerCase().contains(AppCommands.Find)) {
                 FindPhraseController(ts, fileStepIndex);
-            } else if (ts.get_command().toLowerCase().equals("get json") || ts.get_command().toLowerCase().equals("save json") ) {
+            } else if (ts.get_command().toLowerCase().equals(AppCommands.Get_JSON) || ts.get_command().toLowerCase().equals(AppCommands.Save_JSON) ) {
                 JsonController(ts, fileStepIndex);
             }
         }
@@ -581,34 +582,34 @@ public class TestCentral {
     private void PerformWriteActions(TestStep ts, String fileStepIndex) throws Exception {
         Boolean status;
         //Perform all non read actions below that use an accessor
-        String command = ts.get_command().toLowerCase().equals("switch to iframe") ? GetArgumentValue(ts, 1, null) : null;
+        String command = ts.get_command().toLowerCase().equals(AppCommands.Switch_To_IFrame) ? GetArgumentValue(ts, 1, null) : null;
 
         if (ts.get_accessorType() != null && (((ts.get_accessorType().toLowerCase().indexOf(xpathCheckValue) >= 0) || (ts.get_accessorType().toLowerCase().indexOf(cssSelectorCheckValue) >= 0) ||
                 (ts.get_accessorType().toLowerCase().indexOf(tagNameCheckValue) >= 0) || (ts.get_accessorType().toLowerCase().indexOf(idCheckValue) >= 0) ||
                 (ts.get_accessorType().toLowerCase().indexOf(classNameCheckValue) >= 0))
-                && (!ts.get_command().toLowerCase().contains("sendkeys") && !ts.get_command().toLowerCase().contains("send keys")
-                && !ts.get_command().toLowerCase().contains("wait") && !ts.get_command().toLowerCase().contains(persistStringCheckValue)))) {
+                && (!ts.get_command().toLowerCase().contains(AppCommands.SendKeys) && !ts.get_command().toLowerCase().contains(AppCommands.Send_Keys)
+                && !ts.get_command().toLowerCase().contains(AppCommands.Wait) && !ts.get_command().toLowerCase().contains(persistStringCheckValue)))) {
             PerformAccessorActionController(ts, fileStepIndex);
-        }  else if (ts.get_command().toLowerCase().contains("sendkeys") || ts.get_command().toLowerCase().contains("send keys") ||
-                (command != null && (command.toLowerCase().equals("sendkeys") || command.toLowerCase().equals("send keys")))) {
+        } else if (ts.get_command().toLowerCase().contains(AppCommands.SendKeys) || ts.get_command().toLowerCase().contains(AppCommands.Send_Keys) ||
+                (command != null && (command.toLowerCase().equals(AppCommands.SendKeys) || command.toLowerCase().equals(AppCommands.Send_Keys)))) {
             SendKeysController(ts, fileStepIndex);
-        } else if (ts.get_command().toLowerCase().contains("wait for")) {
+        } else if (ts.get_command().toLowerCase().contains(AppCommands.WaitFor)) {
             //wait for a speficic element to load
             WaitForElement(ts, fileStepIndex);
-        } else if (ts.get_command().toLowerCase().equals("connect to database")) {
+        } else if (ts.get_command().toLowerCase().equals(AppCommands.Connect_To_Database)) {
             String databaseType = GetArgumentValue(ts, 0, null);
-            if (databaseType.toLowerCase().equals("mongodb") || databaseType.toLowerCase().contains("mongo")) {
+            if (databaseType.toLowerCase().equals(AppCommands.MongoDb) || databaseType.toLowerCase().contains(AppCommands.Mongo)) {
                 //connect to mongo db or close an open mongo db connection
                 SetMongoClient(ts, fileStepIndex);
-            } else if (databaseType.toLowerCase().contains("sql server")) {
+            } else if (databaseType.toLowerCase().contains(AppConstants.SqlServer.toLowerCase())) {
                 //establish a connection to a sql server database - connection lives until closed or end of the test
                 SetSqlServerClient(ts, fileStepIndex);
             } else {
-                ArgumentOrderErrorMessage(ts, "connect to database");
+                ArgumentOrderErrorMessage(ts, ts.get_command());
             }
-        } else if (ts.get_command().toLowerCase().equals("close database connection") || ts.get_command().toLowerCase().equals("close database") ) {
+        } else if (ts.get_command().toLowerCase().equals(AppCommands.CloseDatabaseConnection) || ts.get_command().toLowerCase().equals(AppCommands.CloseDatabase) ) {
             String databaseType = GetArgumentValue(ts, 0, null);
-            if (databaseType.toLowerCase().equals(AppConstants.MongoDb.toLowerCase()) || databaseType.toLowerCase().contains("mongo")) {
+            if (databaseType.toLowerCase().equals(AppConstants.MongoDb.toLowerCase()) || databaseType.toLowerCase().contains(AppCommands.Mongo)) {
                 CloseOpenConnections(AppConstants.MongoDb, fileStepIndex);
             } else if (databaseType.toLowerCase().contains(AppConstants.SqlServer.toLowerCase())) {
                 CloseOpenConnections(AppConstants.SqlServer, fileStepIndex);
@@ -621,23 +622,28 @@ public class TestCentral {
 //                                " Expected Value:" + ts.get_expectedValue() + " Lookup Type: " + ts.get_searchType() +
 //                                " Perform Action: " + ts.getPerformWrite() + " IsCrucial: " + ts.get_isCrucial());
             //perform all non-read actions below that do not use an accessor
-            if (ts.get_command().toLowerCase().indexOf("navigate") >= 0) {
+            if (ts.get_command().toLowerCase().indexOf(AppCommands.Navigate) >= 0) {
                 PerformExplicitNavigation(ts, fileStepIndex);
-            } else if (ts.get_command().toLowerCase().equals("wait") || ts.get_command().toLowerCase().equals("delay")) {
+            } else if (ts.get_command().toLowerCase().equals(AppCommands.Wait) || ts.get_command().toLowerCase().equals(AppCommands.Delay)) {
                 int delayMilliSeconds = GetArgumentNumericValue(ts, 0, 0);
                 DelayCheck(delayMilliSeconds, fileStepIndex);
-            } else if (ts.get_command().toLowerCase().indexOf("screenshot") >= 0) {
+            } else if (ts.get_command().toLowerCase().indexOf(AppCommands.ScreenShot) >= 0) {
                 //scheduled screenshot capture action
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Taking Screenshot for step " + fileStepIndex, false);
+                CheckScreenShotArgumentOrder(ts, fileStepIndex);
                 String fileName = GetArgumentValue(ts, 0, null);
+                String stringDimensions = GetArgumentValue(ts, 1, null);
+                if (stringDimensions != null) {
+                    SetScreenShotDimensions(stringDimensions);
+                }
                 if (fileName == null) {
                     PerformScreenShotCapture(GetBrowserUsed() + "_" + ts.get_expectedValue() + "_" + fileStepIndex + "_", fileStepIndex);
                 }else {
                     PerformScreenShotCapture(fileName, fileStepIndex);
                 }
-            } else if (ts.get_command().toLowerCase().contains("check") && ts.get_command().toLowerCase().contains("url")) {
+            } else if (ts.get_command().toLowerCase().contains(AppCommands.Check) && ts.get_command().toLowerCase().contains(AppCommands.URL)) {
                 CheckUrlWithoutNavigation(ts, fileStepIndex);
-            } else if (ts.get_command().toLowerCase().contains("switch to tab")) {
+            } else if (ts.get_command().toLowerCase().contains(AppCommands.SwitchToTab)) {
                 int tabNumber = GetArgumentNumericValue(ts, 0, 1);
                 SwitchToTab(ts, fileStepIndex);
                 //region { reformatted to allow for multiple tabs }
@@ -651,7 +657,7 @@ public class TestCentral {
 //                    SwitchToTab(ts, fileStepIndex);
 //                }
                 //endregion
-            } else if (ts.get_command().toLowerCase().contains("login")) {
+            } else if (ts.get_command().toLowerCase().contains(AppCommands.Login)) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Performing login for step " + fileStepIndex, true);
                 String userId = GetArgumentValue(ts, 0, null);
                 String password = GetArgumentValue(ts, 1, null);
@@ -660,22 +666,46 @@ public class TestCentral {
                     Login(url, userId, password, fileStepIndex);
                     testHelper.UpdateTestResults(AppConstants.indent5 + "Login complete for step " + fileStepIndex, true);
                 } else {
-                    ArgumentOrderErrorMessage(ts, "login");
+                    ArgumentOrderErrorMessage(ts, ts.get_command());
                 }
-            } else if (ts.get_command().toLowerCase().contains("create_test_page") || ts.get_command().toLowerCase().contains("create test page")) {
+            } else if (ts.get_command().toLowerCase().contains(AppCommands.CreateTestPage) || ts.get_command().toLowerCase().contains(AppCommands.Create_Test_Page)) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Performing Create Test Page for step " + fileStepIndex, true);
                 CheckCreateTestFileArgumentOrder(ts, fileStepIndex);
                 String createTestFileName = CreateTestPage(ts, fileStepIndex);
                 testHelper.UpdateTestResults("Create Test Page results written to file: " + createTestFileName, false);
-            } else if (ts.get_command().toLowerCase().equals("close child tab")) {
+            } else if (ts.get_command().toLowerCase().equals(AppCommands.Close_Child_Tab)) {
                 CloseOpenChildTab(ts, fileStepIndex);
-            }  else if (ts.get_command().toLowerCase().equals("compare images")) {
+            }  else if (ts.get_command().toLowerCase().equals(AppCommands.Compare_Images)) {
                 CompareImagesController(ts, fileStepIndex);
             }
         }
     }
 
 
+    /************************************************************************
+     * Description: This method parses the string dimensions passed in
+     *              into integer values and then creates a Dimension object
+     *              and saves that to the testHelper.savedDimension variable
+     *              to control the dimensions of the screenshot that will be
+     *              taken.
+     * @param stringDimensions - Dimensions delimited by space and preceded
+     *                         with the dimension identifier.
+     ***********************************************************************/
+    private void SetScreenShotDimensions(String stringDimensions) {
+        int wStart = stringDimensions.toLowerCase().indexOf("w=");
+        int hStart = stringDimensions.toLowerCase().indexOf("h=");
+        int width;
+        int height;
+        if (wStart < hStart) {
+            width = parseInt(stringDimensions.substring(stringDimensions.indexOf("w=") + 2, stringDimensions.indexOf("h=")).trim());
+            height = parseInt(stringDimensions.substring(stringDimensions.indexOf("h=") + 2, stringDimensions.length()).trim());
+            testHelper.savedDimension = stringDimensions != null ? new Dimension(width, height) : null;
+        } else {
+            height= parseInt(stringDimensions.substring(stringDimensions.indexOf("h=") + 2, stringDimensions.indexOf("w=")).trim());
+            width = parseInt(stringDimensions.substring(stringDimensions.indexOf("w=") + 2, stringDimensions.length()).trim());
+            testHelper.savedDimension = stringDimensions != null ? new Dimension(width, height) : null;
+        }
+    }
 
 
     //region { Controller Methods, used to control the program flow for the complicated items }
@@ -688,7 +718,7 @@ public class TestCentral {
      * @throws Exception
      *************************************************************************/
     private void JsonController(TestStep ts, String fileStepIndex) throws Exception {
-        if (ts.get_command().toLowerCase().equals("get json")) {
+        if (ts.get_command().toLowerCase().equals(AppCommands.Get_JSON)) {
             testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_PURPLE_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start JSON Retrieval and Persistence Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
             jsonContent = GetJsonContent(ts, fileStepIndex);
             //testHelper.UpdateTestResults("jsonContent = " + jsonContent, false);
@@ -700,9 +730,9 @@ public class TestCentral {
                 testHelper.UpdateTestResults(AppConstants.indent8 + "Failed to retrieve JSON content for step " + fileStepIndex, true);
             }
             testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_PURPLE_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End JSON Retrieval and Persistence Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
-        } else if (ts.get_command().toLowerCase().equals("query json")) {
+        } else if (ts.get_command().toLowerCase().equals(AppCommands.Query_JSON)) {
             QueryJSON(ts, fileStepIndex);
-        } else if (ts.get_command().toLowerCase().equals("save json")) {
+        } else if (ts.get_command().toLowerCase().equals(AppCommands.Save_JSON)) {
             SaveJsonToFile(ts, fileStepIndex);
         }
     }
@@ -775,10 +805,17 @@ public class TestCentral {
         testHelper.CreateSectionHeader(AppConstants.indent5 + "[ End Persisting action, but value persisted and usable until end of test file ]", "", AppConstants.ANSI_CYAN, false, false, true);
     }
 
+    /**************************************************************************************
+     * Description: This method is the controller method for Persisting Values.
+     * @param ts
+     * @param valueToPersist
+     * @param fileStepIndex
+     * @throws Exception
+     **************************************************************************************/
     private void PersistProvidedValueController(TestStep ts, String valueToPersist, String fileStepIndex) throws Exception {
         persistedString = null;
         testHelper.CreateSectionHeader(AppConstants.indent5 + "[ Start Persisting Sub-command Element Value ]", "", AppConstants.ANSI_CYAN, true, false, true);
-        testHelper.UpdateTestResults(AppConstants.indent8 + "Persisting value as part of command:" + ts.get_command() + " found by: " + ts.get_accessorType() + " accessor: " + ts.get_accessor(), true);
+        testHelper.UpdateTestResults(AppConstants.indent8 + "Persisting value as part of command:" + ts.get_command() + " found by: " + ts.get_accessorType() + " accessor: " + ts.get_accessor() + " for step " + fileStepIndex, true);
         persistedString = valueToPersist;
         testHelper.UpdateTestResults(AppConstants.indent8 + "Persisted value = (" + persistedString + ")", true);
         conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock() && persistedString != null) ? true : false;
@@ -800,19 +837,19 @@ public class TestCentral {
         int delayMilliSeconds = 0;
 
         //check if switching to an iFrame
-        if (ts.get_command() != null && !ts.get_command().toLowerCase().contains("switch to iframe")) {
+        if (ts.get_command() != null && !ts.get_command().toLowerCase().contains(AppCommands.Switch_To_IFrame)) {
             status = PerformAction(ts, null, fileStepIndex);
         } else {
             //subAction can either be the expected value or a command to perform like click
-            if (ts.get_command().toLowerCase().contains("switch to iframe")) {
+            if (ts.get_command().toLowerCase().contains(AppCommands.Switch_To_IFrame)) {
                 subAction = GetArgumentValue(ts, 1, null);
             }
             status = PerformAction(ts, subAction, fileStepIndex);
         }
 
         //if not a right click context command
-        if (!ts.get_command().toLowerCase().contains("right click") && !ts.get_command().toLowerCase().contains("sendkeys")
-                && !ts.get_command().toLowerCase().contains("send keys") && !ts.get_command().toLowerCase().contains("switch to iframe")) {
+        if (!ts.get_command().toLowerCase().contains(AppCommands.Right_Click) && !ts.get_command().toLowerCase().contains(AppCommands.SendKeys)
+                && !ts.get_command().toLowerCase().contains(AppCommands.Send_Keys) && !ts.get_command().toLowerCase().contains(AppCommands.Switch_To_IFrame)) {
             //url has changed, check url against expected value
             String expectedUrl = ts.get_expectedValue();
 
@@ -865,7 +902,7 @@ public class TestCentral {
         int counter = 0;
 
         isNumeric = CheckArgumentNumeric(ts, ts.ArgumentList.size() -1);
-        if (isNumeric && (ts.get_command().toLowerCase().contains("sendkeys") || ts.get_command().toLowerCase().contains("send keys")))
+        if (isNumeric && (ts.get_command().toLowerCase().contains(AppCommands.SendKeys) || ts.get_command().toLowerCase().contains(AppCommands.Send_Keys)))
         {
             timeDelay = GetArgumentNumericValue(ts, ts.ArgumentList.size() -1, 400);
         }
@@ -873,10 +910,10 @@ public class TestCentral {
         for (Argument argument : ts.ArgumentList) {
             item = argument.get_parameter();
             //if this is a switch to iframe command skip the first argument.
-            if ((ts.get_command().toLowerCase().equals("switch to iframe") && counter > 0) || !ts.get_command().toLowerCase().equals("switch to iframe")) {
+            if ((ts.get_command().toLowerCase().equals(AppCommands.Switch_To_IFrame) && counter > 0) || !ts.get_command().toLowerCase().equals(AppCommands.Switch_To_IFrame)) {
                 //if this is a switch to iframe command skip the "sendkeys" subcommand
-                if (!item.toLowerCase().contains("sendkeys")) {
-                    testHelper.DebugDisplay("item = " + item);
+                if (!item.toLowerCase().contains(AppCommands.SendKeys) && !item.toLowerCase().contains(AppCommands.Send_Keys)) {
+                    //testHelper.DebugDisplay("item = " + item);
                     status = PerformAction(ts, item, fileStepIndex);
                     DelayCheck(timeDelay, fileStepIndex);
                 }
@@ -902,9 +939,9 @@ public class TestCentral {
      ****************************************************************************** */
     private void ColorContrastController(TestStep ts, String fileStepIndex) {
         CheckColorContrastArgumentOrder(ts, fileStepIndex);
-        for(int x=0; x < ts.ArgumentList.size();x++) {
-            testHelper.DebugDisplay("For loop ts.ArgumentList.get(" + x + ").get_parameter() = " + ts.ArgumentList.get(x).get_parameter());
-        }
+//        for(int x=0; x < ts.ArgumentList.size();x++) {
+//            testHelper.DebugDisplay("For loop ts.ArgumentList.get(" + x + ").get_parameter() = " + ts.ArgumentList.get(x).get_parameter());
+//        }
         String tagType = GetArgumentValue(ts, 0, null);
         String bContrast = GetArgumentValue(ts, 1, null);
         String dContrast = GetArgumentValue(ts, 2, null);
@@ -928,9 +965,8 @@ public class TestCentral {
      * @param fileStepIndex
      ********************************************************************************/
     private void DatabaseQueryController(TestStep ts, String fileStepIndex) throws SQLException {
-        //testHelper.DebugDisplay("Found query....");
         try {
-            if (ts.get_command().toLowerCase().contains("mongo")) {
+            if (ts.get_command().toLowerCase().contains(AppCommands.Mongo)) {
                 testHelper.UpdateTestResults("Found query then mongo....", false);
                 //make sure that this connection has been established
                 if (mongoClient != null) {
@@ -940,7 +976,7 @@ public class TestCentral {
                     testHelper.UpdateTestResults("Connection is not available!!!", false);
                 }
                 testHelper.UpdateTestResults("Found query, and mongo after the if before RunMongoQuery....", false);
-            } else if (ts.get_command().toLowerCase().contains("sql server") || ts.get_command().toLowerCase().contains("sqlserver")) {
+            } else if (ts.get_command().toLowerCase().contains(AppCommands.Sql_Server) || ts.get_command().toLowerCase().contains(AppCommands.SqlServer)) {
                 testHelper.CreateSectionHeader("[ Start Sql Server Query Event ]", "", AppConstants.ANSI_CYAN, true, false, true);
                 RunSqlServerQuery(ts, fileStepIndex);
                 testHelper.CreateSectionHeader("[ End Sql Server Query Event ]", "", AppConstants.ANSI_CYAN, false, false, true);
@@ -1222,10 +1258,10 @@ public class TestCentral {
         String url = GetArgumentValue(ts, 0, null);
 
         if (url != null) {
-            if (ts.get_command().toLowerCase().contains("post")) {
+            if (ts.get_command().toLowerCase().contains(AppCommands.Post)) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Checking Post status of " + url, false);
                 actualStatus = httpResponseCodeViaPost(url);
-            } else if (ts.get_command().toLowerCase().contains("get")) {
+            } else if (ts.get_command().toLowerCase().contains(AppCommands.Get)) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Checking Get status of " + url, false);
                 actualStatus = httpResponseCodeViaGet(url);
             } else {
@@ -1473,7 +1509,7 @@ public class TestCentral {
     public String CheckElementWithXPath(TestStep ts, String fileStepIndex) throws Exception {
         String actualValue = null;
         String accessor = ts.get_accessor();
-        String command = ts.get_command().toLowerCase().equals("switch to iframe") ? GetArgumentValue(ts, 1, null) : null;
+        String command = ts.get_command().toLowerCase().equals(AppCommands.Switch_To_IFrame) ? GetArgumentValue(ts, 1, null) : null;
 
         try {
             String typeOfElement = this.driver.findElement(By.xpath(accessor)).getAttribute("type");
@@ -1538,7 +1574,7 @@ public class TestCentral {
     public String CheckElementWithCssSelector(TestStep ts, String fileStepIndex) throws Exception {
         String accessor = ts.get_accessor();
         String actualValue = null;
-        String command = ts.get_command().toLowerCase().equals("switch to iframe") ? GetArgumentValue(ts, 1, null) : null;
+        String command = ts.get_command().toLowerCase().equals(AppCommands.Switch_To_IFrame) ? GetArgumentValue(ts, 1, null) : null;
 
         try {
             String typeOfElement = this.driver.findElement(By.cssSelector(accessor)).getAttribute("type");
@@ -1592,7 +1628,7 @@ public class TestCentral {
     public String CheckElementWithTagName(TestStep ts, String fileStepIndex) throws Exception {
         String accessor = ts.get_accessor();
         String actualValue = null;
-        String command = ts.get_command().toLowerCase().equals("switch to iframe") ? GetArgumentValue(ts, 1, null) : null;
+        String command = ts.get_command().toLowerCase().equals(AppCommands.Switch_To_IFrame) ? GetArgumentValue(ts, 1, null) : null;
 
         try {
             String typeOfElement = this.driver.findElement(By.tagName(accessor)).getAttribute("type");
@@ -1617,7 +1653,7 @@ public class TestCentral {
                 }
 
             }
-            //if (!ts.get_expectedValue().toLowerCase().contains(persistStringCheckValue)) {
+
             if (!ts.get_command().toLowerCase().contains(persistStringCheckValue) && (command == null || !command.toLowerCase().contains(persistStringCheckValue))) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Checking element by TagName: " + ElementTypeLookup(accessor) + " for script " + fileStepIndex + " Actual Value: \"" + actualValue + "\"", true);
             } else {
@@ -1646,7 +1682,7 @@ public class TestCentral {
     private String CheckElementWithClassName(TestStep ts, String fileStepIndex) throws Exception {
         String accessor = ts.get_accessor();
         String actualValue = null;
-        String command = ts.get_command().toLowerCase().equals("switch to iframe") ? GetArgumentValue(ts, 1, null) : null;
+        String command = ts.get_command().toLowerCase().equals(AppCommands.Switch_To_IFrame) ? GetArgumentValue(ts, 1, null) : null;
 
         try {
             String typeOfElement = this.driver.findElement(By.className(accessor)).getAttribute("type");
@@ -1700,7 +1736,7 @@ public class TestCentral {
     public String CheckElementWithId(TestStep ts, String fileStepIndex)  throws Exception {
         String accessor = ts.get_accessor();
         String actualValue = null;
-        String command = ts.get_command().toLowerCase().equals("switch to iframe") ? GetArgumentValue(ts, 1, null) : null;
+        String command = ts.get_command().toLowerCase().equals(AppCommands.Switch_To_IFrame) ? GetArgumentValue(ts, 1, null) : null;
 
         try {
             String typeOfElement = this.driver.findElement(By.id(accessor)).getAttribute("type");
@@ -1829,7 +1865,7 @@ public class TestCentral {
         String navigateUrl = GetArgumentValue(ts, 0, null);
         String delayTime = GetArgumentValue(ts, 1, null);
         String windowDimensions = GetArgumentValue(ts, 2, null);
-        String indentMargin = ts.get_command().toLowerCase().equals("navigate") ? AppConstants.indent5 : AppConstants.indent8;
+        String indentMargin = ts.get_command().toLowerCase().equals(AppCommands.Navigate) ? AppConstants.indent5 : AppConstants.indent8;
         String subIndent = indentMargin.equals(AppConstants.indent5) ? AppConstants.indent8 : AppConstants.indent5 + AppConstants.indent8;
 
         if (!testHelper.CheckIsUrl(navigateUrl)) {
@@ -1919,26 +1955,26 @@ public class TestCentral {
      ***************************************************************************** */
     public Boolean PerformAction(TestStep ts, String subAction, String fileStepIndex) {
         Boolean status = false;
-        final String click = "click";
-        final String sendKeys = "sendkeys";
-        final String rightClick = "right click";
+        //final String click = "click";
+        //final String sendKeys = "sendkeys";
+        //final String rightClick = "right click";
         final String keys = "keys.";
-        final String doubleClick = "doubleclick";
-        String command = ts.get_command().toLowerCase().contains("switch to iframe") ? subAction : ts.get_command();
+        //final String doubleClick = "doubleclick";
+        String command = ts.get_command().toLowerCase().contains(AppCommands.Switch_To_IFrame) ? subAction : ts.get_command();
 
         //if this is a click event, click it
-        if ((command.toLowerCase().contains("click")) && !command.contains(sendKeys)) {
-            if (command.toLowerCase().contains(doubleClick)) {
+        if ((command.toLowerCase().contains(AppCommands.Click)) && !command.contains(AppCommands.SendKeys) && !command.contains(AppCommands.Send_Keys)) {
+            if (command.toLowerCase().contains(AppCommands.DoubleClick)) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Performing double click on " + ts.get_accessor() + " using " + ts.get_accessorType() + " for step " + fileStepIndex, true);
-            } else if (command.toLowerCase().contains(rightClick)) {
+            } else if (command.toLowerCase().contains(AppCommands.Right_Click)) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Performing right click on " + ts.get_accessor() + " using " + ts.get_accessorType() + " for step " + fileStepIndex, true);
             } else {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Performing click on " + ts.get_accessor() + " using " + ts.get_accessorType() + " for step " + fileStepIndex, true);
             }
             try {
                 if (ts.get_accessorType().toLowerCase().equals(xpathCheckValue)) {
-                    if (!command.toLowerCase().contains(rightClick)) {
-                        if (!command.toLowerCase().contains(doubleClick)) {
+                    if (!command.toLowerCase().contains(AppCommands.Right_Click)) {
+                        if (!command.toLowerCase().contains(AppCommands.DoubleClick)) {
                             this.driver.findElement(By.xpath(ts.get_accessor())).click();
                             testHelper.UpdateTestResults("Successful - Click performed!", false);
                         } else {
@@ -1949,7 +1985,7 @@ public class TestCentral {
                         }
                     } else {  //right click element
                         Actions action = new Actions(driver);
-                        if (command.toLowerCase().contains(keys)) {
+                        if (command.toLowerCase().contains(AppCommands.Keys)) {
                             action.contextClick(driver.findElement(By.xpath(ts.get_accessor()))).build().perform();
                             testHelper.UpdateTestResults("Successful - Right Click performed!", false);
                         } else {
@@ -1960,8 +1996,8 @@ public class TestCentral {
                     }
                 }
                 else if (ts.get_accessorType().toLowerCase().equals(idCheckValue)) {
-                    if (!command.toLowerCase().contains(rightClick)) {
-                        if (!command.toLowerCase().contains(doubleClick)) {
+                    if (!command.toLowerCase().contains(AppCommands.Right_Click)) {
+                        if (!command.toLowerCase().contains(AppCommands.DoubleClick)) {
                             //click
                             this.driver.findElement(By.id(ts.get_accessor())).click();
                             testHelper.UpdateTestResults("Successful - Click performed!", false);
@@ -1973,7 +2009,7 @@ public class TestCentral {
                         }
                     } else {  //right click element
                         Actions action = new Actions(driver);
-                        if (!command.toLowerCase().contains(keys)) {
+                        if (!command.toLowerCase().contains(AppCommands.Keys)) {
                             action.contextClick(this.driver.findElement(By.id(ts.get_accessor()))).build().perform();
                             testHelper.UpdateTestResults("Successful - Right Click performed!", false);
                         } else {
@@ -1983,8 +2019,8 @@ public class TestCentral {
                         }
                     }
                 } else if (ts.get_accessorType().toLowerCase().equals(classNameCheckValue)) {
-                    if (!command.toLowerCase().contains(rightClick)) {
-                        if (!command.toLowerCase().contains(doubleClick)) {
+                    if (!command.toLowerCase().contains(AppCommands.Right_Click)) {
+                        if (!command.toLowerCase().contains(AppCommands.DoubleClick)) {
                             //click
                             this.driver.findElement(By.className(ts.get_accessor())).click();
                             testHelper.UpdateTestResults("Successful - Click performed!", false);
@@ -1996,7 +2032,7 @@ public class TestCentral {
                         }
                     } else {  //right click element
                         Actions action = new Actions(driver);
-                        if (!command.toLowerCase().contains(keys)) {
+                        if (!command.toLowerCase().contains(AppCommands.Keys)) {
                             action.contextClick(this.driver.findElement(By.className(ts.get_accessor()))).build().perform();
                             testHelper.UpdateTestResults("Successful - Right Click performed!", false);
                         } else {
@@ -2006,8 +2042,8 @@ public class TestCentral {
                         }
                     }
                 } else if (ts.get_accessorType().toLowerCase().equals(cssSelectorCheckValue)) {
-                    if (!command.toLowerCase().contains(rightClick)) {
-                        if (!command.toLowerCase().contains(doubleClick)) {
+                    if (!command.toLowerCase().contains(AppCommands.Right_Click)) {
+                        if (!command.toLowerCase().contains(AppCommands.DoubleClick)) {
                             //click
                             this.driver.findElement(By.cssSelector(ts.get_accessor())).click();
                             testHelper.UpdateTestResults("Successful - Click performed!", false);
@@ -2019,7 +2055,7 @@ public class TestCentral {
                         }
                     } else {  //right click element
                         Actions action = new Actions(driver);
-                        if (!command.toLowerCase().contains(keys)) {
+                        if (!command.toLowerCase().contains(AppCommands.Keys)) {
                             action.contextClick(this.driver.findElement(By.cssSelector(ts.get_accessor()))).build().perform();
                             testHelper.UpdateTestResults("Successful - Right Click performed!", false);
                         } else {
@@ -2029,8 +2065,8 @@ public class TestCentral {
                         }
                     }
                 } else if (ts.get_accessorType().toLowerCase().equals(tagNameCheckValue)) {
-                    if (!command.toLowerCase().contains(rightClick)) {
-                        if (!command.toLowerCase().contains(doubleClick)) {
+                    if (!command.toLowerCase().contains(AppCommands.Right_Click)) {
+                        if (!command.toLowerCase().contains(AppCommands.DoubleClick)) {
                             //click
                             this.driver.findElement(By.tagName(ts.get_accessor())).click();
                             testHelper.UpdateTestResults("Successful - Click performed!", false);
@@ -2042,7 +2078,7 @@ public class TestCentral {
                         }
                     } else {  //right click element
                         Actions action = new Actions(driver);
-                        if (!command.toLowerCase().contains(keys)) {
+                        if (!command.toLowerCase().contains(AppCommands.Keys)) {
                             action.contextClick(this.driver.findElement(By.tagName(ts.get_accessor()))).build().perform();
                             testHelper.UpdateTestResults("Successful - Right Click performed!", false);
                         } else {
@@ -2068,7 +2104,7 @@ public class TestCentral {
         } else {  //if it is not a click, send keys or screenshot
             try {
                 //use sendkeys as the command when sending keywords to a form
-                if (command.contains(sendKeys)) {
+                if (command.contains(AppCommands.SendKeys)) {
                     //added the below structure so that the unique identifier could be used with the persisted string.
                     if (subAction.toLowerCase().contains(persistedStringCheckValue) && !subAction.trim().contains(uidReplacementChars)) {
                         testHelper.UpdateTestResults(AppConstants.indent8 + AppConstants.ANSI_CYAN + "Using Persisted value (" + persistedString + ")" + AppConstants.ANSI_RESET, true);
@@ -2096,7 +2132,7 @@ public class TestCentral {
 //                    pageHelper.UpdateTestResults("value = " + value);
                     testHelper.UpdateTestResults(AppConstants.indent5 + "Performing SendKeys value = " + subAction + " for step " + fileStepIndex, true);
                 }
-                if (subAction.contains(keys) || subAction.toLowerCase().contains(keys)) {
+                if (subAction.contains(AppCommands.Keys) || subAction.toLowerCase().contains(AppCommands.Keys)) {
                     testHelper.UpdateTestResults(AppConstants.indent8 + "Performing special SendKeys value = " + subAction + " for step " + fileStepIndex, true);
                     if (ts.get_accessorType().toLowerCase().equals(xpathCheckValue)) {
                         this.driver.findElement(By.xpath(ts.get_accessor())).sendKeys(GetKeyValue(subAction, fileStepIndex));
@@ -2297,7 +2333,7 @@ public class TestCentral {
         String accessorType = ts.get_accessorType() != null ? ts.get_accessorType().toLowerCase().trim() : null;
         String accessor = ts.get_accessor()!= null ? ts.get_accessor().trim() : null;
         CheckWaitArgumentOrder(ts, fileStepIndex);
-        String elementIdentifier = ts.get_command().toLowerCase().trim().contains("page") ? GetArgumentValue(ts, 0, "n/a") : GetArgumentValue(ts, 0, null);
+        String elementIdentifier = ts.get_command().toLowerCase().trim().contains(AppCommands.Page) ? GetArgumentValue(ts, 0, "n/a") : GetArgumentValue(ts, 0, null);
         int maxTimeInSeconds = GetArgumentNumericValue(ts, 1, AppConstants.DefaultElementWaitTimeInSeconds);
 
         //check that this argument is present
@@ -2306,7 +2342,7 @@ public class TestCentral {
             return;
         }
 
-        if (ts.get_command().toLowerCase().trim().contains("page"))
+        if (ts.get_command().toLowerCase().trim().contains(AppCommands.Page))
         {
             accessorType = "page";
             testHelper.UpdateTestResults(AppConstants.indent5 + "Waiting a maximum of " + maxTimeInSeconds + " seconds for page load to complete at step " + fileStepIndex, true);
@@ -2348,7 +2384,7 @@ public class TestCentral {
                     element = new WebDriverWait(driver, maxTimeInSeconds).until(ExpectedConditions.presenceOfElementLocated(By.xpath(accessor)));
                     break;
             }
-            if (!ts.get_command().toLowerCase().trim().contains("page")) {
+            if (!ts.get_command().toLowerCase().trim().contains(AppCommands.Page)) {
                 if (element != null) {
                     testHelper.UpdateTestResults("Successful load of element " + accessor + " within max time setting of " + maxTimeInSeconds + " at step " + fileStepIndex, true);
                 }
@@ -2358,7 +2394,7 @@ public class TestCentral {
                 }
             }
         } catch (TimeoutException ae) {
-            if (ts.get_command().toLowerCase().trim().contains("page")) {
+            if (ts.get_command().toLowerCase().trim().contains(AppCommands.Page)) {
                 testHelper.UpdateTestResults("Failed to find the element " + GetCurrentPageUrl() + " within the set max time of " + maxTimeInSeconds + " at step " + fileStepIndex + " AL+", true);
             } else {
                 testHelper.UpdateTestResults("Failed to load element " + accessor + " within max time setting of " + maxTimeInSeconds + " at step " + fileStepIndex, true);
@@ -2382,9 +2418,7 @@ public class TestCentral {
         ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());
         tab = isChild ? 1 : 0;
         //String handleName = tabs.get(1);
-//        testHelper.DebugDisplay("isChild = " + isChild + " - tab = " + tab);
         String handleName = tabs.get(tab);
-//        testHelper.DebugDisplay("handleName = " + handleName);
         driver.switchTo().window(handleName);
         System.setProperty("current.window.handle", handleName);
         testHelper.UpdateTestResults(AppConstants.indent5 + "Switched to New tab with url = " + driver.getCurrentUrl(), true);
@@ -2677,7 +2711,7 @@ public class TestCentral {
         String newFileName =  GetArgumentValue(ts, 1, "/config/newTestFile.txt");
         String tagsToSkip = GetArgumentValue(ts, 2, null);
         String [] skipTags = tagsToSkip.split(",");
-        boolean formatted = ts.get_command().toLowerCase().contains("format") ? true : false;
+        boolean formatted = ts.get_command().toLowerCase().contains(AppCommands.Format) ? true : false;
 
         //region { add feature - additional argument that allows existing file to be overwritten or kept and a new filename created if file exists }
         //String updateFileNameMessage;
@@ -2792,7 +2826,7 @@ public class TestCentral {
                             if (inputType.equals("text")) {
                                 outputDescription = CreateSendKeysWriteActionXmlTestStep(elementXPath, "[keys to send]", "FALSE");
                             } else if (inputType.equals("button") || inputType.equals("checkbox") || inputType.equals("radio")) {
-                                outputDescription = CreateClickWriteActionXmlTestStep(elementXPath, "click", "FALSE");
+                                outputDescription = CreateClickWriteActionXmlTestStep(elementXPath, AppCommands.Click, "FALSE");
                             }
                         }
                     }
@@ -3125,7 +3159,8 @@ public class TestCentral {
         String actual = null;
         String comparisonType = CheckComparisonOperator(GetArgumentValue(ts, ts.ArgumentList.size()-1, "="));
 
-        if (sqlTable.toLowerCase().contains("where ") || (sqlField != null &&  sqlField.toLowerCase().contains("where "))) {
+//        if (sqlTable.toLowerCase().contains("where ") || (sqlField != null &&  sqlField.toLowerCase().contains("where "))) {
+        if (sqlTable.toLowerCase().startsWith("where ") || (sqlField != null &&  sqlField.toLowerCase().contains("where "))) {
             ArgumentOrderErrorMessage(ts, "sql server query");
             return;
         }
@@ -4016,11 +4051,11 @@ public class TestCentral {
         String [] items = {value2, value1};
 
         if (testHelper.tryParse(value2) == null) {
-            if (testHelper.tryParse(value1) != null && ts.get_command().toLowerCase().contains("page")) {
+            if (testHelper.tryParse(value1) != null && ts.get_command().toLowerCase().contains(AppCommands.Page)) {
                 RearrangeArgumentOrder(ts, items, ts.get_command());
             }
         }
-        if (testHelper.CheckIsUrl(value2) && ts.get_command().toLowerCase().contains("page")) {
+        if (testHelper.CheckIsUrl(value2) && ts.get_command().toLowerCase().contains(AppCommands.Page)) {
             RearrangeArgumentOrder(ts, items, ts.get_command());
         }
     }
@@ -4040,10 +4075,13 @@ public class TestCentral {
         List<Argument> remainingItems;
         remainingItems = ts.ArgumentList;
 
-        if (value1.contains("click") || value1.equals("assert") || (value1.contains("send") && value1.contains("keys"))
-            || value1.equals(persistStringCheckValue)) {
-            String [] items = {value2, value1};
-            RearrangeArgumentOrder(ts, items, ts.get_command());
+        //find the name of the iframe, move it to the first argument, and  but keep all other arguments in the existing order after the name
+        int nameIndex = FindInArgumentList(ts.ArgumentList, "IFrameName");
+        if (nameIndex != 0) {
+            ArgumentOrderErrorMessage(ts, ts.get_command());
+            value2 = GetArgumentValue(ts, nameIndex, null);
+            ts.ArgumentList.remove(nameIndex);  //remove this item
+            ts.ArgumentList.add(0, new Argument(value2));
         }
 
         //if this is an iframe it could have 1 or many arguments, get any past the initial 2 and reappend them after the rearrangement
@@ -4053,12 +4091,37 @@ public class TestCentral {
             for (int x=2;x < arraySize ;x++) {
                 item = new Argument();
                 item.set_parameter(remainingItems.get(x).get_parameter());
-                testHelper.DebugDisplay("remainingItems.get(x).get_parameter() = " + remainingItems.get(x).get_parameter());
+//                testHelper.DebugDisplay("remainingItems.get(x).get_parameter() = " + remainingItems.get(x).get_parameter());
                 ts.ArgumentList.add(item);
             }
         }
     }
 
+    private int FindInArgumentList(List<Argument> argumentList, String iFrameName) {
+        int returnValue = 0;
+
+        for (int x = 0; x< argumentList.size();x++) {
+            if (!argumentList.get(x).get_parameter().contains(AppCommands.Keys) && !argumentList.get(x).get_parameter().contains(AppCommands.Click)) {
+                returnValue = x;
+                break;
+            }
+        }
+        return returnValue;
+    }
+
+    private void CheckScreenShotArgumentOrder(TestStep ts, String fileStepIndex) {
+        String value1 = GetArgumentValue(ts, 0, null);
+        String value2 = GetArgumentValue(ts, 1, null);
+
+//        if (value1 == null && value2 == null) {
+//            return;
+//        }
+        if ((value1 != null && (value1.contains("w=") || value1.contains("h="))) || (value2 != null && (value2.contains(System.getProperty("file.separator"))
+                || value2.contains(".png")))) {
+            String [] items = {value2, value1};
+            RearrangeArgumentOrder(ts, items, ts.get_command());
+        }
+    }
 
     /*********************************************************************************
      * Description: This method checks the order of the Create Test File command
@@ -4148,50 +4211,50 @@ public class TestCentral {
         String errorStartDecorator = testHelper.PrePostPad("[ Argument Order Error!!! - Attempting to reorder ]", "*", 9, 100) + "\r\n";
         String errorEndDecorator = "\r\n" + testHelper.PrePostPad("*", "*", 9, 100) ;
         String errorMessage = "";
-        if (problemCommand.toLowerCase().equals("navigate")) {
+        if (problemCommand.toLowerCase().equals(AppCommands.Navigate)) {
             errorMessage = "Navigation command arguments out of order!!! \r\n" +
                             "Refer to the help file for the proper oder, shown below!!!\r\n" +
                             "\t<arg1>>Navigation Url</arg1>\r\n\t<arg2>Delay Time</arg2>\r\n\t<arg3>Browser Window Dimensions</arg3>";
-        } else if (problemCommand.toLowerCase().equals("switch to iframe")) {
+        } else if (problemCommand.toLowerCase().equals(AppCommands.Switch_To_IFrame)) {
             errorMessage = "Switch to IFrame arguments out of order!!!\r\n" +
                     "Refer to the help file for the proper order!!!\r\n" +
                     "Argument 1 is always required, the remaining arguments depend upon the sub command.\r\n" +
                     "\t<arg1>IFrame Name</arg1>\r\n\t<arg2>sub command</arg2>\r\n\t<arg3>depends on subcommand</arg3>";
-        } else if (problemCommand.toLowerCase().contains("wait for page")) {
+        } else if (problemCommand.toLowerCase().contains(AppCommands.WaitForPage)) {
             errorMessage =  "Wait for Page command arguments out of order!!!\r\n" +
                     "Refer to the help file for the proper oder!!!\r\n" +
                     "\t<arg1>Navigate URL or n/a</arg1>\r\n\t<arg2>wait time</arg2>";
-        } else if (problemCommand.toLowerCase().contains("login")) {
+        } else if (problemCommand.toLowerCase().contains(AppCommands.Login)) {
             errorMessage =  "Login command arguments out of order, ABORTING!!!!\r\n" +
                     "Refer to the help file for the proper oder!!!\r\n" +
                     "This application will not attempt to try to distinguish between the user name and password!";
             errorStartDecorator = errorStartDecorator.replace("Attempting to reorder", "Not Attempting to reorder");
-        } else if (problemCommand.toLowerCase().contains("create") && problemCommand.toLowerCase().contains("test")) {
+        } else if (problemCommand.toLowerCase().contains(AppCommands.Create) && problemCommand.toLowerCase().contains(AppCommands.Test)) {
             errorMessage = "Create Test Page arguments out of order!!!\r\n" +
                     "Refer to the help file for the proper order!!!\r\n" +
                     "Arguments 1 and 2 are always required but argument 3 is optional.\r\n" +
                     "\t<arg1>Selector which is Tag Type or * for all tags</arg1>\r\n\t<arg2>File name for test file being created</arg2>\r\n\t<arg3>html elements to exclude if argument 1 is *</arg3>";
-        } else if (problemCommand.toLowerCase().contains("connect to database")) {
+        } else if (problemCommand.toLowerCase().contains(AppCommands.Connect_To_Database)) {
             errorMessage = "Connect to Database arguments out of order, ABORTING!!!!\r\n" +
                     "Refer to the help file for the proper oder!!!\r\n" +
                     "This application will not attempt to try to distinguish between the arguments for this command!";
             errorStartDecorator = errorStartDecorator.replace("Attempting to reorder", "Not Attempting to reorder");
-        } else if (problemCommand.toLowerCase().contains("sql server query")) {
+        } else if (problemCommand.toLowerCase().contains(AppCommands.SQL_Server_Query)) {
             errorMessage = "Sql Server Query arguments out of order, ABORTING!!!!\r\n" +
                     "Refer to the help file for the proper oder!!!\r\n" +
                     "This application will not attempt to try to distinguish between the arguments for this command!";
             errorStartDecorator = errorStartDecorator.replace("Attempting to reorder", "Not Attempting to reorder");
-        } else if (problemCommand.toLowerCase().contains("save json")) {
+        } else if (problemCommand.toLowerCase().contains(AppCommands.Save_JSON)) {
             errorMessage = "Save JSON arguments out of order!!!!\r\n" +
                     "Refer to the help file for the proper oder!!!\r\n" +
                     "Arguments 1, the file name is always required but argument 2 is optional.\r\n" +
                     "\t<arg1>JSON filename</arg1>\r\n\t<arg2>overwrite or true or false to create a new file name</arg2>";
-        } else if (problemCommand.toLowerCase().contains("check contrast")) {
+        } else if (problemCommand.toLowerCase().contains(AppCommands.Check_Contrast)) {
             errorMessage = "Check Contrast arguments out of order!!!!\r\n" +
                     "Refer to the help file for the proper oder!!!\r\n" +
                     "Arguments 1, the element to check against the background is always required but arguments 2 and 3 are optional.\r\n" +
                     "\t<arg1>HTML TagName or * for all tags</arg1>\r\n\t<arg2>b=integer - color brightness</arg2>\r\n\t<arg3>d=integer - color difference</arg3>";
-        } else if (problemCommand.toLowerCase().contains("close child tab")) {
+        } else if (problemCommand.toLowerCase().contains(AppCommands.Close_Child_Tab)) {
             errorStartDecorator = errorStartDecorator.replace("Argument Order Error!!! - Attempting to reorder", "Argument Error!!! - Skipping invalid command!!!");
             errorMessage = "The tab number argument was either not supplied, was too large, or was for the main tab." +
                     "1.\tThe tab to be closed must always be specified!!!!\r\n" +
@@ -4200,6 +4263,13 @@ public class TestCentral {
                     "This test step has been aborted but any subsequent test steps will execute!\r\n" +
                     "Valid values for this command are 1 or higher, but ensure that the tab exists.\r\n" +
                     "Do not attempt to close a tab that does not exist!!!";
+        } else if (problemCommand.toLowerCase().contains(AppCommands.ScreenShot)) {
+            errorMessage = "ScreenShot arguments out of order!!!!\r\n" +
+                    "Refer to the help file for the proper oder!!!\r\n" +
+                    "Argument 1, the filename for saving the screen shot is optional but should be provided if providing the dimensions.\r\n" +
+                    "Argument 2, the specified dimensions for saving the image so that it can be compared to an image of equal size is optional.\r\n" +
+                    "The dimensions are numeric values and the identifiers for those dimensions are string values w= for width and h= for height.\r\n" +
+                    "\t<arg1>c:\\ScreenShots\\Actual\\ActualImage.png</arg1>\r\n\t<arg2>w=1400 h=1000</arg2>";
         }
 
         testHelper.UpdateTestResults( AppConstants.ANSI_RED_BRIGHT + errorStartDecorator +

@@ -74,9 +74,11 @@
 		<accessor>btn</accessor>
 		<accessorType>classname</accessorType>
 		<arguments>
-			<arg1>sendkeys</arg1>
-			<arg1>iframeResult</arg1>			
+			<!--<arg1>sendkeys</arg1>-->
 			<arg1>keys.arrow_down</arg1>
+			<arg1>keys.arrow_up</arg1>
+			<arg1>keys.arrow_left</arg1>
+			<arg1>iframeResult</arg1>			
 		</arguments>
 	</step>
 	<step>

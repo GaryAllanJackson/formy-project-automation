@@ -26,7 +26,8 @@
 		<actionType>write</actionType>
 		<crucial>false</crucial>
 		<arguments>
-		<arg1>MyScreenShot.png</arg1>
+			<arg2>h=1000 w=1400</arg2>
+			<arg1>C:\Gary\Java Utilities\ScreenShots\Mashup\Baseline\MyScreenShot.png</arg1>
 		</arguments>
 	</step>
 	<step>
@@ -62,7 +63,8 @@
 		<actionType>write</actionType>
 		<crucial>false</crucial>
 		<arguments>
-		<arg1>C:\Gary\Java Utilities\ScreenShots\Mashup\Actual\MyScreenShot.png</arg1>
+			<arg1>C:\Gary\Java Utilities\ScreenShots\Mashup\Actual\MyScreenShot.png</arg1>
+			<arg2>w=1400 h=1000</arg2>
 		</arguments>
 	</step>
 	<step>
@@ -82,11 +84,12 @@
 		<crucial>FALSE</crucial>
 		<arguments>
 			<!-- first argument is the comp image filename. It is Required!!! -->
-			<arg1>C:\Gary\Java Utilities\ScreenShots\Mashup\MyScreenShot.png</arg1>
+			<arg1>C:\Gary\Java Utilities\ScreenShots\Mashup\Baseline\MyScreenShot.png</arg1>
 			<!-- second argument, is the actual image filename.   It is Required!!! -->
 			<arg2>C:\Gary\Java Utilities\ScreenShots\Mashup\Actual\MyScreenShot.png</arg2> 
 			<!-- third argument the name of the Difference filename. It is Required!!!   -->
 			<arg3>C:\Gary\Java Utilities\ScreenShots\Mashup\Difference\MyScreenShot-DifferenceImage.png</arg3> 
+			<arg4>C:\Gary\Java Utilities\ScreenShots\Mashup\Difference\MyScreenShot-DifferenceImage1.png</arg4> 
 		</arguments>
 	</step>
 	<step>

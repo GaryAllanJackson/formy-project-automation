@@ -1058,11 +1058,18 @@ Alternate method of selecting an option from an HTML select element.
 
 ═════════[ TAKING SCREENSHOTS ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 The ScreenShot command takes a screenshot of the current page.
-To take a screen shot/print screen, the browser will be resized automatically to capture all page content.
+To take a screen shot/print screen, the browser will be resized automatically to capture all page content,
+if browser dimensions are not supplied; however, in the event that browser dimensions are supplied, the browser
+will resize to the supplied dimensions.
+The ability to resize the browser to specific dimensions allows for image pixel comparison as images being compared
+must have the same width and height dimensions.
 This command allows for overriding the configured screenshot folder and dynamic filename creation and either saving 
 the images with a specified name in the configured screenshot folder or saving the images to a file naame and path 
 specified as <arg1></arg1> but if <arg1></arg1> is not provided a name is constructed and the file is saved in the 
 configured folder.
+This command also allows for specifying the browser dimensions so that you get an image the exact size that you need.
+Specifying the browser dimensions is the same as when navigating, where w= identifies the width value and h= identifies
+the height value as shown here: <arg2>w=1400 h=1000</arg2>.
 The ability to name the screenshot allows for executing subsequent Image Comparison steps and speficying the file names
 based on the screenshots being taken.
 In the following example, a default name will be provided for the  screenshot consisting of the browser used and the test step

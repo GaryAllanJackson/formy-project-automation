@@ -7,8 +7,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -70,6 +72,8 @@ public class TestHelper{
     private boolean _is_Maximized;
     public boolean get_is_Maximized() {return _is_Maximized; }
     public void set_is_Maximized(boolean _is_Maximized) { this._is_Maximized = _is_Maximized ;}
+
+    public Dimension savedDimension = null;
 
 
     public ConfigSettings ReadConfigurationSettingsXmlFile(String configurationXmlFile, boolean isExecutedFromMain) throws Exception {
@@ -349,6 +353,9 @@ public class TestHelper{
                             }
                             testStep.ArgumentList = argumentList;
                             if (argumentMessage != null) {
+                                if (argumentMessage.endsWith("\r\n\t\t ")) {
+                                    argumentMessage = argumentMessage.substring(0, argumentMessage.lastIndexOf("\r")-1);
+                                }
                                 UpdateTestResults(argumentMessage, false);
                                 argumentMessage = null;
                             }
@@ -457,6 +464,7 @@ public class TestHelper{
             try {
                 //get the original dimensions and save them
                 Dimension originalDimension = driver.manage().window().getSize();
+                //savedDimension = savedDimension == null ? originalDimension : savedDimension;
                 int height = originalDimension.height;
                 int width = originalDimension.width;
                 //region { This is how to get the screen dimensions but found that the maximized value and screen dimensions didn't match }
@@ -471,7 +479,12 @@ public class TestHelper{
 
                 //reset the browser dimensions to capture all content
                 Dimension dimension = GetWindowContentDimensions(driver);
-                driver.manage().window().setSize(dimension);
+                //if (savedDimension != originalDimension) {
+                if (savedDimension != null) {
+                    driver.manage().window().setSize(savedDimension);
+                } else {
+                    driver.manage().window().setSize(dimension);
+                }
 
                 screenShotName = MakeValidFileName(screenShotName);
                 String fileExtension = screenShotName.endsWith(".png") ? "" : ".png";
@@ -493,11 +506,13 @@ public class TestHelper{
                     }
                     //FileUtils.copyFile(source, new File("Config/ScreenShots/" + screenShotName + ".png"));
                     FileUtils.copyFile(source, new File("Config/ScreenShots/" + screenShotName + fileExtension));
+                    screenShotFolder = "Config/ScreenShots/";
                 }
 
                 if (!isError) {
                     //UpdateTestResults(AppConstants.indent5 + AppConstants.ANSI_GREEN + "Screenshot successfully taken for step " + fileStepIndex + AppConstants.ANSI_RESET, true);
-                    UpdateTestResults(AppConstants.ANSI_GREEN + "Screenshot successfully taken for step " + fileStepIndex + AppConstants.ANSI_RESET, true);
+                    String asSpecified = (savedDimension != null) ? " as specified." : " per content area check. ";
+                    UpdateTestResults(AppConstants.ANSI_GREEN + "Screenshot successfully taken for step " + fileStepIndex + "\r\n\tImage saved to: " + screenShotFolder + screenShotName + fileExtension + "\r\n\tImage Dimensions: " + GetImageDimensions(screenShotFolder + screenShotName + fileExtension) + asSpecified + AppConstants.ANSI_RESET, true);
                 } else {
                     UpdateTestResults(AppConstants.ANSI_RED + "Screenshot taken for step " + fileStepIndex + " - Error condition!" + AppConstants.ANSI_RESET, true);
                 }
@@ -699,6 +714,16 @@ public class TestHelper{
             return null;
         }
     }
+
+    public String GetImageDimensions(String imageFileName) throws Exception {
+        BufferedImage img = ImageIO.read(new File(imageFileName));
+        int width = img.getWidth();
+        int height = img.getHeight();
+
+        return "width: " + width + " height: " + height;
+    }
+
+
 
     //move these methods to a utility class
     /****************************************************************************
@@ -1715,11 +1740,18 @@ public class TestHelper{
 
             WriteToFile(get_helpFileName(), PrePostPad("[ TAKING SCREENSHOTS ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "The ScreenShot command takes a screenshot of the current page.");
-            WriteToFile(get_helpFileName(), "To take a screen shot/print screen, the browser will be resized automatically to capture all page content.");
+            WriteToFile(get_helpFileName(), "To take a screen shot/print screen, the browser will be resized automatically to capture all page content,");
+            WriteToFile(get_helpFileName(), "if browser dimensions are not supplied; however, in the event that browser dimensions are supplied, the browser");
+            WriteToFile(get_helpFileName(), "will resize to the supplied dimensions.");
+            WriteToFile(get_helpFileName(), "The ability to resize the browser to specific dimensions allows for image pixel comparison as images being compared");
+            WriteToFile(get_helpFileName(), "must have the same width and height dimensions.");
             WriteToFile(get_helpFileName(), "This command allows for overriding the configured screenshot folder and dynamic filename creation and either saving ");
             WriteToFile(get_helpFileName(), "the images with a specified name in the configured screenshot folder or saving the images to a file naame and path ");
             WriteToFile(get_helpFileName(), "specified as <arg1></arg1> but if <arg1></arg1> is not provided a name is constructed and the file is saved in the ");
             WriteToFile(get_helpFileName(), "configured folder.");
+            WriteToFile(get_helpFileName(), "This command also allows for specifying the browser dimensions so that you get an image the exact size that you need.");
+            WriteToFile(get_helpFileName(), "Specifying the browser dimensions is the same as when navigating, where w= identifies the width value and h= identifies");
+            WriteToFile(get_helpFileName(), "the height value as shown here: <arg2>w=1400 h=1000</arg2>.");
             WriteToFile(get_helpFileName(), "The ability to name the screenshot allows for executing subsequent Image Comparison steps and speficying the file names");
             WriteToFile(get_helpFileName(), "based on the screenshots being taken.");
             WriteToFile(get_helpFileName(), "In the following example, a default name will be provided for the  screenshot consisting of the browser used and the test step");

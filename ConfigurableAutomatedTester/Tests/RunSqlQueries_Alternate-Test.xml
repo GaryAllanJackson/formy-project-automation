@@ -40,4 +40,19 @@
 			<arg1>Select Forum from [POCFISForumV2].[dbo].[Forums] where ForumId = 2</arg1>
 		</arguments>
 	</step>
+	<step>
+		<command>Sql Server Query</command>
+		<actionType>read</actionType>
+		<expectedValue>FAQ</expectedValue>
+		<crucial>false</crucial>
+		<arguments>
+			<!-- Table to query or select statement -->
+			<arg1>[POCFISForumV2].[dbo].[Forums]</arg1>
+			<!-- Field to query -->
+			<arg2>Forum</arg2>
+			<!-- where clause - optional -->
+			<arg3>where ForumId = 1</arg3>
+			<arg4>!=</arg4>
+		</arguments>
+	</step>
 </testSteps>

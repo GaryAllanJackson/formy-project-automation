@@ -97,9 +97,12 @@ public class HelperUtilities {
         } catch(IllegalArgumentException ia) {
             if (ia.getMessage().contains("Images must have the same dimensions:")) {
                 testHelper.UpdateTestResults("Failure Unable to get difference percentage of images with different dimensions", true);
+                testHelper.UpdateTestResults("Baseline image dimensions: " + testHelper.GetImageDimensions(expected) + "\r\nActual image dimensions: " + testHelper.GetImageDimensions(actual), true);
             }
         }
     }
+
+
 
     /********************************************************************************************
      * Description: Gets the percentage of difference between two images
@@ -142,6 +145,9 @@ public class HelperUtilities {
 
         return 100.0 * diff / maxDiff;
     }
+
+
+
 
     /********************************************************************************************
      * Description: Gets the pixel difference between two images
