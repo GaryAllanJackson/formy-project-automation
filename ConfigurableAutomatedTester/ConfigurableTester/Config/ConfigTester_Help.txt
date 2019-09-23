@@ -84,7 +84,16 @@ This application was designed to perform automated testing using configuration a
 It was intended to remove the need for per project automated test coding, but grew out of the curiosity to 
 learn more about headless testing with Java and Selenium.
 
-It covers most testing, including: Navigation, Form Population, Value checking, Value Persistence for use in 
+This can be run as a stand-alone application or as a JUnit test within the IDE, as it was frequently run within IntelliJ.
+	Colors and other special ANSI characters are removed from the Stand-alone application as they are unsupported
+	outside of the IDE.
+Working as a stand-alone application allows this to be scheduled to run whenever it is desired by either creating a Scheduled Task
+or using some other automated process tool, or writing one of your own.
+Running outside of the IDE means that it can be quickly executed without opening the IDE and then the source project.
+The Log file name will be preceeded with "StandAlone_" when run as a stand-alone application.
+Look at the Project_Setup.txt file for directions on running the stand-alone application as part of a batch file.
+
+The application covers most testing, including: Navigation, Form Population, Value checking, Value Persistence for use in 
 upcoming test step comparisons or form populations, context menu access, iFrame access, switching  browser tabs, 
 SQL Server Connectivity and Querying, anchor href and text property checking, image src and alt property
 checking, checking color contrast, conditional block to run tests only if a condition step passes,
@@ -94,9 +103,23 @@ ensure that entry is unique each time.
 Additionally, it includes waiting a specific length of time, for document state complete, for a specific element, 
 taking screenshots and comparing images using ImageMagick and getting a pixel difference percentage along with a.
 difference image with the differences highlighted.
+In addition to Conditional Blocks, each step can be marked as Crucial or non-Crucial.
+Crucial test steps must pass or the application terminates on failure, while non-Crucial steps
+can fail and the application will continue running tests.
+This behavior ensures that necessary steps for subsequent testing are successful such as navigation, connecting to SQL Server
+retrieving JSON from an endpoint etc...  If these steps fail, the subsequent tests reliant upon them will also fail but to avoid
+wasting time waiting for those steps to fail, marking these steps as crucial stops execution when they fail and the tester
+can see where the application terminated and perform further investigation.
 An added test step configuration can be used to create a test step file for a specific page and while this is not a test, it can make creating test files much faster.
 
+Creating a Configurable Automated test consists of creating one Configuration file and one or more Test files.
+This application can run any number of Test Files, which need to be configured in the Configuration file either
+individually or within a specified folder which can be filtered to select just targeted files.
+
 **********[ IMPORTANT NOTES ]***********************************************************************
+NOTE: Test Steps are numbered by File underscore then Test Step.
+	The F describes the Test File being run while the S describes the Test Step being run.
+	Test Files and Test Steps begin at 0, so F0_S0 is the first Test File and the first Test Step in that file.
 NOTE: The != operator is currently only supported for the following commands: Assert, Sql Server Query, Check Count.
 	There was no viable use case for implementing this functionality for other commands 
 	and the reason it is not supported in the JSON query is explained in the JSON Query section.
@@ -112,19 +135,20 @@ NOTE: For most verifiable operations the success or failure output will be left 
 
 This help file is broken up into 4 separate sections:
 
-	1.	HELP FILE OVERVIEW - This section, which provides an overview of the application and this help file.
+	1.	HELP FILE OVERVIEW - This is that section and it is intended to provide an overview of the application and this help file.
 
-	2.	CONFIGURATION FILE FORMAT  - describes the format of the configuration file and details the use and settings of each field.
+	2.	CONFIGURATION FILE FORMAT  - Describes the format of the configuration file and details the use and settings of each field.
 		Two example configurations are provided to showcase two different means of configuring the way test files are specified.
 
-	3.	TEST FILE FORMAT - describes the format of the test file(s) and details the use and settings of each field.
+	3.	TEST FILE FORMAT - Describes the format of the test file(s) and details the use and settings of each field.
 		Various examples and alternate steps are outlined describing the test settings necessary to perform each test function.
 
-	4.	TROUBLESHOOTING - describes common issues and how to address them to get the desired results.
+	4.	INCLUDED TEST FILES - this section describes the test files that have been included with this application in the Tests folder.
+	5.	TROUBLESHOOTING - describes common issues and how to address them to get the desired results.
 
 Future functionality to be added to this application:
 	Greater Than and Less Than Operator.
-		-	This would be a good addition when used with Condtional Blocks.
+		-	This could be a good addition when used with Conditional Blocks.
 		-	Currently, only validatable(read actionType) commands can be used for the conditional statement such as an text, src, alt or href assertion or element found.
 
 	Color Contrast code has been implemented to allow for color contrast checking using this page's formula.
@@ -175,8 +199,11 @@ The following is an example of a configuration file which will be explained belo
 		<testFileName2>C:\ConfigurableAutomatedTester\Tests\CheckImageSource-Test.xml</testFileName2>
 	</testFiles>
 	<!-- Folder Testing Settings -->
+	<!-- Folder where test files are located -->
 	<testFolderName></testFolderName>
+	<!-- Folder filter type valid values are [Starts With], [Contains] and [Ends With] without the brackets -->
 	<folderFileFilterType></folderFileFilterType>
+	<!-- Folder filter is the text used to select a subset of files -->
 	<folderFileFilter></folderFileFilter>
 </automatedTestConfiguration>
 
@@ -298,7 +325,9 @@ determine the test files to be used.
 	<folderFileFilter>sql</folderFileFilter>
 </automatedTestConfiguration>
 
+
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
 
 
 ╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
@@ -322,7 +351,7 @@ The test file allows for:
 3. Comments to be plentiful.  Comments can be used to document, or to comment out steps or step values for quickly switching
   	between different values when running tests over and over to try to track down a specific behavior.
 4.	Test files are run one after another and most objects are scoped to just the test that required them so
-  	Persisted Values, JSON object and SQL Connecton object will all be reset and the Unique Identifiers will be reinitialized to a new value.
+  	Persisted Values, JSON object and SQL Connection object will all be reset and the Unique Identifiers will be reinitialized to a new value.
 
 ═════════[ TEST FILE FIELDS AND DESCRIPTIONS ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 It begins with the XML declaration followed by the <testSteps> root element.
@@ -348,7 +377,7 @@ Each test is grouped in <step> elements, which consist of the all or some of the
 <conditional>true</conditional> - The conditional node is used to start a conditional block of steps.
 	All steps within the block depend upon the success of this step being successful.
 	The Condition node should only ever be used when starting a conditional block of steps.
-	A separate commmand is used to end the conditional block, so setting this to false is useless
+	A separate command is used to end the conditional block, so setting this to false is useless
 	This can only be used on read actionTypes as performing an action is not verifiable.
 	When applied if successful, all subsequent steps within the block will execute along with all steps after the block.
 	When applied and unsuccessful for any reason, all subsequent steps within the block will be skipped
@@ -390,7 +419,7 @@ All Navigation steps should be marked as crucial, as all subsequent checks requi
 An assertion does not have to be part of navigation, but it probably should be!!!
 To navigate without checking the URL, remove the expectedValue node completely as displayed in the example below.
 For the Navigation command only, although the arguments should be in the order shown, if they 
-are out of order the application will attempt to discern the order and rearranage them.
+are out of order the application will attempt to discern the order and rearrange them.
 
 To Navigate, without checking the URL to ensure that navigation occurred properly, 
 to wait 4000 milli-seconds and to set the window dimensions to (800 x 800)
@@ -581,7 +610,7 @@ Alternative way splitting the words apart.
 ═════════[ CHECK DOCUMENT READY STATE COMPLETE WITHOUT NAVIGATION AS A POST NAVIGATION STEP]═══════════════════════════════════════════════════════════════════
 The Wait for page command waits until document ready state is complete.
 To check that the document ready state is complete after previously navigating to a new page and to make it crucial. 
-NOTE: The first argument must be n/a as shown below.  
+NOTE: The first argument must be n/a as shown below.
 - Omitting this argument or leaving it empty will result in an invalid format exception.
 To make it non-crucial change the last parameter to false.
 This will be most useful for triggered navigation.
@@ -614,9 +643,9 @@ To make it non-crucial change the last parameter to false.
 IMPORTANT: EACH TIME A SWITCH TO IFRAME COMMAND IS ISSUED, THE CONTEXT IS REVERTED TO THE MAIN WINDOW
 ONCE THAT COMMAND COMPLETES EXECUTION, SO IF SUBSEQUENT TESTS NEED TO ACCESS THE IFRAME, THEY MUST BE
 ENCAPSULATED WITHIN SWITCH TO IFRAME COMMANDS.
-The Switch to iFrame command temporarily switches the current context to the iframe mentioned in the firs argument.
+The Switch to iFrame command temporarily switches the current context to the iFrame mentioned in the firs argument.
 Since only the command and first argument are needed to switch to the iFrame, the remaining test step elements
-can be used to perform the desired action within the iframe.
+can be used to perform the desired action within the iFrame.
 The default action when switching to an iFrame is the Assert, which checks the text of an element against the expected
 value provided, so the assert command need not be used but any other commands should be placed into <arg2></arg2>.
 Commands that can be used in the iFrame are assert, sendkeys, click, right click, double click, persist values and  check against persisted values.
@@ -626,7 +655,7 @@ the arguments will be made.  Unfortunately, some commands can be quite complex a
 even more complex, therefore, a message will be displayed indicating that the arguments are out of order so that they can be corrected
 by the tester in the test steps file.
 Failing to do so for complex commands may yield unexpected results.
-The following example is an example of switching to an iframe, specified in <arg1></arg1> and performing an assert
+The following example is an example of switching to an iFrame, specified in <arg1></arg1> and performing an assert
 to check the element text pointed to by the <accessor></accessor> and <accessorType></accessorType> against the
 expected value provided in the <expectedValue></expectedValue> element and since <crucial></crucial> is false
 the status will be reported and subsequent tests will run regardless.
@@ -720,7 +749,7 @@ Alternative way splitting the words.
 <step>
 	<command>check a href</command>
 	<actionType>read</actionType>
-	<expectedValue>https://www.swtestacademy.com/about-software-test-academy/ </expectedValue>
+	<expectedValue>https://www.swtestacademy.com/about-software-test-academy/</expectedValue>
 	<crucial>FALSE</crucial>
 	<accessor>//*[@id="menu-item-21"]/a</accessor>
 	<accessorType>xPath</accessorType>
@@ -1155,10 +1184,10 @@ Alternate Switch to tab command with the tab specified as an argument.
 Recently updated, this method allows switching between all open tabs by passing the tab index as <arg1>.
 The parent tab, where the test originated is tab 0, the first child is tab 1, etc...
 If you open a tab from the parent and then open another tab from the parent, the first is tab 1 and the second is tab 2,
-however, switching to child tabs and opening tabs betwen the current child and the last child may have unexpected results.
+however, switching to child tabs and opening tabs between the current child and the last child may have unexpected results.
 As a rule of thumb, open the tabs manually testing the layout of the tabs before attempting to automate this functionality.
 The following command switches to the first child tab and is an alternate way of doing this separating the functionality from the
-right click command allowing more granual control of switching between tabs.
+right click command allowing more granular control of switching between tabs.
 <step>
 	<command>Switch to tab</command>
 	<actionType>write</actionType>
@@ -1265,8 +1294,8 @@ To Find text searching all label elements and make this non-crucial, use the fol
 
 ═════════[ FIND ELEMENTS THAT CONTAIN TEXT ]═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 There are times when you may need to search for a portion of text but do not know the accessor necessary to find that text.
-A specific instance might be when searching for text that would be in a paragraph.  
-You wouldn't want to add the entire paragraph when you can add a snippet to verify that part of it is there. 
+A specific instance might be when searching for text that would be in a paragraph.
+You wouldn't want to add the entire paragraph when you can add a snippet to verify that part of it is there.
 Additionally, the Find functionality returns the xPath of all elements where the text is found.
 To Find element containing text searching all div elements and make this non-crucial, use the following.
 <step>
@@ -1376,7 +1405,7 @@ IMPORTANT: ENSURE THAT YOU ALWAYS CREATE A CLOSE CONNECTION TEST STEP TO CLOSE T
 An emergency clean up process will attempt to shut down any open connections, but it is recommended that 
 you do this with a test step to ensure that connection limits are not exhausted.
 To do this, you must first establish a connection to the database and this is how to do that.
-There are two ways to establish a connection to Sql Server. 
+There are two ways to establish a connection to Sql Server.
 <step>
 	<!-- Open Connection to Sql Server -->
 	<!-- Allows you to connect to a SQL Server database.  Make this step crucial or conditional as subsequent steps depend on it's success. -->
@@ -1677,6 +1706,14 @@ outlining all things that differ between the images whether it is spacing, item 
 else that is not pixel exact.
 The difference image can be used to quickly see all differences and use it to provide feedback to other teams.
 This command also provides a numeric Pixel percentage of difference between the two images.
+
+IMPORTANT NOTE: When running the Application from the command line, the DB Level from the ImageMagick compare utility
+is automatically output as part of the compare operation, so this output is followed in the display by the 
+following application message to describe what it means:
+"- ImageMagick DB Level (0 for identical images, non-zero numeric value for non-identical images)"
+This DB Level is an output from the ImageMagick compare application, not this application and therefore is not written to the log.
+When running ImageMagick from within the IDE only the last DB Level is reported and it is reported at the end of execution.
+When writing to the log for both standalone and Junit executions, this value is not accessible and, therefore, not written.
 If the images are exactly the same, the percentage of difference will be 0.0 and will be displayed in green to 
 indicate that the images are identical.
 If the images are not exactly the same, the percentage of difference will be more than 0.0 and will be displayed in red
@@ -1695,7 +1732,7 @@ IMPORTANT!!! If tests are rerun, difference images will be overwritten!!
 Take time to backup needed difference images prior to rerunning tests or the previous difference image state will be lost.
 The following command compares the baseline image in <arg1></arg1> with the actual image in <arg2></arg2> and 
 creates the difference image <arg3></arg3> where specified.
-Additionally, this command reports the numeric percentage of difference for a quick reference so that the tester can identify
+Additionally, this command reports the numeric pixel percentage of difference for a quick reference so that the tester can identify
 which images need further examination to detail the differences to the corresponding team members.
 <step>
 	<!-- compares two images -->
@@ -1711,6 +1748,120 @@ which images need further examination to detail the differences to the correspon
 		<arg3>C:\ScreenShots\Mashup\Difference\MyScreenShot-DifferenceImage.png</arg3>
 	</arguments>
 </step>
+
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+
+
+╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                              INCLUDED TEST FILES                                                                                                       ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+The following is a list of test files that are included with the Application.   Each of these files have been tested and are working.
+They have been included to provide samples of how to create coherent tests to test different functionality.
+While some tests cover one specific command, many include a variety of different commands but these test files are just to 
+provide you with a starting point and certainly don't define the scope of the application's functionality.
+All Test files below, except the SQL Server tests begin by navigating to a page so that step will be omitted to avoid unnecessary typing and redundancy.
+
+CheckAllPageImageAltAttributes-Test.xml - Checks All Image Alt tag attributes on the page to ensure that they are not empty and includes a separate navigation step.
+
+CheckAllPageImageAltAttributesNoSeparateNavigationStep-Test.xml - Checks All Image Alt tag attributes on the page to ensure that they are not empty but instead of 
+	- using a separate navigation step, it includes navigation as part of the check command.
+
+CheckAllPageImageSrcWithNoSeparateNavigationStep-Test.xml - Checks All Image Src tag attributes on the page to ensure that they resolve but instead of 
+	- using a separate navigation step, it includes navigation as part of the check command.
+
+CheckAllPageImageSrcWithSeparateNavigationStep-Test.xml - Checks All Image Src tag attributes on the page to ensure that they resolve and includes a separate navigation step.
+
+CheckAllPageLinks-Test.xml - Checks All Link tags href attributes on the page to ensure that they resolve and uses a separate navigation step.
+
+CheckAllPageLinksWithNoSeparateNavigationStep-Test.xml - Checks All Link tags href attributes on the page to ensure that they resolve but instead of 
+	- using a separate navigation step, it includes navigation as part of the check command.
+
+CheckColorContrast-Test.xml - Checks the Color Brightness and Contrast of the Font color compared with the Background color.
+
+CheckCount-Test.xml - Checks the count of a specific element type on a page.  Counts all Anchor 'a' tags and compares that to the expected count.
+
+CheckGet-Test.xml - Checks the Get response for a specific URL and compares that to the expected response code which should be 200 for a successful get response.
+
+CheckPageWithoutNavigation-Test.xml - Performs Check Gets, Check Post, Wait for Page, Check A Hrefs, and Checks the current page URL outside of a navigation step and compares that to the expected value.
+
+CheckSingleImageSrcWithSeparateNavigationStep-Test.xml - Checks the Src attribute of a specific Image tag and compares that to the expected value.
+
+CheckSpecificAnchorhref-Test.xml - Checks the Href attribute of a specific Anchor tag and compares that to the expected value.
+
+CheckSpecificImageSource-Test.xml - Checks the Src and Href attributes of specific Image Tags against expected values.
+
+CompareImages-Gerrett-Test.xml - Takes ScreenShot, partially fills in form fields and takes second ScreenShot then compares the ScreenShot images and creates a difference image file and displays the pixel difference between the images in a percentage.
+
+CompareImages-Test.xml - Compares two images stored on the computer and creates a difference image file and displays the pixel difference between the images in a percentage. 
+	- (Paths will need to be changed to images on your computer.
+
+Conditional-Test.xml - Creates a Conditional Block with dependent tests inside the block and one test after the block.
+
+ContextMenu-Test.xml - Performs the following test steps.
+	1. Right clicks on a menu anchor tag,
+	2. Opens URL in a new tab,
+	3. Waits,
+	4. Switches to that tab,
+	5. Waits,
+	6. Performs an assertion,
+	7. Switches to first tab,
+	8. Right clicks and opens another link in another tab,
+	9. Switches to that tab,
+	10. Waits,
+	11. Performs an assertion,
+	12. Closes all child tabs, waits,
+	13. Switches back to first tab,
+	14. Waits and then ends.
+
+CreateTestPage-Test.xml - Creates an XML formatted test page that can be run immediately afterwards as a test.
+
+CreateUnformatedTestPage-Test.xml - Creates an unformatted page that contains xPath, text, href, src, alt text that can be used for creating tests manually.
+
+Fill_out_FormMy_Form_and_submit-Test.xml - Fills out a form and submits it and checks the confirmation message on the subsequent page.
+	- This form has various different form controls such as text boxes, radio buttons, check boxes, select list box and a date picker.
+
+FindPhrase-Test.xml - Performs the following test steps.
+	1. Waits for Page, 
+	2. Checks URL,
+	3. Checks Get
+	4. Checks Count,
+	5. Waits for Element
+	6. Performs a Find Equals with no element specified,
+	7. Performs a Find Equals with a 'div' element specified
+	8. Performs a Find Equals with a 'label' element specified
+	9. Performs a find Contains with a 'label' element specified.
+
+GetAndQueryJson-Test.xml - Performs the following test steps.
+	1. Gets JSON from API end point as a conditional block start
+	2. Performs 4 JSON Querries and compares against the expected values,
+	3. Saves the JSON to a file
+	4. Ends the Conditional Block
+	5. Navigates to another page.
+
+iFrame_AccessElement-Test.xml - Performs the following test steps.
+	1. Waits for Page, 
+	2. Switches to an iFrame and checks the text of the button agains the expected value,
+	3. Switches to an iFrame and persists the text of an element,
+	4. Switches to an iFrame with arguments out of order to force argument shuffling and checks the text of a button,
+	5. Switches to an iFrame and checks the value of a button,
+	6. Switches to an iFrame and checks the value of a button against the persisted value, 
+	7. Switches to an iFrame and clicks a link,
+	8. Navigates to another page,
+	9. Switches to an iFrame and checks the value of a Select with the expected value.
+
+RunSqlQueries_Alternate-Test.xml -  Performs the following test steps.
+	1. Connects to Sql Server,
+	2. Performs 3 queries using two different command formats and checks the values against the expected values.
+	- This command does not close the Open Sql Server connection and was used to implement the failsafe close connection cleanup method and display the message informing the user that the connection was not properly closed.
+
+SqlServerAccess-Test.xml -  Performs the following test steps. 
+	1. Connects to Sql Server,
+	2. Performs 2 queries where the value is expected to equal the expected value,
+	3. Performs 1 query where the value is expected not to equal the expected value,
+	4. Properly Closed the Open Connection.
+
 
 
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -1761,7 +1912,7 @@ show as having passed.
 If the last step passes but the overall JUnit test shows a failure and the error doesn't point to 
 anything in the test steps, re-run the test and it will likely show as having passed.
 This intermittent failure was noticed during testing and while it is believed to have been a race condition
-that was fixed, this has been added as the exact cause has not been identified.
+that was fixed, this has been added, as the exact cause has not been identified.
 If during testing, this no longer occurs, this tip may be removed.
 
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -1771,7 +1922,7 @@ This means that the start and end element are not proper opening and closing XML
 1.	First, ensure that the document has the start and end tags.
 2.	Next, check that the end tag contains a </ as the first two characters as a common mistake is 
 		copying and pasting and forgetting to update.
-3.	Finally, check that the spelling, if this was not a copy paste issue as it may have been a typo.
+3.	Finally, check that the spelling, if this was not a copy paste issue, as it may have been a typo.
 
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 

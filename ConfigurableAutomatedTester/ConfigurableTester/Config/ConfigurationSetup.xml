@@ -11,22 +11,80 @@
 	<sortSpecifiedTestFiles>true</sortSpecifiedTestFiles>	
 	<!-- Individual File Settings -->
 	<testFiles>
-		<!--<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\SqlServerAccess-Test.xml</testFileName1>
-		<testFileName2>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\RunSqlQueries_Alternate-Test.xml</testFileName2>
-		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1>
-		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckImageSource-Test.xml</testFileName1>-->
-		<!--<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CreateUnformatedTestPage-Test.xml</testFileName1>
-		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckColorContrast-Test.xml</testFileName1>
+		<!-- alphabetical order -->
+		<!-- Group 1 - All elements of specified type tests -->
+		<!--
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckAllPageImageAltAttributes-Test.xml</testFileName1>
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckAllPageImageAltAttributesNoSeparateNavigationStep-Test.xml</testFileName1>
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckAllPageImageSrcWithNoSeparateNavigationStep-Test.xml</testFileName1>
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckAllPageImageSrcWithSeparateNavigationStep-Test.xml</testFileName1>
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckAllPageLinks-Test.xml</testFileName1>
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckAllPageLinksWithNoSeparateNavigationStep-Test.xml</testFileName1>
+		-->
+		
+		<!-- Group 2 - Contrast, Count, Get and Current Page URL -->
+		<!--		
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckColorContrast-Test.xml</testFileName1>-->
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckCount-Test.xml</testFileName1>
+		<!--
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckGet-Test.xml</testFileName1>
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckPageWithoutNavigation-Test.xml</testFileName1>-->
+			
+			
+		<!-- Group 3 - Single or Specific Element checks -->
+		<!--
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckSingleImageSrcWithSeparateNavigationStep-Test.xml</testFileName1>
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckSpecificAnchorhref-Test.xml</testFileName1>
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckSpecificImageSource-Test.xml</testFileName1>
+		-->
+		
+		<!-- Group 4 - Image Comparison tests -->
+		<!--
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CompareImages-Gerrett-Test.xml</testFileName1>
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CompareImages-Test.xml</testFileName1>
+		-->
+		
+		<!-- Group 5 -  Conditional Block and Context Menu tests -->
+		<!--
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\Conditional-Test.xml</testFileName1>
-		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\GetAndQueryJson-Test.xml</testFileName1>-->
-		
-		<!--<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\FindPhrase-Test.xml</testFileName1>
-		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CreateTestPage-Test.xml</testFileName1>
-		<testFileName2>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\iFrame_AccessElement-Test.xml</testFileName2>-->
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\ContextMenu-Test.xml</testFileName1>
-		<!--<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CompareImages-Test.xml</testFileName1>
-		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CompareImages-Gerrett-Test.xml</testFileName1>-->
+		-->
 		
+		
+		<!-- Group 6 - Create Test Page tests -->
+		<!--
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CreateTestPage-Test.xml</testFileName1>
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CreateUnformatedTestPage-Test.xml</testFileName1>
+		-->
+		
+		<!-- Group 7 - Fill out form and Find Phrase tests -->
+		<!--
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1>	
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\FindPhrase-Test.xml</testFileName1>
+		-->
+		
+		<!-- Group 8 - SQL Server Query and JSON Search content tests -->
+		<!--
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\GetAndQueryJson-Test.xml</testFileName1>
+		<testFileName2>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\RunSqlQueries_Alternate-Test.xml</testFileName2>
+		<testFileName2>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\SqlServerAccess-Test.xml</testFileName2>
+		-->
+		
+		<!-- Group 9 - Access iFrame elements tests -->
+		<!--
+		<testFileName2>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\iFrame_AccessElement-Test.xml</testFileName2>
+		-->
+		
+		<!-- Group 10 - Run Created Tests tests -->
+		<!-- 
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\TestPages\Formy-Test.xml</testFileName1>
+		-->
+		
+		<!--
+		<testFileName1></testFileName1>
+		<testFileName1></testFileName1>
+		<testFileName1></testFileName1>
+		<testFileName1></testFileName1> -->
 	</testFiles>
 	<!-- Folder Testing Settings -->
 	<testFolderName>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\</testFolderName>

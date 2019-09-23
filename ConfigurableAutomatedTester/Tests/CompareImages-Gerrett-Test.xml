@@ -66,7 +66,7 @@
 			<arg1>C:\Gary\Java Utilities\ScreenShots\Mashup\Actual\MyScreenShot.png</arg1>
 			<arg2>w=1400 h=1000</arg2>
 		</arguments>
-	</step>
+	</step><!---->
 	<step>
 		<!-- Tested - Good -->
 		<!-- Normal hardcoded wait time -->

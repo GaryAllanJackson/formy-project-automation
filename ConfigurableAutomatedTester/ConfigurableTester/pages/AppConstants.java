@@ -98,11 +98,11 @@ public class AppConstants {
     //endregion
 
     //region {Display Formatting Ansi characters and spaces}
-    public static final String sectionStartFormatLeft =  "╔══════════════[ ";
-    public static final String sectionStartFormatRight = " ]══════════════╗";
-    public static final String sectionEndFormatLeft =    "╚══════════════[ ";
-    public static final String sectionEndFormatRight =   " ]══════════════╝";
-    public static final String subsectionLeft = "     «══════════════[ ";
+//    public static final String sectionStartFormatLeft =  "╔══════════════[ ";
+//    public static final String sectionStartFormatRight = " ]══════════════╗";
+//    public static final String sectionEndFormatLeft =    "╚══════════════[ ";
+//    public static final String sectionEndFormatRight =   " ]══════════════╝";
+//    public static final String subsectionLeft = "     «══════════════[ ";
     public static final String subsectionRight = " ]══════════════════════════════════════════»";
     public static final String indent5 = "     ";
     public static final String indent8 = "        ";

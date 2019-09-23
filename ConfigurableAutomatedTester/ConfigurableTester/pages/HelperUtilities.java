@@ -14,14 +14,19 @@ import java.io.IOException;
 public class HelperUtilities {
 
     //Image files
-    public File baselineImageFile;
-    public File actualImageFile;
     public File differenceImageFile;
     public File differenceFileForParent;
-    private String _screenShotFolder;
     private static String OS = System.getProperty("os.name").toLowerCase();
-    private TestHelper testHelper = new TestHelper();
+    TestHelper testHelper = new TestHelper();
+    private boolean _executedFromMain;
+    private boolean is_executedFromMain() {
+        return _executedFromMain;
+    }
 
+    void set_executedFromMain(boolean _executedFromMain) {
+        this._executedFromMain = _executedFromMain;
+    }
+    private String logFileName;
 
 
     //ImageMagick Compare Method
@@ -39,10 +44,10 @@ public class HelperUtilities {
         // This is the core class of the im4java-library where all the magic takes place.
         //ProcessStarter.setGlobalSearchPath("C:\\Program Files\\ImageMagick-7.0.4-Q16");
         //ProcessStarter.setGlobalSearchPath("C:\\Program Files\\ImageMagick-7.0.8-Q16");
-
         String differenceImage = difference;
         ProcessStarter.setGlobalSearchPath("C:\\Program Files (x86)\\ImageMagick-7.0.8-Q16-HDRI");
         differenceImageFile = new File (difference);
+        testHelper.set_executedFromMain(is_executedFromMain());
 
         //if the difference file already exists, delete it and start fresh
         RemoveExistingFile(difference);
@@ -84,13 +89,16 @@ public class HelperUtilities {
         }
 
         File tempDifference = new File(differenceImage);
+        if (is_executedFromMain()) {
+            testHelper.UpdateTestResults(" - ImageMagick DB Level (0 for identical images, numeric value for non-identical images)", false);
+        }
         if (differenceImage != null && tempDifference.exists()) {
-            testHelper.UpdateTestResults("Successful comparison of images.  View the images to see the comparison results:\r\n" +
+            testHelper.UpdateTestResults("\r\nSuccessful comparison of images.  View the images to see the comparison results:\r\n" +
                     AppConstants.indent5 + "Baseline Image: (" + expected + ")\r\n" +
                     AppConstants.indent5 + "Actual Image: (" + actual + ")\r\n" +
                     AppConstants.indent5 + "Difference Image:(" + differenceImage + ")", true);
         } else {
-            testHelper.UpdateTestResults("Failure something may have gone wrong as no difference image was created.", true);
+            testHelper.UpdateTestResults("\r\nFailure something may have gone wrong as no difference image was created.", true);
         }
         try {
             GetPercentageDifference(expected, actual, difference);
@@ -112,14 +120,14 @@ public class HelperUtilities {
      * @throws IOException
      *******************************************************************************************/
     private void GetPercentageDifference(String expected, String actual, String difference) throws IOException {
-
         BufferedImage img1 = ImageIO.read(new File(expected));
         BufferedImage img2 = ImageIO.read(new File(actual));
 
         double differencePercentage = GetDifferencePercent(img1, img2);
         String diffColor = differencePercentage > 0 ? AppConstants.ANSI_RED_BRIGHT : AppConstants.ANSI_GREEN_BRIGHT;
-        testHelper.UpdateTestResults(diffColor + AppConstants.indent5 +  "Difference Percentage: " + differencePercentage + AppConstants.ANSI_RESET, true);
+        testHelper.UpdateTestResults(diffColor + AppConstants.indent5 +  "Difference Percentage: " + differencePercentage + "%" + AppConstants.ANSI_RESET, true);
     }
+
 
     /********************************************************************************************
      * Description: Gets the numerica percentage of difference value between two images.
@@ -145,8 +153,6 @@ public class HelperUtilities {
 
         return 100.0 * diff / maxDiff;
     }
-
-
 
 
     /********************************************************************************************
@@ -219,18 +225,19 @@ public class HelperUtilities {
         return new File(returnValue);
     }
 
-    private void SetUpExceptionVariables(String difference) {
-        String delimiter = isWindows() ? "\\" : "//";
-        differenceImageFile = new File (difference);
-        int endPosition = difference.lastIndexOf(delimiter);
-        String temp = difference.substring(0, endPosition - 1);
-        endPosition = temp.lastIndexOf(delimiter);
-        temp = temp.substring(0, endPosition);
-        if (!temp.endsWith(delimiter)) {
-
-        }
-
-        //differenceFileForParent = new File (parentDifferencesLocation + diff);
-    }
-
+    //region { Refactored and removed }
+//    private void SetUpExceptionVariables(String difference) {
+//        String delimiter = isWindows() ? "\\" : "//";
+//        differenceImageFile = new File (difference);
+//        int endPosition = difference.lastIndexOf(delimiter);
+//        String temp = difference.substring(0, endPosition - 1);
+//        endPosition = temp.lastIndexOf(delimiter);
+//        temp = temp.substring(0, endPosition);
+//        if (!temp.endsWith(delimiter)) {
+//
+//        }
+//
+//        //differenceFileForParent = new File (parentDifferencesLocation + diff);
+//    }
+    //endregion
 }
