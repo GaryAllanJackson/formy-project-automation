@@ -2930,7 +2930,8 @@ public class TestHelper{
                 .replace(AppConstants.ANSI_PURPLE_BACKGROUND,"").replace(AppConstants.ANSI_YELLOW_BRIGHT,"")
                 .replace(AppConstants.ANSI_PURPLE_BRIGHT,"").replace(AppConstants.ANSI_RED_BRIGHT,"")
                 .replace(AppConstants.ANSI_GREEN_BRIGHT,"").replace(AppConstants.ANSI_BLUE_BRIGHT,"")
-                .replace(AppConstants.ANSI_GREEN_BACKGROUND_BRIGHT,"").replace(AppConstants.ANSI_WHITE_BACKGROUND_BRIGHT,"");
+                .replace(AppConstants.ANSI_GREEN_BACKGROUND_BRIGHT,"").replace(AppConstants.ANSI_WHITE_BACKGROUND_BRIGHT,"")
+                .replace(AppConstants.ANSI_CYAN_BRIGHT,"");
 
     }
 

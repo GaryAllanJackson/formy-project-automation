@@ -361,6 +361,7 @@ public class TestCentral {
             uniqueId = testHelper.GetUniqueIdentifier();
             testSteps = new ArrayList<>();
             jsonContent = null;
+            xmlContent = null;
             CloseOpenConnections();
             persistedString = null;
             boolean isConditionalBlock = false;
@@ -737,7 +738,15 @@ public class TestCentral {
         }
     }
 
-
+    /*************************************************************************
+     * Description: Control method used to Retrieve XML from an API end point,
+     *              persist it into a local variable and this method also
+     *              Querries the local XML variable for values.
+     * @param ts - Test Step Object containing all related information
+     *             for the particular test step.
+     * @param fileStepIndex - the file index and the step index.
+     * @throws Exception - May throw exception if JSON retrieval fails.
+     *************************************************************************/
     private void XmlController(TestStep ts, String fileStepIndex) throws Exception {
         if (ts.get_command().toLowerCase().equals(AppCommands.Get_XML)) {
             testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_CYAN_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start XML Retrieval and Persistence Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
@@ -745,7 +754,6 @@ public class TestCentral {
             //testHelper.DebugDisplay("xmlContent = " + xmlContent);
             if (!IsNullOrEmpty(xmlContent)) {
                 conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
-
                 testHelper.UpdateTestResults(AppConstants.indent8 + "Successful XML content retrieval for step " + fileStepIndex, true);
             } else {
                 conditionalSuccessful = false;
@@ -3330,7 +3338,19 @@ public class TestCentral {
         return jsonResponse;
     }
 
-
+    /****************************************************************************
+     * DESCRIPTION: This method starts by checking if a URL parameter was
+     *              supplied and if so, calls the navigation method to
+     *              perform a Navigation event and make that the current page.
+     *              Next, it downloads the XML from the current page and stores
+     *              it in a global variable where it can later be queried by
+     *              another method.
+     * @param ts - Test Step Object containing all related information
+     *           for the particular test step.
+     * @param fileStepIndex - the file index and the step index.
+     * @return - the retrieved XML if successful else null
+     * @throws Exception - Possible Exception attempting to retrieve XML from API endpoint
+     ****************************************************************************/
     private String GetXmlContent(TestStep ts, String fileStepIndex) throws Exception {
         String xmlResponse = null;
         String url = GetArgumentValue(ts, 0, null);
@@ -3349,36 +3369,18 @@ public class TestCentral {
     }
 
 
-    /*****************************************************************************
-     * DESCRIPTION: This method Searches the global JSON string downloaded in the
-     *              GetJsonContent method for the expected value.
-     *              Since this is actually a search of the string and not a true
-     *              query, if the search string is found, the search and found
-     *              values are the search string for reporting, else a not found
-     *              message is displayed.
+
+
+    /************************************************************************************
+     * Description: This method searches the retrieved JSON for the Key/value pair
+     *              and displays the count of all matching keys and whether one or more
+     *              key contained the specific value.  If a key/value matches the search
+     *              criteria the test is marked as successful, else the test is marked as
+     *              failed.
      * @param ts - Test Step Object containing all related information
      *           for the particular test step.
      * @param fileStepIndex - the file index and the step index.
-     *****************************************************************************/
-    private void QueryJSONContains(TestStep ts, String fileStepIndex) {
-        if (jsonContent != null && !jsonContent.isEmpty()) {
-            String searchString = "\"" + ts.get_accessor() + "\":" + ts.get_expectedValue();
-            testHelper.UpdateTestResults(AppConstants.indent8 + "Searching JSON for " + searchString + " for step " + fileStepIndex,true);
-            if (jsonContent.contains(searchString)) {
-                testHelper.UpdateTestResults("Successful JSON Search for step " + fileStepIndex + " Searched for: (" + searchString + ") Found: (" + searchString + ")", true);
-                if (ts.get_crucial()) {
-                    assertEquals(searchString, searchString);
-                }
-            } else {
-                testHelper.UpdateTestResults("Failed JSON Search for step " + fileStepIndex + " Searched for: (" + searchString + ") but did not find this!", true);
-                //If this is crucial and the search string is not found, force an assertion failure
-                if (ts.get_crucial()) {
-                    assertEquals(searchString, null);
-                }
-            }
-        }
-    }
-
+     ***********************************************************************************/
     private void QueryJSON(TestStep ts, String fileStepIndex) {
         if (!IsNullOrEmpty(jsonContent)) {
             String jsonTemp = jsonContent;
@@ -3415,13 +3417,13 @@ public class TestCentral {
 
             if (searchList.size() > 0) {
                 testHelper.UpdateTestResults("Successful JSON Search for step " + fileStepIndex + " Searched all " + ts.get_accessor() + " for: (" +  ts.get_expectedValue() + ") Found: (" +  searchList.get(0) + ")\r\n" +
-                        AppConstants.indent5 +  "- There were " + count + " " + ts.get_accessor()  + " elements with " + searchList.size() + " elements containing the expected value." , true);
+                        AppConstants.indent5 +  "- There were " + count + " " + ts.get_accessor()  + " keys with " + searchList.size() + " values containing the expected value." , true);
                 if (ts.get_crucial()) {
                     assertEquals( ts.get_expectedValue(), searchList.get(0));
                 }
             } else {
                 testHelper.UpdateTestResults("Failed JSON Search for step " + fileStepIndex + " Searched for: (" +  searchString + ") but did not find this!\r\n" +
-                        AppConstants.indent5 +  "- There were " + count + " " + searchString + " elements but none contained the expected value." , true);
+                        AppConstants.indent5 +  "- There were " + count + " " + searchString + " keys but none contained the expected value." , true);
                 //If this is crucial and the search string is not found, force an assertion failure
                 if (ts.get_crucial()) {
                     assertEquals(ts.get_expectedValue(), null);
@@ -3486,7 +3488,16 @@ public class TestCentral {
     }
 
 
-    //TODO: WORKING HERE
+    /************************************************************************************
+     * Description: This method searches the retrieved XML for the Element/Node value
+     *              and displays the count of all matching Elements/Nodes and whether
+     *              one or more Elements/Nodes contained the specific value.
+     *              If an Element/Node matches the search criteria the test is
+     *              marked as successful, else the test is marked as failed.
+     * @param ts - Test Step Object containing all related information
+     *           for the particular test step.
+     * @param fileStepIndex - the file index and the step index.
+     ***********************************************************************************/
     private void QueryXML(TestStep ts, String fileStepIndex) {
         if (!IsNullOrEmpty(xmlContent)) {
             String xmlTemp = xmlContent;
@@ -3529,6 +3540,13 @@ public class TestCentral {
         }
     }
 
+    /*****************************************************************************
+     * Description: Saves previously retrieved XML to the file specified in the
+     *              command argument.
+     * @param ts - Test Step Object containing all related information
+     *           for the particular test step.
+     * @param fileStepIndex - the file index and the step index.
+     *****************************************************************************/
     private void SaveXmlToFile(TestStep ts, String fileStepIndex) {
         String fileName = GetArgumentValue(ts, 0, null);
         String overWriteExisting = GetArgumentValue(ts, 1, "false");
@@ -4739,6 +4757,35 @@ public class TestCentral {
 
     }
 
+    /*****************************************************************************
+     * DESCRIPTION: This method Searches the global JSON string downloaded in the
+     *              GetJsonContent method for the expected value.
+     *              Since this is actually a search of the string and not a true
+     *              query, if the search string is found, the search and found
+     *              values are the search string for reporting, else a not found
+     *              message is displayed.
+     * @param ts - Test Step Object containing all related information
+     *           for the particular test step.
+     * @param fileStepIndex - the file index and the step index.
+     *****************************************************************************/
+    private void QueryJSONContains(TestStep ts, String fileStepIndex) {
+        if (jsonContent != null && !jsonContent.isEmpty()) {
+            String searchString = "\"" + ts.get_accessor() + "\":" + ts.get_expectedValue();
+            testHelper.UpdateTestResults(AppConstants.indent8 + "Searching JSON for " + searchString + " for step " + fileStepIndex,true);
+            if (jsonContent.contains(searchString)) {
+                testHelper.UpdateTestResults("Successful JSON Search for step " + fileStepIndex + " Searched for: (" + searchString + ") Found: (" + searchString + ")", true);
+                if (ts.get_crucial()) {
+                    assertEquals(searchString, searchString);
+                }
+            } else {
+                testHelper.UpdateTestResults("Failed JSON Search for step " + fileStepIndex + " Searched for: (" + searchString + ") but did not find this!", true);
+                //If this is crucial and the search string is not found, force an assertion failure
+                if (ts.get_crucial()) {
+                    assertEquals(searchString, null);
+                }
+            }
+        }
+    }
 
 
     //endregion

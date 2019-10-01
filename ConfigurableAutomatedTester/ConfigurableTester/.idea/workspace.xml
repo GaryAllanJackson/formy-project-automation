@@ -12,6 +12,7 @@
       <change beforePath="$PROJECT_DIR$/Config/Demo_Complex_ConfigurationSetup.tconfig" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Config/Demo_ConfigurationSetup.tconfig" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Entities/TestSettings.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/GaryJava UtilitiesScreenShotsMashupChromeDriver__F0_S5xPath_Element_Not_Found-Difference.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/pages/AppCommands.java" beforeDir="false" afterPath="$PROJECT_DIR$/pages/AppCommands.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pages/AppConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/pages/AppConstants.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pages/HelperUtilities.java" beforeDir="false" afterPath="$PROJECT_DIR$/pages/HelperUtilities.java" afterDir="false" />
@@ -265,12 +266,12 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/pages/TestCentral.java</url>
-          <line>4323</line>
+          <line>4341</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/pages/TestCentral.java</url>
-          <line>4407</line>
+          <line>4425</line>
           <option name="timeStamp" value="5" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -285,7 +286,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/pages/TestCentral.java</url>
-          <line>3401</line>
+          <line>3403</line>
           <option name="timeStamp" value="11" />
         </line-breakpoint>
       </breakpoints>
