@@ -57,6 +57,9 @@
 		RETRIEVING JSON FROM AN API ENDPOINT
 		QUERYING JSON FROM AN API ENDPOINT
 		SAVE JSON TO FILE
+		RETRIEVING XML FROM AN API ENDPOINT
+		QUERYING XML FROM AN API ENDPOINT
+		SAVE XML TO FILE
 		CHECK COLOR CONTRAST  
 
 		COMPARE IMAGES AND CREATE DIFFERENCE IMAGE 
@@ -1560,12 +1563,14 @@ A QUICK NOTE ABOUT JSON BEFORE REVIEWING THIS COMMAND
 	are represented with quotation marks.
 	This means that 1 and "1" are not the same, as the former is a number and the latter is a string representation of that number.
 	JSON files are key value pairs where the key is a string and the value is either a number or a string.
-	The Key is like a variable name and the Value holds the value of the variable.
+	The Key is like a variable name that is used to reference the value it contains.
 The Query JSON command is actually just a CASE SENSITIVE search and not a querying framework like the SQL Query command.
 For this reason, the != operator is not supported for JSON Queries.
+This test will find every Key bearing the name provided in the <accessor></accessor> element and display the 
+total number of Keys along with the number of Keys that matched or explain that no Keys matched.
 The key, which is placed into the <accessor></accessor> node along with the expected value which is placed into the
 <expectedValue></expectedValue> node are both case sensitive.
-Additionally, the <expectedValue></expectedValue> node must represent the expected value exactly so include quotes for
+Additionally, the <expectedValue></expectedValue> node must represent the expected value exactly, so include quotes for
 strings and exclude quotes for numbers.
 To best determine how to represent the expected value, just copy the text between the colon and the end of the 
 line excluding the comma, if present.
@@ -1652,6 +1657,149 @@ Alternatively, the previous example could have also been written using the word 
 		<arg2>overwrite</arg2>
 	</arguments>
 </step>
+
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ RETRIEVING XML FROM AN API ENDPOINT  ]══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Get XML command works like the Get JSON command persisting an object for use by subsequent commands.
+The Get XML command downloads and stores the XML into a local variable that can later be used to SEARCH for elements containing text.
+This local variable will contain the retrieved XML until overwritten by a subsequent Get XML request or 
+until the test file executing ends.
+Each time a test is run this variable is reset to null until populated by the Get XML command.
+The Get XML command is used to retrieve the XML from either the current page/url or a different page/url.
+If the optional argument URL is not included, the current page/url will be used to retrieve the XML.
+If the URL is included as the command's optional sole argument, it will trigger a navigation event and then
+that page/url will be used to retrieve the XML.
+The preferred way to perform the Get XML is shown below and requires a previous navigation step.
+This step should be conditional or crucial depending upon the subsequent steps in the test file.
+In the example below, XML is retrieved from the current URL and starts a Conditional Block so that
+any query statements can be contained within the Conditional Block preventing their execution if this step fails.
+<step>
+	<!-- Allows you to retrieve XML from the current end point.  Make this step crucial or conditional as subsequent steps depend on it's success. -->
+	<command>Get XML</command>
+	<conditional>true</conditional>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+</step>
+
+Alternatively, navigation can be included in the same step to first trigger a navigation event and then get the XML.
+The only difference between the example below and the one above is that the below example first triggers a navigation event
+by including the URL as an argument in the test step.
+<step>
+	<!-- Allows you to retrieve XML from a different end point.  Make this step crucial or conditional as subsequent steps depend on it's success.  -->
+	<command>Get XML</command>
+	<conditional>true</conditional>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<arg1>http://local.forums.com/?productId=1&amp;id=true&amp;wantJson=false<</arg1>
+	</arguments>
+</step>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ QUERYING XML FROM AN API ENDPOINT ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+A QUICK NOTE ABOUT XML BEFORE REVIEWING THIS COMMAND
+	Returned XML is a string, but unlike JSON, it is unnecessary to differentiate between strings and numbers in your test.
+	While XML does allow for adding parameters to distinguish between different value types, for the purposes of this tool that is unnecessary.
+	The Element/Node is like a variable that references the value it contains.
+The Query XML command is actually just a CASE SENSITIVE search and not a querying framework like the SQL Query command.
+For this reason, the != operator is not supported for XML Queries.
+This test will find every Element/Node bearing the name provided in the <accessor></accessor> element and display the 
+total number of Elements/Nodes along with the number of Elements/Nodes that matched or explain that no Elements/Nodes matched.
+The Element/Node, which is placed into the <accessor></accessor> node along with the expected value, which is placed into the
+<expectedValue></expectedValue> node are both case sensitive.
+To best determine how to represent the expected value, just copy the text between the Element tags 
+which most often will not include quotation marks.
+For the following examples, refer to the following JSON excerpt:
+<Forums>
+	<ForumId>1</ForumId>
+	<Forum>General</Forum>
+	<Description>General Discussion Forum</Description>
+</Forums>
+
+For the first example, the Query XML command is being used to find the ForumId Element/Node with a value of 1.
+Notice that unlike with JSON, there is no differentiation between strings and numbers and therefore no need for 
+quotes in the <expectedValue></expectedValue>.
+<step>
+	<command>Query XML</command>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+	<accessor>ForumId</accessor>
+	<accessorType>XML</accessorType>
+	<expectedValue>1</expectedValue>
+</step>
+
+For the second example, the Query XML command is being used to find the Forum value with a string value of General.
+Although this is actually querying the same endpoint as the JSON examples but with different URL parameters,
+notice that the <expectedValue></expectedValue> is like any other non-JSON test and contains no quotation marks.
+<step>
+	<command>Query XML</command>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+	<accessor>Forum</accessor>
+	<accessorType>XML</accessorType>
+	<expectedValue>General</expectedValue>
+</step>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ SAVE XML TO FILE  ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Save XML command saves the XML retrieved with the Get XML command to the path provided.
+Having the downloaded XML on hand when testing is important for showing proof when providing feedback.
+The command is a read actionType and not a write actionType as it has to read the XML before writing it.
+There are two arguments that can be used with this command.
+The first argument is the file path and name where the XML should be saved and is required.
+The second argument is for overwriting the existing file.
+If set to True or Overwrite, an existing file with the same name will be overwritten.
+If set to False, which is the default, and a file exists with the same name, the application will append an incremental integer value 
+to the file name and retest until it finds a file name that does not exist. 
+The updated name will be used to name the downloaded XML file and will be reported back via the console and log.
+If the second parameter is missing, the value will be defaulted to false.
+In the example below, the XML previously retrieved will be saved to the file outlined in <arg1></arg1>,
+but since <arg2></arg2> overwrite is set to false, if that file exists a new name will be created.
+A message indicating that the file existed along with the original file name and the updated file name will be
+reported to the tester via the console and will also be included in the log file.
+<step>
+	<command>Save XML</command>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<!-- first parameter expected by the command - The file name; it is also required -->
+		<arg1>C:\XML downloads\forums.xml</arg1>
+		<arg2>false</arg2>
+	</arguments>
+</step>
+
+In the below example, <arg2></arg2> has been set to true for overwrite, which will delete an existing file with 
+the same name before saving the file.
+<step>
+	<command>Save XML</command>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<!-- first parameter expected by the command - The file name; it is also required -->
+		<arg1>C:\XML downloads\forums.xml</arg1>
+		<arg2>true</arg2>
+	</arguments>
+</step>
+
+Alternatively, the previous example could have also been written using the word overwrite, as shown below.
+<step>
+	<command>Save XML</command>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<!-- first parameter expected by the command - The file name; it is also required -->
+		<arg1>C:\XML downloads\forums.xml</arg1>
+		<arg2>overwrite</arg2>
+	</arguments>
+</step>
+
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
 
 
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -1792,7 +1940,7 @@ CheckSpecificAnchorhref-Test.xml - Checks the Href attribute of a specific Ancho
 
 CheckSpecificImageSource-Test.xml - Checks the Src and Href attributes of specific Image Tags against expected values.
 
-CompareImages-Gerrett-Test.xml - Takes ScreenShot, partially fills in form fields and takes second ScreenShot then compares the ScreenShot images and creates a difference image file and displays the pixel difference between the images in a percentage.
+CompareImages-Alternate-Test.xml - Takes ScreenShot, partially fills in form fields and takes second ScreenShot then compares the ScreenShot images and creates a difference image file and displays the pixel difference between the images in a percentage.
 
 CompareImages-Test.xml - Compares two images stored on the computer and creates a difference image file and displays the pixel difference between the images in a percentage. 
 	- (Paths will need to be changed to images on your computer.
@@ -1817,7 +1965,7 @@ ContextMenu-Test.xml - Performs the following test steps.
 
 CreateTestPage-Test.xml - Creates an XML formatted test page that can be run immediately afterwards as a test.
 
-CreateUnformatedTestPage-Test.xml - Creates an unformatted page that contains xPath, text, href, src, alt text that can be used for creating tests manually.
+CreateUnformattedTestPage-Test.xml - Creates an unformatted page that contains xPath, text, href, src, alt text that can be used for creating tests manually.
 
 Fill_out_FormMy_Form_and_submit-Test.xml - Fills out a form and submits it and checks the confirmation message on the subsequent page.
 	- This form has various different form controls such as text boxes, radio buttons, check boxes, select list box and a date picker.
@@ -1835,8 +1983,15 @@ FindPhrase-Test.xml - Performs the following test steps.
 
 GetAndQueryJson-Test.xml - Performs the following test steps.
 	1. Gets JSON from API end point as a conditional block start
-	2. Performs 4 JSON Querries and compares against the expected values,
+	2. Performs 4 JSON Queries and compares against the expected values,
 	3. Saves the JSON to a file
+	4. Ends the Conditional Block
+	5. Navigates to another page.
+
+GetAndQueryXML-Test.xml - Performs the following test steps.
+	1. Gets XML from API end point as a conditional block start
+	2. Performs 4 XML Queries and compares against the expected values,
+	3. Saves the XML to a file
 	4. Ends the Conditional Block
 	5. Navigates to another page.
 

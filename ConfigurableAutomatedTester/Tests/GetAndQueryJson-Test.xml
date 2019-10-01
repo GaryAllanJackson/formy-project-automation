@@ -38,7 +38,8 @@
 		<actionType>read</actionType>
 		<crucial>FALSE</crucial>
 		<arguments>
-			<arg1>http://local.forums.com/?productId=1&amp;id=true</arg1>
+			<arg1>http://local.forums.com/?productId=1&amp;id=true&amp;wantJson=true</arg1>
+			<!--<arg1>http://local.forums.com/?productId=1&amp;id=true</arg1>-->
 			<!--<arg1>http://local.forums.com/?productId=2&amp;id=true</arg1>-->
 		</arguments>
 	</step>

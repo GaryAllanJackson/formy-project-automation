@@ -63,6 +63,9 @@ public class AppCommands {
     public static String Assert = "assert";
     public static String SQL_Server_Query =  "sql server query";
     public static String End_Conditional = "end conditional";
+    public static String Get_XML = "get xml";
+    public static String Save_XML = "save xml";
+    public static String Query_XML = "query xml";
     //endregion
 
 

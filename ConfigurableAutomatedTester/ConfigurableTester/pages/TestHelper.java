@@ -6,14 +6,18 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.*;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
@@ -22,6 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static java.lang.Integer.parseInt;
+
 
 public class TestHelper{
 
@@ -355,6 +360,62 @@ public class TestHelper{
         }
         return testSteps;
     }
+
+
+    //TODO: WORKING HERE GAJ
+    String ReadTestSettingsXmlFile(String xmlEndPointFileContent, String xpath_expression, String searchValue) {
+        String matchType = "No match";
+        try {
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(new java.io.ByteArrayInputStream(xmlEndPointFileContent.getBytes()));
+            XPathFactory xPathfactory = XPathFactory.newInstance();
+            XPath xpath = xPathfactory.newXPath();
+            XPathExpression expr = xpath.compile(xpath_expression);
+            NodeList searchNodes = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+            String textContent;
+            for (int x = 0; x < searchNodes.getLength(); x++) {
+                Node checkNode = searchNodes.item(x);
+                textContent = checkNode.getTextContent();
+                if (textContent.equals(searchValue)) {
+                    matchType = "Exact";
+                    break;
+                } else if (textContent.toLowerCase().equals(checkNode.getTextContent().toLowerCase())) {
+                    matchType = "Case Incorrect match";
+                    break;
+                }
+            }
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (XPathExpressionException e) {
+            e.printStackTrace();
+        }
+        return matchType;
+    }
+
+
+//    public static org.w3c.dom.Document loadXMLFrom(String xml)
+//            throws org.xml.sax.SAXException, java.io.IOException {
+//        return loadXMLFrom(new java.io.ByteArrayInputStream(xml.getBytes()));
+//    }
+//    public static org.w3c.dom.Document loadXMLFrom(java.io.InputStream is)
+//            throws org.xml.sax.SAXException, java.io.IOException {
+//        javax.xml.parsers.DocumentBuilderFactory factory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+//        factory.setNamespaceAware(true);
+//        javax.xml.parsers.DocumentBuilder builder = null;
+//        try {
+//            builder = factory.newDocumentBuilder();
+//        }
+//        catch (javax.xml.parsers.ParserConfigurationException ex) {
+//        }
+//        org.w3c.dom.Document doc = builder.parse(is);
+//        is.close();
+//        return doc;
+//    }
 
     /**********************************************************************************************
      * Description: Creates the Section Headers based on the input parameters.
@@ -796,6 +857,9 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\t\tRETRIEVING JSON FROM AN API ENDPOINT");
             WriteToFile(get_helpFileName(), "\t\tQUERYING JSON FROM AN API ENDPOINT");
             WriteToFile(get_helpFileName(), "\t\tSAVE JSON TO FILE");
+            WriteToFile(get_helpFileName(), "\t\tRETRIEVING XML FROM AN API ENDPOINT");
+            WriteToFile(get_helpFileName(), "\t\tQUERYING XML FROM AN API ENDPOINT");
+            WriteToFile(get_helpFileName(), "\t\tSAVE XML TO FILE");
             WriteToFile(get_helpFileName(), "\t\tCHECK COLOR CONTRAST  \r\n");
             WriteToFile(get_helpFileName(), "\t\tCOMPARE IMAGES AND CREATE DIFFERENCE IMAGE \r\n");
             WriteToFile(get_helpFileName(), AppConstants.indent5 + PrePostPad("[ Troubleshooting ]", "═", 9, 100));
@@ -2239,12 +2303,14 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\tare represented with quotation marks.");
             WriteToFile(get_helpFileName(), "\tThis means that 1 and \"1\" are not the same, as the former is a number and the latter is a string representation of that number.");
             WriteToFile(get_helpFileName(), "\tJSON files are key value pairs where the key is a string and the value is either a number or a string.");
-            WriteToFile(get_helpFileName(), "\tThe Key is like a variable name and the Value holds the value of the variable.");
+            WriteToFile(get_helpFileName(), "\tThe Key is like a variable name that is used to reference the value it contains.");
             WriteToFile(get_helpFileName(), "The Query JSON command is actually just a CASE SENSITIVE search and not a querying framework like the SQL Query command.");
             WriteToFile(get_helpFileName(), "For this reason, the != operator is not supported for JSON Queries.");
+            WriteToFile(get_helpFileName(), "This test will find every Key bearing the name provided in the <accessor></accessor> element and display the ");
+            WriteToFile(get_helpFileName(), "total number of Keys along with the number of Keys that matched or explain that no Keys matched.");
             WriteToFile(get_helpFileName(), "The key, which is placed into the <accessor></accessor> node along with the expected value which is placed into the");
             WriteToFile(get_helpFileName(), "<expectedValue></expectedValue> node are both case sensitive.");
-            WriteToFile(get_helpFileName(), "Additionally, the <expectedValue></expectedValue> node must represent the expected value exactly so include quotes for");
+            WriteToFile(get_helpFileName(), "Additionally, the <expectedValue></expectedValue> node must represent the expected value exactly, so include quotes for");
             WriteToFile(get_helpFileName(), "strings and exclude quotes for numbers.");
             WriteToFile(get_helpFileName(), "To best determine how to represent the expected value, just copy the text between the colon and the end of the ");
             WriteToFile(get_helpFileName(), "line excluding the comma, if present.");
@@ -2331,6 +2397,151 @@ public class TestHelper{
                     "\t\t<arg2>overwrite</arg2>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            //TODO: WORKING ON XML HELP STARTING HERE
+            WriteToFile(get_helpFileName(), PrePostPad("[ RETRIEVING XML FROM AN API ENDPOINT  ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "The Get XML command works like the Get JSON command persisting an object for use by subsequent commands.");
+            WriteToFile(get_helpFileName(), "The Get XML command downloads and stores the XML into a local variable that can later be used to SEARCH for elements containing text.");
+            WriteToFile(get_helpFileName(), "This local variable will contain the retrieved XML until overwritten by a subsequent Get XML request or ");
+            WriteToFile(get_helpFileName(), "until the test file executing ends.");
+            WriteToFile(get_helpFileName(), "Each time a test is run this variable is reset to null until populated by the Get XML command.");
+            WriteToFile(get_helpFileName(), "The Get XML command is used to retrieve the XML from either the current page/url or a different page/url.");
+            WriteToFile(get_helpFileName(), "If the optional argument URL is not included, the current page/url will be used to retrieve the XML.");
+            WriteToFile(get_helpFileName(), "If the URL is included as the command's optional sole argument, it will trigger a navigation event and then");
+            WriteToFile(get_helpFileName(), "that page/url will be used to retrieve the XML.");
+            WriteToFile(get_helpFileName(), "The preferred way to perform the Get XML is shown below and requires a previous navigation step.");
+            WriteToFile(get_helpFileName(), "This step should be conditional or crucial depending upon the subsequent steps in the test file.");
+            WriteToFile(get_helpFileName(), "In the example below, XML is retrieved from the current URL and starts a Conditional Block so that");
+            WriteToFile(get_helpFileName(), "any query statements can be contained within the Conditional Block preventing their execution if this step fails.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<!-- Allows you to retrieve XML from the current end point.  Make this step crucial or conditional as subsequent steps depend on it's success. -->\r\n" +
+                    "\t<command>Get XML</command>\r\n" +
+                    "\t<conditional>true</conditional>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "Alternatively, navigation can be included in the same step to first trigger a navigation event and then get the XML.");
+            WriteToFile(get_helpFileName(), "The only difference between the example below and the one above is that the below example first triggers a navigation event");
+            WriteToFile(get_helpFileName(), "by including the URL as an argument in the test step.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<!-- Allows you to retrieve XML from a different end point.  Make this step crucial or conditional as subsequent steps depend on it's success.  -->\r\n" +
+                    "\t<command>Get XML</command>\r\n" +
+                    "\t<conditional>true</conditional>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>http://local.forums.com/?productId=1&amp;id=true&amp;wantJson=false<</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ QUERYING XML FROM AN API ENDPOINT ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "A QUICK NOTE ABOUT XML BEFORE REVIEWING THIS COMMAND");
+            WriteToFile(get_helpFileName(), "\tReturned XML is a string, but unlike JSON, it is unnecessary to differentiate between strings and numbers in your test.");
+            WriteToFile(get_helpFileName(), "\tWhile XML does allow for adding parameters to distinguish between different value types, for the purposes of this tool that is unnecessary.");
+            WriteToFile(get_helpFileName(), "\tThe Element/Node is like a variable that references the value it contains.");
+            WriteToFile(get_helpFileName(), "The Query XML command is actually just a CASE SENSITIVE search and not a querying framework like the SQL Query command.");
+            WriteToFile(get_helpFileName(), "For this reason, the != operator is not supported for XML Queries.");
+            WriteToFile(get_helpFileName(), "This test will find every Element/Node bearing the name provided in the <accessor></accessor> element and display the ");
+            WriteToFile(get_helpFileName(), "total number of Elements/Nodes along with the number of Elements/Nodes that matched or explain that no Elements/Nodes matched.");
+            WriteToFile(get_helpFileName(), "The Element/Node, which is placed into the <accessor></accessor> node along with the expected value, which is placed into the");
+            WriteToFile(get_helpFileName(), "<expectedValue></expectedValue> node are both case sensitive.");
+            WriteToFile(get_helpFileName(), "To best determine how to represent the expected value, just copy the text between the Element tags ");
+            WriteToFile(get_helpFileName(), "which most often will not include quotation marks.");
+            WriteToFile(get_helpFileName(), "For the following examples, refer to the following JSON excerpt:");
+            WriteToFile(get_helpFileName(), "<Forums>\r\n" +
+                    "\t<ForumId>1</ForumId>\r\n" +
+                    "\t<Forum>General</Forum>\r\n" +
+                    "\t<Description>General Discussion Forum</Description>\r\n" +
+                    "</Forums>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "For the first example, the Query XML command is being used to find the ForumId Element/Node with a value of 1.");
+            WriteToFile(get_helpFileName(), "Notice that unlike with JSON, there is no differentiation between strings and numbers and therefore no need for ");
+            WriteToFile(get_helpFileName(), "quotes in the <expectedValue></expectedValue>.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Query XML</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<accessor>ForumId</accessor>\r\n" +
+                    "\t<accessorType>XML</accessorType>\r\n" +
+                    "\t<expectedValue>1</expectedValue>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "For the second example, the Query XML command is being used to find the Forum value with a string value of General.");
+            WriteToFile(get_helpFileName(), "Although this is actually querying the same endpoint as the JSON examples but with different URL parameters,");
+            WriteToFile(get_helpFileName(), "notice that the <expectedValue></expectedValue> is like any other non-JSON test and contains no quotation marks.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Query XML</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<accessor>Forum</accessor>\r\n" +
+                    "\t<accessorType>XML</accessorType>\r\n" +
+                    "\t<expectedValue>General</expectedValue>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ SAVE XML TO FILE  ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "The Save XML command saves the XML retrieved with the Get XML command to the path provided.");
+            WriteToFile(get_helpFileName(), "Having the downloaded XML on hand when testing is important for showing proof when providing feedback.");
+            WriteToFile(get_helpFileName(), "The command is a read actionType and not a write actionType as it has to read the XML before writing it.");
+            WriteToFile(get_helpFileName(), "There are two arguments that can be used with this command.");
+            WriteToFile(get_helpFileName(), "The first argument is the file path and name where the XML should be saved and is required.");
+            WriteToFile(get_helpFileName(), "The second argument is for overwriting the existing file.");
+            WriteToFile(get_helpFileName(), "If set to True or Overwrite, an existing file with the same name will be overwritten.");
+            WriteToFile(get_helpFileName(), "If set to False, which is the default, and a file exists with the same name, the application will append an incremental integer value ");
+            WriteToFile(get_helpFileName(), "to the file name and retest until it finds a file name that does not exist. ");
+            WriteToFile(get_helpFileName(), "The updated name will be used to name the downloaded XML file and will be reported back via the console and log.");
+            WriteToFile(get_helpFileName(), "If the second parameter is missing, the value will be defaulted to false.");
+            WriteToFile(get_helpFileName(), "In the example below, the XML previously retrieved will be saved to the file outlined in <arg1></arg1>,");
+            WriteToFile(get_helpFileName(), "but since <arg2></arg2> overwrite is set to false, if that file exists a new name will be created.");
+            WriteToFile(get_helpFileName(), "A message indicating that the file existed along with the original file name and the updated file name will be");
+            WriteToFile(get_helpFileName(), "reported to the tester via the console and will also be included in the log file.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Save XML</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<!-- first parameter expected by the command - The file name; it is also required -->\r\n" +
+                    "\t\t<arg1>C:\\XML downloads\\forums.xml</arg1>\r\n" +
+                    "\t\t<arg2>false</arg2>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "In the below example, <arg2></arg2> has been set to true for overwrite, which will delete an existing file with ");
+            WriteToFile(get_helpFileName(), "the same name before saving the file.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Save XML</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<!-- first parameter expected by the command - The file name; it is also required -->\r\n" +
+                    "\t\t<arg1>C:\\XML downloads\\forums.xml</arg1>\r\n" +
+                    "\t\t<arg2>true</arg2>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "Alternatively, the previous example could have also been written using the word overwrite, as shown below.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Save XML</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<!-- first parameter expected by the command - The file name; it is also required -->\r\n" +
+                    "\t\t<arg1>C:\\XML downloads\\forums.xml</arg1>\r\n" +
+                    "\t\t<arg2>overwrite</arg2>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            //TODO: WORKING ON XML HELP ENDING HERE
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
@@ -2455,13 +2666,13 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "CheckSingleImageSrcWithSeparateNavigationStep-Test.xml - Checks the Src attribute of a specific Image tag and compares that to the expected value.\r\n");
             WriteToFile(get_helpFileName(), "CheckSpecificAnchorhref-Test.xml - Checks the Href attribute of a specific Anchor tag and compares that to the expected value.\r\n");
             WriteToFile(get_helpFileName(), "CheckSpecificImageSource-Test.xml - Checks the Src and Href attributes of specific Image Tags against expected values.\r\n");
-            WriteToFile(get_helpFileName(), "CompareImages-Gerrett-Test.xml - Takes ScreenShot, partially fills in form fields and takes second ScreenShot then compares the ScreenShot images and creates a difference image file and displays the pixel difference between the images in a percentage.\r\n");
+            WriteToFile(get_helpFileName(), "CompareImages-Alternate-Test.xml - Takes ScreenShot, partially fills in form fields and takes second ScreenShot then compares the ScreenShot images and creates a difference image file and displays the pixel difference between the images in a percentage.\r\n");
             WriteToFile(get_helpFileName(), "CompareImages-Test.xml - Compares two images stored on the computer and creates a difference image file and displays the pixel difference between the images in a percentage. \r\n\t- (Paths will need to be changed to images on your computer.\r\n");
             WriteToFile(get_helpFileName(), "Conditional-Test.xml - Creates a Conditional Block with dependent tests inside the block and one test after the block.\r\n");
             WriteToFile(get_helpFileName(), "ContextMenu-Test.xml - Performs the following test steps.\r\n\t1. Right clicks on a menu anchor tag,\r\n\t2. Opens URL in a new tab,\r\n\t3. Waits,\r\n\t4. Switches to that tab,\r\n\t5. Waits,\r\n\t6. Performs an assertion,\r\n\t7. Switches to first tab,\r\n\t8. Right clicks and opens another link in another tab,\r\n\t9. Switches to that tab,\r\n\t10. Waits,\r\n\t11. Performs an assertion,\r\n\t12. Closes all child tabs, waits,\r\n\t13. Switches back to first tab,\r\n\t14. Waits and then ends.\r\n");
 
             WriteToFile(get_helpFileName(), "CreateTestPage-Test.xml - Creates an XML formatted test page that can be run immediately afterwards as a test.\r\n");
-            WriteToFile(get_helpFileName(), "CreateUnformatedTestPage-Test.xml - Creates an unformatted page that contains xPath, text, href, src, alt text that can be used for creating tests manually.\r\n");
+            WriteToFile(get_helpFileName(), "CreateUnformattedTestPage-Test.xml - Creates an unformatted page that contains xPath, text, href, src, alt text that can be used for creating tests manually.\r\n");
             WriteToFile(get_helpFileName(), "Fill_out_FormMy_Form_and_submit-Test.xml - Fills out a form and submits it and checks the confirmation message on the subsequent page.");
             WriteToFile(get_helpFileName(), "\t- This form has various different form controls such as text boxes, radio buttons, check boxes, select list box and a date picker.\r\n");
 
@@ -2471,7 +2682,9 @@ public class TestHelper{
 //            WriteToFile(get_helpFileName(), "GaryXMLstepsShell - Updated backup.xml - Contains a list of some commands.  This was originally going to be used before the help file was created.\r\n");
 //            WriteToFile(get_helpFileName(), "GaryXMLstepsShell.xml - Contains a list of some commands.  This was originally going to be used before the help file was created.\r\n");
 
-            WriteToFile(get_helpFileName(), "GetAndQueryJson-Test.xml - Performs the following test steps.\r\n\t1. Gets JSON from API end point as a conditional block start\r\n\t2. Performs 4 JSON Querries and compares against the expected values,\r\n\t3. Saves the JSON to a file\r\n\t4. Ends the Conditional Block\r\n\t5. Navigates to another page.\r\n");
+            WriteToFile(get_helpFileName(), "GetAndQueryJson-Test.xml - Performs the following test steps.\r\n\t1. Gets JSON from API end point as a conditional block start\r\n\t2. Performs 4 JSON Queries and compares against the expected values,\r\n\t3. Saves the JSON to a file\r\n\t4. Ends the Conditional Block\r\n\t5. Navigates to another page.\r\n");
+
+            WriteToFile(get_helpFileName(), "GetAndQueryXML-Test.xml - Performs the following test steps.\r\n\t1. Gets XML from API end point as a conditional block start\r\n\t2. Performs 4 XML Queries and compares against the expected values,\r\n\t3. Saves the XML to a file\r\n\t4. Ends the Conditional Block\r\n\t5. Navigates to another page.\r\n");
 
             WriteToFile(get_helpFileName(), "iFrame_AccessElement-Test.xml - Performs the following test steps.\r\n\t1. Waits for Page, \r\n\t2. Switches to an iFrame and checks the text of the button agains the expected value,\r\n\t3. Switches to an iFrame and persists the text of an element,\r\n\t4. Switches to an iFrame with arguments out of order to force argument shuffling and checks the text of a button,");
             WriteToFile(get_helpFileName(), "\t5. Switches to an iFrame and checks the value of a button,\r\n\t6. Switches to an iFrame and checks the value of a button against the persisted value, \r\n\t7. Switches to an iFrame and clicks a link,\r\n\t8. Navigates to another page,");

@@ -17,13 +17,17 @@
       <change beforePath="$PROJECT_DIR$/pages/HelperUtilities.java" beforeDir="false" afterPath="$PROJECT_DIR$/pages/HelperUtilities.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pages/TestCentral.java" beforeDir="false" afterPath="$PROJECT_DIR$/pages/TestCentral.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pages/TestHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/pages/TestHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/AppCommands.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/AppCommands.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/AppConstants.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/AppConstants.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/BrowserTypes.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/BrowserTypes.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/HelperUtilities.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/HelperUtilities.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/TestCentral.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/TestCentral.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/TestHelper.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/TestHelper.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/TestSettings.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tests/CheckAnchorhref-Test.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tests/CheckImageSource-Test.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tests/CompareImages-Gerrett-Test.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Tests/CompareImages-Gerrett-Test.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tests/GetAndQueryJson-Test.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Tests/GetAndQueryJson-Test.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -261,12 +265,12 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/pages/TestCentral.java</url>
-          <line>4130</line>
+          <line>4323</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/pages/TestCentral.java</url>
-          <line>4214</line>
+          <line>4407</line>
           <option name="timeStamp" value="5" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -276,8 +280,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/pages/TestCentral.java</url>
-          <line>319</line>
+          <line>320</line>
           <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/pages/TestCentral.java</url>
+          <line>3401</line>
+          <option name="timeStamp" value="11" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

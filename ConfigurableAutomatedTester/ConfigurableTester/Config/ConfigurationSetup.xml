@@ -24,8 +24,8 @@
 		
 		<!-- Group 2 - Contrast, Count, Get and Current Page URL -->
 		<!--		
-		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckColorContrast-Test.xml</testFileName1>-->
-		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckCount-Test.xml</testFileName1>
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckColorContrast-Test.xml</testFileName1>
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckCount-Test.xml</testFileName1>-->
 		<!--
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckGet-Test.xml</testFileName1>
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckPageWithoutNavigation-Test.xml</testFileName1>-->
@@ -40,7 +40,7 @@
 		
 		<!-- Group 4 - Image Comparison tests -->
 		<!--
-		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CompareImages-Gerrett-Test.xml</testFileName1>
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CompareImages-Alternate-Test.xml</testFileName1>
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CompareImages-Test.xml</testFileName1>
 		-->
 		
@@ -54,7 +54,7 @@
 		<!-- Group 6 - Create Test Page tests -->
 		<!--
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CreateTestPage-Test.xml</testFileName1>
-		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CreateUnformatedTestPage-Test.xml</testFileName1>
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CreateUnformattedTestPage-Test.xml</testFileName1>
 		-->
 		
 		<!-- Group 7 - Fill out form and Find Phrase tests -->
@@ -64,9 +64,10 @@
 		-->
 		
 		<!-- Group 8 - SQL Server Query and JSON Search content tests -->
-		<!--
+		<!-- -->
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\GetAndQueryJson-Test.xml</testFileName1>
-		<testFileName2>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\RunSqlQueries_Alternate-Test.xml</testFileName2>
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\GetAndQueryXML-Test.xml</testFileName1>
+		<!--<testFileName2>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\RunSqlQueries_Alternate-Test.xml</testFileName2>
 		<testFileName2>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\SqlServerAccess-Test.xml</testFileName2>
 		-->
 		

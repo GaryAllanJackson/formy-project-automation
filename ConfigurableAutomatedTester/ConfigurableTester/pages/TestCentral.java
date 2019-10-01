@@ -139,6 +139,7 @@ public class TestCentral {
     private String uniqueId = null;
     private boolean conditionalSuccessful = false;
     private String jsonContent = null;
+    private String xmlContent = null;
 
     //region { Properties }
     boolean is_executedFromMain() {
@@ -540,6 +541,8 @@ public class TestCentral {
                 PersistValueController(ts, fileStepIndex);
             } else if (ts.get_command().toLowerCase().equals(AppCommands.Query_JSON)) {
                 JsonController(ts, fileStepIndex);
+            } else if (ts.get_command().toLowerCase().equals(AppCommands.Query_XML)) {
+                XmlController(ts, fileStepIndex);
             } else {
                 CheckElementText(ts, fileStepIndex);
             }
@@ -570,7 +573,11 @@ public class TestCentral {
                 FindPhraseController(ts, fileStepIndex);
             } else if (ts.get_command().toLowerCase().equals(AppCommands.Get_JSON) || ts.get_command().toLowerCase().equals(AppCommands.Save_JSON) ) {
                 JsonController(ts, fileStepIndex);
+            } else if (ts.get_command().toLowerCase().equals(AppCommands.Get_XML) || ts.get_command().toLowerCase().equals(AppCommands.Save_XML) ) {
+                XmlController(ts, fileStepIndex);
             }
+
+            //XmlController
         }
     }
 
@@ -729,6 +736,30 @@ public class TestCentral {
             SaveJsonToFile(ts, fileStepIndex);
         }
     }
+
+
+    private void XmlController(TestStep ts, String fileStepIndex) throws Exception {
+        if (ts.get_command().toLowerCase().equals(AppCommands.Get_XML)) {
+            testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_CYAN_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start XML Retrieval and Persistence Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+            xmlContent = GetXmlContent(ts, fileStepIndex);
+            //testHelper.DebugDisplay("xmlContent = " + xmlContent);
+            if (!IsNullOrEmpty(xmlContent)) {
+                conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
+
+                testHelper.UpdateTestResults(AppConstants.indent8 + "Successful XML content retrieval for step " + fileStepIndex, true);
+            } else {
+                conditionalSuccessful = false;
+                testHelper.UpdateTestResults(AppConstants.indent8 + "Failed to retrieve XML content for step " + fileStepIndex, true);
+            }
+            testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_CYAN_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End XML Retrieval and Persistence Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+        } else if (ts.get_command().toLowerCase().equals(AppCommands.Query_XML)) {
+            QueryXML(ts, fileStepIndex);
+        } else if (ts.get_command().toLowerCase().equals(AppCommands.Save_XML)) {
+            SaveXmlToFile(ts, fileStepIndex);
+        }
+    }
+
+
 
 
     /******************************************************************************
@@ -3299,6 +3330,25 @@ public class TestCentral {
         return jsonResponse;
     }
 
+
+    private String GetXmlContent(TestStep ts, String fileStepIndex) throws Exception {
+        String xmlResponse = null;
+        String url = GetArgumentValue(ts, 0, null);
+        if (url != null && !url.isEmpty()) {
+            testHelper.setNavigationMessageIndent(AppConstants.indent8 + AppConstants.indent5);
+            PerformExplicitNavigation(ts, fileStepIndex);
+            testHelper.setNavigationMessageIndent(null);
+
+            xmlResponse = driver.getPageSource();     //driver.getPageSource();
+            if (!IsNullOrEmpty(xmlResponse)) {
+                //testHelper.DebugDisplay("xmlResponse= " + xmlResponse);
+                return xmlResponse;
+            }
+        }
+        return xmlResponse;
+    }
+
+
     /*****************************************************************************
      * DESCRIPTION: This method Searches the global JSON string downloaded in the
      *              GetJsonContent method for the expected value.
@@ -3310,7 +3360,7 @@ public class TestCentral {
      *           for the particular test step.
      * @param fileStepIndex - the file index and the step index.
      *****************************************************************************/
-    private void QueryJSON(TestStep ts, String fileStepIndex) {
+    private void QueryJSONContains(TestStep ts, String fileStepIndex) {
         if (jsonContent != null && !jsonContent.isEmpty()) {
             String searchString = "\"" + ts.get_accessor() + "\":" + ts.get_expectedValue();
             testHelper.UpdateTestResults(AppConstants.indent8 + "Searching JSON for " + searchString + " for step " + fileStepIndex,true);
@@ -3328,6 +3378,62 @@ public class TestCentral {
             }
         }
     }
+
+    private void QueryJSON(TestStep ts, String fileStepIndex) {
+        if (!IsNullOrEmpty(jsonContent)) {
+            String jsonTemp = jsonContent;
+            ArrayList<String> searchList = new ArrayList<>();
+            int count  = 0;
+            int endPos;
+            String searchString = "\"" + ts.get_accessor() + "\":" + ts.get_expectedValue();
+            String searchKey = "\"" + ts.get_accessor() + "\":";
+            int keyPos = 0;
+
+            testHelper.UpdateTestResults(AppConstants.indent8 + "Searching JSON for " + searchString + " for step " + fileStepIndex,true);
+
+            if (jsonTemp == null || jsonTemp.isEmpty()) {
+                testHelper.UpdateTestResults(AppConstants.indent8 + "JSON not previously retrieved prior to query attempt for step " + fileStepIndex + " skipping.",true);
+                return;
+            }
+
+            String elementContent;
+            while (jsonTemp.contains(searchKey)) {
+                endPos = 0;
+                keyPos = jsonTemp.indexOf(searchKey);
+                endPos = keyPos + searchString.length();
+                elementContent = "";
+
+                if (jsonTemp.substring(keyPos, endPos).equals(searchString)) {
+                    elementContent = jsonTemp.substring(keyPos, endPos).trim();
+                    elementContent = elementContent.substring(elementContent.indexOf(":") + 1).trim();
+                    searchList.add(elementContent);
+                }
+
+                jsonTemp = jsonTemp.substring(endPos + 1);
+                count++;
+            }
+
+            if (searchList.size() > 0) {
+                testHelper.UpdateTestResults("Successful JSON Search for step " + fileStepIndex + " Searched all " + ts.get_accessor() + " for: (" +  ts.get_expectedValue() + ") Found: (" +  searchList.get(0) + ")\r\n" +
+                        AppConstants.indent5 +  "- There were " + count + " " + ts.get_accessor()  + " elements with " + searchList.size() + " elements containing the expected value." , true);
+                if (ts.get_crucial()) {
+                    assertEquals( ts.get_expectedValue(), searchList.get(0));
+                }
+            } else {
+                testHelper.UpdateTestResults("Failed JSON Search for step " + fileStepIndex + " Searched for: (" +  searchString + ") but did not find this!\r\n" +
+                        AppConstants.indent5 +  "- There were " + count + " " + searchString + " elements but none contained the expected value." , true);
+                //If this is crucial and the search string is not found, force an assertion failure
+                if (ts.get_crucial()) {
+                    assertEquals(ts.get_expectedValue(), null);
+                }
+            }
+        } else {
+            testHelper.UpdateTestResults("Failed JSON Search for step " + fileStepIndex + " JSON content was not previously retrieved successfully\r\n." +
+                    "Either the Get JSON retrieval step failed or no Get JSON step preceded this JSON Query attempt", true);
+        }
+    }
+
+
 
     /*****************************************************************************
      * Description: Saves previously retrieved JSON to the file specified in the
@@ -3376,6 +3482,93 @@ public class TestCentral {
                 errorMessage = "Aborting!!!  No File Name was specified as the destination for the downloaded JSON content.";
             }
             testHelper.UpdateTestResults(AppConstants.indent8 + "Failure JSON not saved to file for step " + fileStepIndex + " because: " + errorMessage, true);
+        }
+    }
+
+
+    //TODO: WORKING HERE
+    private void QueryXML(TestStep ts, String fileStepIndex) {
+        if (!IsNullOrEmpty(xmlContent)) {
+            String xmlTemp = xmlContent;
+            ArrayList<String> searchList = new ArrayList<>();
+            int count  = 0;
+            int startPos, endPos;
+            String elementStart = "<" + ts.get_accessor() + ">";
+            String elementEnd = "</" + ts.get_accessor() + ">";
+            String elementContent;
+            while (xmlTemp.contains(elementStart)) {
+                startPos = xmlTemp.indexOf(elementStart) + elementStart.length();
+                endPos = xmlTemp.indexOf(elementEnd);
+                elementContent = xmlTemp.substring(startPos, endPos).trim();
+                //testHelper.DebugDisplay("elementContent(" + count + ") = " + elementContent);
+                if (elementContent.equals(ts.get_expectedValue())) {
+                    searchList.add(elementContent);
+                }
+                xmlTemp = xmlTemp.substring(endPos + elementEnd.length());
+                count++;
+            }
+
+            testHelper.UpdateTestResults(AppConstants.indent8 + "Searching XML for " + elementStart + ts.get_expectedValue() + elementEnd + " for step " + fileStepIndex,true);
+            if (searchList.size() > 0) {
+                testHelper.UpdateTestResults("Successful XML Search for step " + fileStepIndex + " Searched for: (" +  ts.get_expectedValue() + ") Found: (" +  searchList.get(0) + ")\r\n" +
+                        AppConstants.indent5 +  "- There were " + count + " " + elementStart + elementEnd + " elements with " + searchList.size() + " elements containing the expected value." , true);
+                if (ts.get_crucial()) {
+                    assertEquals( ts.get_expectedValue(), searchList.get(0));
+                }
+            } else {
+                testHelper.UpdateTestResults("Failed XML Search for step " + fileStepIndex + " Searched for: (" +  elementStart + ts.get_expectedValue() + elementEnd + ") but did not find this!\r\n" +
+                        AppConstants.indent5 +  "- There were " + count + " " + elementStart + elementEnd + " elements but none contained the expected value." , true);
+                //If this is crucial and the search string is not found, force an assertion failure
+                if (ts.get_crucial()) {
+                    assertEquals(ts.get_expectedValue(), null);
+                }
+            }
+        } else {
+            testHelper.UpdateTestResults("Failed XML Search for step " + fileStepIndex + " XML content was not previously retrieved successfully\r\n." +
+                    "Either the Get XML retrieval step failed or no Get XML step preceded this XML Query attempt", true);
+        }
+    }
+
+    private void SaveXmlToFile(TestStep ts, String fileStepIndex) {
+        String fileName = GetArgumentValue(ts, 0, null);
+        String overWriteExisting = GetArgumentValue(ts, 1, "false");
+        boolean overwriteExistingFile = (overWriteExisting.toLowerCase().equals("true") || overWriteExisting.toLowerCase().equals("overwrite")) ? true : false;
+        String originalFileName = fileName;
+        String updateFileNameMessage = "";
+
+        if (overWriteExisting.contains("\\") || overWriteExisting.contains("//")) {
+            ArgumentOrderErrorMessage(ts, "save xml");
+            String [] items = {fileName, overWriteExisting};
+            RearrangeArgumentOrder(ts, items, ts.get_command());
+            fileName = GetArgumentValue(ts, 0, null);
+            originalFileName = fileName;
+            overWriteExisting = GetArgumentValue(ts, 1, "false");
+            overwriteExistingFile = (overWriteExisting.toLowerCase().equals("true") || overWriteExisting.toLowerCase().equals("overwrite")) ? true : false;
+        }
+
+        if (!IsNullOrEmpty(xmlContent) && !IsNullOrEmpty(fileName)) {
+            if (!overwriteExistingFile) {
+                fileName = testHelper.GetUnusedFileName(fileName);
+                if (!originalFileName.equals(fileName)) {
+                    updateFileNameMessage = "A File with the original file name existed.\r\n" +
+                            AppConstants.indent8 + "File name updated from: " + originalFileName + " to " + fileName;
+                    testHelper.UpdateTestResults(AppConstants.indent8 + updateFileNameMessage, true);
+                }
+            } else {
+                testHelper.DeleteFile(fileName);
+            }
+
+            testHelper.UpdateTestResults(AppConstants.indent8 + "Saving XML to file:" + fileName + " for step " + fileStepIndex, true);
+            testHelper.WriteToFile(fileName, xmlContent);
+            testHelper.UpdateTestResults("Successful XML saved to file " + fileName + " for step " + fileStepIndex, true);
+        } else {
+            String errorMessage;
+            if (xmlContent != null && !xmlContent.isEmpty()) {
+                errorMessage = "Aborting!!!  No XML content was previously retrieved.";
+            } else {
+                errorMessage = "Aborting!!!  No File Name was specified as the destination for the downloaded XML content.";
+            }
+            testHelper.UpdateTestResults(AppConstants.indent8 + "Failure XML not saved to file for step " + fileStepIndex + " because: " + errorMessage, true);
         }
     }
     //endregion
