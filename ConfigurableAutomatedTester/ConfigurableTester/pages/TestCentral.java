@@ -27,8 +27,12 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -720,8 +724,7 @@ public class TestCentral {
     private void JsonController(TestStep ts, String fileStepIndex) throws Exception {
         if (ts.get_command().toLowerCase().equals(AppCommands.Get_JSON)) {
             testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_PURPLE_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start JSON Retrieval and Persistence Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
-            jsonContent = GetJsonContent(ts, fileStepIndex);
-            //testHelper.UpdateTestResults("jsonContent = " + jsonContent, false);
+            jsonContent = GetHttpResponse(ts, fileStepIndex);
             if (jsonContent != null && !jsonContent.isEmpty()) {
                 conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
 
@@ -750,8 +753,7 @@ public class TestCentral {
     private void XmlController(TestStep ts, String fileStepIndex) throws Exception {
         if (ts.get_command().toLowerCase().equals(AppCommands.Get_XML)) {
             testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_CYAN_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start XML Retrieval and Persistence Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
-            xmlContent = GetXmlContent(ts, fileStepIndex);
-            //testHelper.DebugDisplay("xmlContent = " + xmlContent);
+            xmlContent = GetHttpResponse(ts, fileStepIndex);
             if (!IsNullOrEmpty(xmlContent)) {
                 conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
                 testHelper.UpdateTestResults(AppConstants.indent8 + "Successful XML content retrieval for step " + fileStepIndex, true);
@@ -817,7 +819,7 @@ public class TestCentral {
                 message = "Performing find searching all elements containing '" + phrase.trim() + "'";
             }
         }
-       testHelper.UpdateTestResults(AppConstants.indent5 + message + " for step " + fileStepIndex, true);
+        testHelper.UpdateTestResults(AppConstants.indent5 + message + " for step " + fileStepIndex, true);
         FindPhrase(ts, fileStepIndex);
     }
 
@@ -3307,65 +3309,46 @@ public class TestCentral {
     //endregion
 
     //region { JSON API EndPoint Methods }
-    /****************************************************************************
-     * DESCRIPTION: This method starts by checking if a URL parameter was
-     *              supplied and if so, calls the navigation method to
-     *              perform a Navigation event and make that the current page.
-     *              Next, it downloads the JSON from the current page and stores
-     *              it in a global variable where it can later be queried by
-     *              another method.
-     * @param ts - Test Step Object containing all related information
-     *           for the particular test step.
-     * @param fileStepIndex - the file index and the step index.
-     * @return - the retrieved JSON if successful else null
-     * @throws Exception - Possible Exception attempting to retrieve JSON from API endpoint
-     ****************************************************************************/
-    private String GetJsonContent(TestStep ts, String fileStepIndex)throws Exception {
-        String jsonResponse;
-        String url = GetArgumentValue(ts, 0, null);
-        if (url != null && !url.isEmpty()) {
-            testHelper.setNavigationMessageIndent(AppConstants.indent8 + AppConstants.indent5);
-            PerformExplicitNavigation(ts, fileStepIndex);
-            testHelper.setNavigationMessageIndent(null);
-        }
-        //DO NOT REMOVE THIS.  MAY TRANSFORM THIS FROM A STRING INTO A JSON OBJECT TO SEE IF EASIER TO QUERY
-        //JsonObject jsonObject = (JSON)driver.getPageSource();
-        jsonResponse = driver.getPageSource();
 
-        if (jsonResponse != null && !jsonResponse.isEmpty()) {
-            return jsonResponse;
-        }
-        return jsonResponse;
-    }
 
     /****************************************************************************
      * DESCRIPTION: This method starts by checking if a URL parameter was
      *              supplied and if so, calls the navigation method to
      *              perform a Navigation event and make that the current page.
-     *              Next, it downloads the XML from the current page and stores
-     *              it in a global variable where it can later be queried by
-     *              another method.
+     *              Next, it retrieves the http response from the current
+     *              page and returns it to the calling method where it will
+     *              be persisted in a global variable for use throughout
+     *              the application.
      * @param ts - Test Step Object containing all related information
      *           for the particular test step.
      * @param fileStepIndex - the file index and the step index.
-     * @return - the retrieved XML if successful else null
-     * @throws Exception - Possible Exception attempting to retrieve XML from API endpoint
-     ****************************************************************************/
-    private String GetXmlContent(TestStep ts, String fileStepIndex) throws Exception {
-        String xmlResponse = null;
-        String url = GetArgumentValue(ts, 0, null);
+     * @return - the retrieved http response (JSON/XML) if successful else null
+     * @throws Exception - Possible Exception attempting to retrieve JSON/XML
+     *                      from API endpoint
+     * *******************************************************************************/
+    private String GetHttpResponse(TestStep ts, String fileStepIndex) throws Exception {
+        String url = GetArgumentValue(ts, 0, GetCurrentPageUrl());
+        StringBuffer response = new StringBuffer();
+
         if (url != null && !url.isEmpty()) {
             testHelper.setNavigationMessageIndent(AppConstants.indent8 + AppConstants.indent5);
             PerformExplicitNavigation(ts, fileStepIndex);
             testHelper.setNavigationMessageIndent(null);
+            URL obj = new URL(url);
 
-            xmlResponse = driver.getPageSource();     //driver.getPageSource();
-            if (!IsNullOrEmpty(xmlResponse)) {
-                //testHelper.DebugDisplay("xmlResponse= " + xmlResponse);
-                return xmlResponse;
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            int responseCode = con.getResponseCode();
+            String color = (responseCode == 200) ? AppConstants.ANSI_GREEN_BRIGHT : AppConstants.ANSI_RED_BRIGHT;
+            testHelper.UpdateTestResults(AppConstants.indent8 + color + "Response Code " + responseCode + " for step " + fileStepIndex + AppConstants.ANSI_RESET, true);
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
             }
+            in.close();
         }
-        return xmlResponse;
+        return response.toString();
     }
 
 
@@ -4787,7 +4770,66 @@ public class TestCentral {
         }
     }
 
+    /****************************************************************************
+     * DESCRIPTION: This method starts by checking if a URL parameter was
+     *              supplied and if so, calls the navigation method to
+     *              perform a Navigation event and make that the current page.
+     *              Next, it downloads the XML from the current page and stores
+     *              it in a global variable where it can later be queried by
+     *              another method.
+     * @param ts - Test Step Object containing all related information
+     *           for the particular test step.
+     * @param fileStepIndex - the file index and the step index.
+     * @return - the retrieved XML if successful else null
+     * @throws Exception - Possible Exception attempting to retrieve XML from API endpoint
+     ****************************************************************************/
+    private String GetXmlContent(TestStep ts, String fileStepIndex) throws Exception {
+        String xmlResponse = null;
+        String url = GetArgumentValue(ts, 0, null);
+        if (url != null && !url.isEmpty()) {
+            testHelper.setNavigationMessageIndent(AppConstants.indent8 + AppConstants.indent5);
+            PerformExplicitNavigation(ts, fileStepIndex);
+            testHelper.setNavigationMessageIndent(null);
 
+            xmlResponse = driver.getPageSource();     //driver.getPageSource();
+            if (!IsNullOrEmpty(xmlResponse)) {
+                //testHelper.DebugDisplay("xmlResponse= " + xmlResponse);
+                return xmlResponse;
+            }
+        }
+        return xmlResponse;
+    }
+
+    /****************************************************************************
+     * DESCRIPTION: This method starts by checking if a URL parameter was
+     *              supplied and if so, calls the navigation method to
+     *              perform a Navigation event and make that the current page.
+     *              Next, it downloads the JSON from the current page and stores
+     *              it in a global variable where it can later be queried by
+     *              another method.
+     * @param ts - Test Step Object containing all related information
+     *           for the particular test step.
+     * @param fileStepIndex - the file index and the step index.
+     * @return - the retrieved JSON if successful else null
+     * @throws Exception - Possible Exception attempting to retrieve JSON from API endpoint
+     ****************************************************************************/
+    private String GetJsonContent(TestStep ts, String fileStepIndex)throws Exception {
+        String jsonResponse;
+        String url = GetArgumentValue(ts, 0, null);
+        if (url != null && !url.isEmpty()) {
+            testHelper.setNavigationMessageIndent(AppConstants.indent8 + AppConstants.indent5);
+            PerformExplicitNavigation(ts, fileStepIndex);
+            testHelper.setNavigationMessageIndent(null);
+        }
+        //DO NOT REMOVE THIS.  MAY TRANSFORM THIS FROM A STRING INTO A JSON OBJECT TO SEE IF EASIER TO QUERY
+        //JsonObject jsonObject = (JSON)driver.getPageSource();
+        jsonResponse = driver.getPageSource();
+
+        if (jsonResponse != null && !jsonResponse.isEmpty()) {
+            return jsonResponse;
+        }
+        return jsonResponse;
+    }
     //endregion
 
 
