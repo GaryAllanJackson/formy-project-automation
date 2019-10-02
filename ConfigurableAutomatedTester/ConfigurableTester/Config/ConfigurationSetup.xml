@@ -64,8 +64,8 @@
 		-->
 		
 		<!-- Group 8 - SQL Server Query and JSON Search content tests -->
-		<!-- -->
-		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\GetAndQueryJson-Test.xml</testFileName1>
+		<!-- 
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\GetAndQueryJson-Test.xml</testFileName1>-->
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\GetAndQueryXML-Test.xml</testFileName1>
 		<!--<testFileName2>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\RunSqlQueries_Alternate-Test.xml</testFileName2>
 		<testFileName2>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\SqlServerAccess-Test.xml</testFileName2>

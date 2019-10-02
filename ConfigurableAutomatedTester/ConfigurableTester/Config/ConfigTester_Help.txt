@@ -1453,6 +1453,9 @@ Equally important as opening the database connection object, is closing the data
 Open connections consume resources and unclosed connections can use up all available memory or an 
 allotment of connections depending on where the connection lives.
 To avoid this, always write a close connection command whenever writing an open connection command.
+While a cleanup method exists to close any open connections it should not be relied upon to close your open connection and
+by the time it is executed, used resources could bog down the computer system depending upon what is being tested and what other
+applications are open.
 The close command is simple and as follows:
 <step>
 	<command>Close Database Connection</command>
@@ -1519,12 +1522,13 @@ Second Option Alternative type of SQL Select Statement: Specify the entire Selec
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 ═════════[ RETRIEVING JSON FROM AN API ENDPOINT  ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════
-The Get JSON command like the SQL Server Connection, persists an object for use by subsequent commands.
+The Get JSON command, like the SQL Server Connection, persists an object for use by subsequent commands.
 Unlike the SQL Server Connection command, which opens a connection object, the Get JSON command
 downloads and stores the JSON into a local variable that can later be used to SEARCH for key value pairs.
 This local variable will contain the retrieved JSON until overwritten by a subsequent Get JSON request or 
 until the test file executing ends.
-Each time a test is run this variable is reset to null until populated by the Get JSON command.
+Also, unlike the SQL Server Connection, which needs to be closed, there is no need to close the JSON object.
+Each time a test is run, this variable is reset to null until populated by the Get JSON command.
 The Get JSON command is used to retrieve the JSON from either the current page/url or a different page/url.
 If the optional argument URL is not included, the current page/url will be used to retrieve the JSON.
 If the URL is included as the command's optional sole argument, it will trigger a navigation event and then
@@ -1666,6 +1670,7 @@ The Get XML command works like the Get JSON command persisting an object for use
 The Get XML command downloads and stores the XML into a local variable that can later be used to SEARCH for elements containing text.
 This local variable will contain the retrieved XML until overwritten by a subsequent Get XML request or 
 until the test file executing ends.
+Like the JSON object, there is no need to close the XML object.
 Each time a test is run this variable is reset to null until populated by the Get XML command.
 The Get XML command is used to retrieve the XML from either the current page/url or a different page/url.
 If the optional argument URL is not included, the current page/url will be used to retrieve the XML.
@@ -1702,8 +1707,17 @@ by including the URL as an argument in the test step.
 ═════════[ QUERYING XML FROM AN API ENDPOINT ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 A QUICK NOTE ABOUT XML BEFORE REVIEWING THIS COMMAND
 	Returned XML is a string, but unlike JSON, it is unnecessary to differentiate between strings and numbers in your test.
-	While XML does allow for adding parameters to distinguish between different value types, for the purposes of this tool that is unnecessary.
+	While XML does allow for adding attributes to distinguish between different value types, for the purposes of this tool .
+	that is unnecessary to identify the type but attributes must be included as part of the <accessor></accessor> if they are
+	part of the Element/Node tag.
 	The Element/Node is like a variable that references the value it contains.
+	If the Element being queried contains parameters, they must be included as part of the <accessor></accessor>.
+	This application is going to place angle brackets around the accessor provided and search for that complete element from angle bracket to angle bracket.
+	For example the XML Element:
+		<ForumId type="int">1</ForumId>
+	Should have the following accessor:
+		<accessor>ForumId type="int"</accessor>
+
 The Query XML command is actually just a CASE SENSITIVE search and not a querying framework like the SQL Query command.
 For this reason, the != operator is not supported for XML Queries.
 This test will find every Element/Node bearing the name provided in the <accessor></accessor> element and display the 
@@ -1741,6 +1755,25 @@ notice that the <expectedValue></expectedValue> is like any other non-JSON test 
 	<accessor>Forum</accessor>
 	<accessorType>XML</accessorType>
 	<expectedValue>General</expectedValue>
+</step>
+
+For the following examples, refer to the following XML excerpt:
+<Forums>
+	<ForumId type="int">1</ForumId>
+	<Forum>General</Forum>
+	<Description>General Discussion Forum</Description>
+</Forums>
+
+For this example, the Query XML command is being used to find the ForumId Element/Node with a value of 1 but this Element/Node contains a type attribute.
+Notice that this attribute MUST be accounted for in the <accessor></accessor>, as shown below, for the application to recognize this as the correct Element/Node.
+Failing to include existing parameters when querying the XML will result in a failure to find the Element/Node and thus a test step failure. 
+<step>
+	<command>Query XML</command>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+	<accessor>ForumId type="int"</accessor>
+	<accessorType>XML</accessorType>
+	<expectedValue>1</expectedValue>
 </step>
 
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════

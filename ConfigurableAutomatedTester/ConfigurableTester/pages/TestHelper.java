@@ -2194,6 +2194,9 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "Open connections consume resources and unclosed connections can use up all available memory or an ");
             WriteToFile(get_helpFileName(), "allotment of connections depending on where the connection lives.");
             WriteToFile(get_helpFileName(), "To avoid this, always write a close connection command whenever writing an open connection command.");
+            WriteToFile(get_helpFileName(), "While a cleanup method exists to close any open connections it should not be relied upon to close your open connection and");
+            WriteToFile(get_helpFileName(), "by the time it is executed, used resources could bog down the computer system depending upon what is being tested and what other");
+            WriteToFile(get_helpFileName(), "applications are open.");
             WriteToFile(get_helpFileName(), "The close command is simple and as follows:");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>Close Database Connection</command>\r\n" +
@@ -2259,12 +2262,13 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("[ RETRIEVING JSON FROM AN API ENDPOINT  ]", "═", 9, 159));
-            WriteToFile(get_helpFileName(), "The Get JSON command like the SQL Server Connection, persists an object for use by subsequent commands.");
+            WriteToFile(get_helpFileName(), "The Get JSON command, like the SQL Server Connection, persists an object for use by subsequent commands.");
             WriteToFile(get_helpFileName(), "Unlike the SQL Server Connection command, which opens a connection object, the Get JSON command");
             WriteToFile(get_helpFileName(), "downloads and stores the JSON into a local variable that can later be used to SEARCH for key value pairs.");
             WriteToFile(get_helpFileName(), "This local variable will contain the retrieved JSON until overwritten by a subsequent Get JSON request or ");
             WriteToFile(get_helpFileName(), "until the test file executing ends.");
-            WriteToFile(get_helpFileName(), "Each time a test is run this variable is reset to null until populated by the Get JSON command.");
+            WriteToFile(get_helpFileName(), "Also, unlike the SQL Server Connection, which needs to be closed, there is no need to close the JSON object.");
+            WriteToFile(get_helpFileName(), "Each time a test is run, this variable is reset to null until populated by the Get JSON command.");
             WriteToFile(get_helpFileName(), "The Get JSON command is used to retrieve the JSON from either the current page/url or a different page/url.");
             WriteToFile(get_helpFileName(), "If the optional argument URL is not included, the current page/url will be used to retrieve the JSON.");
             WriteToFile(get_helpFileName(), "If the URL is included as the command's optional sole argument, it will trigger a navigation event and then");
@@ -2401,12 +2405,13 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
-            //TODO: WORKING ON XML HELP STARTING HERE
+            //XML API help starts here
             WriteToFile(get_helpFileName(), PrePostPad("[ RETRIEVING XML FROM AN API ENDPOINT  ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "The Get XML command works like the Get JSON command persisting an object for use by subsequent commands.");
             WriteToFile(get_helpFileName(), "The Get XML command downloads and stores the XML into a local variable that can later be used to SEARCH for elements containing text.");
             WriteToFile(get_helpFileName(), "This local variable will contain the retrieved XML until overwritten by a subsequent Get XML request or ");
             WriteToFile(get_helpFileName(), "until the test file executing ends.");
+            WriteToFile(get_helpFileName(), "Like the JSON object, there is no need to close the XML object.");
             WriteToFile(get_helpFileName(), "Each time a test is run this variable is reset to null until populated by the Get XML command.");
             WriteToFile(get_helpFileName(), "The Get XML command is used to retrieve the XML from either the current page/url or a different page/url.");
             WriteToFile(get_helpFileName(), "If the optional argument URL is not included, the current page/url will be used to retrieve the XML.");
@@ -2443,8 +2448,13 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), PrePostPad("[ QUERYING XML FROM AN API ENDPOINT ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "A QUICK NOTE ABOUT XML BEFORE REVIEWING THIS COMMAND");
             WriteToFile(get_helpFileName(), "\tReturned XML is a string, but unlike JSON, it is unnecessary to differentiate between strings and numbers in your test.");
-            WriteToFile(get_helpFileName(), "\tWhile XML does allow for adding parameters to distinguish between different value types, for the purposes of this tool that is unnecessary.");
+            WriteToFile(get_helpFileName(), "\tWhile XML does allow for adding attributes to distinguish between different value types, for the purposes of this tool .");
+            WriteToFile(get_helpFileName(), "\tthat is unnecessary to identify the type but attributes must be included as part of the <accessor></accessor> if they are");
+            WriteToFile(get_helpFileName(), "\tpart of the Element/Node tag.");
             WriteToFile(get_helpFileName(), "\tThe Element/Node is like a variable that references the value it contains.");
+            WriteToFile(get_helpFileName(), "\tIf the Element being queried contains parameters, they must be included as part of the <accessor></accessor>.");
+            WriteToFile(get_helpFileName(), "\tThis application is going to place angle brackets around the accessor provided and search for that complete element from angle bracket to angle bracket.");
+            WriteToFile(get_helpFileName(), "\tFor example the XML Element:\r\n\t\t<ForumId type=\"int\">1</ForumId>\r\n\tShould have the following accessor:\r\n\t\t<accessor>ForumId type=\"int\"</accessor>\r\n");
             WriteToFile(get_helpFileName(), "The Query XML command is actually just a CASE SENSITIVE search and not a querying framework like the SQL Query command.");
             WriteToFile(get_helpFileName(), "For this reason, the != operator is not supported for XML Queries.");
             WriteToFile(get_helpFileName(), "This test will find every Element/Node bearing the name provided in the <accessor></accessor> element and display the ");
@@ -2482,6 +2492,25 @@ public class TestHelper{
                     "\t<accessor>Forum</accessor>\r\n" +
                     "\t<accessorType>XML</accessorType>\r\n" +
                     "\t<expectedValue>General</expectedValue>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "For the following examples, refer to the following XML excerpt:");
+            WriteToFile(get_helpFileName(), "<Forums>\r\n" +
+                    "\t<ForumId type=\"int\">1</ForumId>\r\n" +
+                    "\t<Forum>General</Forum>\r\n" +
+                    "\t<Description>General Discussion Forum</Description>\r\n" +
+                    "</Forums>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "For this example, the Query XML command is being used to find the ForumId Element/Node with a value of 1 but this Element/Node contains a type attribute.");
+            WriteToFile(get_helpFileName(), "Notice that this attribute MUST be accounted for in the <accessor></accessor>, as shown below, for the application to recognize this as the correct Element/Node.");
+            WriteToFile(get_helpFileName(), "Failing to include existing parameters when querying the XML will result in a failure to find the Element/Node and thus a test step failure. ");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Query XML</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<accessor>ForumId type=\"int\"</accessor>\r\n" +
+                    "\t<accessorType>XML</accessorType>\r\n" +
+                    "\t<expectedValue>1</expectedValue>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
@@ -2541,7 +2570,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
-            //TODO: WORKING ON XML HELP ENDING HERE
+            //XML API help ends here
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));

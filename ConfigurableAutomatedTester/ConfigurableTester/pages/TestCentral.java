@@ -2269,33 +2269,42 @@ public class TestCentral {
         testHelper.UpdateTestResults("Login method reached", false);
 
         try {
+            //#1 attempt to access the alert window and send the username, tab to next input, then password
             testHelper.UpdateTestResults("Switched to Alert second try", false);
             //driver.switchTo().alert();
             driver.switchTo().alert().sendKeys(email + Keys.TAB + password + Keys.RETURN);
             testHelper.UpdateTestResults("Switched to Alert second try after", false);
         } catch (Exception ex) {
             try {
+                //#2 if the alert window is not present, reload the page
                 if (!isAlertPresent()) {
                     driver.get(testPage);
                 }
+                //switch to the alert window, find the username field and send the username
                 driver.switchTo().alert();
                 testHelper.UpdateTestResults("Switched to Alert #1", false);
                 driver.findElement(By.id("username")).sendKeys(email);
+                //find the password field and send the password
                 driver.findElement(By.id("password")).sendKeys(password);
                 testHelper.UpdateTestResults("Sent Credentials email: " + email + " Password: " + password, false);
+                //press the ok button
                 driver.switchTo().alert().accept();
                 testHelper.UpdateTestResults("Switched to Alert #2", false);
+                //switch back to the main window
                 driver.switchTo().defaultContent();
                 testHelper.UpdateTestResults("Switched to default context", false);
                 testHelper.UpdateTestResults("Completed login sequence without error.", true);
             } catch (Exception ex1) {
                 testHelper.UpdateTestResults("Exception " + ex.getMessage(), false);
                 //if (url == null || url.isEmpty() || !url.toLowerCase().trim().equals("n/a")) {
+                //if the url is not present, use the current url
                 if (url == null || url.isEmpty() || !urlIsNA) {
                     url = testPage;
                 }
                 testHelper.UpdateTestResults("Switched to Alert Second catch", false);
+                //place the username and password into the URL
                 String newUrl = url.replace("://", "://" + email + ":" + password + "@");
+                //navgate to the credential encoded url to authenticate
                 driver.get(newUrl);
                 //if the alert doesn't show up, you already have context and are logged in
             }
@@ -3484,12 +3493,14 @@ public class TestCentral {
     private void QueryXML(TestStep ts, String fileStepIndex) {
         if (!IsNullOrEmpty(xmlContent)) {
             String xmlTemp = xmlContent;
+            //testHelper.DebugDisplay("xmlTemp = " + xmlTemp);
             ArrayList<String> searchList = new ArrayList<>();
             int count  = 0;
             int startPos, endPos;
             String elementStart = "<" + ts.get_accessor() + ">";
-            String elementEnd = "</" + ts.get_accessor() + ">";
+            String elementEnd = !ts.get_accessor().contains(" ") ?  "</" + ts.get_accessor() + ">" : "</" + ts.get_accessor().substring(0, ts.get_accessor().indexOf(" ")).trim() + ">";
             String elementContent;
+            //testHelper.DebugDisplay("elementEnd = " + elementEnd);
             while (xmlTemp.contains(elementStart)) {
                 startPos = xmlTemp.indexOf(elementStart) + elementStart.length();
                 endPos = xmlTemp.indexOf(elementEnd);
