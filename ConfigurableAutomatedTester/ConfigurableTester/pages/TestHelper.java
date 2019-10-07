@@ -76,7 +76,6 @@ public class TestHelper{
 
     Dimension savedDimension = null;
 
-
     ConfigSettings ReadConfigurationSettingsXmlFile(String configurationXmlFile, boolean isExecutedFromMain) {
         PrintSamples();
         ConfigSettings configSettings = new ConfigSettings();
@@ -545,8 +544,10 @@ public class TestHelper{
                 File source = ts.getScreenshotAs(OutputType.FILE);
 
                 if (screenShotFolder != null && !screenShotFolder.isEmpty() && Files.exists(Paths.get(screenShotFolder))) {
-                    if (!screenShotFolder.endsWith("\\")) {
+                    if (HelperUtilities.isWindows() &&  !screenShotFolder.endsWith("\\")) {
                         screenShotFolder = screenShotFolder + "\\";
+                    } else if (HelperUtilities.isMac() && !screenShotFolder.endsWith("/")) {
+                        screenShotFolder = screenShotFolder + "/";
                     }
                     FileUtils.copyFile(source, new File(screenShotFolder + screenShotName + fileExtension));
                 } else { //this will never happen, as the configuration folder is set in the calling method for errors

@@ -175,16 +175,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TestCentral (4)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="TestCentral" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="Form" />
       <option name="PACKAGE_NAME" value="" />
       <option name="MAIN_CLASS_NAME" value="TestCentral" />
-      <option name="METHOD_NAME" value="ConfigurableTestController" />
-      <option name="TEST_OBJECT" value="uniqueId" />
+      <option name="TEST_OBJECT" value="class" />
       <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
-      <uniqueIds>
-        <uniqueId value="[engine:junit-jupiter]/[class:TestCentral]" />
-      </uniqueIds>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -228,10 +224,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="JUnit.TestCentral.ConfigurableTestController" />
+        <item itemvalue="JUnit.TestCentral" />
         <item itemvalue="JUnit.TestCentral (2)" />
         <item itemvalue="Application.Form" />
         <item itemvalue="JUnit.TestCentral (1)" />
-        <item itemvalue="JUnit.TestCentral (4)" />
       </list>
     </recent_temporary>
   </component>
@@ -266,17 +262,17 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/pages/TestCentral.java</url>
-          <line>4335</line>
+          <line>4339</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/pages/TestCentral.java</url>
-          <line>4419</line>
+          <line>4423</line>
           <option name="timeStamp" value="5" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/pages/HelperUtilities.java</url>
-          <line>81</line>
+          <line>92</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -286,7 +282,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/pages/TestCentral.java</url>
-          <line>3395</line>
+          <line>3399</line>
           <option name="timeStamp" value="11" />
         </line-breakpoint>
       </breakpoints>

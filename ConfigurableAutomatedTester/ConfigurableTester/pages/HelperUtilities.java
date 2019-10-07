@@ -44,6 +44,14 @@ public class HelperUtilities {
         // This is the core class of the im4java-library where all the magic takes place.
         //ProcessStarter.setGlobalSearchPath("C:\\Program Files\\ImageMagick-7.0.4-Q16");
         //ProcessStarter.setGlobalSearchPath("C:\\Program Files\\ImageMagick-7.0.8-Q16");
+        if (isMac()) {
+            expected = EscapeMacPath(expected);
+            actual = EscapeMacPath(actual);
+            difference = EscapeMacPath(difference);
+        }
+        final double fuzz = 10.0;
+        final String metric = "AE";
+
         String differenceImage = difference;
         ProcessStarter.setGlobalSearchPath("C:\\Program Files (x86)\\ImageMagick-7.0.8-Q16-HDRI");
         differenceImageFile = new File (difference);
@@ -63,11 +71,13 @@ public class HelperUtilities {
 
         //Add option -fuzz to the ImageMagick commandline
         //With Fuzz we can ignore small changes
-        cmpOp.fuzz(10.0);
+        //cmpOp.fuzz(10.0);
+        cmpOp.fuzz(fuzz);
 
         //The special "-metric" setting of 'AE' (short for "Absolute Error" count), will report (to standard error),
         //a count of the actual number of pixels that were masked, at the current fuzz factor.
-        cmpOp.metric("AE");
+        //cmpOp.metric("AE");
+        cmpOp.metric(metric);
 
         // Add the expected image
         cmpOp.addImage(expected);
@@ -78,8 +88,15 @@ public class HelperUtilities {
         // This stores the difference
         cmpOp.addImage(difference);
         try {
-            //Do the compare
-            compare.run(cmpOp);
+            if (isWindows()) {
+                //Do the compare
+                compare.run(cmpOp);
+            } else {
+                boolean status = ExecuteCompareForMac("compare -fuzz " + fuzz + " -metric " + metric + expected + " " + actual + " " + difference);
+                if (!status) {
+                    testHelper.UpdateTestResults("\r\nFailure something went wrong while issuing the compare command on Mac.  Ensure the ImageMagick bin folder is in your path!", true);
+                }
+            }
         } catch (Exception ex) {
             //System.out.print(ex);
             //Put the difference image to the global differences folder
@@ -110,6 +127,18 @@ public class HelperUtilities {
         }
     }
 
+    private boolean ExecuteCompareForMac(String command) {
+        boolean status = false;
+
+        try {
+            // Execute command
+            Process child = Runtime.getRuntime().exec(command);
+            status = true;
+        } catch (IOException e) {
+            testHelper.UpdateTestResults("The following error occurred while trying to shut down ChromeDriver: " + e.getMessage(), true);
+        }
+        return status;
+    }
 
 
     /********************************************************************************************
@@ -223,6 +252,10 @@ public class HelperUtilities {
             returnValue = returnValue.substring(0, returnValue.length() - 1);
         }
         return new File(returnValue);
+    }
+
+    public String EscapeMacPath(String filePath) {
+        return filePath.replace(" ", "\\ ");
     }
 
     //region { Refactored and removed }

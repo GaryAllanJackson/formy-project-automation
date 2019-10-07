@@ -663,7 +663,7 @@ public class TestCentral {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Performing login for step " + fileStepIndex, true);
                 String userId = GetArgumentValue(ts, 0, null);
                 String password = GetArgumentValue(ts, 1, null);
-                String url = GetArgumentValue(ts, 2, "n/a");
+                String url = GetArgumentValue(ts, 2, GetCurrentPageUrl());
                 if (testHelper.CheckIsUrl(url)) {
                     Login(url, userId, password, fileStepIndex);
                     testHelper.UpdateTestResults(AppConstants.indent5 + "Login complete for step " + fileStepIndex, true);
@@ -1044,7 +1044,11 @@ public class TestCentral {
             testHelper.UpdateTestResults(AppConstants.indent5 + "Performing Image Comparison for step " + fileStepIndex + "\r\n" +
                     AppConstants.indent8 + "(Baseline)Expected Image:" + baseLineImage + "\r\n" +
                     AppConstants.indent8 +  "Actual Image: " + actualImage, true);
-            helperUtilities.differenceFileForParent = new File(GetArgumentValue(ts, 3, helperUtilities.GetParentFolder(differenceImage).toString()));
+            if (helperUtilities.isWindows()) {
+                helperUtilities.differenceFileForParent = new File(GetArgumentValue(ts, 3, helperUtilities.GetParentFolder(differenceImage).toString()));
+            } else {
+                helperUtilities.differenceFileForParent = new File(GetArgumentValue(ts, 3, helperUtilities.EscapeMacPath(helperUtilities.GetParentFolder(differenceImage).toString())));
+            }
             helperUtilities.set_executedFromMain(is_executedFromMain());
             helperUtilities.CompareImagesWithImageMagick(baseLineImage, actualImage, differenceImage);
             testHelper.CreateSectionHeader("[ End Image Comparison Test ]", "", AppConstants.ANSI_CYAN, false, false, true);
