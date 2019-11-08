@@ -6,8 +6,16 @@ import org.im4java.process.StandardStream;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.FileStore;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Objects;
 
 //refer to the following page for instructions or reference on implementation
 //https://www.swtestacademy.com/visual-testing-imagemagick-selenium/
@@ -15,7 +23,7 @@ public class HelperUtilities {
 
     //Image files
     public File differenceImageFile;
-    public File differenceFileForParent;
+    public File differenceFileForParent = null;
     private static String OS = System.getProperty("os.name").toLowerCase();
     TestHelper testHelper = new TestHelper();
     private boolean _executedFromMain;
@@ -27,7 +35,7 @@ public class HelperUtilities {
         this._executedFromMain = _executedFromMain;
     }
     private String logFileName;
-
+    private String numType = "bytes";
 
     //ImageMagick Compare Method
     /********************************************************************************************
@@ -56,6 +64,7 @@ public class HelperUtilities {
         ProcessStarter.setGlobalSearchPath("C:\\Program Files (x86)\\ImageMagick-7.0.8-Q16-HDRI");
         differenceImageFile = new File (difference);
         testHelper.set_executedFromMain(is_executedFromMain());
+        String globalImageMessage = "";
 
         //if the difference file already exists, delete it and start fresh
         RemoveExistingFile(difference);
@@ -92,17 +101,28 @@ public class HelperUtilities {
                 //Do the compare
                 compare.run(cmpOp);
             } else {
-                boolean status = ExecuteCompareForMac("compare -fuzz " + fuzz + " -metric " + metric + expected + " " + actual + " " + difference);
+                //boolean status = ExecuteCompareForMac("compare -fuzz " + fuzz + " -metric " + metric + expected + " " + actual + " " + difference);
+                boolean status = ExecuteShellCommand("compare", "-fuzz " + fuzz, " -metric " + metric, expected, actual, difference);
                 if (!status) {
                     testHelper.UpdateTestResults("\r\nFailure something went wrong while issuing the compare command on Mac.  Ensure the ImageMagick bin folder is in your path!", true);
                 }
             }
         } catch (Exception ex) {
+            //the java.lang.NullPointerException exception happens because of a flaw in img4java and needs to be suppressed but all other errors should be shown.
+            if (!ex.getMessage().equals("java.lang.NullPointerException")) {
+                testHelper.UpdateTestResults(AppConstants.ANSI_RED_BRIGHT + "The following error occurred while performing the image comparison: " + ex.getMessage() + AppConstants.ANSI_RESET, true);
+            }
             //System.out.print(ex);
             //Put the difference image to the global differences folder
-            Files.copy(differenceImageFile,differenceFileForParent);
-            differenceImage = differenceFileForParent.getAbsoluteFile().toString();
             //throw ex;  //do not re-throw this!!!!!
+        }
+
+        //make a copy of the difference file in the global folder
+        if (differenceImageFile.exists() && differenceFileForParent != null) {
+            Files.copy(differenceImageFile, differenceFileForParent);
+            globalImageMessage = "\r\n" + AppConstants.indent5 + "Global Difference Image:(" + differenceFileForParent.getAbsoluteFile().toString() + ")\r\n";
+            globalImageMessage += AppConstants.indent5 + GetGlobalFileStorageInformation(new File(differenceFileForParent.getParent()));
+            //differenceImage = differenceFileForParent.getAbsoluteFile().toString();
         }
 
         File tempDifference = new File(differenceImage);
@@ -113,7 +133,7 @@ public class HelperUtilities {
             testHelper.UpdateTestResults("\r\nSuccessful comparison of images.  View the images to see the comparison results:\r\n" +
                     AppConstants.indent5 + "Baseline Image: (" + expected + ")\r\n" +
                     AppConstants.indent5 + "Actual Image: (" + actual + ")\r\n" +
-                    AppConstants.indent5 + "Difference Image:(" + differenceImage + ")", true);
+                    AppConstants.indent5 + "Difference Image:(" + differenceImage + ")" + globalImageMessage, true);
         } else {
             testHelper.UpdateTestResults("\r\nFailure something may have gone wrong as no difference image was created.", true);
         }
@@ -131,6 +151,9 @@ public class HelperUtilities {
         boolean status = false;
 
         try {
+            //add the ImageMagick bin folder to the command so that it can find the command program
+            command = "\"" + ProcessStarter.getGlobalSearchPath() + "bin/" + command + "\"";
+
             // Execute command
             Process child = Runtime.getRuntime().exec(command);
             status = true;
@@ -138,6 +161,42 @@ public class HelperUtilities {
             testHelper.UpdateTestResults("The following error occurred while trying to shut down ChromeDriver: " + e.getMessage(), true);
         }
         return status;
+    }
+
+    private boolean ExecuteShellCommand(String command, String fuzz, String metric, String expected, String actual, String difference) {
+        boolean status = false;
+
+        ProcessBuilder processBuilder = new ProcessBuilder();
+
+        processBuilder.command(command, fuzz, metric, expected, actual, difference);
+        try {
+            Process process = processBuilder.start();
+            StringBuilder output = new StringBuilder();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line + "\n");
+            }
+
+            int exitVal = process.waitFor();
+            if (exitVal == 0) {
+                System.out.println("Success!");
+                System.out.println(output);
+                System.exit(0);
+                status = true;
+            } else {
+                //abnormal...
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+
+        }
+        return status;
+
     }
 
 
@@ -257,6 +316,75 @@ public class HelperUtilities {
     public String EscapeMacPath(String filePath) {
         return filePath.replace(" ", "\\ ");
     }
+
+    /*******************************************************************************
+     * Description: Retrieves the available space for all mapped drives, the number of
+     *          files in the Global Backup folder as well as the total size in bytes of
+     *          all files in the Global Backup Folder and returns this to the calling
+     *          method as one formatted string containing this information.
+     * @param folder - Global Backup Folder
+     * @return  - String of folder and drive space information
+     * @throws IOException - An IOException can be thrown if the folder does not exist.
+     **********************************************************************************/
+    private String GetGlobalFileStorageInformation(final File folder) throws IOException {
+        NumberFormat nf = NumberFormat.getNumberInstance();
+        String availableSpace = "";
+        for (Path root : FileSystems.getDefault().getRootDirectories()) {
+            try {
+                FileStore store = java.nio.file.Files.getFileStore(root);
+                float tmpLong = ReduceNumberAndSetDescriptor(store.getUsableSpace());
+                availableSpace += root + " = " + nf.format(tmpLong) + " " + numType + "\r\n\t" + AppConstants.indent8;
+
+            } catch(IOException e) {
+                availableSpace = "??";
+            }
+        }
+
+        availableSpace = availableSpace.substring(0, availableSpace.lastIndexOf("\r"));
+        String temp = "\tThe " + folder.getName() + " folder contains x files totaling xx bytes.\r\n" + AppConstants.indent8 + "Available Space: \r\n\t" + AppConstants.indent8 + availableSpace;
+        float totalSize = 0;
+        int totalFiles = 0;
+
+        for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
+            if (fileEntry.isFile()) {
+                totalSize += fileEntry.length();
+                totalFiles++;
+            }
+        }
+
+        DecimalFormat formatter =  new DecimalFormat("###,###,###,###.###");
+        totalSize = ReduceNumberAndSetDescriptor((long)totalSize);
+
+        return temp.replace("xx", formatter.format(totalSize)).replace(" x ", " " + Integer.toString(totalFiles) + " ").replace("bytes", numType);
+    }
+
+    /***********************************************************************************
+     * Description: This method reduces the number passed in by the highest 10s multiplier
+     *              and sets the global numType variable accordingly so that
+     *              1,000,000 = 1 and the numType is set to MB
+     *              thus reducing 1,000,000 to 1 MB.
+     * @param size
+     * @return
+     ***************************************************************************************/
+    float ReduceNumberAndSetDescriptor(long size) {
+
+        if (size > 1000000000) {
+            size = size / 1000000000;
+            numType = "GB";
+            if (size > 1000) {
+                size = size / 1000;
+                numType = "TB";
+            }
+        } else if (size > 1000000) {
+            size = size / 1000000;
+            numType = "MB";
+        } else if (size > 1000) {
+            size = size / 1000;
+            numType = "KB";
+        }
+        return size;
+    }
+
 
     //region { Refactored and removed }
 //    private void SetUpExceptionVariables(String difference) {

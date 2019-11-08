@@ -28,6 +28,7 @@
       <change beforePath="$PROJECT_DIR$/../Tests/CheckAnchorhref-Test.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tests/CheckImageSource-Test.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tests/CompareImages-Gerrett-Test.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Tests/CompareImages-Gerrett-Test.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Tests/CompareImages-Test.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Tests/CompareImages-Test.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Tests/GetAndQueryJson-Test.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Tests/GetAndQueryJson-Test.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -262,17 +263,17 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/pages/TestCentral.java</url>
-          <line>4339</line>
+          <line>4348</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/pages/TestCentral.java</url>
-          <line>4423</line>
+          <line>4432</line>
           <option name="timeStamp" value="5" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/pages/HelperUtilities.java</url>
-          <line>92</line>
+          <line>101</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -282,8 +283,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/pages/TestCentral.java</url>
-          <line>3399</line>
+          <line>3408</line>
           <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/pages/HelperUtilities.java</url>
+          <line>170</line>
+          <option name="timeStamp" value="12" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

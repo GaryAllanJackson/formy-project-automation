@@ -27,6 +27,7 @@
 			<arg2>C:\Gary\Java Utilities\ScreenShots\Mashup\Actual\Test1.png</arg2> 
 			<!-- third argument the name of the Difference filename. It is Required!!!   -->
 			<arg3>C:\Gary\Java Utilities\ScreenShots\Mashup\Difference\Test-Difference.png</arg3> 
+			<arg4></arg4>
 		</arguments>
 	</step>
 </testSteps>

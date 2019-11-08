@@ -1909,6 +1909,17 @@ It is suggested that you create the following three folders when comparing image
 	The Difference folder - This is where your difference images can be stored, separated from other images to allow for quickly 
 		reviewing the differences.
 		This image will be created in the file system and need not exist prior to running the test.
+	The arguments for this command are as follows:
+	<arg1>This argument specifies the baseline or comp image and is required.  The path and file must exist!</arg1>
+	<arg2>This argument specifies the actual image being compared to the baseline image and is required. The path and file must exist!</arg2>
+	<arg3>This argument specifies the difference file that will be created.  The path must exist but the file need not exist as it will be created.</arg3>
+	<arg4>This argument allows for a global backup of the difference file to be created with a unique name based on the file name provided.</arg4>
+		If this filename exists an incremental integer value will be appended to the base filename to create a unique file name, which will be displayed to .
+		the tester and written to the log file for that test run.
+		Keeping these files allows for tracking progress and determining differences between test runs.
+		It also allows for comparing difference files, if desired but please note that storing a large number of files
+		may adversely affect computer performance and even overrun free drive space, so monitoring the computer is essential when
+		repeatedly running tests that create images and global backups.
 IMPORTANT!!! If tests are rerun, difference images will be overwritten!!
 Take time to backup needed difference images prior to rerunning tests or the previous difference image state will be lost.
 The following command compares the baseline image in <arg1></arg1> with the actual image in <arg2></arg2> and 
@@ -1927,6 +1938,9 @@ which images need further examination to detail the differences to the correspon
 		<arg2>C:\ScreenShots\Mashup\Actual\MyScreenShot.png</arg2>
 		<!-- third argument the name of the Difference filename. It is Required!!!   -->
 		<arg3>C:\ScreenShots\Mashup\Difference\MyScreenShot-DifferenceImage.png</arg3>
+		<!-- fourth argument the name of the Global Difference filename for backing up difference images. It is Optional.   -->
+		<!-- If provided a unique filename based on the filename provided will be created to prevent overwriting previous files.   -->
+		<arg4>C:\ScreenShots\Mashup\Global_Differences\MyScreenShot-DifferenceImage.png</arg4>
 	</arguments>
 </step>
 

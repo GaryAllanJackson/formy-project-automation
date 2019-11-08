@@ -343,7 +343,8 @@ public class TestHelper{
                             testStep.ArgumentList = argumentList;
                             if (argumentMessage != null) {
                                 if (argumentMessage.toString().endsWith("\r\n\t\t ")) {
-                                    argumentMessage = new StringBuilder(argumentMessage.substring(0, argumentMessage.lastIndexOf("\r") - 1));
+                                    //argumentMessage = new StringBuilder(argumentMessage.substring(0, argumentMessage.lastIndexOf("\r") - 1));
+                                    argumentMessage = new StringBuilder(argumentMessage.substring(0, argumentMessage.lastIndexOf("\r")));
                                 }
                                 UpdateTestResults(argumentMessage.toString(), false);
                                 argumentMessage = null;
@@ -361,7 +362,7 @@ public class TestHelper{
     }
 
 
-    //TODO: WORKING HERE GAJ
+    //TODO: WORKING HERE GAJ - for reading the API xml file as an xml document for xPath access
     String ReadTestSettingsXmlFile(String xmlEndPointFileContent, String xpath_expression, String searchValue) {
         String matchType = "No match";
         try {
@@ -468,7 +469,21 @@ public class TestHelper{
         int defaultMilliSecondsForNavigation = 10000;
         UpdateTestResults(indent + "Waiting the default wait time of " + defaultMilliSecondsForNavigation + " milliseconds for navigation to complete!", false);
         driver.get(webAddress);
+        CheckPageLoadTiming(driver, indent);
         Thread.sleep(defaultMilliSecondsForNavigation);
+    }
+
+    private void CheckPageLoadTiming(WebDriver driver, String indent) {
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        double backendPerformance_calc = (double)js.executeScript("return (window.performance.timing.responseStart - window.performance.timing.navigationStart) / 1000");
+        double frontendPerformance_calc = (double)js.executeScript("return (window.performance.timing.domComplete - window.performance.timing.responseStart) / 1000");
+        //double navigationStart = (long)js.executeScript("return window.performance.timing.navigationStart");
+        //double responseStart = (long)js.executeScript("return window.performance.timing.responseStart");
+        //double domComplete = (long)js.executeScript("return window.performance.timing.domComplete");
+        //double backendPerformance_calc = (double) (responseStart - navigationStart);
+        //double frontendPerformance_calc = (double) (domComplete - responseStart);
+        UpdateTestResults(indent + "Backend Performance Timing: " + backendPerformance_calc  + " milliseconds.", true);
+        UpdateTestResults(indent + "Frontend Performance Timing: " + frontendPerformance_calc + " milliseconds.", true);
     }
 
 
@@ -484,6 +499,7 @@ public class TestHelper{
         if (milliseconds > 0) {
             UpdateTestResults(AppConstants.indent8 + "Waiting " + milliseconds  + " milliseconds, as directed, for navigation to complete!", false);
             driver.get(webAddress);
+            CheckPageLoadTiming(driver, AppConstants.indent8);
             Thread.sleep(milliseconds);
         } else {
             NavigateToPage(driver, webAddress);
@@ -2648,6 +2664,17 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\tThe Difference folder - This is where your difference images can be stored, separated from other images to allow for quickly ");
             WriteToFile(get_helpFileName(), "\t\treviewing the differences.");
             WriteToFile(get_helpFileName(), "\t\tThis image will be created in the file system and need not exist prior to running the test.");
+            WriteToFile(get_helpFileName(), "\tThe arguments for this command are as follows:");
+            WriteToFile(get_helpFileName(), "\t<arg1>This argument specifies the baseline or comp image and is required.  The path and file must exist!</arg1>");
+            WriteToFile(get_helpFileName(), "\t<arg2>This argument specifies the actual image being compared to the baseline image and is required. The path and file must exist!</arg2>");
+            WriteToFile(get_helpFileName(), "\t<arg3>This argument specifies the difference file that will be created.  The path must exist but the file need not exist as it will be created.</arg3>");
+            WriteToFile(get_helpFileName(), "\t<arg4>This argument allows for a global backup of the difference file to be created with a unique name based on the file name provided.</arg4>");
+            WriteToFile(get_helpFileName(), "\t\tIf this filename exists an incremental integer value will be appended to the base filename to create a unique file name, which will be displayed to .");
+            WriteToFile(get_helpFileName(), "\t\tthe tester and written to the log file for that test run.");
+            WriteToFile(get_helpFileName(), "\t\tKeeping these files allows for tracking progress and determining differences between test runs.");
+            WriteToFile(get_helpFileName(), "\t\tIt also allows for comparing difference files, if desired but please note that storing a large number of files");
+            WriteToFile(get_helpFileName(), "\t\tmay adversely affect computer performance and even overrun free drive space, so monitoring the computer is essential when");
+            WriteToFile(get_helpFileName(), "\t\trepeatedly running tests that create images and global backups.");
             WriteToFile(get_helpFileName(), "IMPORTANT!!! If tests are rerun, difference images will be overwritten!!");
             WriteToFile(get_helpFileName(), "Take time to backup needed difference images prior to rerunning tests or the previous difference image state will be lost.");
             WriteToFile(get_helpFileName(), "The following command compares the baseline image in <arg1></arg1> with the actual image in <arg2></arg2> and ");
@@ -2666,6 +2693,9 @@ public class TestHelper{
                     "\t\t<arg2>C:\\ScreenShots\\Mashup\\Actual\\MyScreenShot.png</arg2>\r\n" +
                     "\t\t<!-- third argument the name of the Difference filename. It is Required!!!   -->\r\n" +
                     "\t\t<arg3>C:\\ScreenShots\\Mashup\\Difference\\MyScreenShot-DifferenceImage.png</arg3>\r\n" +
+                    "\t\t<!-- fourth argument the name of the Global Difference filename for backing up difference images. It is Optional.   -->\r\n" +
+                    "\t\t<!-- If provided a unique filename based on the filename provided will be created to prevent overwriting previous files.   -->\r\n" +
+                    "\t\t<arg4>C:\\ScreenShots\\Mashup\\Global_Differences\\MyScreenShot-DifferenceImage.png</arg4>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
@@ -3113,5 +3143,20 @@ public class TestHelper{
         }
         return checkFileName;
     }
+
+    /*******************************************************************
+     * Description: Tests a string to determine if it is null or empty.
+     *
+     * @param testString - String to test if is null or empty.
+     * @return - Returns True if null or Empty, else False.
+     ********************************************************************/
+    boolean IsNullOrEmpty(String testString) {
+        boolean status = false;
+        if (testString == null || testString.isEmpty()) {
+            status = true;
+        }
+        return status;
+    }
+
 }
 

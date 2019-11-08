@@ -754,7 +754,7 @@ public class TestCentral {
         if (ts.get_command().toLowerCase().equals(AppCommands.Get_XML)) {
             testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_CYAN_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start XML Retrieval and Persistence Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
             xmlContent = GetHttpResponse(ts, fileStepIndex);
-            if (!IsNullOrEmpty(xmlContent)) {
+            if (!testHelper.IsNullOrEmpty(xmlContent)) {
                 conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
                 testHelper.UpdateTestResults(AppConstants.indent8 + "Successful XML content retrieval for step " + fileStepIndex, true);
             } else {
@@ -1037,17 +1037,26 @@ public class TestCentral {
         String baseLineImage = GetArgumentValue(ts,0, null);
         String actualImage = GetArgumentValue(ts, 1, null);
         String differenceImage = GetArgumentValue(ts, 2, null);
+        String globalDifferenceImage = GetArgumentValue(ts, 3, null);
 
-        if (!IsNullOrEmpty(baseLineImage) && !IsNullOrEmpty(actualImage) && !IsNullOrEmpty(differenceImage)) {
+        if (!testHelper.IsNullOrEmpty(baseLineImage) && !testHelper.IsNullOrEmpty(actualImage) && !testHelper.IsNullOrEmpty(differenceImage)) {
             helperUtilities.testHelper = testHelper;
             testHelper.CreateSectionHeader("[ Start Image Comparison Test ]", "", AppConstants.ANSI_CYAN, true, false, true);
             testHelper.UpdateTestResults(AppConstants.indent5 + "Performing Image Comparison for step " + fileStepIndex + "\r\n" +
                     AppConstants.indent8 + "(Baseline)Expected Image:" + baseLineImage + "\r\n" +
                     AppConstants.indent8 +  "Actual Image: " + actualImage, true);
-            if (helperUtilities.isWindows()) {
-                helperUtilities.differenceFileForParent = new File(GetArgumentValue(ts, 3, helperUtilities.GetParentFolder(differenceImage).toString()));
+            if (!testHelper.IsNullOrEmpty(globalDifferenceImage)) {
+                helperUtilities.differenceFileForParent = new File(testHelper.GetUnusedFileName(globalDifferenceImage));
+//                if (helperUtilities.isWindows()) {
+//                    //helperUtilities.differenceFileForParent = new File(GetArgumentValue(ts, 3, helperUtilities.GetParentFolder(differenceImage).toString()));
+//                    //helperUtilities.differenceFileForParent = new File(globalDifferenceImage != null ? globalDifferenceImage : helperUtilities.GetParentFolder(differenceImage).toString());
+//                    helperUtilities.differenceFileForParent = new File(testHelper.GetUnusedFileName(globalDifferenceImage));
+//                } else {
+//                    //helperUtilities.differenceFileForParent = new File(globalDifferenceImage != null ? globalDifferenceImage : helperUtilities.EscapeMacPath(helperUtilities.GetParentFolder(differenceImage).toString()));
+//                    helperUtilities.differenceFileForParent = new File(testHelper.GetUnusedFileName(globalDifferenceImage));
+//                }
             } else {
-                helperUtilities.differenceFileForParent = new File(GetArgumentValue(ts, 3, helperUtilities.EscapeMacPath(helperUtilities.GetParentFolder(differenceImage).toString())));
+                helperUtilities.differenceFileForParent = null;
             }
             helperUtilities.set_executedFromMain(is_executedFromMain());
             helperUtilities.CompareImagesWithImageMagick(baseLineImage, actualImage, differenceImage);
@@ -1055,19 +1064,19 @@ public class TestCentral {
         }
     }
 
-    /*******************************************************************
-     * Description: Tests a string to determine if it is null or empty.
-     *
-     * @param testString - String to test if is null or empty.
-     * @return - Returns True if null or Empty, else False.
-     ********************************************************************/
-    private boolean IsNullOrEmpty(String testString) {
-        boolean status = false;
-        if (testString == null || testString.isEmpty()) {
-            status = true;
-        }
-        return status;
-    }
+//    /*******************************************************************
+//     * Description: Tests a string to determine if it is null or empty.
+//     *
+//     * @param testString - String to test if is null or empty.
+//     * @return - Returns True if null or Empty, else False.
+//     ********************************************************************/
+//    private boolean IsNullOrEmpty(String testString) {
+//        boolean status = false;
+//        if (testString == null || testString.isEmpty()) {
+//            status = true;
+//        }
+//        return status;
+//    }
     //endregion
 
 
@@ -3378,7 +3387,7 @@ public class TestCentral {
      * @param fileStepIndex - the file index and the step index.
      ***********************************************************************************/
     private void QueryJSON(TestStep ts, String fileStepIndex) {
-        if (!IsNullOrEmpty(jsonContent)) {
+        if (!testHelper.IsNullOrEmpty(jsonContent)) {
             String jsonTemp = jsonContent;
             ArrayList<String> searchList = new ArrayList<>();
             int count  = 0;
@@ -3495,7 +3504,7 @@ public class TestCentral {
      * @param fileStepIndex - the file index and the step index.
      ***********************************************************************************/
     private void QueryXML(TestStep ts, String fileStepIndex) {
-        if (!IsNullOrEmpty(xmlContent)) {
+        if (!testHelper.IsNullOrEmpty(xmlContent)) {
             String xmlTemp = xmlContent;
             //testHelper.DebugDisplay("xmlTemp = " + xmlTemp);
             ArrayList<String> searchList = new ArrayList<>();
@@ -3562,7 +3571,7 @@ public class TestCentral {
             overwriteExistingFile = (overWriteExisting.toLowerCase().equals("true") || overWriteExisting.toLowerCase().equals("overwrite")) ? true : false;
         }
 
-        if (!IsNullOrEmpty(xmlContent) && !IsNullOrEmpty(fileName)) {
+        if (!testHelper.IsNullOrEmpty(xmlContent) && !testHelper.IsNullOrEmpty(fileName)) {
             if (!overwriteExistingFile) {
                 fileName = testHelper.GetUnusedFileName(fileName);
                 if (!originalFileName.equals(fileName)) {
@@ -4807,7 +4816,7 @@ public class TestCentral {
             testHelper.setNavigationMessageIndent(null);
 
             xmlResponse = driver.getPageSource();     //driver.getPageSource();
-            if (!IsNullOrEmpty(xmlResponse)) {
+            if (!testHelper.IsNullOrEmpty(xmlResponse)) {
                 //testHelper.DebugDisplay("xmlResponse= " + xmlResponse);
                 return xmlResponse;
             }
