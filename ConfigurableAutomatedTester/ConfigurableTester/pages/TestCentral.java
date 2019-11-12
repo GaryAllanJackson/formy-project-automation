@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -1949,19 +1950,18 @@ public class TestCentral {
         String windowDimensions = GetArgumentValue(ts, 2, null);
         String indentMargin = ts.get_command().toLowerCase().equals(AppCommands.Navigate) ? AppConstants.indent5 : AppConstants.indent8;
         String subIndent = indentMargin.equals(AppConstants.indent5) ? AppConstants.indent8 : AppConstants.indent5 + AppConstants.indent8;
+        //TODO: ADDING TIMING CHECK FOR FRONT END AND BACK END PAGE LOAD TIMINGS
+        String pageTimings = GetArgumentValue(ts, 3, null);
+        double frontEndTiming = 0;
+        double backEndTiming = 0;
 
-        if (!testHelper.CheckIsUrl(navigateUrl)) {
-            SortNavigationArguments(ts, navigateUrl, delayTime, windowDimensions, "navigate");
+        if (!testHelper.CheckIsUrl(navigateUrl) || (delayTime != null && TestHelper.tryParse(delayTime) == null) || (windowDimensions != null && !windowDimensions.toLowerCase().contains("w=")) ||
+                (pageTimings != null && !pageTimings.contains("be"))) {
+            SortNavigationArguments(ts, navigateUrl, delayTime, windowDimensions, pageTimings, "navigate");
             navigateUrl =  GetArgumentValue(ts, 0, null);
             delayTime = GetArgumentValue(ts, 1, null);
             windowDimensions = GetArgumentValue(ts, 2, null);
-        }
-
-        if (delayTime != null && TestHelper.tryParse(delayTime) == null) {
-            SortNavigationArguments(ts, navigateUrl, delayTime, windowDimensions, "delay");
-            navigateUrl =  GetArgumentValue(ts, 0, null);
-            delayTime = GetArgumentValue(ts, 1, null);
-            windowDimensions = GetArgumentValue(ts, 2, null);
+            pageTimings = GetArgumentValue(ts, 3, null);
         }
 
         String expectedUrl = null;
@@ -1994,12 +1994,25 @@ public class TestCentral {
                     testHelper.SetWindowContentDimensions(driver, width, height);
                 }
             }
+            if (pageTimings != null && !pageTimings.isEmpty()) {
+                //first find out if BE or FE is first
+                if (pageTimings.toLowerCase().contains("be=") && pageTimings.toLowerCase().contains("fe=")) {
+                    if (pageTimings.toLowerCase().indexOf("be=") < pageTimings.toLowerCase().indexOf("fe=")) {
+                        frontEndTiming = parseDouble(pageTimings.substring(pageTimings.toLowerCase().indexOf("fe=") + 3));
+                        backEndTiming =  parseDouble(pageTimings.substring(pageTimings.toLowerCase().indexOf("be=") + 3, pageTimings.toLowerCase().indexOf("fe=") - 1));
+                    } else {
+                        backEndTiming = parseDouble(pageTimings.substring(pageTimings.toLowerCase().indexOf("be=") + 3));
+                        frontEndTiming =  parseDouble(pageTimings.substring(pageTimings.toLowerCase().indexOf("fe=") + 3, pageTimings.toLowerCase().indexOf("be=") - 1));
+                    }
+                }
+            }
         }
         testPage = navigateUrl;
         //Explicit Navigation Event
         testHelper.UpdateTestResults(subIndent + "Navigating to " + navigateUrl + " for step " + fileStepIndex, true);
 
         String actualUrl = CheckPageUrl(delayMilliSeconds);
+        String timingMessage = "";
         if (expectedUrl != null && expectedUrl.trim().length() > 0) {
             if (ts.get_crucial()) {
                 assertEquals(expectedUrl, actualUrl);
@@ -2012,13 +2025,45 @@ public class TestCentral {
                 }
             }
             if (expectedUrl.trim().equals(actualUrl.trim())) {
-                testHelper.UpdateTestResults(subIndent + "Successful Navigation and URL Check for step " + fileStepIndex + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")", true);
+                if (frontEndTiming > 0 && backEndTiming > 0) {
+                    timingMessage = GetTimingMessage(frontEndTiming, backEndTiming, subIndent);
+                    testHelper.UpdateTestResults(subIndent + "Successful Navigation and URL Check for step " + fileStepIndex + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")\r\n" + timingMessage, true);
+                } else {
+                    testHelper.UpdateTestResults(subIndent + "Successful Navigation and URL Check for step " + fileStepIndex + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")", true);
+                }
                 //subIndent
             } else {
-                testHelper.UpdateTestResults(subIndent + "Failed Navigation and URL Check for step " + fileStepIndex + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")", true);
+                if (frontEndTiming > 0 && backEndTiming > 0) {
+                    timingMessage = GetTimingMessage(frontEndTiming, backEndTiming, subIndent);
+                    testHelper.UpdateTestResults(subIndent + "Failed Navigation and URL Check for step " + fileStepIndex + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")\r\n" + timingMessage, true);
+                } else {
+                    testHelper.UpdateTestResults(subIndent + "Failed Navigation and URL Check for step " + fileStepIndex + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")", true);
+                }
             }
         }
         testHelper.UpdateTestResults( indentMargin + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End Explicit Navigation Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+    }
+
+    String GetTimingMessage(Double frontEndTiming, Double backEndTiming, String subIndent) {
+        String timingMessage = null;
+
+        if (frontEndTiming >= testHelper.get_frontEndPageLoadDuration() && backEndTiming >= testHelper.get_backEndPageLoadDuration()) {
+            timingMessage = subIndent + AppConstants.ANSI_GREEN_BRIGHT + "Successful Backend Load Expected time (" + backEndTiming + ") actual (" + testHelper.get_backEndPageLoadDuration() + ")\r\n" +
+                    subIndent + "Successful Frontend Load Expected time (" + frontEndTiming + ") actual (" + testHelper.get_frontEndPageLoadDuration() + ")" + AppConstants.ANSI_RESET;
+        } else if (frontEndTiming < testHelper.get_frontEndPageLoadDuration() && backEndTiming < testHelper.get_backEndPageLoadDuration()) {
+            timingMessage = subIndent + AppConstants.ANSI_RED + "Failed Backend Load Expected time (" + backEndTiming + ") actual (" + testHelper.get_backEndPageLoadDuration() + ")\r\n" +
+                    subIndent + "Failed Frontend Load Expected time (" + frontEndTiming + ") actual (" + testHelper.get_frontEndPageLoadDuration() + ")" + AppConstants.ANSI_RESET;
+        } else {
+            if (backEndTiming < testHelper.get_backEndPageLoadDuration()) {
+                timingMessage = subIndent + AppConstants.ANSI_RED + "Failed Backend Load Expected time (" + backEndTiming + ") actual (" + testHelper.get_backEndPageLoadDuration() + ")\r\n" + AppConstants.ANSI_RESET +
+                        subIndent + AppConstants.ANSI_GREEN_BRIGHT + "Successful Frontend Load Expected time (" + frontEndTiming + ") actual (" + testHelper.get_frontEndPageLoadDuration() + ")" + AppConstants.ANSI_RESET;
+            }
+            if (frontEndTiming < testHelper.get_frontEndPageLoadDuration()) {
+                timingMessage = subIndent + AppConstants.ANSI_GREEN_BRIGHT + "Successful Backend Load Expected time (" + backEndTiming + ") actual (" + testHelper.get_backEndPageLoadDuration() + ")\r\n" + AppConstants.ANSI_RESET +
+                        subIndent + AppConstants.ANSI_RED + "Failed Frontend Load Expected time (" + frontEndTiming + ") actual (" + testHelper.get_frontEndPageLoadDuration() + ")" + AppConstants.ANSI_RESET;
+            }
+        }
+        return timingMessage;
     }
 
 
@@ -4223,77 +4268,25 @@ public class TestCentral {
      * @param windowDimensions - window dimensions to set for the browser
      * @param sortField - field found to be out of argument order
      *****************************************************************************/
-    private void SortNavigationArguments(TestStep ts, String navigateUrl, String delayTime, String windowDimensions, String sortField) {
-        String tempValue;
+    private void SortNavigationArguments(TestStep ts, String navigateUrl, String delayTime, String windowDimensions, String pageTimings, String sortField) {
         String [] items;
+        //String[] tempItems = new String[] {"navigate", "delayTime", "windowDimensions", "pageTimings"};
+        String[] tempItems = new String[] {"", "", "", ""};
 
-        if (sortField.toLowerCase().equals("navigate")) {
-            if (delayTime != null && !delayTime.isEmpty() && testHelper.CheckIsUrl(delayTime)) {
-                tempValue = delayTime;
-                //navigateUrl in delayTime, delayTime in windowDimension, windowDimension in navigateUrl
-                final boolean navArgumentContainsDimensionValues = (navigateUrl.toLowerCase().contains("w=") || navigateUrl.toLowerCase().contains("h="));
-                //if (navigateUrl.toLowerCase().contains("w=") || navigateUrl.toLowerCase().contains("h=")) {
-                if (navArgumentContainsDimensionValues) {
-                    delayTime = windowDimensions;
-                    windowDimensions = navigateUrl;
-                    navigateUrl = tempValue;
-                    items = new String[] {navigateUrl, delayTime, windowDimensions};
-                    RearrangeArgumentOrder(ts, items, ts.get_command());
-                    //navigateUrl in delayTime, delayTime in NavigateUrl, windowDimensions in windowDimensions
-                } else if (windowDimensions != null && (windowDimensions.toLowerCase().contains("w=") || windowDimensions.toLowerCase().contains("h="))) {
-                    //delayTime in navigateUrl, navigateUrl in delayTime, windowDimension in windowDimension
-                    delayTime = navigateUrl;
-                    navigateUrl = tempValue;
-                    items = new String[] {navigateUrl, delayTime, windowDimensions};
-                    RearrangeArgumentOrder(ts, items, ts.get_command());
-                    //navigateUrl in delayTime, delaytime in navigateURL, no windowDimensions provided
-                } else if (TestHelper.tryParse(navigateUrl) != null) {
-                    delayTime = navigateUrl;
-                    navigateUrl = tempValue;
-                    items = new String[] {navigateUrl, delayTime, windowDimensions};
-                    RearrangeArgumentOrder(ts, items, ts.get_command());
-                }
-            } else if (windowDimensions != null && !windowDimensions.isEmpty() && testHelper.CheckIsUrl(windowDimensions)) {
-                //windowDimensions has URL, navigateUrl has windowDimensions
-                tempValue = windowDimensions;
-                if (navigateUrl.toLowerCase().contains("w=") || navigateUrl.toLowerCase().contains("h=")) {
-                    //windowdimensions has URL - navigateURL has window dimensions");
-                    windowDimensions = navigateUrl;
-                    navigateUrl = tempValue;
-                    items = new String[] {navigateUrl, delayTime, windowDimensions};
-                    RearrangeArgumentOrder(ts, items, ts.get_command());
-                } else {
-                    windowDimensions = delayTime;
-                    delayTime = navigateUrl;
-                    navigateUrl = tempValue;
-                    items = new String[] {navigateUrl, delayTime, windowDimensions};
-                    RearrangeArgumentOrder(ts, items, ts.get_command());
-                }
-            } else if (TestHelper.tryParse(delayTime) != null) {
-                //delayTime in delayTime, navigateUrl in windowDimensions, windowDimensions in navigateUrl
-                tempValue = windowDimensions;
-                windowDimensions = navigateUrl;
-                navigateUrl = tempValue;
-                items = new String[] {navigateUrl, delayTime, windowDimensions};
-                RearrangeArgumentOrder(ts, items, ts.get_command());
-            }
-        } else if (sortField.toLowerCase().equals("delay")) {
-            //if delay is the sort field that means the navigation field is correct.
-            if (delayTime.toLowerCase().contains("w=") || delayTime.toLowerCase().contains("h=")) {
-                if (windowDimensions != null && !windowDimensions.isEmpty()) {
-                    tempValue = windowDimensions;
-                    windowDimensions = delayTime;
-                    delayTime = tempValue;
-                    items = new String[] {navigateUrl, delayTime, windowDimensions};
-                    RearrangeArgumentOrder(ts, items, ts.get_command());
-                } else {
-                    windowDimensions = delayTime;
-                    delayTime = Integer.toString(AppConstants.DefaultTimeDelay);
-                    items = new String[] {navigateUrl, delayTime, windowDimensions};
-                    RearrangeArgumentOrder(ts, items, ts.get_command());
-                }
+        items = new String[] {navigateUrl, delayTime, windowDimensions, pageTimings};
+        for (int x=0;x<items.length;x++) {
+            if (items[x].contains("http")) {
+                tempItems[0] = items[x];
+            } else if (items[x].toLowerCase().contains("w=")) {
+                tempItems[2] = items[x];
+            } else if (items[x].toLowerCase().contains("fe")) {
+                tempItems[3] = items[x];
+            } else if (TestHelper.tryParse(items[x]) != null) {
+                tempItems[1] = items[x];
             }
         }
+
+        RearrangeArgumentOrder(ts, tempItems, ts.get_command());
     }
 
 
@@ -4486,7 +4479,7 @@ public class TestCentral {
         if (problemCommand.toLowerCase().equals(AppCommands.Navigate)) {
             errorMessage = "Navigation command arguments out of order!!! \r\n" +
                             "Refer to the help file for the proper order, shown below!!!\r\n" +
-                            "\t<arg1>>Navigation Url</arg1>\r\n\t<arg2>Delay Time</arg2>\r\n\t<arg3>Browser Window Dimensions</arg3>";
+                            "\t<arg1>>Navigation Url</arg1>\r\n\t<arg2>Delay Time</arg2>\r\n\t<arg3>Browser Window Dimensions</arg3>\r\n\t<arg4>Page Load Max Timings</arg4>";
         } else if (problemCommand.toLowerCase().equals(AppCommands.Switch_To_IFrame)) {
             errorMessage = "Switch to IFrame arguments out of order!!!\r\n" +
                     "Refer to the help file for the proper order!!!\r\n" +

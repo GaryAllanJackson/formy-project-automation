@@ -420,9 +420,15 @@ Usually, the test file will consist of multiple steps like (navigation, check el
 The Navigation command navigates the browser to the provided URL.
 All Navigation steps should be marked as crucial, as all subsequent checks require that navigation complete successfully!!!
 An assertion does not have to be part of navigation, but it probably should be!!!
+If Backend and Frontend timings are being tested, the URL must be tested, so the expected value must contain the URL if testing page timings.
 To navigate without checking the URL, remove the expectedValue node completely as displayed in the example below.
 For the Navigation command only, although the arguments should be in the order shown, if they 
 are out of order the application will attempt to discern the order and rearrange them.
+The Navigation command has 4 possible arguments but only the first argument is required.
+The required first argument, <arg1></arg1>, contains the URL to be loaded.
+The optional second argument, <arg2></arg2>, contains the time in milliseconds to wait to allow the page to load.  The default is 10 seconds.
+The optional third argument, <arg3></arg3>, contains the dimensions for setting the browser window height and width.
+The optional fourth argument, <arg4></arg4>, contains the time in milliseconds to wait to allow the page to load.
 
 To Navigate, without checking the URL to ensure that navigation occurred properly, 
 to wait 4000 milli-seconds and to set the window dimensions to (800 x 800)
@@ -444,7 +450,8 @@ Please note that making this crucial is irrelevant as no assertions will be made
 </step>
 
 ═════════[ NAVIGATION WITH SUCCESSFUL NAVIGATION CONFIRMATION ]════════════════════════════════════════════════════════════════════════════════════════════════
-To Navigate, assert that the URL is what is in the expectedValue node and to wait 4 thousand milli-seconds before making the assertion to allow the page to load:
+To Navigate, assert that the URL is what is in the expectedValue node and to wait 4 thousand milli-seconds before making the assertion to allow the page to load,
+and to check that the Back end loads under .5 seconds and that the Front end loads under 3.75 seconds.
 PLEASE NOTE: Asserting that the URL is correct does not mean that a server transfer didn't redirect the URL to a different page but leave the URL untouched. 
 <step>
 	<command>navigate</command>
@@ -455,6 +462,9 @@ PLEASE NOTE: Asserting that the URL is correct does not mean that a server trans
 		<arg1>https://formy-project.herokuapp.com/form</arg1>
 		<arg2>4000</arg2>
 	</arguments>
+		<arg3></arg3>
+		<!-- fourth argument, optional - Back End (BE) and Front End (FE) Page Max Load time in seconds --> 
+		<arg4>FE=3.75 BE=.5</arg4>
 </step>
 
 To Navigate, assert that the URL is as expected, add a time delay and set the browser dimensions to 800 width by 800 height:
@@ -467,6 +477,21 @@ To Navigate, assert that the URL is as expected, add a time delay and set the br
 		<arg1>https://formy-project.herokuapp.com/form</arg1>
 		<arg2>4000</arg2>
 		<arg3>w=800 h=800</arg3>
+	</arguments>
+</step>
+
+To Navigate, assert that the URL is as expected, add a time delay, set the browser dimensions to 800 width by 800 height and
+set the expected Frontend page load time to 3.75 seconds and Backend page load time to .5 seconds:
+<step>
+	<command>navigate</command>
+	<actionType>write</actionType>
+	<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<arg1>https://formy-project.herokuapp.com/form</arg1>
+		<arg2>4000</arg2>
+		<arg3>w=800 h=800</arg3>
+		<arg4>FE=3.75 BE=.5</arg4>
 	</arguments>
 </step>
 
@@ -526,7 +551,8 @@ Please note this is for normal passwords which cannot contain spaces or characte
 The following Login command does not include the navigation step.
 As mentioned earlier, there may be isseus with logging in related to the operating system or alert type.
 Try different methods if failures happen as one approach may work best for a specific scenario.
-To login when presented with an alert style popup, which could happen upon landing on the site or after the site redirects you, and to make this crucial.
+To login when presented with an alert style popup, which could happen upon landing on the site or after the site redirects you, 
+and to make this crucial.
 Please note this is for normal passwords which cannot contain spaces or characters that require escaping.
 <step>
 	<command>login</command>
@@ -546,7 +572,8 @@ When an command, like a button or link click occurs that navigates to a new page
 perform a navigation command but there is a need to check that the page is where expected before further testing.
 NOTE: The <actionType></actionType> for this command is write, not a read.
 This command is designed to work with event navigation to ensure that the navigation has occurred prior to subsequent testing.
-To check a URL without navigating and to make it crucial.  To make it non-crucial change the last parameter to false.
+To check a URL without navigating and to make it crucial.
+To make it non-crucial change the crucial element to false. <crucial>false</crucial>.
 <step>
 	<command>check url</command>
 	<actionType>write</actionType>
@@ -558,13 +585,14 @@ To check a URL without navigating and to make it crucial.  To make it non-crucia
 
 ═════════[ CHECK GET REQUEST STATUS WITHOUT NAVIGATION ]═══════════════════════════════════════════════════════════════════════════════════════════════════════
 The CheckGet command checks the response status of a get.
-To check the Get Requests status of a URL without navigating and to make it crucial.  To make it non-crucial change the last parameter to false.
+To check the Get Requests status of a URL without navigating and to make it crucial.
+To make it non-crucial change the crucial element to false. <crucial>false</crucial>.
 The Space between check and get is optional as shown below.
 <step>
 	<command>checkget</command>
 	<actionType>read</actionType>
 	<expectedValue>200</expectedValue>
-	<crucial>FALSE</crucial>
+	<crucial>TRUE</crucial>
 	<arguments>
 		<arg1>https://www.swtestacademy.com/about-software-test-academy/ </arg1>
 	</arguments>
@@ -586,13 +614,14 @@ Alternative way splitting the words apart.
 ═════════[ CHECK POST REQUEST STATUS WITHOUT NAVIGATION ]══════════════════════════════════════════════════════════════════════════════════════════════════════
 The CheckPost command checks the response status of a post.
 <!-- Test results unconfirmed!!! Need to find suitable URL that allows posting. -->
-To check the Post Requests status of a URL without navigating and to make it crucial.  To make it non-crucial change the last parameter to false.
+To check the Post Requests status of a URL without navigating and to make it crucial.
+To make it non-crucial change the crucial element to false. <crucial>false</crucial>.
 The Space between check and post is optional as shown below.
 <step>
 	<command>checkpost</command>
 	<actionType>read</actionType>
 	<expectedValue>200</expectedValue>
-	<crucial>FALSE</crucial>
+	<crucial>true</crucial>
 	<arguments>
 		<arg1>https://www.swtestacademy.com/about-software-test-academy/ </arg1>
 	</arguments>
@@ -615,7 +644,7 @@ The Wait for page command waits until document ready state is complete.
 To check that the document ready state is complete after previously navigating to a new page and to make it crucial. 
 NOTE: The first argument must be n/a as shown below.
 - Omitting this argument or leaving it empty will result in an invalid format exception.
-To make it non-crucial change the last parameter to false.
+To make it non-crucial change the crucial element to false. <crucial>false</crucial>.
 This will be most useful for triggered navigation.
 <step>
 	<command>wait for page</command>
@@ -629,7 +658,7 @@ This will be most useful for triggered navigation.
 
 ═════════[ CHECK DOCUMENT READY STATE COMPLETE WITH NAVIGATION IN A SINGLE STEP]═══════════════════════════════════════════════════════════════════════════════
 To check that the document ready state is complete after navigating to a new page and to make it crucial. 
-To make it non-crucial change the last parameter to false.
+To make it non-crucial change the crucial element to false. <crucial>false</crucial>.
 <step>
 	<command>wait for page</command>
 	<actionType>write</actionType>
@@ -830,7 +859,8 @@ The src tag will be checked to see if it exists and if it returns a status code 
 
 ═════════[ CHECK ALL PAGE IMAGE ALT TAGS WITH SEPARATE NAVIGATION STEP ]═══════════════════════════════════════════════════════════════════════════════════════
 The Check Image Alt command checks all page image alt tags for text.
-To check all page image alt tags, for ADA compliance and to make it crucial.  To make it non-crucial change the last parameter to false.
+To check all page image alt tags, for ADA compliance and to make it crucial.
+To make it non-crucial change the crucial element to false. <crucial>false</crucial>.
 The alt tag will checked to see if it exists and is not empty.  Empty tags will be flagged as failed.
 This is a small part of 508 compliance.
 <step>
@@ -840,7 +870,8 @@ This is a small part of 508 compliance.
 </step>
 
 ═════════[ CHECK ALL PAGE IMAGE ALT TAGS WITH NO SEPARATE NAVIGATION STEP ]════════════════════════════════════════════════════════════════════════════════════
-To check all page image alt tags, for ADA compliance and to make it crucial.  To make it non-crucial change the last parameter to false.
+To check all page image alt tags, for ADA compliance and to make it crucial.
+To make it non-crucial change the crucial element to false. <crucial>false</crucial>.
 The alt tag will checked to see if it exists and is not empty.  Empty tags will be flagged as failed.
 This is a small part of 508 compliance.
 <step>
@@ -874,7 +905,7 @@ To wait for 5 thousand milli-seconds before continuing onto the next step.
 The Wait for Element command waits a maximum amount of time for an element to be available.
 To wait for an element to be present, requires checking for the element using an accessor unlike waiting a specific amount of time.
 To wait for for a maximum of 15 seconds for an element to be present and making this check crucial, use the following.
-To make it non-crucial change the last parameter to false.
+To make it non-crucial change the crucial element to false. <crucial>false</crucial>.
 <step>
 	<command>wait for element</command>
 	<actionType>write</actionType>
@@ -891,7 +922,7 @@ To wait for the page to fully load and document state to be complete, use the fo
 Please note that the accessor is set to page and that an accessor type is present.  Any Accessor Type must be present, although it is not used,
 to distinguish this document ready state complete wait from a time interval wait.
 To wait for for a maximum of 15 seconds for document state complete and to make this check crucial, use the following.
-To make it non-crucial change the last parameter to false.
+To make it non-crucial change the crucial element to false. <crucial>false</crucial>.
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 <step>
 	<command>wait for page</command>

@@ -74,6 +74,14 @@ public class TestHelper{
     private boolean get_is_Maximized() {return _is_Maximized; }
     void set_is_Maximized(boolean _is_Maximized) { this._is_Maximized = _is_Maximized ;}
 
+    private double _backEndPageLoadDuration;
+    private double _frontEndPageLoadDuration;
+    void set_backEndPageLoadDuration(double _backEndPageLoadDuration) { this._backEndPageLoadDuration = _backEndPageLoadDuration; }
+    double get_backEndPageLoadDuration() { return _backEndPageLoadDuration;}
+    void set_frontEndPageLoadDuration(double _frontEndPageLoadDuration) { this._frontEndPageLoadDuration = _frontEndPageLoadDuration; }
+    double get_frontEndPageLoadDuration() { return _frontEndPageLoadDuration;}
+
+
     Dimension savedDimension = null;
 
     ConfigSettings ReadConfigurationSettingsXmlFile(String configurationXmlFile, boolean isExecutedFromMain) {
@@ -464,7 +472,6 @@ public class TestHelper{
      * @param webAddress -
      **************************************************************** */
     void NavigateToPage(WebDriver driver, String webAddress) throws InterruptedException{
-        // String indent = getNavigationMessageIndent() != null ? getNavigationMessageIndent() : AppConstants.indent8;
         String indent = navigationMessageIndent != null ? navigationMessageIndent : AppConstants.indent8;
         int defaultMilliSecondsForNavigation = 10000;
         UpdateTestResults(indent + "Waiting the default wait time of " + defaultMilliSecondsForNavigation + " milliseconds for navigation to complete!", false);
@@ -477,13 +484,17 @@ public class TestHelper{
         JavascriptExecutor js = (JavascriptExecutor) driver;
         double backendPerformance_calc = (double)js.executeScript("return (window.performance.timing.responseStart - window.performance.timing.navigationStart) / 1000");
         double frontendPerformance_calc = (double)js.executeScript("return (window.performance.timing.domComplete - window.performance.timing.responseStart) / 1000");
+        //region { alternate method for doing this with separate variables but not as good as combinations above }
         //double navigationStart = (long)js.executeScript("return window.performance.timing.navigationStart");
         //double responseStart = (long)js.executeScript("return window.performance.timing.responseStart");
         //double domComplete = (long)js.executeScript("return window.performance.timing.domComplete");
         //double backendPerformance_calc = (double) (responseStart - navigationStart);
         //double frontendPerformance_calc = (double) (domComplete - responseStart);
-        UpdateTestResults(indent + "Backend Performance Timing: " + backendPerformance_calc  + " milliseconds.", true);
-        UpdateTestResults(indent + "Frontend Performance Timing: " + frontendPerformance_calc + " milliseconds.", true);
+        //endregion
+        UpdateTestResults(indent + "Backend Performance Timing: " + backendPerformance_calc  + " seconds.", true);
+        UpdateTestResults(indent + "Frontend Performance Timing: " + frontendPerformance_calc + " seconds.", true);
+        set_backEndPageLoadDuration(backendPerformance_calc);
+        set_frontEndPageLoadDuration(frontendPerformance_calc);
     }
 
 
@@ -1193,9 +1204,15 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "The Navigation command navigates the browser to the provided URL.");
             WriteToFile(get_helpFileName(), "All Navigation steps should be marked as crucial, as all subsequent checks require that navigation complete successfully!!!");
             WriteToFile(get_helpFileName(), "An assertion does not have to be part of navigation, but it probably should be!!!");
+            WriteToFile(get_helpFileName(), "If Backend and Frontend timings are being tested, the URL must be tested, so the expected value must contain the URL if testing page timings.");
             WriteToFile(get_helpFileName(), "To navigate without checking the URL, remove the expectedValue node completely as displayed in the example below.");
             WriteToFile(get_helpFileName(), "For the Navigation command only, although the arguments should be in the order shown, if they ");
             WriteToFile(get_helpFileName(), "are out of order the application will attempt to discern the order and rearrange them.");
+            WriteToFile(get_helpFileName(), "The Navigation command has 4 possible arguments but only the first argument is required.");
+            WriteToFile(get_helpFileName(), "The required first argument, <arg1></arg1>, contains the URL to be loaded.");
+            WriteToFile(get_helpFileName(), "The optional second argument, <arg2></arg2>, contains the time in milliseconds to wait to allow the page to load.  The default is 10 seconds.");
+            WriteToFile(get_helpFileName(), "The optional third argument, <arg3></arg3>, contains the dimensions for setting the browser window height and width.");
+            WriteToFile(get_helpFileName(), "The optional fourth argument, <arg4></arg4>, contains the time in milliseconds to wait to allow the page to load.");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "To Navigate, without checking the URL to ensure that navigation occurred properly, ");
             WriteToFile(get_helpFileName(), "to wait 4000 milli-seconds and to set the window dimensions to (800 x 800)");
@@ -1217,13 +1234,17 @@ public class TestHelper{
                     "</step>");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("[ NAVIGATION WITH SUCCESSFUL NAVIGATION CONFIRMATION ]", "═", 9, 159));
-            WriteToFile(get_helpFileName(), "To Navigate, assert that the URL is what is in the expectedValue node and to wait 4 thousand milli-seconds before making the assertion to allow the page to load:");
+            WriteToFile(get_helpFileName(), "To Navigate, assert that the URL is what is in the expectedValue node and to wait 4 thousand milli-seconds before making the assertion to allow the page to load,");
+            WriteToFile(get_helpFileName(), "and to check that the Back end loads under .5 seconds and that the Front end loads under 3.75 seconds.");
             WriteToFile(get_helpFileName(), "PLEASE NOTE: Asserting that the URL is correct does not mean that a server transfer didn't redirect the URL to a different page but leave the URL untouched. ");
             WriteToFile(get_helpFileName(), "<step>\r\n\t<command>navigate</command>\r\n\t<actionType>write</actionType>\r\n" +
                                                         "\t<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>\r\n" +
                                                         "\t<crucial>TRUE</crucial>\r\n\t<arguments>\r\n" +
                                                         "\t\t<arg1>https://formy-project.herokuapp.com/form</arg1>\r\n" +
                                                         "\t\t<arg2>4000</arg2>\r\n\t</arguments>\r\n" +
+                                                        "\t\t<arg3></arg3>\r\n" +
+                                                        "\t\t<!-- fourth argument, optional - Back End (BE) and Front End (FE) Page Max Load time in seconds --> \r\n" +
+                                                        "\t\t<arg4>FE=3.75 BE=.5</arg4>\r\n" +
                                                         "</step>");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "To Navigate, assert that the URL is as expected, add a time delay and set the browser dimensions to 800 width by 800 height:");
@@ -1232,6 +1253,17 @@ public class TestHelper{
                     "\t<crucial>TRUE</crucial>\r\n\t<arguments>\r\n" +
                     "\t\t<arg1>https://formy-project.herokuapp.com/form</arg1>\r\n" +
                     "\t\t<arg2>4000</arg2>\r\n\t\t<arg3>w=800 h=800</arg3>\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To Navigate, assert that the URL is as expected, add a time delay, set the browser dimensions to 800 width by 800 height and");
+            WriteToFile(get_helpFileName(), "set the expected Frontend page load time to 3.75 seconds and Backend page load time to .5 seconds:");
+            WriteToFile(get_helpFileName(), "<step>\r\n\t<command>navigate</command>\r\n\t<actionType>write</actionType>\r\n" +
+                    "\t<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n\t<arguments>\r\n" +
+                    "\t\t<arg1>https://formy-project.herokuapp.com/form</arg1>\r\n" +
+                    "\t\t<arg2>4000</arg2>\r\n\t\t<arg3>w=800 h=800</arg3>\n" +
+                    "\t\t<arg4>FE=3.75 BE=.5</arg4>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
@@ -1281,7 +1313,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "The following Login command does not include the navigation step.");
             WriteToFile(get_helpFileName(), "As mentioned earlier, there may be isseus with logging in related to the operating system or alert type.");
             WriteToFile(get_helpFileName(), "Try different methods if failures happen as one approach may work best for a specific scenario.");
-            WriteToFile(get_helpFileName(), "To login when presented with an alert style popup, which could happen upon landing on the site or after the site redirects you, and to make this crucial.");
+            WriteToFile(get_helpFileName(), "To login when presented with an alert style popup, which could happen upon landing on the site or after the site redirects you, \r\nand to make this crucial.");
             WriteToFile(get_helpFileName(), "Please note this is for normal passwords which cannot contain spaces or characters that require escaping.");
             WriteToFile(get_helpFileName(), "<step>\r\n\t<command>login</command>\r\n\t<actionType>write</actionType>\r\n" +
                     "\t<crucial>TRUE</crucial>\r\n\t<arguments>\r\n" +
@@ -1297,7 +1329,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "perform a navigation command but there is a need to check that the page is where expected before further testing.");
             WriteToFile(get_helpFileName(), "NOTE: The <actionType></actionType> for this command is write, not a read.");
             WriteToFile(get_helpFileName(), "This command is designed to work with event navigation to ensure that the navigation has occurred prior to subsequent testing.");
-            WriteToFile(get_helpFileName(), "To check a URL without navigating and to make it crucial.  To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "To check a URL without navigating and to make it crucial.\r\nTo make it non-crucial change the crucial element to false. <crucial>false</crucial>.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>check url</command>\r\n" +
                     "\t<actionType>write</actionType>\r\n" +
@@ -1309,13 +1341,13 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("[ CHECK GET REQUEST STATUS WITHOUT NAVIGATION ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "The CheckGet command checks the response status of a get.");
-            WriteToFile(get_helpFileName(), "To check the Get Requests status of a URL without navigating and to make it crucial.  To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "To check the Get Requests status of a URL without navigating and to make it crucial.\r\nTo make it non-crucial change the crucial element to false. <crucial>false</crucial>.");
             WriteToFile(get_helpFileName(), "The Space between check and get is optional as shown below.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>checkget</command>\r\n" +
                     "\t<actionType>read</actionType>\r\n" +
                     "\t<expectedValue>200</expectedValue>\r\n" +
-                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
                     "\t<arguments>\r\n" +
                     "\t\t<arg1>https://www.swtestacademy.com/about-software-test-academy/ </arg1>\r\n" +
                     "\t</arguments>\r\n" +
@@ -1337,13 +1369,13 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), PrePostPad("[ CHECK POST REQUEST STATUS WITHOUT NAVIGATION ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "The CheckPost command checks the response status of a post.");
             WriteToFile(get_helpFileName(), "<!-- Test results unconfirmed!!! Need to find suitable URL that allows posting. -->");
-            WriteToFile(get_helpFileName(), "To check the Post Requests status of a URL without navigating and to make it crucial.  To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "To check the Post Requests status of a URL without navigating and to make it crucial.\r\nTo make it non-crucial change the crucial element to false. <crucial>false</crucial>.");
             WriteToFile(get_helpFileName(), "The Space between check and post is optional as shown below.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>checkpost</command>\r\n" +
                     "\t<actionType>read</actionType>\r\n" +
                     "\t<expectedValue>200</expectedValue>\r\n" +
-                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<crucial>true</crucial>\r\n" +
                     "\t<arguments>\r\n" +
                     "\t\t<arg1>https://www.swtestacademy.com/about-software-test-academy/ </arg1>\r\n" +
                     "\t</arguments>\r\n" +
@@ -1366,7 +1398,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "To check that the document ready state is complete after previously navigating to a new page and to make it crucial. ");
             WriteToFile(get_helpFileName(), "NOTE: The first argument must be n/a as shown below.");
             WriteToFile(get_helpFileName(), "- Omitting this argument or leaving it empty will result in an invalid format exception.");
-            WriteToFile(get_helpFileName(), "To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "To make it non-crucial change the crucial element to false. <crucial>false</crucial>.");
             WriteToFile(get_helpFileName(), "This will be most useful for triggered navigation.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>wait for page</command>\r\n" +
@@ -1380,7 +1412,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("[ CHECK DOCUMENT READY STATE COMPLETE WITH NAVIGATION IN A SINGLE STEP]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "To check that the document ready state is complete after navigating to a new page and to make it crucial. ");
-            WriteToFile(get_helpFileName(), "To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "To make it non-crucial change the crucial element to false. <crucial>false</crucial>.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>wait for page</command>\r\n" +
                     "\t<actionType>write</actionType>\r\n" +
@@ -1582,7 +1614,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("[ CHECK ALL PAGE IMAGE ALT TAGS WITH SEPARATE NAVIGATION STEP ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "The Check Image Alt command checks all page image alt tags for text.");
-            WriteToFile(get_helpFileName(), "To check all page image alt tags, for ADA compliance and to make it crucial.  To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "To check all page image alt tags, for ADA compliance and to make it crucial.\r\nTo make it non-crucial change the crucial element to false. <crucial>false</crucial>.");
             WriteToFile(get_helpFileName(), "The alt tag will checked to see if it exists and is not empty.  Empty tags will be flagged as failed.");
             WriteToFile(get_helpFileName(), "This is a small part of 508 compliance.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
@@ -1592,7 +1624,7 @@ public class TestHelper{
                     "</step>");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("[ CHECK ALL PAGE IMAGE ALT TAGS WITH NO SEPARATE NAVIGATION STEP ]", "═", 9, 159));
-            WriteToFile(get_helpFileName(), "To check all page image alt tags, for ADA compliance and to make it crucial.  To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "To check all page image alt tags, for ADA compliance and to make it crucial.\r\nTo make it non-crucial change the crucial element to false. <crucial>false</crucial>.");
             WriteToFile(get_helpFileName(), "The alt tag will checked to see if it exists and is not empty.  Empty tags will be flagged as failed.");
             WriteToFile(get_helpFileName(), "This is a small part of 508 compliance.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
@@ -1627,7 +1659,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "The Wait for Element command waits a maximum amount of time for an element to be available.");
             WriteToFile(get_helpFileName(), "To wait for an element to be present, requires checking for the element using an accessor unlike waiting a specific amount of time.");
             WriteToFile(get_helpFileName(), "To wait for for a maximum of 15 seconds for an element to be present and making this check crucial, use the following.");
-            WriteToFile(get_helpFileName(), "To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "To make it non-crucial change the crucial element to false. <crucial>false</crucial>.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>wait for element</command>\r\n" +
                     "\t<actionType>write</actionType>\r\n" +
@@ -1644,7 +1676,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "Please note that the accessor is set to page and that an accessor type is present.  Any Accessor Type must be present, although it is not used,");
             WriteToFile(get_helpFileName(), "to distinguish this document ready state complete wait from a time interval wait.");
             WriteToFile(get_helpFileName(), "To wait for for a maximum of 15 seconds for document state complete and to make this check crucial, use the following.");
-            WriteToFile(get_helpFileName(), "To make it non-crucial change the last parameter to false.");
+            WriteToFile(get_helpFileName(), "To make it non-crucial change the crucial element to false. <crucial>false</crucial>.");
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>wait for page</command>\r\n" +
