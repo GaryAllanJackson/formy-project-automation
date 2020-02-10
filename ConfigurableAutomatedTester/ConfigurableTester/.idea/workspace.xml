@@ -5,6 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="49794caf-59e9-4ae7-8fe8-d853aa382371" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_api_5_5_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_platform_junit_platform_commons_1_5_1.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Config/ConfigTester_Help.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Config/ConfigTester_Help.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Config/ConfigurationSetup.tconfig" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Config/ConfigurationSetup.tconfig_GAJ" beforeDir="false" />
@@ -12,6 +15,7 @@
       <change beforePath="$PROJECT_DIR$/Config/Demo_Complex_ConfigurationSetup.tconfig" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Config/Demo_ConfigurationSetup.tconfig" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Entities/TestSettings.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Form.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Form.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GaryJava UtilitiesScreenShotsMashupChromeDriver__F0_S5xPath_Element_Not_Found-Difference.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/pages/AppCommands.java" beforeDir="false" afterPath="$PROJECT_DIR$/pages/AppCommands.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pages/AppConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/pages/AppConstants.java" afterDir="false" />
@@ -95,11 +99,11 @@
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5" value="" />
     <property name="extract.method.default.visibility" value="private" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.last.edited" value="SDKs" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="vcs.Git" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RecentsManager">
     <key name="CreateTestDialog.RecentsKey">
@@ -263,13 +267,8 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/pages/TestCentral.java</url>
-          <line>4341</line>
+          <line>4356</line>
           <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/pages/TestCentral.java</url>
-          <line>4425</line>
-          <option name="timeStamp" value="5" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/pages/HelperUtilities.java</url>
@@ -278,12 +277,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/pages/TestCentral.java</url>
-          <line>325</line>
+          <line>326</line>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/pages/TestCentral.java</url>
-          <line>3453</line>
+          <line>3468</line>
           <option name="timeStamp" value="11" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">

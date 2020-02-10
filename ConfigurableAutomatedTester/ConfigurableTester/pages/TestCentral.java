@@ -92,6 +92,7 @@ public class TestCentral {
      ╚═══════════════════════════════════════════════════════════════════════════════╝ */
      //endregion
 
+    //region { Accessor Type String Constants and Persist String Constants }
     private final String persistStringCheckValue = "persiststring";
     private final String persistedStringCheckValue = "persistedstring";
     private final String xpathCheckValue = "xpath";
@@ -101,7 +102,7 @@ public class TestCentral {
     private final String classNameCheckValue = "classname";
     //endregion
 
-    //region { Configuration Variables }
+    //region { Application Configuration Variables }
     private String configurationFile = "Config/ConfigurationSetup.xml";
     private String configurationFolder = "Config/";
     private static String testPage = "https://www.myWebsite.com/";
@@ -122,18 +123,18 @@ public class TestCentral {
     private String logFileName = configurationFile.contains("\\") ?
             configurationFile.substring(0, configurationFile.lastIndexOf("\\")) + "\\" + logFileRootFileName + logFileUniqueName + ".log" :
             configurationFile.substring(0, configurationFile.lastIndexOf("/")) + "/" + logFileRootFileName + logFileUniqueName + ".log";
-    //    private String logFileName = configurationFile.contains("\\") ?
-//            configurationFile.substring(0, configurationFile.lastIndexOf("\\")) + "\\TestResults_" + logFileUniqueName + ".log" :
-//            configurationFile.substring(0, configurationFile.lastIndexOf("/")) + "/TestResults_" + logFileUniqueName + ".log";
     private String helpFileName = configurationFile.contains("\\") ?
             configurationFile.substring(0, configurationFile.lastIndexOf("\\")) + "\\ConfigTester_Help.txt" :
             configurationFile.substring(0, configurationFile.lastIndexOf("/")) + "/ConfigTester_Help.txt";
     private List<String> testFiles = new ArrayList<>();
+
+    //region { WebDriver Browser Driver Configured Locations }
     private String chromeDriverPath = "/gary/java utilities/BrowserDrivers/chromedriver.exe";
     private String fireFoxDriverPath = "/gary/java utilities/BrowserDrivers/geckodriver.exe";
     private String phantomJsDriverPath = "/gary/java utilities/BrowserDrivers/phantomjs.exe";
     private String internetExplorerDriverPath = "/gary/java utilities/BrowserDrivers/IEDriverServer.exe";
     private String edgeDriverPath = "/gary/java utilities/BrowserDrivers/msedgedriver.exe";
+    //endregion
 
     //local global variables for values that need to live outside of a single method
     private boolean _executedFromMain = false;
@@ -590,6 +591,10 @@ public class TestCentral {
 
     /*****************************************************************
      * Description: This method performs all Write related actions.
+     *              This method is used for initial routing of all Write
+     *              type actions determining which command is configured
+     *              and routing to the associated method and passing along any
+     *              required parameters.
      * @param ts - Test Step Object containing all related information
      *           for the particular test step.
      * @param fileStepIndex - the file index and the step index.
@@ -713,6 +718,12 @@ public class TestCentral {
 
 
     //region { Controller Methods, used to control the program flow for the complicated items }
+    //region {Controller Notes}
+    /*
+        Controller methods are acting as intermediaries helping to parse and test testStep values
+        to ensure all values are present and correct before calling the actual command methods.
+     */
+    //endregion
     /*************************************************************************
      * Description: Control method used to Retrieve JSON from an API end point,
      *              persist it into a local variable and this method also
@@ -728,7 +739,6 @@ public class TestCentral {
             jsonContent = GetHttpResponse(ts, fileStepIndex);
             if (jsonContent != null && !jsonContent.isEmpty()) {
                 conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
-
                 testHelper.UpdateTestResults(AppConstants.indent8 + "Successful JSON content retrieval for step " + fileStepIndex, true);
             } else {
                 conditionalSuccessful = false;
@@ -771,8 +781,6 @@ public class TestCentral {
     }
 
 
-
-
     /******************************************************************************
      * DESCRIPTION: Control method used to Check the count of a specific element type.
      *  @param ts - Test Step Object containing all related information
@@ -794,6 +802,7 @@ public class TestCentral {
             ImproperlyFormedTest(fileStepIndex);
         }
     }
+
 
     /******************************************************************************
      * DESCRIPTION: Control method used to find a Phrase.
@@ -824,6 +833,7 @@ public class TestCentral {
         FindPhrase(ts, fileStepIndex);
     }
 
+
     /******************************************************************************
      * DESCRIPTION: Control method used to Persist a value.
      *  @param ts - Test Step Object containing all related information
@@ -837,9 +847,10 @@ public class TestCentral {
         testHelper.UpdateTestResults(AppConstants.indent8 + "Persisting value found by: " + ts.get_accessorType() + " accessor: " + ts.get_accessor(), true);
         persistedString = PersistValue(ts, ts.get_accessor(), fileStepIndex);
         testHelper.UpdateTestResults(AppConstants.indent8 + "Persisted value = (" + persistedString + ")", true);
-        conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock() && persistedString != null) ? true : false;
+        conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock() && persistedString != null); // ? true : false;
         testHelper.CreateSectionHeader(AppConstants.indent5 + "[ End Persisting action, but value persisted and usable until end of test file ]", "", AppConstants.ANSI_CYAN, false, false, true);
     }
+
 
     /**************************************************************************************
      * Description: This method is the controller method for Persisting Values.
@@ -854,7 +865,7 @@ public class TestCentral {
         testHelper.UpdateTestResults(AppConstants.indent8 + "Persisting value as part of command:" + ts.get_command() + " found by: " + ts.get_accessorType() + " accessor: " + ts.get_accessor() + " for step " + fileStepIndex, true);
         persistedString = valueToPersist;
         testHelper.UpdateTestResults(AppConstants.indent8 + "Persisted value = (" + persistedString + ")", true);
-        conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock() && persistedString != null) ? true : false;
+        conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock() && persistedString != null);  // ? true : false;
         testHelper.CreateSectionHeader(AppConstants.indent5 + "[ End Persisting Sub-command action, but value persisted and usable until end of test file ]", "", AppConstants.ANSI_CYAN, false, false, true);
     }
 
@@ -879,7 +890,7 @@ public class TestCentral {
             status = PerformAction(ts, null, fileStepIndex);
         } else {
             //subAction can either be the expected value or a command to perform like click
-            if (ts.get_command().toLowerCase().contains(AppCommands.Switch_To_IFrame)) {
+            if (ts.get_command() != null && ts.get_command().toLowerCase().contains(AppCommands.Switch_To_IFrame)) {
                 subAction = GetArgumentValue(ts, 1, null);
             }
             status = PerformAction(ts, subAction, fileStepIndex);
@@ -934,7 +945,6 @@ public class TestCentral {
      *  @param fileStepIndex - the file index and the step index.
      ******************************************************************************/
     private void SendKeysController(TestStep ts, String fileStepIndex) throws InterruptedException {
-//        boolean status;
         Boolean isNumeric = false;
         String item;
         int timeDelay = 400;
@@ -988,8 +998,6 @@ public class TestCentral {
         testHelper.UpdateTestResults(AppConstants.indent5 + "Checking color contrast of " + tagType + " on page " + testPage + " for step " + fileStepIndex, false);
         CheckColorContrast(ts, fileStepIndex);
     }
-
-
 
 
     /********************************************************************************
@@ -1048,6 +1056,7 @@ public class TestCentral {
                     AppConstants.indent8 +  "Actual Image: " + actualImage, true);
             if (!testHelper.IsNullOrEmpty(globalDifferenceImage)) {
                 helperUtilities.differenceFileForParent = new File(testHelper.GetUnusedFileName(globalDifferenceImage));
+                //region { Refactored - remove if no longer necessary }
 //                if (helperUtilities.isWindows()) {
 //                    //helperUtilities.differenceFileForParent = new File(GetArgumentValue(ts, 3, helperUtilities.GetParentFolder(differenceImage).toString()));
 //                    //helperUtilities.differenceFileForParent = new File(globalDifferenceImage != null ? globalDifferenceImage : helperUtilities.GetParentFolder(differenceImage).toString());
@@ -1056,6 +1065,7 @@ public class TestCentral {
 //                    //helperUtilities.differenceFileForParent = new File(globalDifferenceImage != null ? globalDifferenceImage : helperUtilities.EscapeMacPath(helperUtilities.GetParentFolder(differenceImage).toString()));
 //                    helperUtilities.differenceFileForParent = new File(testHelper.GetUnusedFileName(globalDifferenceImage));
 //                }
+                //endregion
             } else {
                 helperUtilities.differenceFileForParent = null;
             }
@@ -1064,22 +1074,6 @@ public class TestCentral {
             testHelper.CreateSectionHeader("[ End Image Comparison Test ]", "", AppConstants.ANSI_CYAN, false, false, true);
         }
     }
-
-//    /*******************************************************************
-//     * Description: Tests a string to determine if it is null or empty.
-//     *
-//     * @param testString - String to test if is null or empty.
-//     * @return - Returns True if null or Empty, else False.
-//     ********************************************************************/
-//    private boolean IsNullOrEmpty(String testString) {
-//        boolean status = false;
-//        if (testString == null || testString.isEmpty()) {
-//            status = true;
-//        }
-//        return status;
-//    }
-    //endregion
-
 
 
     /*******************************************************************************************
@@ -1090,9 +1084,9 @@ public class TestCentral {
      *           for the particular test step.
      * @param fileStepIndex - the file index and the step index.
      *
-     * IMPORTANT NOTE: NOTICED THAT FOR INPUT CONTROLS GETTING TEXT IS NOT WORKING
-     *                 NEED TO ADD CHECK AND IF TEXT IS NULL FOR INPUT TYPE=TEXT
-     *                 HAVE TO GET THE VALUE ATTRIBUTE INSTEAD.
+     * IMPORTANT NOTE: NOTICED THAT FOR INPUT CONTROLS GETTING TEXT IS NOT WORKING.
+     *                 ADDED CHECK IN CHECKELEMENTWITHXXX MEHTODS AND IF TEXT IS NULL
+     *                 FOR INPUT TYPE=TEXT RETURN THE VALUE ATTRIBUTE INSTEAD.
      ****************************************************************************************/
     private void CheckElementText(TestStep ts, String fileStepIndex) throws Exception {
         String actual = "";
@@ -1269,8 +1263,7 @@ public class TestCentral {
         if (ts.get_crucial()) {
             assertEquals(ts.get_expectedValue(), actualValue);
         } else {
-            try
-            {
+            try {
                 assertEquals(ts.get_expectedValue(), actualValue);
             } catch (AssertionError ae) {
                 //do nothing, this just traps the assertion error so that processing can continue
@@ -1327,7 +1320,8 @@ public class TestCentral {
         }
         if (ts.get_expectedValue().trim().equals(actualValue.trim())) {
             testHelper.UpdateTestResults(AppConstants.indent8 + "Successful Anchor " + hrefTxt + " Check for step " + fileStepIndex + " Expected: (" + ts.get_expectedValue() + ") Actual: (" + actualValue + ")", true);
-            conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
+            //conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
+            conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) || conditionalSuccessful;
         } else {
             testHelper.UpdateTestResults(AppConstants.indent8 + "Failed Anchor " + hrefTxt + " Check for step " + fileStepIndex + " Expected: (" + ts.get_expectedValue() + ") Actual: (" + actualValue + ")", true);
             conditionalSuccessful = false;
@@ -1454,7 +1448,7 @@ public class TestCentral {
                     testHelper.UpdateTestResults("Failed link test " + href + " gave a response code of " + brokenLinksStatusCode, true);
                     conditionalSuccessful = false;
                 } else {
-                    testHelper.UpdateTestResults( "Successful link test text: " + text + " href: " + href + " xPath: " + generateXPATH(link, "") + " gave a response code of " + brokenLinksStatusCode, true);
+                    testHelper.UpdateTestResults( "Successful link test text: " + text + " href: " + href + " xPath: " + GenerateXPath(link, "") + " gave a response code of " + brokenLinksStatusCode, true);
                     conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
                 }
             }
@@ -1492,7 +1486,8 @@ public class TestCentral {
                 if (altTag != null && !altTag.trim().isEmpty()) {
                     altTagCount++;
                     testHelper.UpdateTestResults("Successful image alt tag found: " + altTag + " for img src: " + imgSrc, true);
-                    conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
+                    //conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
+                    conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) || conditionalSuccessful;
                 } else {
                     testHelper.UpdateTestResults("Failed image alt tag missing for img src: " + imgSrc, true);
                     conditionalSuccessful = false;
@@ -1511,7 +1506,8 @@ public class TestCentral {
                         conditionalSuccessful = false;
                     } else {
                         testHelper.UpdateTestResults("Successful image src test " + imgSrc + " gave a response code of " + brokenImageSrcStatusCode, true);
-                        conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
+                        //conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
+                        conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) || conditionalSuccessful;
                     }
                 } else {
                     if (altTag != null) {
@@ -1569,7 +1565,8 @@ public class TestCentral {
                     conditionalSuccessful = false;
                 } else {
                     testHelper.UpdateTestResults("Successful matching count of '" + checkElement + "' tags for step " + fileStepIndex + ".  Expected: " + expectedCount + "  Actual: " + actualCount, true);
-                    conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
+                    //conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
+                    conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) || conditionalSuccessful;
                 }
             } else {
                 if (actualCount != expectedCount) {
@@ -1584,11 +1581,10 @@ public class TestCentral {
     }
 
 
-
-
     /*************************************************************
-     * DESCRIPTION:
-     *      Returns the text of an element using its xPath accessor.
+     * DESCRIPTION: Retrieves element text or element value,
+     *              if text is null, using its xPath accessor
+     *              and returns it to the calling method.
      * @param ts - Test Step Object containing all related information
      *           for the particular test step.
      * @param fileStepIndex - the file index and the step index.
@@ -1649,8 +1645,9 @@ public class TestCentral {
 
 
     /***************************************************************************
-     * DESCRIPTION: Returns the text of an element using its
-     *              CssSelector accessor.
+     * DESCRIPTION: Retrieves element text or element value,
+     *              if text is null, using its CssSelector accessor
+     *              and returns it to the calling method.
      *
      * @param ts - Test Step Object containing all related information
      *           for the particular test step.
@@ -1703,8 +1700,9 @@ public class TestCentral {
 
 
     /*************************************************************
-     * DESCRIPTION: Returns the text of an element using its
-     *              TagName accessor.
+     * DESCRIPTION: Retrieves element text or element value,
+     *              if text is null, using its TagName accessor
+     *              and returns it to the calling method.
      * @param ts - Test Step Object containing all related information
      *           for the particular test step.
      * @param fileStepIndex - the file index and the step index.
@@ -1756,8 +1754,9 @@ public class TestCentral {
 
 
     /*************************************************************
-     * DESCRIPTION: Returns the text of an element using its
-     *              ClassName accessor.
+     * DESCRIPTION: Retrieves element text or element value,
+     *              if text is null, using its ClassName accessor
+     *              and returns it to the calling method.
      * @param ts - Test Step Object containing all related information
      *           for the particular test step.
      * @param fileStepIndex - the file index and the step index.
@@ -1809,8 +1808,9 @@ public class TestCentral {
 
 
     /*************************************************************
-     * DESCRIPTION: Returns the text of an element using
-     *              its Id accessor.
+     * DESCRIPTION: Retrieves element text or element value,
+     *              if text is null, using its Id accessor
+     *              and returns it to the calling method.
      * @param ts - Test Step Object containing all related information
      *           for the particular test step.
      * @param fileStepIndex - the file index and the step index.
@@ -1863,10 +1863,10 @@ public class TestCentral {
 
 
     /***********************************************************************
-     * DESCRIPTION:
-     *      If a Tag is passed in as part of the Expected values, search the text
-     *      of all tags of that type for the phrase, but if no tag is passed in,
-     *      search the text of all page elements for the phrase.
+     * DESCRIPTION: If a Tag is passed in as an argument, search the text
+     *              of all tags of that type for the phrase, but if no tag
+     *              is passed in, search the text of all page elements for
+     *              the phrase.
      * @param ts - Test Step Object containing all related information
      *           for the particular test step.
      * @param fileStepIndex - the file index and the step index.
@@ -1889,14 +1889,14 @@ public class TestCentral {
             for (WebElement element : elements) {
                 if (element.getText().trim().contains(ts.get_expectedValue().trim())) {
                     wasFound = true;
-                    foundElements.add(generateXPATH(element, ""));
+                    foundElements.add(GenerateXPath(element, ""));
                 }
             }
         } else {
             for (WebElement element : elements) {
                 if (element.getText().equals(ts.get_expectedValue().trim())) {
                     wasFound = true;
-                    foundElements.add(generateXPATH(element, ""));
+                    foundElements.add(GenerateXPath(element, ""));
                 }
             }
         }
@@ -2044,6 +2044,15 @@ public class TestCentral {
         testHelper.UpdateTestResults( indentMargin + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End Explicit Navigation Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
     }
 
+    /****************************************************************************
+     * Description: Gets the BackEnd and FrontEnd Timing Message based on the
+     *              BackEnd and FrontEnd testStep settings indicating the success
+     *              or failure of these timings.
+     * @param frontEndTiming - time limit set for the front end load complete
+     * @param backEndTiming - time limit set for the back end load complete
+     * @param subIndent - indentation to follow to align with the calling method
+     * @return - Returns the Success/Failure of the Back and Front end load timing
+     ****************************************************************************/
     String GetTimingMessage(Double frontEndTiming, Double backEndTiming, String subIndent) {
         String timingMessage = null;
 
@@ -2072,7 +2081,7 @@ public class TestCentral {
      *              navigating, waiting, taking screen shots etc...
      * @param ts - Test Step Object containing all related information
      *           for the particular test step.
-     * @param subAction -
+     * @param subAction - used when a step contains multiple actions in one command
      * @param fileStepIndex - the file index and the step index.
      ***************************************************************************** */
     Boolean PerformAction(TestStep ts, String subAction, String fileStepIndex) {
@@ -2324,14 +2333,14 @@ public class TestCentral {
         if (url != null && !url.isEmpty() && !urlIsNA) {
             driver.get(url);
         }
-        testHelper.UpdateTestResults("Login method reached", false);
+        testHelper.UpdateTestResults("Login method reached for step " + fileStepIndex, false);
 
         try {
             //#1 attempt to access the alert window and send the username, tab to next input, then password
-            testHelper.UpdateTestResults("Switched to Alert second try", false);
+            testHelper.UpdateTestResults("Switched to Alert first login method", false);
             //driver.switchTo().alert();
             driver.switchTo().alert().sendKeys(email + Keys.TAB + password + Keys.RETURN);
-            testHelper.UpdateTestResults("Switched to Alert second try after", false);
+            testHelper.UpdateTestResults("Switched to Alert first login method - after", false);
         } catch (Exception ex) {
             try {
                 //#2 if the alert window is not present, reload the page
@@ -2340,30 +2349,31 @@ public class TestCentral {
                 }
                 //switch to the alert window, find the username field and send the username
                 driver.switchTo().alert();
-                testHelper.UpdateTestResults("Switched to Alert #1", false);
+                testHelper.UpdateTestResults("Switched to Alert second login method", false);
                 driver.findElement(By.id("username")).sendKeys(email);
                 //find the password field and send the password
                 driver.findElement(By.id("password")).sendKeys(password);
                 testHelper.UpdateTestResults("Sent Credentials email: " + email + " Password: " + password, false);
                 //press the ok button
                 driver.switchTo().alert().accept();
-                testHelper.UpdateTestResults("Switched to Alert #2", false);
+                testHelper.UpdateTestResults("Switched to Alert second login method - after", false);
                 //switch back to the main window
                 driver.switchTo().defaultContent();
                 testHelper.UpdateTestResults("Switched to default context", false);
                 testHelper.UpdateTestResults("Completed login sequence without error.", true);
             } catch (Exception ex1) {
+                //if the above two methods do not work, prepend the credentials to the URL and attempt to log in that way
                 testHelper.UpdateTestResults("Exception " + ex.getMessage(), false);
-                //if (url == null || url.isEmpty() || !url.toLowerCase().trim().equals("n/a")) {
                 //if the url is not present, use the current url
                 if (url == null || url.isEmpty() || !urlIsNA) {
                     url = testPage;
                 }
-                testHelper.UpdateTestResults("Switched to Alert Second catch", false);
+                testHelper.UpdateTestResults("Switched to Alert third login method", false);
                 //place the username and password into the URL
                 String newUrl = url.replace("://", "://" + email + ":" + password + "@");
                 //navgate to the credential encoded url to authenticate
                 driver.get(newUrl);
+                testHelper.UpdateTestResults("Switched to Alert third login method - after", false);
                 //if the alert doesn't show up, you already have context and are logged in
             }
         }
@@ -2377,8 +2387,8 @@ public class TestCentral {
      * @param ts - Test Step Object containing all related information
      *           for the particular test step.
      * @param fileStepIndex - the file index and the step index.
-     * @throws AWTException -
-     * @throws InterruptedException -
+     * @throws AWTException - Abstract Window Toolkit exception has occurred - for capturing Robot errors
+     * @throws InterruptedException - thrown when thread is sleeping or waiting and is then interrupted
      ***********************************************************************************/
     private void SelectFromContextMenu(TestStep ts, String fileStepIndex) throws AWTException, InterruptedException {
         int downCount = 0;
@@ -2490,8 +2500,7 @@ public class TestCentral {
             return;
         }
 
-        if (ts.get_command().toLowerCase().trim().contains(AppCommands.Page))
-        {
+        if (ts.get_command().toLowerCase().trim().contains(AppCommands.Page)) {
             accessorType = "page";
             testHelper.UpdateTestResults(AppConstants.indent5 + "Waiting a maximum of " + maxTimeInSeconds + " seconds for page load to complete at step " + fileStepIndex, true);
         } else {
@@ -2703,9 +2712,11 @@ public class TestCentral {
 
 
     /*********************************************************************
-     * DESCRIPTION:
-     *      Checks the URL without performing a navigation action.
-     *      Compares what was passed in against the current URL.
+     * DESCRIPTION: This method Checks the URL without performing a
+     *              navigation action.
+     *              Compares what was passed in against the current URL.
+     *              Allows for separation of functionality and concerns
+     *              in test steps.
      * @param ts - Test Step Object containing all related information
      *           for the particular test step.
      * @param fileStepIndex - the file index and the step index.
@@ -2720,10 +2731,8 @@ public class TestCentral {
         String actualUrl = GetCurrentPageUrl();
         assertEquals(expectedUrl, actualUrl);
         if (expectedUrl.trim().equals(actualUrl.trim())) {
-            //testHelper.UpdateTestResults(AppConstants.ANSI_GREEN + "URL Check successful for step " + fileStepIndex + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")" + AppConstants.ANSI_RESET, true);
             testHelper.UpdateTestResults(AppConstants.ANSI_GREEN + "Successful URL Check for step " + fileStepIndex + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")" + AppConstants.ANSI_RESET, true);
         } else {
-            //testHelper.UpdateTestResults(AppConstants.ANSI_RED + "URL Check unsuccessful for step " + fileStepIndex + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")" + AppConstants.ANSI_RESET, true);
             testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed URL Check for step " + fileStepIndex + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")" + AppConstants.ANSI_RESET, true);
         }
     }
@@ -2829,7 +2838,7 @@ public class TestCentral {
 
             String backColorAncestor = treeClimb > 0 ? "^" + treeClimb : "";
 
-            testHelper.UpdateTestResults(AppConstants.indent8 + "Element being checked: " + generateXPATH(element,"") + " for step " + fileStepIndex, false);
+            testHelper.UpdateTestResults(AppConstants.indent8 + "Element being checked: " + GenerateXPath(element,"") + " for step " + fileStepIndex, false);
             if (brightness >= brightnessStandard && contrast >= contrastStandard) {
                 testHelper.UpdateTestResults(AppConstants.ANSI_GREEN + "Good brightness and Good contrast (Brightness Difference: " + brightness + " Color Difference: " + contrast + ")\r\n - forecolor(" + color + ") forecolor Brightness: " + foreColorBrightness + "\r\n - backcolor(" + backColor + ")" + backColorAncestor + " Back-Color Brightness: " + backColorBrightness + AppConstants.ANSI_RESET, false);
             } else if (brightness >= brightnessStandard && contrast < contrastStandard) {
@@ -2851,10 +2860,10 @@ public class TestCentral {
 
     //region { Create Test Page Methods }
     /****************************************************************************
-     * DESCRIPTION:
-     *          Creates a file with element properties and attributes to allow
-     *          users to more quickly create test files without inspecting each
-     *          page element to do so.
+     * DESCRIPTION: This method Creates an XML Test file or a text file, depending
+     *          upon the test configuration, with element properties and
+     *          attributes to allow users to more quickly create test files
+     *          without inspecting each page element to do so.
      *
      * @param ts - Test Step Object containing all related information
      *           for the particular test step.
@@ -2915,87 +2924,89 @@ public class TestCentral {
             }
 
             for (WebElement element : elements) {
-                canProceed = true;
-                outputDescription = "";
-                elementType = element.getTagName();
-                isVisible = element.isDisplayed();
-                if (cssSelector.equals("*")) {
-                    if (skipTags != null && skipTags.length > 0) {
-                        for (String skipTag : skipTags) {
-                            if (elementType.equals(skipTag)) {
-                                canProceed = false;
-                                break;
+                try {
+                    canProceed = true;
+                    outputDescription = "";
+                    elementType = element.getTagName();
+                    isVisible = element.isDisplayed();
+                    if (cssSelector.equals("*")) {
+                        if (skipTags != null && skipTags.length > 0) {
+                            for (String skipTag : skipTags) {
+                                if (elementType.equals(skipTag)) {
+                                    canProceed = false;
+                                    break;
+                                }
                             }
                         }
                     }
-                }
-//                else {
-//                    canProceed = true;
-//                }
 
-                if (canProceed) {
-                    elementXPath = generateXPATH(element, "");
-                    elementText = element.getText();
+                    if (canProceed) {
+                        elementXPath = GenerateXPath(element, "");
+                        elementText = element.getText();
 
-                    if (formatted) {
-                        if (!elementType.equals("img")) {
-                            if (isVisible) {
-                                if (elementText != null && !elementText.isEmpty()) {
-                                    outputDescription = CreateReadActionXmlTestStep(elementXPath, elementText, "FALSE");
+                        if (formatted) {
+                            if (!elementType.equals("img")) {
+                                if (isVisible) {
+                                    if (elementText != null && !elementText.isEmpty()) {
+                                        outputDescription = CreateReadActionXmlTestStep(elementXPath, elementText, "FALSE");
+                                    }
+                                } else {
+                                    if (elementText != null && !elementText.isEmpty()) {
+                                        outputDescription = "\t<!-- The following element is not visible by default -->\r\n";
+                                        //script = "return arguments[0].innerHTML";
+                                        script = "return arguments[0].innerText";
+                                        elementText = (String) ((JavascriptExecutor) driver).executeScript(script, element);
+                                        outputDescription += CreateReadActionXmlTestStep(elementXPath, elementText, "FALSE");
+                                    }
                                 }
+                            }
+                        } else {
+                            if (elementText != null && !elementText.isEmpty()) {
+                                outputDescription = "Element Type: " + elementType + " - Element xPath: " + elementXPath + " - Element Text: " + elementText;
+                            }
+                        }
+
+                        if (elementType.equals("img")) {
+                            elementSrc = element.getAttribute("src");
+                            elementAltText = element.getAttribute("alt");
+                            if (formatted) {
+                                outputDescription = CreateImageReadActionsXmlTestSteps(elementXPath, elementSrc, elementAltText, "FALSE");
                             } else {
-                                if (elementText != null && !elementText.isEmpty()) {
-                                    outputDescription = "\t<!-- The following element is not visible by default -->\r\n";
-                                    //script = "return arguments[0].innerHTML";
-                                    script = "return arguments[0].innerText";
-                                    elementText = (String) ((JavascriptExecutor) driver).executeScript(script, element);
-                                    outputDescription += CreateReadActionXmlTestStep(elementXPath, elementText, "FALSE");
+                                outputDescription += " - Element Src: " + elementSrc;
+                            }
+                        } else if (elementType.equals("a")) {
+                            elementHref = element.getAttribute("href");
+                            if (formatted && !elementHref.isEmpty()) {  //make sure that this is not an anchor
+                                outputDescription += outputDescription.contains(">assert<") ? "\r\n" : "";
+                                outputDescription += CreateAHrefReadActionXmlTestStep(elementXPath, elementHref, "FALSE");
+                            } else if (!elementHref.isEmpty()) {
+                                outputDescription += " - Element Href: " + elementHref;
+                            } else {
+                                outputDescription = "\t<!--  The following element is an Anchor, not a link. -->\r\n" + outputDescription;
+                            }
+                        } else if (elementType.equals("input")) {
+                            inputType = element.getAttribute("type");
+                            if (formatted) {
+                                if (inputType.equals("text")) {
+                                    outputDescription = CreateSendKeysWriteActionXmlTestStep(elementXPath, "[keys to send]", "FALSE");
+                                } else if (inputType.equals("button") || inputType.equals("checkbox") || inputType.equals("radio")) {
+                                    outputDescription = CreateClickWriteActionXmlTestStep(elementXPath, AppCommands.Click, "FALSE");
                                 }
                             }
+                        } else if (elementType.equals("select") && formatted) {
+                            outputDescription = CreateSelectWriteActionXmlTestStep(elementXPath, "[value of option to select]", "FALSE");
                         }
-                    } else {
-                        if (elementText != null && !elementText.isEmpty()) {
-                            outputDescription = "Element Type: " + elementType + " - Element xPath: " + elementXPath + " - Element Text: " + elementText;
+                        if (!formatted) {
+                            outputDescription += " Element Visible: " + isVisible;
                         }
-                    }
-
-                    if (elementType.equals("img")) {
-                        elementSrc = element.getAttribute("src");
-                        elementAltText = element.getAttribute("alt");
-                        if (formatted) {
-                            outputDescription = CreateImageReadActionsXmlTestSteps(elementXPath, elementSrc, elementAltText, "FALSE");
-                        } else {
-                            outputDescription += " - Element Src: " + elementSrc;
-                        }
-                    } else if (elementType.equals("a")) {
-                        elementHref = element.getAttribute("href");
-                        if (formatted && !elementHref.isEmpty()) {  //make sure that this is not an anchor
-                            outputDescription += outputDescription.contains(">assert<") ? "\r\n" : "";
-                            outputDescription += CreateAHrefReadActionXmlTestStep(elementXPath, elementHref, "FALSE");
-                        } else if (!elementHref.isEmpty()) {
-                            outputDescription += " - Element Href: " + elementHref;
-                        } else {
-                            outputDescription = "\t<!--  The following element is an Anchor, not a link. -->\r\n" + outputDescription;
-                        }
-                    } else if (elementType.equals("input")) {
-                        inputType = element.getAttribute("type");
-                        if (formatted) {
-                            if (inputType.equals("text")) {
-                                outputDescription = CreateSendKeysWriteActionXmlTestStep(elementXPath, "[keys to send]", "FALSE");
-                            } else if (inputType.equals("button") || inputType.equals("checkbox") || inputType.equals("radio")) {
-                                outputDescription = CreateClickWriteActionXmlTestStep(elementXPath, AppCommands.Click, "FALSE");
-                            }
+                        if (outputDescription != null && !outputDescription.isEmpty()) {
+                            testHelper.UpdateTestResults(outputDescription, true);
+                            testHelper.WriteToFile(newFileName, outputDescription);
                         }
                     }
-                    else if (elementType.equals("select") && formatted) {
-                        outputDescription = CreateSelectWriteActionXmlTestStep(elementXPath, "[value of option to select]", "FALSE");
-                    }
-                    if (!formatted) {
-                        outputDescription += " Element Visible: " + isVisible;
-                    }
-                    if (outputDescription != null && !outputDescription.isEmpty()) {
-                        testHelper.UpdateTestResults(outputDescription, true);
-                        testHelper.WriteToFile(newFileName, outputDescription);
+                } catch (Exception fex) {
+                    if (fex.getMessage().equals("stale element reference: element is not attached to the page document")) {
+                        continue;
                     }
                 }
             }
@@ -3005,6 +3016,10 @@ public class TestCentral {
             testHelper.WriteToFile(newFileName, "");
         } catch (Exception ex) {
             testHelper.UpdateTestResults("Error: " + ex.getMessage(), false);
+            /*if (formatted) {
+                testHelper.WriteToFile(newFileName, CreateXmlFileStartAndEnd(false));
+            }
+            testHelper.WriteToFile(newFileName, "");*/
         }
 
         return newFileName;
@@ -4169,7 +4184,7 @@ public class TestCentral {
      * @param current - currently not used, send empty string
      * @return - xPath of the childElement passed in
      **********************************************************************/
-    private String generateXPATH(WebElement childElement, String current) {
+    private String GenerateXPath(WebElement childElement, String current) {
         String childTag = childElement.getTagName();
         if(childTag.equals("html")) {
             return "/html[1]"+current;
@@ -4184,7 +4199,7 @@ public class TestCentral {
                 count++;
             }
             if(childElement.equals(childrenElement)) {
-                return generateXPATH(parentElement, "/" + childTag + "[" + count + "]"+current);
+                return GenerateXPath(parentElement, "/" + childTag + "[" + count + "]"+current);
             }
         }
         return null;
@@ -4568,7 +4583,7 @@ public class TestCentral {
      ****************************************************************/
     private String CheckComparisonOperator(String comparisonType) {
         //in case the comparison type is not passed in, default it to equals.
-        if (!comparisonType.equals("!=") && !comparisonType.equals("=")) {
+        if (comparisonType == null || (!comparisonType.equals("!=") && !comparisonType.equals("="))) {
             comparisonType = "=";
         }
         return comparisonType;
@@ -4582,7 +4597,7 @@ public class TestCentral {
      *                            this command was issued.
      ************************************************************ */
     private void ImproperlyFormedTest(String fileStepIndex) {
-        testHelper.UpdateTestResults("Imporperly formatted test for step " + fileStepIndex, true);
+        testHelper.UpdateTestResults("Improperly formatted test for step " + fileStepIndex, true);
     }
 
     /*******************************************************************

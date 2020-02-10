@@ -6,18 +6,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.*;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
@@ -84,6 +80,17 @@ public class TestHelper{
 
     Dimension savedDimension = null;
 
+
+    /**************************************************************************************************
+     * Description: This method reads the XML based Configuration file, populates the ConfigSettings
+     *              object with the values from the file and returns that ConfigSettings object to the
+     *              calling method.
+     * @param configurationXmlFile - XML Configuration File
+     * @param isExecutedFromMain - boolean value true if Executed from Main indicating that this is
+     *                           being run as a stand-alone application.
+     *
+     * @return - ConfigSettings object
+     **************************************************************************************************/
     ConfigSettings ReadConfigurationSettingsXmlFile(String configurationXmlFile, boolean isExecutedFromMain) {
         PrintSamples();
         ConfigSettings configSettings = new ConfigSettings();
@@ -246,7 +253,6 @@ public class TestHelper{
             //optional, but recommended
             //read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
             doc.getDocumentElement().normalize();
-            //testHelper.CreateSectionHeader("[ Running Test Script ]", AppConstants.FRAMED + AppConstants.ANSI_PURPLE_BACKGROUND + AppConstants.ANSI_BOLD, AppConstants.ANSI_YELLOW_BRIGHT, true, true, true);
             CreateSectionHeader("[ Start of Reading Test Settings File  ]", "", AppConstants.ANSI_PURPLE + AppConstants.ANSI_BOLD, true, true, false);
             UpdateTestResults(AppConstants.ANSI_PURPLE + AppConstants.indent5 + "Reading file: " + AppConstants.ANSI_RESET + testXmlFileName, false);
 //            System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
@@ -371,39 +377,39 @@ public class TestHelper{
 
 
     //TODO: WORKING HERE GAJ - for reading the API xml file as an xml document for xPath access
-    String ReadTestSettingsXmlFile(String xmlEndPointFileContent, String xpath_expression, String searchValue) {
-        String matchType = "No match";
-        try {
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(new java.io.ByteArrayInputStream(xmlEndPointFileContent.getBytes()));
-            XPathFactory xPathfactory = XPathFactory.newInstance();
-            XPath xpath = xPathfactory.newXPath();
-            XPathExpression expr = xpath.compile(xpath_expression);
-            NodeList searchNodes = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
-            String textContent;
-            for (int x = 0; x < searchNodes.getLength(); x++) {
-                Node checkNode = searchNodes.item(x);
-                textContent = checkNode.getTextContent();
-                if (textContent.equals(searchValue)) {
-                    matchType = "Exact";
-                    break;
-                } else if (textContent.toLowerCase().equals(checkNode.getTextContent().toLowerCase())) {
-                    matchType = "Case Incorrect match";
-                    break;
-                }
-            }
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (XPathExpressionException e) {
-            e.printStackTrace();
-        }
-        return matchType;
-    }
+//    String ReadTestSettingsXmlFile(String xmlEndPointFileContent, String xpath_expression, String searchValue) {
+//        String matchType = "No match";
+//        try {
+//            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+//            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+//            Document doc = dBuilder.parse(new java.io.ByteArrayInputStream(xmlEndPointFileContent.getBytes()));
+//            XPathFactory xPathfactory = XPathFactory.newInstance();
+//            XPath xpath = xPathfactory.newXPath();
+//            XPathExpression expr = xpath.compile(xpath_expression);
+//            NodeList searchNodes = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+//            String textContent;
+//            for (int x = 0; x < searchNodes.getLength(); x++) {
+//                Node checkNode = searchNodes.item(x);
+//                textContent = checkNode.getTextContent();
+//                if (textContent.equals(searchValue)) {
+//                    matchType = "Exact";
+//                    break;
+//                } else if (textContent.toLowerCase().equals(checkNode.getTextContent().toLowerCase())) {
+//                    matchType = "Case Incorrect match";
+//                    break;
+//                }
+//            }
+//        } catch (ParserConfigurationException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (SAXException e) {
+//            e.printStackTrace();
+//        } catch (XPathExpressionException e) {
+//            e.printStackTrace();
+//        }
+//        return matchType;
+//    }
 
 
 //    public static org.w3c.dom.Document loadXMLFrom(String xml)
@@ -468,8 +474,8 @@ public class TestHelper{
 
     /*****************************************************************
      * DESCRIPTION: Navigates to the web address passed in.
-     * @param driver -
-     * @param webAddress -
+     * @param driver - the webdriver
+     * @param webAddress - The URL to navigate to.
      **************************************************************** */
     void NavigateToPage(WebDriver driver, String webAddress) throws InterruptedException{
         String indent = navigationMessageIndent != null ? navigationMessageIndent : AppConstants.indent8;
@@ -480,6 +486,13 @@ public class TestHelper{
         Thread.sleep(defaultMilliSecondsForNavigation);
     }
 
+    /***************************************************************************
+     * DESCRIPTION: Gets the Back-End and Front-End Page Load Timing and sets
+     *              the associated class properties so that they can be retrieved
+     *              by the method in TestCentral that initiated the call hierarchy.
+     * @param driver - the webdriver
+     * @param indent - the amount of space to indent to keep the output consistent.
+     ******************************************************************************/
     private void CheckPageLoadTiming(WebDriver driver, String indent) {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         double backendPerformance_calc = (double)js.executeScript("return (window.performance.timing.responseStart - window.performance.timing.navigationStart) / 1000");
@@ -498,14 +511,15 @@ public class TestHelper{
     }
 
 
-    /*****************************************************************
+    /***************************************************************************************
      *  DESCRIPTION:
      *  Navigates to the web address passed in and sleeps for the
      *  number of milliseconds passed in.
-     * @param driver -
-     * @param webAddress -
-     * @param milliseconds -
-     **************************************************************** */
+     * @param driver - the WebDriver
+     * @param webAddress - web page URL
+     * @param milliseconds - number of milliseconds to wait after loading the page
+     *                       to allow it to load
+     ************************************************************************************** */
     void NavigateToPage(WebDriver driver, String webAddress, int milliseconds) throws InterruptedException{
         if (milliseconds > 0) {
             UpdateTestResults(AppConstants.indent8 + "Waiting " + milliseconds  + " milliseconds, as directed, for navigation to complete!", false);
@@ -519,23 +533,21 @@ public class TestHelper{
 
 
 
-    /*****************************************************************
-     * DESCRIPTION:  This method checks to ensure that Screenshots
-     * are configured to be taken.
-     * If screenshots are configured, it checks the current number of
-     * screenshots against the total taken to ensure that it doesn't
-     * take more than configured.  For error screen captures, this
-     * count is ignored so that issues can be troubleshot by the user.
-     * Saves the current screen dimensions, calls the resize method to
-     * expand the screen to capture the entire page and saves a
-     * screenshot to the the specified folder.
-     * If a screenshot folder is not configured screenshots will be saved in
-     * config folder.
+    /***************************************************************************************
+     * DESCRIPTION:  This method checks to ensure that Screenshots are configured
+     * to be taken.
+     * If screenshots are configured, it checks the current number of screenshots against
+     * the total taken to ensure that it doesn't take more than configured.
+     * For error screen captures, this count is ignored so that issues can be troubleshot
+     * by the user.
+     * Saves the current screen dimensions, calls the resize method to expand the screen
+     * to capture the entire page and saves a screenshot to the the specified folder.
+     * If a screenshot folder is not configured screenshots will be saved in config folder.
      * @param driver - the WebDriver
      * @param screenShotName - Name to save the ScreenShot being taken
      * @param screenShotFolder - Folder where the ScreenShot should be saved.
      * @param isError - Is this ScreenShot for an error condition.
-     **************************************************************** */
+     ************************************************************************************** */
     void CaptureScreenShot(WebDriver driver, String screenShotName, String screenShotFolder, boolean isError, String fileStepIndex) {
         if ((maxScreenShotsToTake > 0 && screenShotsTaken < maxScreenShotsToTake) || (maxScreenShotsToTake == 0)) {
             try {
@@ -1204,18 +1216,28 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "The Navigation command navigates the browser to the provided URL.");
             WriteToFile(get_helpFileName(), "All Navigation steps should be marked as crucial, as all subsequent checks require that navigation complete successfully!!!");
             WriteToFile(get_helpFileName(), "An assertion does not have to be part of navigation, but it probably should be!!!");
-            WriteToFile(get_helpFileName(), "If Backend and Frontend timings are being tested, the URL must be tested, so the expected value must contain the URL if testing page timings.");
+            WriteToFile(get_helpFileName(), "As some testers may like to separate test steps, this is not enforced by the application and since a tester could choose to");
+            WriteToFile(get_helpFileName(), "navigate to separate pages in one test script and make a subsequent \"URL without Navigation checks\" conditional, there are ");
+            WriteToFile(get_helpFileName(), "sound alternatives to the suggested approach.");
+            WriteToFile(get_helpFileName(), "If Backend and Frontend timings are being tested, the URL must be tested, so the expected value must contain the URL ");
+            WriteToFile(get_helpFileName(), "if testing page timings.");
             WriteToFile(get_helpFileName(), "To navigate without checking the URL, remove the expectedValue node completely as displayed in the example below.");
             WriteToFile(get_helpFileName(), "For the Navigation command only, although the arguments should be in the order shown, if they ");
             WriteToFile(get_helpFileName(), "are out of order the application will attempt to discern the order and rearrange them.");
             WriteToFile(get_helpFileName(), "The Navigation command has 4 possible arguments but only the first argument is required.");
             WriteToFile(get_helpFileName(), "The required first argument, <arg1></arg1>, contains the URL to be loaded.");
-            WriteToFile(get_helpFileName(), "The optional second argument, <arg2></arg2>, contains the time in milliseconds to wait to allow the page to load.  The default is 10 seconds.");
+            WriteToFile(get_helpFileName(), "The optional second argument, <arg2></arg2>, contains the time in milliseconds to wait to allow the page to load. ");
+            WriteToFile(get_helpFileName(), " -  The default is 10 seconds.");
             WriteToFile(get_helpFileName(), "The optional third argument, <arg3></arg3>, contains the dimensions for setting the browser window height and width.");
-            WriteToFile(get_helpFileName(), "The optional fourth argument, <arg4></arg4>, contains the time in milliseconds to wait to allow the page to load.");
+            WriteToFile(get_helpFileName(), "The optional fourth argument, <arg4></arg4>, contains the maximum time in seconds for the  Back-End and Front-End  to load.");
+            WriteToFile(get_helpFileName(), " - This last optional argument actually performs a test based on the values entered and reports if the Back-End and Front-End load ");
+            WriteToFile(get_helpFileName(), " - times were within the maximum allotted time provided.");
+            WriteToFile(get_helpFileName(), " - Individual times are displayed in Green, when within the allotted time, and in Red, when outside the allotted time.");
+            WriteToFile(get_helpFileName(), " - This check is not part of the Crucial or Conditional functionality and will only display results but never determine");
+            WriteToFile(get_helpFileName(), " - subsequent functionality.");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "To Navigate, without checking the URL to ensure that navigation occurred properly, ");
-            WriteToFile(get_helpFileName(), "to wait 4000 milli-seconds and to set the window dimensions to (800 x 800)");
+            WriteToFile(get_helpFileName(), "To Navigate, without checking the URL to ensure that navigation occurred properly, to wait 4000 milli-seconds ");
+            WriteToFile(get_helpFileName(), "and to set the window dimensions to (800 x 800).");
             WriteToFile(get_helpFileName(), "Please note that making this crucial is irrelevant as no assertions will be made.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<!-- Command - ALWAYS REQUIRED!!! -->\r\n" +
@@ -1234,9 +1256,11 @@ public class TestHelper{
                     "</step>");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), PrePostPad("[ NAVIGATION WITH SUCCESSFUL NAVIGATION CONFIRMATION ]", "═", 9, 159));
-            WriteToFile(get_helpFileName(), "To Navigate, assert that the URL is what is in the expectedValue node and to wait 4 thousand milli-seconds before making the assertion to allow the page to load,");
+            WriteToFile(get_helpFileName(), "To Navigate, assert that the URL is what is in the expectedValue node and to wait 4 thousand milli-seconds before making the assertion to");
+            WriteToFile(get_helpFileName(), "allow the page to load,");
             WriteToFile(get_helpFileName(), "and to check that the Back end loads under .5 seconds and that the Front end loads under 3.75 seconds.");
-            WriteToFile(get_helpFileName(), "PLEASE NOTE: Asserting that the URL is correct does not mean that a server transfer didn't redirect the URL to a different page but leave the URL untouched. ");
+            WriteToFile(get_helpFileName(), "PLEASE NOTE: Asserting that the URL is correct does not mean that a server transfer didn't redirect the URL to a different page but");
+            WriteToFile(get_helpFileName(), "leave the URL untouched. ");
             WriteToFile(get_helpFileName(), "<step>\r\n\t<command>navigate</command>\r\n\t<actionType>write</actionType>\r\n" +
                                                         "\t<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>\r\n" +
                                                         "\t<crucial>TRUE</crucial>\r\n\t<arguments>\r\n" +
@@ -1274,7 +1298,8 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "Additionally, it should be mentioned that the Authentication and Login commands are not for form based authentication but ");
             WriteToFile(get_helpFileName(), "rather for alert style login popups.");
             WriteToFile(get_helpFileName(), "For logging into a page that has two input text type form fields, use the send keys command coupled with the click command.");
-            WriteToFile(get_helpFileName(), "To Navigate and Authenticate with username and password and assert that the URL is in the expectedValue node and to wait 4 thousand milli-seconds ");
+            WriteToFile(get_helpFileName(), "To Navigate and Authenticate with username and password and assert that the URL is in the expectedValue node and to wait");
+            WriteToFile(get_helpFileName(), "4 thousand milli-seconds ");
             WriteToFile(get_helpFileName(), "before making the assertion to allow the page to load:");
             WriteToFile(get_helpFileName(), "<step>\r\n\t<command>navigate</command>\r\n\t<actionType>write</actionType>\r\n" +
                                                         "\t<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>\r\n" +
@@ -2882,6 +2907,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
+            //region { Template }
 //            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
 //            WriteToFile(get_helpFileName(), "");
 //            WriteToFile(get_helpFileName(), "");
@@ -2894,6 +2920,7 @@ public class TestHelper{
 //            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
 //            WriteToFile(get_helpFileName(), "");
 //            WriteToFile(get_helpFileName(), "");
+            //endregion
         } catch (Exception ignored) {
 
         }

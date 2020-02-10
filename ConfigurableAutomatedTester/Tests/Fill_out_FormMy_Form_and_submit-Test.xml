@@ -146,9 +146,9 @@
 		<crucial>false</crucial>				   	
 		<accessor>last-name</accessor>
 		<accessorType>ID</accessorType>
-		<arguments>
+		<!--<arguments>
 			<arg1>!=</arg1>
-		</arguments>
+		</arguments>-->
 	</step>
 	<step>
 		<!-- Tested - Good -->

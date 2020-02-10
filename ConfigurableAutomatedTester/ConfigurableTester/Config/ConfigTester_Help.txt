@@ -420,18 +420,28 @@ Usually, the test file will consist of multiple steps like (navigation, check el
 The Navigation command navigates the browser to the provided URL.
 All Navigation steps should be marked as crucial, as all subsequent checks require that navigation complete successfully!!!
 An assertion does not have to be part of navigation, but it probably should be!!!
-If Backend and Frontend timings are being tested, the URL must be tested, so the expected value must contain the URL if testing page timings.
+As some testers may like to separate test steps, this is not enforced by the application and since a tester could choose to
+navigate to separate pages in one test script and make a subsequent "URL without Navigation checks" conditional, there are 
+sound alternatives to the suggested approach.
+If Backend and Frontend timings are being tested, the URL must be tested, so the expected value must contain the URL 
+if testing page timings.
 To navigate without checking the URL, remove the expectedValue node completely as displayed in the example below.
 For the Navigation command only, although the arguments should be in the order shown, if they 
 are out of order the application will attempt to discern the order and rearrange them.
 The Navigation command has 4 possible arguments but only the first argument is required.
 The required first argument, <arg1></arg1>, contains the URL to be loaded.
-The optional second argument, <arg2></arg2>, contains the time in milliseconds to wait to allow the page to load.  The default is 10 seconds.
+The optional second argument, <arg2></arg2>, contains the time in milliseconds to wait to allow the page to load. 
+ -  The default is 10 seconds.
 The optional third argument, <arg3></arg3>, contains the dimensions for setting the browser window height and width.
-The optional fourth argument, <arg4></arg4>, contains the time in milliseconds to wait to allow the page to load.
+The optional fourth argument, <arg4></arg4>, contains the maximum time in seconds for the  Back-End and Front-End  to load.
+ - This last optional argument actually performs a test based on the values entered and reports if the Back-End and Front-End load 
+ - times were within the maximum allotted time provided.
+ - Individual times are displayed in Green, when within the allotted time, and in Red, when outside the allotted time.
+ - This check is not part of the Crucial or Conditional functionality and will only display results but never determine
+ - subsequent functionality.
 
-To Navigate, without checking the URL to ensure that navigation occurred properly, 
-to wait 4000 milli-seconds and to set the window dimensions to (800 x 800)
+To Navigate, without checking the URL to ensure that navigation occurred properly, to wait 4000 milli-seconds 
+and to set the window dimensions to (800 x 800).
 Please note that making this crucial is irrelevant as no assertions will be made.
 <step>
 	<!-- Command - ALWAYS REQUIRED!!! -->
@@ -450,9 +460,11 @@ Please note that making this crucial is irrelevant as no assertions will be made
 </step>
 
 ═════════[ NAVIGATION WITH SUCCESSFUL NAVIGATION CONFIRMATION ]════════════════════════════════════════════════════════════════════════════════════════════════
-To Navigate, assert that the URL is what is in the expectedValue node and to wait 4 thousand milli-seconds before making the assertion to allow the page to load,
+To Navigate, assert that the URL is what is in the expectedValue node and to wait 4 thousand milli-seconds before making the assertion to
+allow the page to load,
 and to check that the Back end loads under .5 seconds and that the Front end loads under 3.75 seconds.
-PLEASE NOTE: Asserting that the URL is correct does not mean that a server transfer didn't redirect the URL to a different page but leave the URL untouched. 
+PLEASE NOTE: Asserting that the URL is correct does not mean that a server transfer didn't redirect the URL to a different page but
+leave the URL untouched. 
 <step>
 	<command>navigate</command>
 	<actionType>write</actionType>
@@ -502,7 +514,8 @@ It should be mentioned that this does not work for all authentication which is w
 Additionally, it should be mentioned that the Authentication and Login commands are not for form based authentication but 
 rather for alert style login popups.
 For logging into a page that has two input text type form fields, use the send keys command coupled with the click command.
-To Navigate and Authenticate with username and password and assert that the URL is in the expectedValue node and to wait 4 thousand milli-seconds 
+To Navigate and Authenticate with username and password and assert that the URL is in the expectedValue node and to wait
+4 thousand milli-seconds 
 before making the assertion to allow the page to load:
 <step>
 	<command>navigate</command>

@@ -39,9 +39,9 @@
 		-->
 		
 		<!-- Group 4 - Image Comparison tests -->
-		<!--
-		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CompareImages-Alternate-Test.xml</testFileName1>
 		
+		<!--<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CompareImages-Alternate-Test.xml</testFileName1>
+	
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CompareImages-Test.xml</testFileName1>-->
 		
 		
@@ -57,10 +57,11 @@
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CreateTestPage-Test.xml</testFileName1>
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CreateUnformattedTestPage-Test.xml</testFileName1>
 		-->
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CreateCNNTestPage-Test.xml</testFileName1>
 		
 		<!-- Group 7 - Fill out form and Find Phrase tests -->
-		<!--
-		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1>	
+		
+		<!--<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1>	
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\FindPhrase-Test.xml</testFileName1>
 		-->
 		
@@ -84,8 +85,9 @@
 		<!-- test in section below saved from .Net Desktop Test Composition Application -->
 		<!--<testFileName1>C:\Gary\TestFiles\From_Desktop_App\Gary_Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1>
 		<testFileName1>C:\Gary\TestFiles\From_Desktop_App\Gary2_Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1>
-		<testFileName1>C:\Gary\TestFiles\From_Desktop_App\Gary3_Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1>  -->
+		<testFileName1>C:\Gary\TestFiles\From_Desktop_App\Gary3_Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1>  
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\Navigation-Test.xml</testFileName1>
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckConditionalPersistence-Test.xml</testFileName1>-->
 		<!--
 		<testFileName1></testFileName1>
 		<testFileName1></testFileName1>
