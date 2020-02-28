@@ -40,6 +40,15 @@ public class TestHelper{
         return _helpFileName;
     }
 
+    private String _csvFileName;
+    String get_csvFileName() {
+        return _csvFileName;
+    }
+    void set_csvFileName(String _csvFileName) {
+        this._csvFileName = _csvFileName;
+    }
+
+
     void set_helpFileName(String _helpFileName) {
         this._helpFileName = _helpFileName;
     }
@@ -76,7 +85,11 @@ public class TestHelper{
     double get_backEndPageLoadDuration() { return _backEndPageLoadDuration;}
     void set_frontEndPageLoadDuration(double _frontEndPageLoadDuration) { this._frontEndPageLoadDuration = _frontEndPageLoadDuration; }
     double get_frontEndPageLoadDuration() { return _frontEndPageLoadDuration;}
-
+    private String _testFileName;
+    void set_testFileName(String _testFileName) {
+        this._testFileName = _testFileName;
+    }
+    String get_testFileName() {return _testFileName; }
 
     Dimension savedDimension = null;
 
@@ -169,6 +182,13 @@ public class TestHelper{
                         eElement.getElementsByTagName(AppConstants.SortSpecifiedTestFilesNode).item(0).getTextContent() : "false";
                 configSettings.set_sortSpecifiedTestFiles(Boolean.parseBoolean(configValue));
                 UpdateTestResults(AppConstants.ANSI_YELLOW + AppConstants.indent5 + "SortSpecifiedTestFiles = "  + AppConstants.ANSI_RESET + configSettings.get_sortSpecifiedTestFiles().toString(), false);
+
+                //CreateCSVStatusFiles - default set to false
+                configValue = (eElement.getElementsByTagName(AppConstants.CreateCSVStatusFiles).item(0) != null) ?
+                        eElement.getElementsByTagName(AppConstants.CreateCSVStatusFiles).item(0).getTextContent() : "none";
+                configSettings.set_createCsvStatusFiles(configValue.toLowerCase());
+                UpdateTestResults(AppConstants.ANSI_YELLOW + AppConstants.indent5 + "CreateCSVStatusFiles = "  + AppConstants.ANSI_RESET + configSettings.get_createCsvStatusFiles(), false);
+
 
                 //TestFolderName - default set to null
                 configValue = (eElement.getElementsByTagName(AppConstants.TestFolderNameNode).item(0) != null) ?
@@ -681,8 +701,12 @@ public class TestHelper{
                     }
                 } else {
                     WriteToFile(get_logFileName(), CleanMessage(testMessage));
-                    if (testMessage.startsWith("Successful") || testMessage.startsWith("Failed")) {
+                    //if (testMessage.startsWith("Successful") || testMessage.startsWith("Failed")) {
+                    if (testMessage.contains("Successful") || testMessage.contains("Failed")) {
                         WriteToFile(get_logFileName(), "");
+                        if (get_csvFileName() != null) {
+                            WriteToCSV(CleanMessage(testMessage));
+                        }
                     }
                 }
             }
@@ -736,6 +760,39 @@ public class TestHelper{
         }
     }
 
+    private void WriteToCSV(String testMessage) {
+        String fileName = this.get_csvFileName();
+        String step = testMessage.substring(testMessage.indexOf("for step ") + "for step ".length());
+        if (step.contains(" ")) {
+            step = step.substring(0, step.indexOf(" "));
+        }
+        String status = testMessage.contains("Successful") ? "Successful" : "Failure";
+        int startPos = testMessage.indexOf(status) + status.length();
+        int endPos = testMessage.indexOf(" for step ");
+        String message = testMessage.substring(startPos, endPos).trim();
+        message = message.substring(0,1).toUpperCase() + message.substring(1);
+        DebugDisplay("step = (" + step + ")");
+        DebugDisplay("message = (" + message + ")");
+        DebugDisplay("status = (" + status + ")");
+
+        String csv = step.replace("\n","") + "," + message.replace("\n","") + "," + status + "," + get_testFileName();
+        WriteToFile(fileName, csv);
+    }
+
+    private Boolean isNumeric(String character) {
+
+        boolean status = true;
+
+        try {
+            if (character != null) {
+                int returnValueCheck = Integer.parseInt(character);
+            }
+        } catch (NumberFormatException ne){
+            status = false;
+        }
+
+        return status;
+    }
 
     /*****************************************************************************
      * Description: Used for outputting to the screen for debugging purposes
@@ -930,7 +987,8 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "Working as a stand-alone application allows this to be scheduled to run whenever it is desired by either creating a Scheduled Task");
             WriteToFile(get_helpFileName(), "or using some other automated process tool, or writing one of your own.");
             WriteToFile(get_helpFileName(), "Running outside of the IDE means that it can be quickly executed without opening the IDE and then the source project.");
-            WriteToFile(get_helpFileName(), "The Log file name will be preceeded with \"StandAlone_\" when run as a stand-alone application.");
+            WriteToFile(get_helpFileName(), "The Log file name will be preceded with \"StandAlone_\" when run as a stand-alone application.");
+            WriteToFile(get_helpFileName(), "By default, log and CSV files will be created in the \"\\Config\" folder, which is part of this project.");
             WriteToFile(get_helpFileName(), "Look at the Project_Setup.txt file for directions on running the stand-alone application as part of a batch file.\r\n");
             WriteToFile(get_helpFileName(), "The application covers most testing, including: Navigation, Form Population, Value checking, Value Persistence for use in ");
             WriteToFile(get_helpFileName(), "upcoming test step comparisons or form populations, context menu access, iFrame access, switching  browser tabs, ");
@@ -1018,6 +1076,8 @@ public class TestHelper{
                     "\t<testAllBrowsers>false</testAllBrowsers>\r\n" +
                     "\t<specifyTestFiles>true</specifyTestFiles>\r\n" +
                     "\t<sortSpecifiedTestFiles>false</sortSpecifiedTestFiles>\r\n" +
+                    "\t<!-- createCsvStatusFiles settings are \"none\", \"one\" or \"many\" without the quotes, of course.  -->\r\n" +
+                    "\t<createCsvStatusFiles>none</createCsvStatusFiles>\r\n" +
                     "\t<!-- Individual File Settings -->\r\n" +
                     "\t<testFiles>\r\n" +
                     "\t\t<!--<testFileName1>C:\\ConfigurableAutomatedTester\\Tests\\SqlServerAccess-Test.xml</testFileName1>\r\n" +
@@ -1074,6 +1134,24 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\tThe number no longer has meaning in the sort as each entry should be entered in numerical order, so the number will not be used for sorting.");
             WriteToFile(get_helpFileName(), "\t\t-\tIf false, files are taken in the order in which they are physically listed, which should be numerically.");
             WriteToFile(get_helpFileName(), "\t\t-\tIf true, files will be sorted alphabetically and re-listed on the screen to show the order in which they will execute.\r\n");
+            WriteToFile(get_helpFileName(), "The <createCsvStatusFiles></createCsvStatusFiles> element specifies whether to create none, one, or many CSV files.");
+            WriteToFile(get_helpFileName(), "\tThe CSV file logs only Success and Failure steps, unlike the Test Execution log file, which logs all test steps.");
+            WriteToFile(get_helpFileName(), "\tThis setting has 3 acceptable values \"none\", \"one\" and \"many\".");
+            WriteToFile(get_helpFileName(), "\t\t-\tIf \"none\", which is the default, no CSV files will be produced.");
+            WriteToFile(get_helpFileName(), "\t\t-\tIf \"one\", one CSV file containing all tests run results, will be produced and it will be named similar to the corresponding");
+            WriteToFile(get_helpFileName(), "\t\t\t-\tlog file name but have a .csv extension.");
+            WriteToFile(get_helpFileName(), "\t\t-\tIf \"many\", one CSV file for each test will be produced and each will be named similar to the corresponding test file name ");
+            WriteToFile(get_helpFileName(), "\t\t\t-\tbut have a datetime stamp like the log file and with a .csv extension.");
+            WriteToFile(get_helpFileName(), "\t\t-\tIf any value other than those specified above, no CSV files will be produced.");
+            WriteToFile(get_helpFileName(), "\tThe CSV file consists of the following 4 columns:");
+            WriteToFile(get_helpFileName(), "\t\tFile and Step Number - This column holds the file number and step number, each starting at 0 and in the format F0_S0 where ");
+            WriteToFile(get_helpFileName(), "\t\t-\tF0 corresponds to File 0, which is the first file, and S0 corresponds to Step 0, which is the first step.");
+            WriteToFile(get_helpFileName(), "\t\t-\tSince all steps taken are not checks, there may be line number gaps.");
+            WriteToFile(get_helpFileName(), "\t\tTest Performed - This column holds type of test being performed such as Navigation and URL Check, Equal comparison results etc..");
+            WriteToFile(get_helpFileName(), "\t\tExecution Status - This column holds the word Successful for successful test step checks and the word Failure for failed test step checks.");
+            WriteToFile(get_helpFileName(), "\t\tTest File Name - This column holds the name of the test file this entry corresponds with.");
+            WriteToFile(get_helpFileName(), "\t\t-\tWhen creating one CSV file for multiple tests, this allows for another method of sorting the data.\r\n");
+
             WriteToFile(get_helpFileName(), "The <testFiles></testFiles> element is a container element for the testFileName elements and has no textual content of its own.\r\n");
             WriteToFile(get_helpFileName(), "The <testFileName1></testFileName1> element specifies the test file to use for the test and each element should end with an incremental numeric value.");
             WriteToFile(get_helpFileName(), "\tExample:\r\n\t\t<testFileName1></testFileName1>\r\n\t\t<testFileName2></testFileName2>\r\n");
@@ -1111,6 +1189,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "will be used, the screen shot folder is specified, but no screenshots will be taken, only the Chrome browser will be used and it will be visible,");
             WriteToFile(get_helpFileName(), "and although test files are specified, they will be ignored because <specifyTestFiles></specifyTestFiles> is false meaning the folder settings will be used to ");
             WriteToFile(get_helpFileName(), "determine the test files to be used.");
+            WriteToFile(get_helpFileName(), "Additionally, no CSV files will be created because the <createCsvStatusFiles></createCsvStatusFiles> is set to \"none\".");
             WriteToFile(get_helpFileName(), "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\r\n" +
                     "<automatedTestConfiguration>\r\n" +
                     "\t<!-- folder where screenshots should be saved -->\r\n" +
@@ -1122,6 +1201,7 @@ public class TestHelper{
                     "\t<testAllBrowsers>false</testAllBrowsers>\r\n" +
                     "\t<specifyTestFiles>false</specifyTestFiles>\r\n" +
                     "\t<sortSpecifiedTestFiles>true</sortSpecifiedTestFiles>\r\n" +
+                    "\t<createCsvStatusFiles>none</createCsvStatusFiles>\r\n" +
                     "\t<!-- Individual File Settings -->\r\n" +
                     "\t<testFiles>\r\n" +
                     "\t\t<!--<testFileName1>C:\\ConfigurableAutomatedTester\\Tests\\SqlServerAccess-Test.xml</testFileName1>\r\n" +

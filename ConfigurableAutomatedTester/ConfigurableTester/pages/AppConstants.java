@@ -16,6 +16,7 @@ public class AppConstants {
     public static final String FolderFileFilterTypeNode = "folderFileFilterType";
     public static final String FolderFileFilterNode = "folderFileFilter";
     public static final String TestFilesNode = "testFiles";
+    public static final String CreateCSVStatusFiles = "createCsvStatusFiles";
     //endregion
 
     //region { XML Node name constants for Test Settings }

@@ -93,7 +93,8 @@ This can be run as a stand-alone application or as a JUnit test within the IDE, 
 Working as a stand-alone application allows this to be scheduled to run whenever it is desired by either creating a Scheduled Task
 or using some other automated process tool, or writing one of your own.
 Running outside of the IDE means that it can be quickly executed without opening the IDE and then the source project.
-The Log file name will be preceeded with "StandAlone_" when run as a stand-alone application.
+The Log file name will be preceded with "StandAlone_" when run as a stand-alone application.
+By default, log and CSV files will be created in the "\Config" folder, which is part of this project.
 Look at the Project_Setup.txt file for directions on running the stand-alone application as part of a batch file.
 
 The application covers most testing, including: Navigation, Form Population, Value checking, Value Persistence for use in 
@@ -194,6 +195,8 @@ The following is an example of a configuration file which will be explained belo
 	<testAllBrowsers>false</testAllBrowsers>
 	<specifyTestFiles>true</specifyTestFiles>
 	<sortSpecifiedTestFiles>false</sortSpecifiedTestFiles>
+	<!-- createCsvStatusFiles settings are "none", "one" or "many" without the quotes, of course.  -->
+	<createCsvStatusFiles>none</createCsvStatusFiles>
 	<!-- Individual File Settings -->
 	<testFiles>
 		<!--<testFileName1>C:\ConfigurableAutomatedTester\Tests\SqlServerAccess-Test.xml</testFileName1>
@@ -259,6 +262,24 @@ The <sortSpecifiedTestFiles></sortSpecifiedTestFiles> element specifies whether 
 		-	If false, files are taken in the order in which they are physically listed, which should be numerically.
 		-	If true, files will be sorted alphabetically and re-listed on the screen to show the order in which they will execute.
 
+The <createCsvStatusFiles></createCsvStatusFiles> element specifies whether to create none, one, or many CSV files.
+	The CSV file logs only Success and Failure steps, unlike the Test Execution log file, which logs all test steps.
+	This setting has 3 acceptable values "none", "one" and "many".
+		-	If "none", which is the default, no CSV files will be produced.
+		-	If "one", one CSV file containing all tests run results, will be produced and it will be named similar to the corresponding
+			-	log file name but have a .csv extension.
+		-	If "many", one CSV file for each test will be produced and each will be named similar to the corresponding test file name 
+			-	but have a datetime stamp like the log file and with a .csv extension.
+		-	If any value other than those specified above, no CSV files will be produced.
+	The CSV file consists of the following 4 columns:
+		File and Step Number - This column holds the file number and step number, each starting at 0 and in the format F0_S0 where 
+		-	F0 corresponds to File 0, which is the first file, and S0 corresponds to Step 0, which is the first step.
+		-	Since all steps taken are not checks, there may be line number gaps.
+		Test Performed - This column holds type of test being performed such as Navigation and URL Check, Equal comparison results etc..
+		Execution Status - This column holds the word Successful for successful test step checks and the word Failure for failed test step checks.
+		Test File Name - This column holds the name of the test file this entry corresponds with.
+		-	When creating one CSV file for multiple tests, this allows for another method of sorting the data.
+
 The <testFiles></testFiles> element is a container element for the testFileName elements and has no textual content of its own.
 
 The <testFileName1></testFileName1> element specifies the test file to use for the test and each element should end with an incremental numeric value.
@@ -304,6 +325,7 @@ In the example configuration file provided below, a folder of test files are bei
 will be used, the screen shot folder is specified, but no screenshots will be taken, only the Chrome browser will be used and it will be visible,
 and although test files are specified, they will be ignored because <specifyTestFiles></specifyTestFiles> is false meaning the folder settings will be used to 
 determine the test files to be used.
+Additionally, no CSV files will be created because the <createCsvStatusFiles></createCsvStatusFiles> is set to "none".
 <?xml version="1.0" encoding="UTF-8" ?>
 <automatedTestConfiguration>
 	<!-- folder where screenshots should be saved -->
@@ -315,6 +337,7 @@ determine the test files to be used.
 	<testAllBrowsers>false</testAllBrowsers>
 	<specifyTestFiles>false</specifyTestFiles>
 	<sortSpecifiedTestFiles>true</sortSpecifiedTestFiles>
+	<createCsvStatusFiles>none</createCsvStatusFiles>
 	<!-- Individual File Settings -->
 	<testFiles>
 		<!--<testFileName1>C:\ConfigurableAutomatedTester\Tests\SqlServerAccess-Test.xml</testFileName1>

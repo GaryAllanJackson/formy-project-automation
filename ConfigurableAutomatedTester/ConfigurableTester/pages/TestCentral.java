@@ -109,6 +109,7 @@ public class TestCentral {
     private boolean runHeadless = true;
     private String screenShotSaveFolder;
     private BrowserTypes _selectedBrowserType; // = BrowserType.Firefox;    //BrowserType.Chrome;  //BrowserType.PhantomJS;
+    private String createCSVStatusFiles = "none";
     //endregion
 
     private WebDriver driver;
@@ -335,6 +336,7 @@ public class TestCentral {
             this.runHeadless = configSettings.get_runHeadless();
             this.screenShotSaveFolder = configSettings.get_screenShotSaveFolder();
             this.testAllBrowsers = configSettings.get_testAllBrowsers();
+            this.createCSVStatusFiles = configSettings.get_createCsvStatusFiles();
 
             if (testFiles.size() > 1) {
                 this.testFileName = testFiles.get(0);
@@ -359,9 +361,12 @@ public class TestCentral {
         }
         int startIndex = 0;  //used for instances when you do not want to start at the first element to test
         boolean revertToParent = false;
+        String csvFileName;
+        testHelper.set_csvFileName(null);
 
         for (int fileIndex = 0; fileIndex < testFiles.size(); fileIndex++) {
             testFileName = testFiles.get(fileIndex);
+            testHelper.set_testFileName(testFileName);
             //Start - reset this for each test file
             //moved this here so that the Unique Identifier is created for each test file.
             uniqueId = testHelper.GetUniqueIdentifier();
@@ -373,11 +378,22 @@ public class TestCentral {
             boolean isConditionalBlock = false;
             conditionalSuccessful = false;
             testSteps = testHelper.ReadTestSettingsXmlFile(testSteps, testFileName);
-
-
+            testHelper.DebugDisplay("testHelper.get_csvFileName() = " + testHelper.get_csvFileName());
+            if (this.createCSVStatusFiles.equals("many")) {
+                SetCSVFileName(testFileName);  //added for individual CSV files
+            } else if (this.createCSVStatusFiles.equals("one") && testHelper.get_csvFileName() == null) {
+                SetCSVFileName(logFileName);
+            } else if (this.createCSVStatusFiles.equals("none")) {
+                testHelper.set_csvFileName(null);
+            }
+            testHelper.WriteToFile(testHelper.get_csvFileName(),"File And Step Number,Test Performed,Execution Status,Test File Name");
             //End - reset this for each test file
             testHelper.CreateSectionHeader("[ Running Test Script ]", AppConstants.FRAMED + AppConstants.ANSI_PURPLE_BACKGROUND + AppConstants.ANSI_BOLD, AppConstants.ANSI_YELLOW_BRIGHT, true, true, true);
             testHelper.UpdateTestResults(AppConstants.ANSI_YELLOW_BRIGHT + "Running Test Script file: " + AppConstants.ANSI_RESET + testFileName, true);
+            testHelper.UpdateTestResults(AppConstants.ANSI_YELLOW_BRIGHT + "CSV Status file: " + AppConstants.ANSI_RESET + (testHelper.get_csvFileName() != null ? testHelper.get_csvFileName() : "N/A"), true);
+//            if (1 == 1) {
+//                return;
+//            }
             for (int x = startIndex; x < testSteps.size(); x++) {
                 if (revertToParent) {
                     driver.switchTo().defaultContent();
@@ -436,6 +452,19 @@ public class TestCentral {
 //            driver.quit();
 //            PerformCleanup();
         }
+    }
+
+    private void SetCSVFileName(String testFileName) {
+       String csvFileName = testFileName.contains(".xml") ? testFileName.replace(".xml", "_" + logFileUniqueName + ".csv") :
+               testFileName.replace(".log", ".csv");
+               //testFileName.replace(".log", "_" + logFileUniqueName + ".csv");
+       if (csvFileName.contains("\\")) {
+           csvFileName = csvFileName.substring(testFileName.lastIndexOf("\\") + 1);
+       } else if (csvFileName.contains("/")) {
+           csvFileName =  csvFileName.substring(testFileName.lastIndexOf("/") + 1);
+       }
+        testHelper.UpdateTestResults("configurationFolder + csvFileName = '" + configurationFolder + "' '" + csvFileName + "'", false);
+        testHelper.set_csvFileName(configurationFolder + csvFileName);  //added for individual CSV files
     }
 
     /*****************************************************************
@@ -561,13 +590,13 @@ public class TestCentral {
             } else if (ts.get_command().toLowerCase().contains(AppCommands.Check) && ts.get_command().toLowerCase().contains(AppCommands.Links)) {
                 String url = GetArgumentValue(ts, 0, testPage);
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Checking page links for " + url, false);
-                CheckBrokenLinks(ts, url);
+                CheckBrokenLinks(ts, url, fileStepIndex);
             } else if (ts.get_command().toLowerCase().contains(AppCommands.Check) && ts.get_command().toLowerCase().contains(AppCommands.Image))  {
                 String url = GetArgumentValue(ts, 0, null);
                 if (ts.get_command().toLowerCase().contains(AppCommands.Alt)) {
-                    CheckADAImages(ts, url, AppCommands.Alt);
+                    CheckADAImages(ts, url, AppCommands.Alt, fileStepIndex);
                 } else if (ts.get_command().toLowerCase().contains(AppCommands.Src)) {
-                    CheckADAImages(ts, url, AppCommands.Src);
+                    CheckADAImages(ts, url, AppCommands.Src, fileStepIndex);
                 }
             } else if (ts.get_command().toLowerCase().contains(AppCommands.Check) && ts.get_command().toLowerCase().contains(AppCommands.Count)) {
                 CheckElementCountController(ts, fileStepIndex);
@@ -928,9 +957,9 @@ public class TestCentral {
             //if there is an expectedValue in a click event it is to validate that a new page has been navigated to
             if (expectedUrl != null) {
                 if (expectedUrl.equals(actualUrl)) {
-                    testHelper.UpdateTestResults("Successful Post Action results for step " + fileStepIndex + " Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")", true);
+                    testHelper.UpdateTestResults("Successful Post Action results.  Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ") for step " + fileStepIndex, true);
                 } else if (!expectedUrl.equals(actualUrl)) {
-                    testHelper.UpdateTestResults("Failed Post Action results for step " + fileStepIndex + " Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ")", true);
+                    testHelper.UpdateTestResults("Failed Post Action results.  Expected URL: (" + expectedUrl + ") Actual URL: (" + actualUrl + ") for step " + fileStepIndex, true);
                 }
             }
         }
@@ -1171,19 +1200,23 @@ public class TestCentral {
             }
         }
         if (expected.equals(actual) && !notEqual) {
-            testHelper.UpdateTestResults("Successful equal comparison results at step " + fileStepIndex + " Expected value: (" + expected + ") Actual value: (" + actual + ")\r\n", true);
+            //testHelper.UpdateTestResults("Successful equal comparison results.  Expected value: (" + expected + ") Actual value: (" + actual + ") for step " + fileStepIndex + " \r\n", true);
+            testHelper.UpdateTestResults("Successful equal comparison results.  Expected value: (" + expected + ") Actual value: (" + actual + ") for step " + fileStepIndex,  true);
             conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
         } else if (!expected.equals(actual) && notEqual) {
-            testHelper.UpdateTestResults("Successful NOT equal (!=) comparison results at step " + fileStepIndex + " Expected value: (" + expected + ") Actual value: (" + actual + ")\r\n", true);
+            //testHelper.UpdateTestResults("Successful NOT equal (!=) comparison results.  Expected value: (" + expected + ") Actual value: (" + actual + ") for step " + fileStepIndex + " \r\n", true);
+            testHelper.UpdateTestResults("Successful NOT equal (!=) comparison results.  Expected value: (" + expected + ") Actual value: (" + actual + ") for step " + fileStepIndex, true);
             conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
         } else if (!expected.equals(actual) && !notEqual) {
-            testHelper.UpdateTestResults("Failed equal comparison results at step " + fileStepIndex + " Expected value: (" + expected + ") Actual value: (" + actual + ")\r\n", true);
+            //testHelper.UpdateTestResults("Failed equal comparison results.  Expected value: (" + expected + ") Actual value: (" + actual + ") for step " + fileStepIndex + " \r\n", true);
+            testHelper.UpdateTestResults("Failed equal comparison results.  Expected value: (" + expected + ") Actual value: (" + actual + ") for step " + fileStepIndex, true);
             conditionalSuccessful = false;
             if (screenShotSaveFolder != null && !screenShotSaveFolder.isEmpty()) {
                 testHelper.CaptureScreenShot(driver, GetBrowserUsed() + fileStepIndex + "Assert_Fail", screenShotSaveFolder, false, fileStepIndex);
             }
         } else if (expected.equals(actual) && notEqual) {
-            testHelper.UpdateTestResults("Failed not equal comparison results at step " + fileStepIndex + " Expected value: (" + expected + ") Actual value: (" + actual + ")\r\n", true);
+            //testHelper.UpdateTestResults("Failed not equal comparison results.  Expected value: (" + expected + ") Actual value: (" + actual + ") for step " + fileStepIndex + " \r\n", true);
+            testHelper.UpdateTestResults("Failed not equal comparison results.  Expected value: (" + expected + ") Actual value: (" + actual + ") for step " + fileStepIndex, true);
             conditionalSuccessful = false;
             if (screenShotSaveFolder != null && !screenShotSaveFolder.isEmpty()) {
                 testHelper.CaptureScreenShot(driver, GetBrowserUsed() + fileStepIndex + "Assert_Fail", screenShotSaveFolder, false, fileStepIndex);
@@ -1270,10 +1303,10 @@ public class TestCentral {
             }
         }
         if (ts.get_expectedValue().trim().equals(actualValue.trim())) {
-            testHelper.UpdateTestResults(AppConstants.indent8 + "Successful Image " + srcAlt + " Check for step " + fileStepIndex + " Expected: (" + ts.get_expectedValue() + ") Actual: (" + actualValue + ")", true);
+            testHelper.UpdateTestResults(AppConstants.indent8 + "Successful Image " + srcAlt + " Check.  Expected: (" + ts.get_expectedValue() + ") Actual: (" + actualValue + ") for step " + fileStepIndex, true);
             conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
         } else {
-            testHelper.UpdateTestResults(AppConstants.indent8 + "Failed Image " + srcAlt + " Check for step " + fileStepIndex + " Expected: (" + ts.get_expectedValue() + ") Actual: (" + actualValue + ")", true);
+            testHelper.UpdateTestResults(AppConstants.indent8 + "Failed Image " + srcAlt + " Check.  Expected: (" + ts.get_expectedValue() + ") Actual: (" + actualValue + ") for step " + fileStepIndex, true);
             conditionalSuccessful = false;
         }
     }
@@ -1319,11 +1352,11 @@ public class TestCentral {
             }
         }
         if (ts.get_expectedValue().trim().equals(actualValue.trim())) {
-            testHelper.UpdateTestResults(AppConstants.indent8 + "Successful Anchor " + hrefTxt + " Check for step " + fileStepIndex + " Expected: (" + ts.get_expectedValue() + ") Actual: (" + actualValue + ")", true);
+            testHelper.UpdateTestResults(AppConstants.indent8 + "Successful Anchor " + hrefTxt + " Check.  Expected: (" + ts.get_expectedValue() + ") Actual: (" + actualValue + ") for step " + fileStepIndex, true);
             //conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
             conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) || conditionalSuccessful;
         } else {
-            testHelper.UpdateTestResults(AppConstants.indent8 + "Failed Anchor " + hrefTxt + " Check for step " + fileStepIndex + " Expected: (" + ts.get_expectedValue() + ") Actual: (" + actualValue + ")", true);
+            testHelper.UpdateTestResults(AppConstants.indent8 + "Failed Anchor " + hrefTxt + " Check.  Expected: (" + ts.get_expectedValue() + ") Actual: (" + actualValue + ") for step " + fileStepIndex, true);
             conditionalSuccessful = false;
         }
     }
@@ -1365,14 +1398,16 @@ public class TestCentral {
                 }
             }
             if (expectedStatus == actualStatus) {
-                testHelper.UpdateTestResults("Successful comparison results at step " + fileStepIndex + " Expected value: (" + expectedStatus + ") Actual value: (" + actualStatus + ")\r\n", true);
+                //testHelper.UpdateTestResults("Successful comparison results.  Expected value: (" + expectedStatus + ") Actual value: (" + actualStatus + ") for step " + fileStepIndex + "\r\n", true);
+                testHelper.UpdateTestResults("Successful comparison results.  Expected value: (" + expectedStatus + ") Actual value: (" + actualStatus + ") for step " + fileStepIndex, true);
                 conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
             } else if (expectedStatus != actualStatus) {
-                testHelper.UpdateTestResults("Failed comparison results at step " + fileStepIndex + " Expected value: (" + expectedStatus + ") Actual value: (" + actualStatus + ")\r\n", true);
+                //testHelper.UpdateTestResults("Failed comparison results.  Expected value: (" + expectedStatus + ") Actual value: (" + actualStatus + ") for step " + fileStepIndex + "\r\n", true);
+                testHelper.UpdateTestResults("Failed comparison results.  Expected value: (" + expectedStatus + ") Actual value: (" + actualStatus + ") for step " + fileStepIndex, true);
                 conditionalSuccessful = false;
             }
         } else {
-            testHelper.UpdateTestResults("Error: Required URL not provided as Argument 1 aborting at step " + fileStepIndex, true);
+            testHelper.UpdateTestResults("Error: Required URL not provided as Argument 1 aborting for step " + fileStepIndex, true);
             conditionalSuccessful = false;
         }
     }
@@ -1413,7 +1448,7 @@ public class TestCentral {
      *              have an href attribute.
      * @param url - url to check
      ************************************************************ */
-    void CheckBrokenLinks(TestStep ts, String url) {
+    void CheckBrokenLinks(TestStep ts, String url, String fileStepIndex) {
         if (!driver.getCurrentUrl().equals(url)) {
             driver.get(url);
         }
@@ -1443,12 +1478,11 @@ public class TestCentral {
             if (href != null) {
                 linkCount++;
                 int brokenLinksStatusCode = httpResponseCodeViaGet(href);
-
                 if (200 != brokenLinksStatusCode) {
-                    testHelper.UpdateTestResults("Failed link test " + href + " gave a response code of " + brokenLinksStatusCode, true);
+                    testHelper.UpdateTestResults("Failed link test " + href + " gave a response code of " + brokenLinksStatusCode + " for step " + fileStepIndex, true);
                     conditionalSuccessful = false;
                 } else {
-                    testHelper.UpdateTestResults( "Successful link test text: " + text + " href: " + href + " xPath: " + GenerateXPath(link, "") + " gave a response code of " + brokenLinksStatusCode, true);
+                    testHelper.UpdateTestResults( "Successful link test text: " + text + " href: " + href + " xPath: " + GenerateXPath(link, "") + " gave a response code of " + brokenLinksStatusCode + " for step " + fileStepIndex, true);
                     conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
                 }
             }
@@ -1468,7 +1502,7 @@ public class TestCentral {
      * @param url - url to check
      * @param checkType - Set to Image alt or src attribute
      ************************************************************ */
-    void CheckADAImages(TestStep ts, String url, String checkType) {
+    void CheckADAImages(TestStep ts, String url, String checkType, String fileStepIndex) {
         if (url != null && !url.isEmpty() && !url.toLowerCase().trim().equals("n/a")) {
             driver.get(url);
         }
@@ -1485,11 +1519,11 @@ public class TestCentral {
             if (checkType.toLowerCase().trim().equals("alt")) {
                 if (altTag != null && !altTag.trim().isEmpty()) {
                     altTagCount++;
-                    testHelper.UpdateTestResults("Successful image alt tag found: " + altTag + " for img src: " + imgSrc, true);
+                    testHelper.UpdateTestResults("Successful image alt tag found: " + altTag + " for img src: " + imgSrc + " for step " + fileStepIndex, true);
                     //conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
                     conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) || conditionalSuccessful;
                 } else {
-                    testHelper.UpdateTestResults("Failed image alt tag missing for img src: " + imgSrc, true);
+                    testHelper.UpdateTestResults("Failed image alt tag missing for img src: " + imgSrc + " for step " + fileStepIndex, true);
                     conditionalSuccessful = false;
                 }
             } else if (checkType.toLowerCase().trim().equals("src")) {
@@ -1498,23 +1532,23 @@ public class TestCentral {
                     try {
                         brokenImageSrcStatusCode = httpResponseCodeViaGet(imgSrc);
                     } catch (Exception ex) {
-                        testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed Error when attempting to validate image src " + imgSrc + " Error: " + ex.getMessage() + AppConstants.ANSI_RESET, true);
+                        testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed Error when attempting to validate image src " + imgSrc + " Error: " + ex.getMessage() + " for step " + fileStepIndex + AppConstants.ANSI_RESET, true);
                         conditionalSuccessful = false;
                     }
                     if (200 != brokenImageSrcStatusCode) {
-                        testHelper.UpdateTestResults("Failed image src test " + imgSrc + " gave a response code of " + brokenImageSrcStatusCode, true);
+                        testHelper.UpdateTestResults("Failed image src test " + imgSrc + " gave a response code of " + brokenImageSrcStatusCode + " for step " + fileStepIndex, true);
                         conditionalSuccessful = false;
                     } else {
-                        testHelper.UpdateTestResults("Successful image src test " + imgSrc + " gave a response code of " + brokenImageSrcStatusCode, true);
+                        testHelper.UpdateTestResults("Successful image src test " + imgSrc + " gave a response code of " + brokenImageSrcStatusCode + " for step " + fileStepIndex, true);
                         //conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
                         conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) || conditionalSuccessful;
                     }
                 } else {
                     if (altTag != null) {
-                        testHelper.UpdateTestResults("Failed image src tag missing for image with alt tag: " + altTag, true);
+                        testHelper.UpdateTestResults("Failed image src tag missing for image with alt tag: " + altTag + " for step " + fileStepIndex, true);
                         conditionalSuccessful = false;
                     } else {
-                        testHelper.UpdateTestResults("Failed image src tag missing.", true);
+                        testHelper.UpdateTestResults("Failed image src tag missing for step " + fileStepIndex, true);
                         conditionalSuccessful = false;
                     }
                 }
@@ -1561,19 +1595,19 @@ public class TestCentral {
 
             if (comparisonType.equals("=")) {
                 if (actualCount != expectedCount) {
-                    testHelper.UpdateTestResults("Failed to match count of '" + checkElement + "' tags for step " + fileStepIndex + ".  Expected: " + expectedCount + "  Actual: " + actualCount, true);
+                    testHelper.UpdateTestResults("Failed to match count of '" + checkElement + "' tags.  Expected: " + expectedCount + "  Actual: " + actualCount + " for step " + fileStepIndex, true);
                     conditionalSuccessful = false;
                 } else {
-                    testHelper.UpdateTestResults("Successful matching count of '" + checkElement + "' tags for step " + fileStepIndex + ".  Expected: " + expectedCount + "  Actual: " + actualCount, true);
+                    testHelper.UpdateTestResults("Successful matching count of '" + checkElement + "' tags.  Expected: " + expectedCount + "  Actual: " + actualCount + " for step " + fileStepIndex, true);
                     //conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
                     conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) || conditionalSuccessful;
                 }
             } else {
                 if (actualCount != expectedCount) {
-                    testHelper.UpdateTestResults("Successful not equal count of '" + checkElement + "' tags for step " + fileStepIndex + ".  Expected: " + expectedCount + " !=  Actual: " + actualCount, true);
+                    testHelper.UpdateTestResults("Successful not equal count of '" + checkElement + "' tags.  Expected: " + expectedCount + " !=  Actual: " + actualCount + " for step " + fileStepIndex, true);
                     conditionalSuccessful = false;
                 } else {
-                    testHelper.UpdateTestResults("Failed not equal count of '" + checkElement + "' tags for step " + fileStepIndex + ".  Expected: " + expectedCount + " !=  Actual: " + actualCount, true);
+                    testHelper.UpdateTestResults("Failed not equal count of '" + checkElement + "' tags.  Expected: " + expectedCount + " !=  Actual: " + actualCount + " for step " + fileStepIndex, true);
                     conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) || conditionalSuccessful;
                 }
             }
@@ -2027,17 +2061,17 @@ public class TestCentral {
             if (expectedUrl.trim().equals(actualUrl.trim())) {
                 if (frontEndTiming > 0 && backEndTiming > 0) {
                     timingMessage = GetTimingMessage(frontEndTiming, backEndTiming, subIndent);
-                    testHelper.UpdateTestResults(subIndent + "Successful Navigation and URL Check for step " + fileStepIndex + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")\r\n" + timingMessage, true);
+                    testHelper.UpdateTestResults(subIndent + "Successful Navigation and URL Check.  Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")\r\n" + timingMessage + " for step " + fileStepIndex, true);
                 } else {
-                    testHelper.UpdateTestResults(subIndent + "Successful Navigation and URL Check for step " + fileStepIndex + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")", true);
+                    testHelper.UpdateTestResults(subIndent + "Successful Navigation and URL Check.  Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ") for step " + fileStepIndex, true);
                 }
                 //subIndent
             } else {
                 if (frontEndTiming > 0 && backEndTiming > 0) {
                     timingMessage = GetTimingMessage(frontEndTiming, backEndTiming, subIndent);
-                    testHelper.UpdateTestResults(subIndent + "Failed Navigation and URL Check for step " + fileStepIndex + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")\r\n" + timingMessage, true);
+                    testHelper.UpdateTestResults(subIndent + "Failed Navigation and URL Check.  Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")\r\n" + timingMessage + " for step " + fileStepIndex, true);
                 } else {
-                    testHelper.UpdateTestResults(subIndent + "Failed Navigation and URL Check for step " + fileStepIndex + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")", true);
+                    testHelper.UpdateTestResults(subIndent + "Failed Navigation and URL Check.  Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ") for step " + fileStepIndex, true);
                 }
             }
         }
@@ -2103,22 +2137,22 @@ public class TestCentral {
                         if (!command.toLowerCase().contains(AppCommands.Right_Click)) {
                             if (!command.toLowerCase().contains(AppCommands.DoubleClick)) {
                                 this.driver.findElement(By.xpath(ts.get_accessor())).click();
-                                testHelper.UpdateTestResults("Successful - Click performed!", false);
+                                testHelper.UpdateTestResults("Successful - Click performed for step " + fileStepIndex, false);
                             } else {
                                 //doubleclick
                                 Actions action = new Actions(driver);
                                 action.doubleClick(driver.findElement(By.xpath(ts.get_accessor()))).build().perform();
-                                testHelper.UpdateTestResults("Successful - Double Click performed!", false);
+                                testHelper.UpdateTestResults("Successful - Double Click performed for step " + fileStepIndex, false);
                             }
                         } else {  //right click element
                             Actions action = new Actions(driver);
                             if (command.toLowerCase().contains(AppCommands.Keys)) {
                                 action.contextClick(driver.findElement(By.xpath(ts.get_accessor()))).build().perform();
-                                testHelper.UpdateTestResults("Successful - Right Click performed!", false);
+                                testHelper.UpdateTestResults("Successful - Right Click performed for step " + fileStepIndex, false);
                             } else {
                                 action.contextClick(driver.findElement(By.xpath(ts.get_accessor()))).build().perform();
                                 SelectFromContextMenu(ts, fileStepIndex);
-                                testHelper.UpdateTestResults("Successful - Right Click and Context menu sendkeys performed!", false);
+                                testHelper.UpdateTestResults("Successful - Right Click and Context menu sendkeys performed for step " + fileStepIndex, false);
                             }
                         }
                         break;
@@ -2127,22 +2161,22 @@ public class TestCentral {
                             if (!command.toLowerCase().contains(AppCommands.DoubleClick)) {
                                 //click
                                 this.driver.findElement(By.id(ts.get_accessor())).click();
-                                testHelper.UpdateTestResults("Successful - Click performed!", false);
+                                testHelper.UpdateTestResults("Successful - Click performed for step " + fileStepIndex, false);
                             } else {
                                 //doubleclick
                                 Actions action = new Actions(driver);
                                 action.doubleClick(driver.findElement(By.id(ts.get_accessor()))).build().perform();
-                                testHelper.UpdateTestResults("Successful - Double Click performed!", false);
+                                testHelper.UpdateTestResults("Successful - Double Click performed for step " + fileStepIndex, false);
                             }
                         } else {  //right click element
                             Actions action = new Actions(driver);
                             if (!command.toLowerCase().contains(AppCommands.Keys)) {
                                 action.contextClick(this.driver.findElement(By.id(ts.get_accessor()))).build().perform();
-                                testHelper.UpdateTestResults("Successful - Right Click performed!", false);
+                                testHelper.UpdateTestResults("Successful - Right Click performed for step " + fileStepIndex, false);
                             } else {
                                 action.contextClick(driver.findElement(By.id(ts.get_accessor()))).build().perform();
                                 SelectFromContextMenu(ts, fileStepIndex);
-                                testHelper.UpdateTestResults("Successful - Right Click and Context menu sendkeys performed!", false);
+                                testHelper.UpdateTestResults("Successful - Right Click and Context menu sendkeys performed for step " + fileStepIndex, false);
                             }
                         }
                         break;
@@ -2151,22 +2185,22 @@ public class TestCentral {
                             if (!command.toLowerCase().contains(AppCommands.DoubleClick)) {
                                 //click
                                 this.driver.findElement(By.className(ts.get_accessor())).click();
-                                testHelper.UpdateTestResults("Successful - Click performed!", false);
+                                testHelper.UpdateTestResults("Successful - Click performed for step " + fileStepIndex, false);
                             } else {
                                 //doubleclick
                                 Actions action = new Actions(driver);
                                 action.doubleClick(driver.findElement(By.className(ts.get_accessor()))).build().perform();
-                                testHelper.UpdateTestResults("Successful - Double Click performed!", false);
+                                testHelper.UpdateTestResults("Successful - Double Click performed for step " + fileStepIndex, false);
                             }
                         } else {  //right click element
                             Actions action = new Actions(driver);
                             if (!command.toLowerCase().contains(AppCommands.Keys)) {
                                 action.contextClick(this.driver.findElement(By.className(ts.get_accessor()))).build().perform();
-                                testHelper.UpdateTestResults("Successful - Right Click performed!", false);
+                                testHelper.UpdateTestResults("Successful - Right Click performed for step " + fileStepIndex, false);
                             } else {
                                 action.contextClick(driver.findElement(By.className(ts.get_accessor()))).build().perform();
                                 SelectFromContextMenu(ts, fileStepIndex);
-                                testHelper.UpdateTestResults("Successful - Right Click and Context menu sendkeys performed!", false);
+                                testHelper.UpdateTestResults("Successful - Right Click and Context menu sendkeys performed for step " + fileStepIndex, false);
                             }
                         }
                         break;
@@ -2175,22 +2209,22 @@ public class TestCentral {
                             if (!command.toLowerCase().contains(AppCommands.DoubleClick)) {
                                 //click
                                 this.driver.findElement(By.cssSelector(ts.get_accessor())).click();
-                                testHelper.UpdateTestResults("Successful - Click performed!", false);
+                                testHelper.UpdateTestResults("Successful - Click performed for step " + fileStepIndex, false);
                             } else {
                                 //doubleclick
                                 Actions action = new Actions(driver);
                                 action.doubleClick(driver.findElement(By.cssSelector(ts.get_accessor()))).build().perform();
-                                testHelper.UpdateTestResults("Successful - Double Click performed!", false);
+                                testHelper.UpdateTestResults("Successful - Double Click performed for step " + fileStepIndex, false);
                             }
                         } else {  //right click element
                             Actions action = new Actions(driver);
                             if (!command.toLowerCase().contains(AppCommands.Keys)) {
                                 action.contextClick(this.driver.findElement(By.cssSelector(ts.get_accessor()))).build().perform();
-                                testHelper.UpdateTestResults("Successful - Right Click performed!", false);
+                                testHelper.UpdateTestResults("Successful - Right Click performed for step " + fileStepIndex, false);
                             } else {
                                 action.contextClick(driver.findElement(By.cssSelector(ts.get_accessor()))).build().perform();
                                 SelectFromContextMenu(ts, fileStepIndex);
-                                testHelper.UpdateTestResults("Successful - Right Click and Context menu sendkeys performed!", false);
+                                testHelper.UpdateTestResults("Successful - Right Click and Context menu sendkeys performed for step " + fileStepIndex, false);
                             }
                         }
                         break;
@@ -2199,22 +2233,22 @@ public class TestCentral {
                             if (!command.toLowerCase().contains(AppCommands.DoubleClick)) {
                                 //click
                                 this.driver.findElement(By.tagName(ts.get_accessor())).click();
-                                testHelper.UpdateTestResults("Successful - Click performed!", false);
+                                testHelper.UpdateTestResults("Successful - Click performed for step " + fileStepIndex, false);
                             } else {
                                 //doubleclick
                                 Actions action = new Actions(driver);
                                 action.doubleClick(driver.findElement(By.tagName(ts.get_accessor()))).build().perform();
-                                testHelper.UpdateTestResults("Successful - Double Click performed!", false);
+                                testHelper.UpdateTestResults("Successful - Double Click performed for step " + fileStepIndex, false);
                             }
                         } else {  //right click element
                             Actions action = new Actions(driver);
                             if (!command.toLowerCase().contains(AppCommands.Keys)) {
                                 action.contextClick(this.driver.findElement(By.tagName(ts.get_accessor()))).build().perform();
-                                testHelper.UpdateTestResults("Successful - Right Click performed!", false);
+                                testHelper.UpdateTestResults("Successful - Right Click performed for step " + fileStepIndex, false);
                             } else {
                                 action.contextClick(driver.findElement(By.tagName(ts.get_accessor()))).build().perform();
                                 SelectFromContextMenu(ts, fileStepIndex);
-                                testHelper.UpdateTestResults("Successful - Right Click and Context menu sendkeys performed!", false);
+                                testHelper.UpdateTestResults("Successful - Right Click and Context menu sendkeys performed for step " + fileStepIndex, false);
                             }
                         }
                         break;
@@ -2286,7 +2320,7 @@ public class TestCentral {
                     }
                 } else {
                     if (subAction.contains(uidReplacementChars)) {
-                        testHelper.UpdateTestResults(AppConstants.indent5 + "Replacing Unique Identifier placeholder", true);
+                        testHelper.UpdateTestResults(AppConstants.indent5 + "Replacing Unique Identifier placeholder for step " + fileStepIndex, true);
                     }
                     subAction = subAction.replace(uidReplacementChars, uniqueId);
                     testHelper.UpdateTestResults(AppConstants.indent8 + "Performing default SendKeys value = " + subAction + " for step " + fileStepIndex, true);
@@ -2536,7 +2570,7 @@ public class TestCentral {
                         try {
                             testHelper.NavigateToPage(driver, elementIdentifier);
                         } catch (Exception ex) {
-                            testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed to navigate error: " + ex.getMessage(), true);
+                            testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed to navigate error: " + ex.getMessage() + " for step " + fileStepIndex, true);
                         }
                     }
                     pageLoadComplete = new WebDriverWait(driver, maxTimeInSeconds).until(
@@ -2548,16 +2582,18 @@ public class TestCentral {
             }
             if (!ts.get_command().toLowerCase().trim().contains(AppCommands.Page)) {
                 if (element != null) {
-                    testHelper.UpdateTestResults("Successful load of element " + accessor + " within max time setting of " + maxTimeInSeconds + " at step " + fileStepIndex, true);
+                    testHelper.UpdateTestResults("Successful load of element " + accessor + " within max time setting of " + maxTimeInSeconds + " for step " + fileStepIndex, true);
                 }
             } else {
                 if (pageLoadComplete) {
-                    testHelper.UpdateTestResults("Successful load of page " + GetCurrentPageUrl() + " within max time setting of " + maxTimeInSeconds + " at step " + fileStepIndex, true);
+                    testHelper.UpdateTestResults("Successful load of page " + GetCurrentPageUrl() + " within max time setting of " + maxTimeInSeconds + " for step " + fileStepIndex, true);
                 }
             }
         } catch (TimeoutException ae) {
             if (ts.get_command().toLowerCase().trim().contains(AppCommands.Page)) {
-                testHelper.UpdateTestResults("Failed to find the element " + GetCurrentPageUrl() + " within the set max time of " + maxTimeInSeconds + " at step " + fileStepIndex + " AL+", true);
+                //TODO: INVESTIGATE WHY YOU ADDED AL+ IN THE INITIAL MESSAGE
+                //testHelper.UpdateTestResults("Failed to find the element " + GetCurrentPageUrl() + " within the set max time of " + maxTimeInSeconds + " for step " + fileStepIndex + " AL+", true);
+                testHelper.UpdateTestResults("Failed to find the element " + GetCurrentPageUrl() + " within the set max time of " + maxTimeInSeconds + " for step " + fileStepIndex, true);
             } else {
                 testHelper.UpdateTestResults("Failed to load element " + accessor + " within max time setting of " + maxTimeInSeconds + " at step " + fileStepIndex, true);
             }
@@ -2634,7 +2670,7 @@ public class TestCentral {
                 CloseAllOpenChildTabs(fileStepIndex);
             }
         }catch (Exception ex) {
-            testHelper.UpdateTestResults("Failed Closing of Child tab (" + tab + ") for step " + fileStepIndex + "\r\n" + ex.getMessage(), true);
+            testHelper.UpdateTestResults("Failed Closing of Child tab (" + tab + ")\r\n" + ex.getMessage() + " for step " + fileStepIndex, true);
         }
     }
 
@@ -2669,7 +2705,7 @@ public class TestCentral {
             //endregion
             driver.switchTo().window(originalHandle);
         } catch (Exception ex) {
-            testHelper.UpdateTestResults("Failed Closing of All Child tabs for step " + fileStepIndex + "\r\n" + ex.getMessage(), true);
+            testHelper.UpdateTestResults("Failed Closing of All Child tabs\r\n" + ex.getMessage() + " for step " + fileStepIndex, true);
         }
     }
 
@@ -2731,9 +2767,9 @@ public class TestCentral {
         String actualUrl = GetCurrentPageUrl();
         assertEquals(expectedUrl, actualUrl);
         if (expectedUrl.trim().equals(actualUrl.trim())) {
-            testHelper.UpdateTestResults(AppConstants.ANSI_GREEN + "Successful URL Check for step " + fileStepIndex + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")" + AppConstants.ANSI_RESET, true);
+            testHelper.UpdateTestResults(AppConstants.ANSI_GREEN + "Successful URL Check.  Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ") for step " + fileStepIndex + AppConstants.ANSI_RESET, true);
         } else {
-            testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed URL Check for step " + fileStepIndex + " Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")" + AppConstants.ANSI_RESET, true);
+            testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed URL Check.   Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ") for step " + fileStepIndex + AppConstants.ANSI_RESET, true);
         }
     }
 
@@ -3312,7 +3348,7 @@ public class TestCentral {
             }
         } catch(SQLException e) {
             testHelper.UpdateTestResults("Failure", true);
-            testHelper.UpdateTestResults("Failed to establish a connection to the SQL Server for step " + fileStepIndex + "\r\n Error Message: " + e.getMessage(), true);
+            testHelper.UpdateTestResults("Failed to establish a connection to the SQL Server.\r\n Error Message: " + e.getMessage() + " for step " + fileStepIndex, true);
         }
     }
 
@@ -3367,24 +3403,24 @@ public class TestCentral {
             } else {
                 if ("=".equals(comparisonType)) {
                     if (ts.get_expectedValue() != null && actual != null && ts.get_expectedValue().trim().equals(actual.trim())) {
-                        testHelper.UpdateTestResults("Successful Sql Query for step " + fileStepIndex + " Expected: (" + ts.get_expectedValue() + ") Actual: (" + actual + ")", true);
+                        testHelper.UpdateTestResults("Successful Sql Query.  Expected: (" + ts.get_expectedValue() + ") Actual: (" + actual + ") for step " + fileStepIndex, true);
                         conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
                     } else {
-                        testHelper.UpdateTestResults("Failed Sql Server for step " + fileStepIndex + " Expected: (" + ts.get_expectedValue() + ") Actual: (" + actual + ")", true);
+                        testHelper.UpdateTestResults("Failed Sql Server.  Expected: (" + ts.get_expectedValue() + ") Actual: (" + actual + ") for step " + fileStepIndex, true);
                         conditionalSuccessful = false;
                     }
                 } else {
                     if (ts.get_expectedValue() != null && actual != null && !ts.get_expectedValue().trim().equals(actual.trim())) {
-                        testHelper.UpdateTestResults("Successful Sql Query for step " + fileStepIndex + " Expected: (" + ts.get_expectedValue() + ") != Actual: (" + actual + ")", true);
+                        testHelper.UpdateTestResults("Successful Sql Server Query.  Expected: (" + ts.get_expectedValue() + ") != Actual: (" + actual + ") for step " + fileStepIndex, true);
                         conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
                     } else {
-                        testHelper.UpdateTestResults("Failed Sql Server for step " + fileStepIndex + " Expected: (" + ts.get_expectedValue() + ") != Actual: (" + actual + ")", true);
+                        testHelper.UpdateTestResults("Failed Sql Server Query.  Expected: (" + ts.get_expectedValue() + ") != Actual: (" + actual + ") for step " + fileStepIndex, true);
                         conditionalSuccessful = false;
                     }
                 }
             }
         } catch(SQLException e) {
-            testHelper.UpdateTestResults("Failed to execute query successfully for step " + fileStepIndex + "\r\n Error: " + e.getMessage(), true);
+            testHelper.UpdateTestResults("Failed to execute query successfully.\r\n Error: " + e.getMessage() + " for step " + fileStepIndex, true);
             conditionalSuccessful = false;
         }
     }
@@ -3481,22 +3517,22 @@ public class TestCentral {
             }
 
             if (searchList.size() > 0) {
-                testHelper.UpdateTestResults("Successful JSON Search for step " + fileStepIndex + " Searched all " + ts.get_accessor() + " for: (" +  ts.get_expectedValue() + ") Found: (" +  searchList.get(0) + ")\r\n" +
-                        AppConstants.indent5 +  "- There were " + count + " " + ts.get_accessor()  + " keys with " + searchList.size() + " values containing the expected value." , true);
+                testHelper.UpdateTestResults("Successful JSON Search.  Searched all " + ts.get_accessor() + " for: (" +  ts.get_expectedValue() + ") Found: (" +  searchList.get(0) + ")\r\n" +
+                        AppConstants.indent5 +  "- There were " + count + " " + ts.get_accessor()  + " keys with " + searchList.size() + " values containing the expected value for step " + fileStepIndex, true);
                 if (ts.get_crucial()) {
                     assertEquals( ts.get_expectedValue(), searchList.get(0));
                 }
             } else {
-                testHelper.UpdateTestResults("Failed JSON Search for step " + fileStepIndex + " Searched for: (" +  searchString + ") but did not find this!\r\n" +
-                        AppConstants.indent5 +  "- There were " + count + " " + searchString + " keys but none contained the expected value." , true);
+                testHelper.UpdateTestResults("Failed JSON Search.  Searched for: (" +  searchString + ") but did not find this!\r\n" +
+                        AppConstants.indent5 +  "- There were " + count + " " + searchString + " keys but none contained the expected value for step " + fileStepIndex, true);
                 //If this is crucial and the search string is not found, force an assertion failure
                 if (ts.get_crucial()) {
                     assertEquals(ts.get_expectedValue(), null);
                 }
             }
         } else {
-            testHelper.UpdateTestResults("Failed JSON Search for step " + fileStepIndex + " JSON content was not previously retrieved successfully\r\n." +
-                    "Either the Get JSON retrieval step failed or no Get JSON step preceded this JSON Query attempt", true);
+            testHelper.UpdateTestResults("Failed JSON Search.  JSON content was not previously retrieved successfully\r\n." +
+                    "Either the Get JSON retrieval step failed or no Get JSON step preceded this JSON Query attempt for step " + fileStepIndex, true);
         }
     }
 
@@ -3548,7 +3584,7 @@ public class TestCentral {
             } else {
                 errorMessage = "Aborting!!!  No File Name was specified as the destination for the downloaded JSON content.";
             }
-            testHelper.UpdateTestResults(AppConstants.indent8 + "Failure JSON not saved to file for step " + fileStepIndex + " because: " + errorMessage, true);
+            testHelper.UpdateTestResults(AppConstants.indent8 + "Failure JSON not saved to file because: " + errorMessage + " for step " + fileStepIndex, true);
         }
     }
 
@@ -3588,22 +3624,22 @@ public class TestCentral {
 
             testHelper.UpdateTestResults(AppConstants.indent8 + "Searching XML for " + elementStart + ts.get_expectedValue() + elementEnd + " for step " + fileStepIndex,true);
             if (searchList.size() > 0) {
-                testHelper.UpdateTestResults("Successful XML Search for step " + fileStepIndex + " Searched for: (" +  ts.get_expectedValue() + ") Found: (" +  searchList.get(0) + ")\r\n" +
-                        AppConstants.indent5 +  "- There were " + count + " " + elementStart + elementEnd + " elements with " + searchList.size() + " elements containing the expected value." , true);
+                testHelper.UpdateTestResults("Successful XML Search.  Searched for: (" +  ts.get_expectedValue() + ") Found: (" +  searchList.get(0) + ")\r\n" +
+                        AppConstants.indent5 +  "- There were " + count + " " + elementStart + elementEnd + " elements with " + searchList.size() + " elements containing the expected value for step " + fileStepIndex, true);
                 if (ts.get_crucial()) {
                     assertEquals( ts.get_expectedValue(), searchList.get(0));
                 }
             } else {
-                testHelper.UpdateTestResults("Failed XML Search for step " + fileStepIndex + " Searched for: (" +  elementStart + ts.get_expectedValue() + elementEnd + ") but did not find this!\r\n" +
-                        AppConstants.indent5 +  "- There were " + count + " " + elementStart + elementEnd + " elements but none contained the expected value." , true);
+                testHelper.UpdateTestResults("Failed XML Search.  Searched for: (" +  elementStart + ts.get_expectedValue() + elementEnd + ") but did not find this!\r\n" +
+                        AppConstants.indent5 +  "- There were " + count + " " + elementStart + elementEnd + " elements but none contained the expected value for step " + fileStepIndex, true);
                 //If this is crucial and the search string is not found, force an assertion failure
                 if (ts.get_crucial()) {
                     assertEquals(ts.get_expectedValue(), null);
                 }
             }
         } else {
-            testHelper.UpdateTestResults("Failed XML Search for step " + fileStepIndex + " XML content was not previously retrieved successfully\r\n." +
-                    "Either the Get XML retrieval step failed or no Get XML step preceded this XML Query attempt", true);
+            testHelper.UpdateTestResults("Failed XML Search.  XML content was not previously retrieved successfully\r\n." +
+                    "Either the Get XML retrieval step failed or no Get XML step preceded this XML Query attempt for step " + fileStepIndex, true);
         }
     }
 
@@ -3653,7 +3689,7 @@ public class TestCentral {
             } else {
                 errorMessage = "Aborting!!!  No File Name was specified as the destination for the downloaded XML content.";
             }
-            testHelper.UpdateTestResults(AppConstants.indent8 + "Failure XML not saved to file for step " + fileStepIndex + " because: " + errorMessage, true);
+            testHelper.UpdateTestResults(AppConstants.indent8 + "Failure XML not saved to file because: " + errorMessage + " for step " + fileStepIndex, true);
         }
     }
     //endregion
@@ -4290,14 +4326,16 @@ public class TestCentral {
 
         items = new String[] {navigateUrl, delayTime, windowDimensions, pageTimings};
         for (int x=0;x<items.length;x++) {
-            if (items[x].contains("http")) {
-                tempItems[0] = items[x];
-            } else if (items[x].toLowerCase().contains("w=")) {
-                tempItems[2] = items[x];
-            } else if (items[x].toLowerCase().contains("fe")) {
-                tempItems[3] = items[x];
-            } else if (TestHelper.tryParse(items[x]) != null) {
-                tempItems[1] = items[x];
+            if (items[x] != null) {
+                if (items[x].contains("http")) {
+                    tempItems[0] = items[x];
+                } else if (items[x].toLowerCase().contains("w=")) {
+                    tempItems[2] = items[x];
+                } else if (items[x].toLowerCase().contains("fe")) {
+                    tempItems[3] = items[x];
+                } else if (TestHelper.tryParse(items[x]) != null) {
+                    tempItems[1] = items[x];
+                }
             }
         }
 

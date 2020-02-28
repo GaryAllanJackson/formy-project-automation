@@ -8,7 +8,8 @@
 	<runHeadless>false</runHeadless>
 	<testAllBrowsers>false</testAllBrowsers>
 	<specifyTestFiles>TRUE</specifyTestFiles>
-	<sortSpecifiedTestFiles>true</sortSpecifiedTestFiles>	
+	<sortSpecifiedTestFiles>true</sortSpecifiedTestFiles>
+	<createCsvStatusFiles>none</createCsvStatusFiles>
 	<!-- Individual File Settings -->
 	<testFiles>
 		<!-- alphabetical order -->
@@ -56,14 +57,15 @@
 		<!--
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CreateTestPage-Test.xml</testFileName1>
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CreateUnformattedTestPage-Test.xml</testFileName1>
-		-->
+		
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CreateCNNTestPage-Test.xml</testFileName1>
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\TestPages\List_of_MeowMix_URLs-Test.xml</testFileName1>-->
 		
 		<!-- Group 7 - Fill out form and Find Phrase tests -->
 		
-		<!--<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1>	
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1>	
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\FindPhrase-Test.xml</testFileName1>
-		-->
+		<!---->
 		
 		<!-- Group 8 - SQL Server Query and JSON Search content tests -->
 		<!-- 

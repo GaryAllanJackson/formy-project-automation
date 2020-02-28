@@ -2,11 +2,13 @@
 THE CONFIGURABLE AUTOMATED TESTER PROJECT:  
 	The CONFIGURABLE AUTOMATED TESTER APPLICATION uses XML to describe the configuration file and the Test Settings files.  
 	This uniform approach allows for easier understanding because there is a common template for constructing both file types.
-	This project has a ton of functionality, including checking text, href, src, alt values, populating form controls, accessing items in IFrames, 
-	logging into sites with popup alert style logins as well as form logins, using the context menu, opening and closing new tabs, sending keystrokes, 
-	connecting to and querying Sql Server, accessing API endpoints and downloading JSON to search and save the JSON to a file, creating Test files, 
-	reading directories of test files and filtering that to select a subset of test files and taking screenshots, limiting the number of screenshots, 
-	comparing image files(screenshots) and much much more.
+	This project has a ton of functionality, including checking text, href, src, alt values, populating form controls, 
+	accessing items in IFrames, logging into sites with popup alert style logins as well as form logins, using the context menu, 
+	opening and closing new tabs, sending keystrokes, connecting to and querying Sql Server, accessing API endpoints and 
+	downloading JSON to search and save the JSON to a file, creating Test files, reading directories of test files and filtering 
+	that to select a subset of test files and taking screenshots, limiting the number of screenshots, 
+	comparing image files(screenshots), logging results to a log file and optionally logging success and failure steps to 
+	one or more csv files and much much more.
 	It can be run from the command line as an application or in IntelliJ using JUnit and possibly any other Java IDE.
 	To use this application, be sure to update the TestCentral.java file below. 
 	Run the ConfigurableTestController() method using JUnit to run this application.
@@ -21,7 +23,6 @@ DOWNLOADING THE JAVA SDK:
 	
 BACKING UP THE IMPORTS!!!:
 	Before opening the project, open the TestCentral.java file in NotePad++, or some other plain text editor, and copy the imports from the top of the file.
-	(You can also copy the imports from the top of the HomePage.java file if you are using the legacy project.)
 	During the initial processing of the code, IntelliJ tries to resolve all code to the corresponding library and may incorrectly identify the library for a 
 	line of code that may cause a subsequent use of that object to be reported as an error and prevent compiling.  
 	Backing up the Imports allow you to ensure that your code is using the correct set of libraries specified by the developer of the application and not the 
@@ -129,16 +130,18 @@ SETTING UP A NEW PROJECT FOR TESTING:
 	2.	Create the Configuration file and save it to the projects Config folder.  
 		The Configuration file must exist in this location or the path for the configuration file must be changed 
 		in the TestCentral.java and HomePage.java files.
-		Two configuration files are part of this project and can be found in the Config project folder.
-		It is suggested that you make a backup of these files to ensure that you do not lose the structure.
-		For the Updated Project: ConfigurationSetup.xml
-		For the Legacy Project: ConfigurationSetup.tconfig
+		One configuration file is part of this project and can be found in the Config project folder.
+		It is suggested that you make a backup of this file to ensure that you do not lose the structure.
+		The Configuration file name: ConfigurationSetup.xml
 		The Help file will output a sample of the Configuration file that can be used as a starting point if the included Configuration file was overwritten.
 		
 	3. 	Create one or more test files and save them to the Test Files folder that was created in Step 3 of SETTING UP THE PROJECT.
 		
 	4.	Return to the Configuration file and either Point to the individual Test Files or the the folder containing the Test Files and set the 
 		<specifyTestFiles></specifyTestFiles> value accordingly.
+		Optionally, change the value in <createCsvStatusFiles></createCsvStatusFiles> from "none" to "one" or "many" to 
+		create CSV files containing just the Successful or Failure test step outputs.  
+		By default this is set to "none", which does not create the CSV file(s). (See help for more information)
 		
 	5.  Open the Project in IntelliJ, go to the TestCentral.java file.
 		In the TestCentral.java file go to the ConfigurableTestController() method marked with the @Test attribute, 

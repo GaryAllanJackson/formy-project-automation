@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class ConfigSettings {
@@ -17,7 +16,7 @@ public class ConfigSettings {
     private String _folderFileFilter;
     private int _maxScreenShots;
     private Boolean _sortSpecifiedTestFiles;
-
+    private String _createCsvStatusFiles;
 
     public ConfigSettings() {
         _testFiles = new ArrayList<>();
@@ -145,6 +144,15 @@ public class ConfigSettings {
     public void set_sortSpecifiedTestFiles(Boolean _sortSpecifiedTestFiles) {
         this._sortSpecifiedTestFiles = _sortSpecifiedTestFiles;
     }
+
+    public String get_createCsvStatusFiles() {
+        return _createCsvStatusFiles;
+    }
+
+    public void set_createCsvStatusFiles(String _createCsvStatusFiles) {
+        this._createCsvStatusFiles = _createCsvStatusFiles;
+    }
+
 
 
 }
