@@ -771,11 +771,22 @@ public class TestHelper{
         int endPos = testMessage.indexOf(" for step ");
         String message = testMessage.substring(startPos, endPos).trim();
         message = message.substring(0,1).toUpperCase() + message.substring(1);
-        DebugDisplay("step = (" + step + ")");
-        DebugDisplay("message = (" + message + ")");
-        DebugDisplay("status = (" + status + ")");
+        //region {Debugging - CSV Column data}
+        //DebugDisplay("step = (" + step + ")");
+        //DebugDisplay("message = (" + message + ")");
+        //DebugDisplay("status = (" + status + ")");
+        //endregion
+        if (message.contains("\r\n")) {
+            message = "\"" + message + "\"";
+        }
+        String variableOutput = "";
+        if (message.contains("Difference Percentage")) {
+            startPos = message.indexOf(":") + 1;
+            endPos = message.indexOf("(") -1;
+            variableOutput = message.substring(startPos, endPos).trim();
+        }
 
-        String csv = step.replace("\n","") + "," + message.replace("\n","") + "," + status + "," + get_testFileName();
+        String csv = step.replace("\n","") + "," + message.replace("\n","") + "," + status + "," + variableOutput + "," + get_testFileName();
         WriteToFile(fileName, csv);
     }
 
@@ -1143,12 +1154,14 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\t\t-\tIf \"many\", one CSV file for each test will be produced and each will be named similar to the corresponding test file name ");
             WriteToFile(get_helpFileName(), "\t\t\t-\tbut have a datetime stamp like the log file and with a .csv extension.");
             WriteToFile(get_helpFileName(), "\t\t-\tIf any value other than those specified above, no CSV files will be produced.");
-            WriteToFile(get_helpFileName(), "\tThe CSV file consists of the following 4 columns:");
+            WriteToFile(get_helpFileName(), "\tThe CSV file consists of the following 5 columns:");
             WriteToFile(get_helpFileName(), "\t\tFile and Step Number - This column holds the file number and step number, each starting at 0 and in the format F0_S0 where ");
             WriteToFile(get_helpFileName(), "\t\t-\tF0 corresponds to File 0, which is the first file, and S0 corresponds to Step 0, which is the first step.");
             WriteToFile(get_helpFileName(), "\t\t-\tSince all steps taken are not checks, there may be line number gaps.");
             WriteToFile(get_helpFileName(), "\t\tTest Performed - This column holds type of test being performed such as Navigation and URL Check, Equal comparison results etc..");
             WriteToFile(get_helpFileName(), "\t\tExecution Status - This column holds the word Successful for successful test step checks and the word Failure for failed test step checks.");
+            WriteToFile(get_helpFileName(), "\t\tVariable Output - This column currently holds the difference percentage for image comparisons but eventually may hold searched values for ");
+            WriteToFile(get_helpFileName(), "\t\t-\tSQL Server queries as well as JSON and XML endpoint queries.");
             WriteToFile(get_helpFileName(), "\t\tTest File Name - This column holds the name of the test file this entry corresponds with.");
             WriteToFile(get_helpFileName(), "\t\t-\tWhen creating one CSV file for multiple tests, this allows for another method of sorting the data.\r\n");
 
@@ -1194,6 +1207,7 @@ public class TestHelper{
                     "<automatedTestConfiguration>\r\n" +
                     "\t<!-- folder where screenshots should be saved -->\r\n" +
                     "\t<screenShotSaveFolder>C:\\ScreenShots\\Mashup</screenShotSaveFolder>\r\n" +
+                    "\t<!-- maxScreenShotsToTake: -1 means no screenshots, 0 means unlimited screenshots, any other number is the screenshot maximum limit -->\r\n" +
                     "\t<maxScreenShotsToTake>5</maxScreenShotsToTake>\r\n" +
                     "\t<browserType>Chrome</browserType>\r\n" +
                     "\t<!--<browserType>Firefox</browserType>-->\r\n" +
@@ -2812,6 +2826,11 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\t\tIt also allows for comparing difference files, if desired but please note that storing a large number of files");
             WriteToFile(get_helpFileName(), "\t\tmay adversely affect computer performance and even overrun free drive space, so monitoring the computer is essential when");
             WriteToFile(get_helpFileName(), "\t\trepeatedly running tests that create images and global backups.");
+            WriteToFile(get_helpFileName(), "\t<arg5>This optional argument, is a double and allows for entering an acceptable decimal percentage of difference value.");
+            WriteToFile(get_helpFileName(), "\t\tThe default value for this, if missing, is 0 so any difference no matter how small cause this step to be marked as Failed.");
+            WriteToFile(get_helpFileName(), "\t\tIf the actual difference exceeds this value, the test step will be marked as Failed, but if the difference does not exceed this value  ");
+            WriteToFile(get_helpFileName(), "\t\t this test step will be marked as Successful.");
+            WriteToFile(get_helpFileName(), "\t\tIt should be noted that it is strongly recommended that this value be omitted to ensure that any differences are brought to your attention.");
             WriteToFile(get_helpFileName(), "IMPORTANT!!! If tests are rerun, difference images will be overwritten!!");
             WriteToFile(get_helpFileName(), "Take time to backup needed difference images prior to rerunning tests or the previous difference image state will be lost.");
             WriteToFile(get_helpFileName(), "The following command compares the baseline image in <arg1></arg1> with the actual image in <arg2></arg2> and ");
@@ -2833,6 +2852,7 @@ public class TestHelper{
                     "\t\t<!-- fourth argument the name of the Global Difference filename for backing up difference images. It is Optional.   -->\r\n" +
                     "\t\t<!-- If provided a unique filename based on the filename provided will be created to prevent overwriting previous files.   -->\r\n" +
                     "\t\t<arg4>C:\\ScreenShots\\Mashup\\Global_Differences\\MyScreenShot-DifferenceImage.png</arg4>\r\n" +
+                    "\t\t<arg5>5.0</arg5>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");

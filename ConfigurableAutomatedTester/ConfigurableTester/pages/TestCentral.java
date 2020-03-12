@@ -378,7 +378,7 @@ public class TestCentral {
             boolean isConditionalBlock = false;
             conditionalSuccessful = false;
             testSteps = testHelper.ReadTestSettingsXmlFile(testSteps, testFileName);
-            testHelper.DebugDisplay("testHelper.get_csvFileName() = " + testHelper.get_csvFileName());
+            //testHelper.DebugDisplay("testHelper.get_csvFileName() = " + testHelper.get_csvFileName());
             if (this.createCSVStatusFiles.equals("many")) {
                 SetCSVFileName(testFileName);  //added for individual CSV files
             } else if (this.createCSVStatusFiles.equals("one") && testHelper.get_csvFileName() == null) {
@@ -386,7 +386,7 @@ public class TestCentral {
             } else if (this.createCSVStatusFiles.equals("none")) {
                 testHelper.set_csvFileName(null);
             }
-            testHelper.WriteToFile(testHelper.get_csvFileName(),"File And Step Number,Test Performed,Execution Status,Test File Name");
+            testHelper.WriteToFile(testHelper.get_csvFileName(),"File And Step Number,Test Performed,Execution Status,Variable Output,Test File Name");
             //End - reset this for each test file
             testHelper.CreateSectionHeader("[ Running Test Script ]", AppConstants.FRAMED + AppConstants.ANSI_PURPLE_BACKGROUND + AppConstants.ANSI_BOLD, AppConstants.ANSI_YELLOW_BRIGHT, true, true, true);
             testHelper.UpdateTestResults(AppConstants.ANSI_YELLOW_BRIGHT + "Running Test Script file: " + AppConstants.ANSI_RESET + testFileName, true);
@@ -1076,9 +1076,11 @@ public class TestCentral {
         String actualImage = GetArgumentValue(ts, 1, null);
         String differenceImage = GetArgumentValue(ts, 2, null);
         String globalDifferenceImage = GetArgumentValue(ts, 3, null);
+        double acceptableDifference = GetArgumentNumericDoubleValue(ts, 4, 0);
 
         if (!testHelper.IsNullOrEmpty(baseLineImage) && !testHelper.IsNullOrEmpty(actualImage) && !testHelper.IsNullOrEmpty(differenceImage)) {
             helperUtilities.testHelper = testHelper;
+            helperUtilities.set_acceptableDifference(acceptableDifference);
             testHelper.CreateSectionHeader("[ Start Image Comparison Test ]", "", AppConstants.ANSI_CYAN, true, false, true);
             testHelper.UpdateTestResults(AppConstants.indent5 + "Performing Image Comparison for step " + fileStepIndex + "\r\n" +
                     AppConstants.indent8 + "(Baseline)Expected Image:" + baseLineImage + "\r\n" +
@@ -1099,7 +1101,7 @@ public class TestCentral {
                 helperUtilities.differenceFileForParent = null;
             }
             helperUtilities.set_executedFromMain(is_executedFromMain());
-            helperUtilities.CompareImagesWithImageMagick(baseLineImage, actualImage, differenceImage);
+            helperUtilities.CompareImagesWithImageMagick(baseLineImage, actualImage, differenceImage, fileStepIndex);
             testHelper.CreateSectionHeader("[ End Image Comparison Test ]", "", AppConstants.ANSI_CYAN, false, false, true);
         }
     }
@@ -4279,6 +4281,16 @@ public class TestCentral {
 
         if (arg!=null) {
             return parseInt(arg.get_parameter());
+        } else {
+            return defaultValue;
+        }
+    }
+
+    private double GetArgumentNumericDoubleValue(TestStep ts, int index, int defaultValue) {
+        Argument arg  = ts.ArgumentList != null && ts.ArgumentList.size() > index ? ts.ArgumentList.get(index) : null;
+
+        if (arg!=null) {
+            return parseDouble(arg.get_parameter());
         } else {
             return defaultValue;
         }

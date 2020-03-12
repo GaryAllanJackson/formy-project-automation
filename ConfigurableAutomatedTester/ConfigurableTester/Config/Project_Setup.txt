@@ -34,7 +34,7 @@ DOWNLOADING IntelliJ:
 	
 DOWNLOADING and Installing ImageMagick: (See instructions below on when to download and install this application.)
 	ImageMagick allows for image comparison to visually see the difference between screenshots.
-	On Windows, download the 32 bit version of ImageMagick as the 64 bit version has some library registration issue.
+	On Windows, download the 32 bit HDR version of ImageMagick as the 64 bit version has some library registration issue.
 	On Mac, download the Mac version.  No known MAC issues were found when researching the library registration issue on Windows.
 	Select all options except the "Install PerlMagick for Strawberry Perl vX.xx".
 	Additionally, rename the compare.exe file to compare_old.exe and then copy the magick.exe and rename the copy to compare.exe.

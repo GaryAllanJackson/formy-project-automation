@@ -6,10 +6,7 @@ import org.im4java.process.StandardStream;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.file.FileStore;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -36,7 +33,15 @@ public class HelperUtilities {
     }
     private String logFileName;
     private String numType = "bytes";
+    private double _acceptableDifference;
 
+    public double get_acceptableDifference() {
+        return _acceptableDifference;
+    }
+
+    public void set_acceptableDifference(double _acceptableDifference) {
+        this._acceptableDifference = _acceptableDifference;
+    }
     //ImageMagick Compare Method
     /********************************************************************************************
      * Description: Compares two images and creates a difference image using the ImageMagick
@@ -47,7 +52,7 @@ public class HelperUtilities {
      * @param difference
      * @throws IOException
      *******************************************************************************************/
-    public void CompareImagesWithImageMagick (String expected, String actual, String difference) throws Exception {
+    public void CompareImagesWithImageMagick (String expected, String actual, String difference, String fileStepIndex) throws Exception {
         // This class implements the processing of os-commands using a ProcessBuilder.
         // This is the core class of the im4java-library where all the magic takes place.
         //ProcessStarter.setGlobalSearchPath("C:\\Program Files\\ImageMagick-7.0.4-Q16");
@@ -102,10 +107,12 @@ public class HelperUtilities {
                 compare.run(cmpOp);
             } else {
                 //boolean status = ExecuteCompareForMac("compare -fuzz " + fuzz + " -metric " + metric + expected + " " + actual + " " + difference);
-                boolean status = ExecuteShellCommand("compare", "-fuzz " + fuzz, " -metric " + metric, expected, actual, difference);
-                if (!status) {
-                    testHelper.UpdateTestResults("\r\nFailure something went wrong while issuing the compare command on Mac.  Ensure the ImageMagick bin folder is in your path!", true);
-                }
+//                boolean status = ExecuteShellCommand("compare", "-fuzz " + fuzz, " -metric " + metric, expected, actual, difference);
+//                if (!status) {
+//                    testHelper.UpdateTestResults("\r\nFailure something went wrong while issuing the compare command on Mac.  Ensure the ImageMagick bin folder is in your path!", true);
+//                }
+                Runtime runTime = Runtime.getRuntime();
+                Process proc = runTime.exec("compare -fuzz " + fuzz + " -metric " + metric + expected + " " + actual + " " + difference);
             }
         } catch (Exception ex) {
             //the java.lang.NullPointerException exception happens because of a flaw in img4java and needs to be suppressed but all other errors should be shown.
@@ -133,19 +140,26 @@ public class HelperUtilities {
             testHelper.UpdateTestResults("\r\nSuccessful comparison of images.  View the images to see the comparison results:\r\n" +
                     AppConstants.indent5 + "Baseline Image: (" + expected + ")\r\n" +
                     AppConstants.indent5 + "Actual Image: (" + actual + ")\r\n" +
-                    AppConstants.indent5 + "Difference Image:(" + differenceImage + ")" + globalImageMessage, true);
+                    AppConstants.indent5 + "Difference Image:(" + differenceImage + ")" + globalImageMessage + " for step " + fileStepIndex, true);
         } else {
-            testHelper.UpdateTestResults("\r\nFailure something may have gone wrong as no difference image was created.", true);
+            testHelper.UpdateTestResults("\r\nFailed something may have gone wrong as no difference image was created for step " + fileStepIndex, true);
         }
         try {
-            GetPercentageDifference(expected, actual, difference);
+            GetPercentageDifference(expected, actual, difference, fileStepIndex);
         } catch(IllegalArgumentException ia) {
             if (ia.getMessage().contains("Images must have the same dimensions:")) {
-                testHelper.UpdateTestResults("Failure Unable to get difference percentage of images with different dimensions", true);
-                testHelper.UpdateTestResults("Baseline image dimensions: " + testHelper.GetImageDimensions(expected) + "\r\nActual image dimensions: " + testHelper.GetImageDimensions(actual), true);
+                testHelper.UpdateTestResults("Failed Unable to get difference percentage of images with different dimensions" +
+                                "Baseline image dimensions: " + testHelper.GetImageDimensions(expected) + "\r\nActual image dimensions: " + testHelper.GetImageDimensions(actual)  + " for step " + fileStepIndex, true);
+//                testHelper.UpdateTestResults("Failure Unable to get difference percentage of images with different dimensions for step " + fileStepIndex, true);
+//                testHelper.UpdateTestResults("Baseline image dimensions: " + testHelper.GetImageDimensions(expected) + "\r\nActual image dimensions: " + testHelper.GetImageDimensions(actual)  + " for step " + fileStepIndex, true);
             }
         }
     }
+
+//    public printOutput getStreamWrapper(InputStream inputStream, String type) {
+//        return new printOutput(inputStream, type);
+//    }
+
 
     private boolean ExecuteCompareForMac(String command) {
         boolean status = false;
@@ -207,13 +221,24 @@ public class HelperUtilities {
      * @param difference
      * @throws IOException
      *******************************************************************************************/
-    private void GetPercentageDifference(String expected, String actual, String difference) throws IOException {
+    private void GetPercentageDifference(String expected, String actual, String difference, String fileStepIndex) throws IOException {
         BufferedImage img1 = ImageIO.read(new File(expected));
         BufferedImage img2 = ImageIO.read(new File(actual));
+//      region {Refactored remove this once completely validated }
+//        double differencePercentage = GetDifferencePercent(img1, img2);
+//        String diffColor = differencePercentage > 0 ? AppConstants.ANSI_RED_BRIGHT : AppConstants.ANSI_GREEN_BRIGHT;
+//        testHelper.UpdateTestResults(diffColor + AppConstants.indent5 +  "Difference Percentage: " + differencePercentage + "%" + AppConstants.ANSI_RESET, true);
+//         String diffColor = differencePercentage > 0 ? AppConstants.ANSI_RED_BRIGHT : AppConstants.ANSI_GREEN_BRIGHT;
+        //testHelper.UpdateTestResults(diffColor + AppConstants.indent5 +  successFailurePrefix + " Difference Percentage: " + df.format(differencePercentage) + "% Acceptable Difference Percentage: " + get_acceptableDifference() + "% for step " + fileStepIndex + AppConstants.ANSI_RESET, true);
+        //endregion
+        double differencePercentage = GetPixelPercentageDifference(img1, img2);
+        DecimalFormat df = new DecimalFormat("###.##");
 
-        double differencePercentage = GetDifferencePercent(img1, img2);
-        String diffColor = differencePercentage > 0 ? AppConstants.ANSI_RED_BRIGHT : AppConstants.ANSI_GREEN_BRIGHT;
-        testHelper.UpdateTestResults(diffColor + AppConstants.indent5 +  "Difference Percentage: " + differencePercentage + "%" + AppConstants.ANSI_RESET, true);
+        double acceptableDifference = get_acceptableDifference() > 0 ? get_acceptableDifference() : 0;
+        String diffColor = differencePercentage > acceptableDifference ? AppConstants.ANSI_RED_BRIGHT : AppConstants.ANSI_GREEN_BRIGHT;
+        String successFailurePrefix = differencePercentage > acceptableDifference ? "Failed" : "Successful";
+
+        testHelper.UpdateTestResults( successFailurePrefix + " Difference Percentage: " + df.format(differencePercentage) + "% (Acceptable Difference Percentage: " + get_acceptableDifference() + "%) for step " + fileStepIndex, true);
     }
 
 
@@ -222,7 +247,8 @@ public class HelperUtilities {
      * @param img1
      * @param img2
      *******************************************************************************************/
-    private static double GetDifferencePercent(BufferedImage img1, BufferedImage img2) {
+    //private static double GetDifferencePercent(BufferedImage img1, BufferedImage img2) {
+    private double GetDifferencePercent(BufferedImage img1, BufferedImage img2) {
         int width = img1.getWidth();
         int height = img1.getHeight();
         int width2 = img2.getWidth();
@@ -242,6 +268,37 @@ public class HelperUtilities {
         return 100.0 * diff / maxDiff;
     }
 
+    private double GetPixelPercentageDifference(BufferedImage img1, BufferedImage img2) {
+        int width = img1.getWidth();
+        int height = img1.getHeight();
+        int width2 = img2.getWidth();
+        int height2 = img2.getHeight();
+        if (width != width2 || height != height2) {
+            throw new IllegalArgumentException(String.format("Images must have the same dimensions: (%d,%d) vs. (%d,%d)", width, height, width2, height2));
+        }
+
+        double diff = 0;
+        double gDiff = 0;
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                diff = pixelDiff(img1.getRGB(x, y), img2.getRGB(x, y));
+                if (diff != 0) {
+                    gDiff += 1;  //2;
+                }
+            }
+        }
+        //long maxDiff = 3L * 255 * width * height;
+        double maxDiff = width * height;
+        DecimalFormat df = new DecimalFormat("###.##");
+        //region {Debugging view difference percentages }
+//        testHelper.DebugDisplay("maxDiff = (" + width + " * " + height + ") = " + maxDiff);
+//        testHelper.DebugDisplay("gDiff = " + gDiff);
+//        testHelper.DebugDisplay("return 100 * (" + gDiff + " / " + maxDiff + ") = " + (100.0 * (gDiff / maxDiff)));
+//        testHelper.DebugDisplay("return Math.round(100 * (" + gDiff + " / " + maxDiff + ")) = " + Math.round(100.0 * (gDiff / maxDiff)));
+//        testHelper.DebugDisplay("return Math.round(100 * (" + gDiff + " / " + maxDiff + ")) = " + df.format(100.0 * (gDiff / maxDiff)));
+        //endregion
+        return 100.0 * (gDiff / maxDiff);
+    }
 
     /********************************************************************************************
      * Description: Gets the pixel difference between two images
@@ -340,7 +397,7 @@ public class HelperUtilities {
             }
         }
 
-        availableSpace = availableSpace.substring(0, availableSpace.lastIndexOf("\r"));
+        availableSpace = availableSpace.contains("\r") ? availableSpace.substring(0, availableSpace.lastIndexOf("\r")) : " unknown";
         String temp = "\tThe " + folder.getName() + " folder contains x files totaling xx bytes.\r\n" + AppConstants.indent8 + "Available Space: \r\n\t" + AppConstants.indent8 + availableSpace;
         float totalSize = 0;
         int totalFiles = 0;

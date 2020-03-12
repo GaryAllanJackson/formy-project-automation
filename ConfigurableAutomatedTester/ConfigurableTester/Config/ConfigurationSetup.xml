@@ -5,11 +5,11 @@
 	<maxScreenShotsToTake>5</maxScreenShotsToTake>
 	<browserType>Chrome</browserType>
 	<!--<browserType>Firefox</browserType>-->
-	<runHeadless>false</runHeadless>
+	<runHeadless>true</runHeadless>
 	<testAllBrowsers>false</testAllBrowsers>
 	<specifyTestFiles>TRUE</specifyTestFiles>
 	<sortSpecifiedTestFiles>true</sortSpecifiedTestFiles>
-	<createCsvStatusFiles>none</createCsvStatusFiles>
+	<createCsvStatusFiles>one</createCsvStatusFiles>
 	<!-- Individual File Settings -->
 	<testFiles>
 		<!-- alphabetical order -->
@@ -62,10 +62,10 @@
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\TestPages\List_of_MeowMix_URLs-Test.xml</testFileName1>-->
 		
 		<!-- Group 7 - Fill out form and Find Phrase tests -->
-		
+		<!--
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1>	
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\FindPhrase-Test.xml</testFileName1>
-		<!---->
+		-->
 		
 		<!-- Group 8 - SQL Server Query and JSON Search content tests -->
 		<!-- 
@@ -90,6 +90,10 @@
 		<testFileName1>C:\Gary\TestFiles\From_Desktop_App\Gary3_Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1>  
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\Navigation-Test.xml</testFileName1>
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckConditionalPersistence-Test.xml</testFileName1>-->
+		<!--
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckNuturalBalance_PageLoad-Test.xml</testFileName1>
+		-->
+		<testFileName1>C:\Gary\Alvaro\Tests\Flag-Test.xml</testFileName1>
 		<!--
 		<testFileName1></testFileName1>
 		<testFileName1></testFileName1>
