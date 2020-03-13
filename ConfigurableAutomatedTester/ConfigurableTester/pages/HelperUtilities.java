@@ -243,7 +243,7 @@ public class HelperUtilities {
 
 
     /********************************************************************************************
-     * Description: Gets the numerica percentage of difference value between two images.
+     * Description: Gets the numerical percentage of difference value between two images.
      * @param img1
      * @param img2
      *******************************************************************************************/
@@ -268,6 +268,14 @@ public class HelperUtilities {
         return 100.0 * diff / maxDiff;
     }
 
+    /********************************************************************************************
+     * Description: Gets the numerical pixel percentage of difference value between two images
+     *              using the 100 * (pixelDifference / (image height * image width)).
+     *
+     * @param img1 - First image to be compared
+     * @param img2 - Second image to be compared
+     * @return - double representing the Pixel Difference Percentage
+     *******************************************************************************************/
     private double GetPixelPercentageDifference(BufferedImage img1, BufferedImage img2) {
         int width = img1.getWidth();
         int height = img1.getHeight();

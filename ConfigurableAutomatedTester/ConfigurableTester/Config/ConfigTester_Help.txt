@@ -263,7 +263,7 @@ The <sortSpecifiedTestFiles></sortSpecifiedTestFiles> element specifies whether 
 		-	If true, files will be sorted alphabetically and re-listed on the screen to show the order in which they will execute.
 
 The <createCsvStatusFiles></createCsvStatusFiles> element specifies whether to create none, one, or many CSV files.
-	The CSV file logs only Success and Failure steps, unlike the Test Execution log file, which logs all test steps.
+	The CSV file logs only Success, Failure and Error steps, unlike the Test Execution log file, which logs all test steps.
 	This setting has 3 acceptable values "none", "one" and "many".
 		-	If "none", which is the default, no CSV files will be produced.
 		-	If "one", one CSV file containing all tests run results, will be produced and it will be named similar to the corresponding
@@ -277,8 +277,8 @@ The <createCsvStatusFiles></createCsvStatusFiles> element specifies whether to c
 		-	Since all steps taken are not checks, there may be line number gaps.
 		Test Performed - This column holds type of test being performed such as Navigation and URL Check, Equal comparison results etc..
 		Execution Status - This column holds the word Successful for successful test step checks and the word Failure for failed test step checks.
-		Variable Output - This column currently holds the difference percentage for image comparisons but eventually may hold searched values for 
-		-	SQL Server queries as well as JSON and XML endpoint queries.
+		Variable Output - This column holds the difference percentage for image comparisons in percentage format, the http response code in square brackets 
+		-	like [200] and element counts in numeric format like 128 to allow for filtering these separate check types easily.
 		Test File Name - This column holds the name of the test file this entry corresponds with.
 		-	When creating one CSV file for multiple tests, this allows for another method of sorting the data.
 

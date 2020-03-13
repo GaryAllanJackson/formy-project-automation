@@ -702,7 +702,7 @@ public class TestHelper{
                 } else {
                     WriteToFile(get_logFileName(), CleanMessage(testMessage));
                     //if (testMessage.startsWith("Successful") || testMessage.startsWith("Failed")) {
-                    if (testMessage.contains("Successful") || testMessage.contains("Failed")) {
+                    if (testMessage.contains("Successful") || testMessage.contains("Failed") || testMessage.contains("Error")) {
                         WriteToFile(get_logFileName(), "");
                         if (get_csvFileName() != null) {
                             WriteToCSV(CleanMessage(testMessage));
@@ -760,13 +760,23 @@ public class TestHelper{
         }
     }
 
+    /*****************************************************************************
+     * Description: Parses the Successful/Failed message from the UpdateResults()
+     *              method and creates/writes to a comma delimited text output file.
+     *              Uses keywords that are in every message to parse most values
+     *              and searches for special keywords for one field and if present
+     *              uses the parsed value else uses an empty value.
+     *
+     * @param testMessage - The Successful or Failed Message from the
+     *                    UpdateResults() method.
+     ******************************************************************************/
     private void WriteToCSV(String testMessage) {
         String fileName = this.get_csvFileName();
         String step = testMessage.substring(testMessage.indexOf("for step ") + "for step ".length());
         if (step.contains(" ")) {
             step = step.substring(0, step.indexOf(" "));
         }
-        String status = testMessage.contains("Successful") ? "Successful" : "Failure";
+        String status = testMessage.contains("Successful") ? "Successful" : testMessage.contains("Error") ? "Error" : "Failure";
         int startPos = testMessage.indexOf(status) + status.length();
         int endPos = testMessage.indexOf(" for step ");
         String message = testMessage.substring(startPos, endPos).trim();
@@ -780,16 +790,35 @@ public class TestHelper{
             message = "\"" + message + "\"";
         }
         String variableOutput = "";
+        //TODO: ADD PARSING FOR FRONT END AND BACK END TIMINGS.  WILL REQUIRE SOME THOUGHT BEFORE IMPLEMENTING TO BE USEFUL BECAUSE RETURNS 2 VALUES (MAY NEED TO SPLIT RESPONSE OUTPUT) (2 numeric values)
+        //TODO: ADD PARSING FOR HTTP RESPONSE FOR GET AND POST COMMANDS (1 numeric value) (Done)
+        //TODO: ADD PARSING FOR ELEMENT COUNT   (1 numeric value) (Done)
+        //TODO: ADD PARSING FOR SQL SERVER, JSON AND XML QUERY (Maybe not as this can be a string)I
         if (message.contains("Difference Percentage")) {
             startPos = message.indexOf(":") + 1;
             endPos = message.indexOf("(") -1;
             variableOutput = message.substring(startPos, endPos).trim();
+        } else if (message.contains("count of")) {
+            startPos = message.indexOf("Actual: ") + "Actual: ".length();
+            endPos = message.length();
+            variableOutput =  message.substring(startPos, endPos).trim();
+        } else if (message.contains("HTTP Response")) {
+            startPos = message.indexOf("Actual: (") + "Actual: (".length();
+            endPos = message.lastIndexOf(")");
+            variableOutput = "[" + message.substring(startPos, endPos).trim() + "]";
         }
 
         String csv = step.replace("\n","") + "," + message.replace("\n","") + "," + status + "," + variableOutput + "," + get_testFileName();
         WriteToFile(fileName, csv);
     }
 
+    /*************************************************************************
+     * Description: Checks if a value is Numeric or not and returns true if
+     *              the value is numeric and false if the value is not
+     *              numeric.
+     * @param character
+     * @return
+     *************************************************************************/
     private Boolean isNumeric(String character) {
 
         boolean status = true;
@@ -806,7 +835,10 @@ public class TestHelper{
     }
 
     /*****************************************************************************
-     * Description: Used for outputting to the screen for debugging purposes
+     * Description: Used for outputting to the screen for debugging purposes.
+     *              This method may not be in use at times but never delete it as
+     *              it separates the output from the UpdateResults() output method
+     *              and never writes to the log.
      * @param message - The message that is displayed
      *****************************************************************************/
     public void DebugDisplay(String message) {
@@ -1146,7 +1178,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\t\t-\tIf false, files are taken in the order in which they are physically listed, which should be numerically.");
             WriteToFile(get_helpFileName(), "\t\t-\tIf true, files will be sorted alphabetically and re-listed on the screen to show the order in which they will execute.\r\n");
             WriteToFile(get_helpFileName(), "The <createCsvStatusFiles></createCsvStatusFiles> element specifies whether to create none, one, or many CSV files.");
-            WriteToFile(get_helpFileName(), "\tThe CSV file logs only Success and Failure steps, unlike the Test Execution log file, which logs all test steps.");
+            WriteToFile(get_helpFileName(), "\tThe CSV file logs only Success, Failure and Error steps, unlike the Test Execution log file, which logs all test steps.");
             WriteToFile(get_helpFileName(), "\tThis setting has 3 acceptable values \"none\", \"one\" and \"many\".");
             WriteToFile(get_helpFileName(), "\t\t-\tIf \"none\", which is the default, no CSV files will be produced.");
             WriteToFile(get_helpFileName(), "\t\t-\tIf \"one\", one CSV file containing all tests run results, will be produced and it will be named similar to the corresponding");
@@ -1160,8 +1192,10 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\t\t-\tSince all steps taken are not checks, there may be line number gaps.");
             WriteToFile(get_helpFileName(), "\t\tTest Performed - This column holds type of test being performed such as Navigation and URL Check, Equal comparison results etc..");
             WriteToFile(get_helpFileName(), "\t\tExecution Status - This column holds the word Successful for successful test step checks and the word Failure for failed test step checks.");
-            WriteToFile(get_helpFileName(), "\t\tVariable Output - This column currently holds the difference percentage for image comparisons but eventually may hold searched values for ");
-            WriteToFile(get_helpFileName(), "\t\t-\tSQL Server queries as well as JSON and XML endpoint queries.");
+            WriteToFile(get_helpFileName(), "\t\tVariable Output - This column holds the difference percentage for image comparisons in percentage format like 28%, ");
+            WriteToFile(get_helpFileName(), "\t\t-\tthe http response code in square brackets like [200] and element counts in numeric format like 128 to allow ");
+            WriteToFile(get_helpFileName(), "\t\t-\tfor filtering these separate check types easily.");
+            //WriteToFile(get_helpFileName(), "\t\t-\tSQL Server queries as well as JSON and XML endpoint queries.");
             WriteToFile(get_helpFileName(), "\t\tTest File Name - This column holds the name of the test file this entry corresponds with.");
             WriteToFile(get_helpFileName(), "\t\t-\tWhen creating one CSV file for multiple tests, this allows for another method of sorting the data.\r\n");
 

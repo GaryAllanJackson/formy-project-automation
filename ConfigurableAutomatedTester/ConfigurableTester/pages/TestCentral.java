@@ -1376,6 +1376,7 @@ public class TestCentral {
         int expectedStatus = ts.get_expectedValue() != null ? parseInt(ts.get_expectedValue()) : 200;   //GetArgumentNumericValue(ts, 0, 200);
         int actualStatus;
         String url = GetArgumentValue(ts, 0, null);
+        String getPost = "Get";
 
         if (url != null) {
             if (ts.get_command().toLowerCase().contains(AppCommands.Post)) {
@@ -1401,11 +1402,13 @@ public class TestCentral {
             }
             if (expectedStatus == actualStatus) {
                 //testHelper.UpdateTestResults("Successful comparison results.  Expected value: (" + expectedStatus + ") Actual value: (" + actualStatus + ") for step " + fileStepIndex + "\r\n", true);
-                testHelper.UpdateTestResults("Successful comparison results.  Expected value: (" + expectedStatus + ") Actual value: (" + actualStatus + ") for step " + fileStepIndex, true);
+                //testHelper.UpdateTestResults("Successful comparison results.  Expected value: (" + expectedStatus + ") Actual value: (" + actualStatus + ") for step " + fileStepIndex, true);
+                testHelper.UpdateTestResults("Successful " + getPost + " HTTP Response.  Expected: (" + expectedStatus + ") Actual: (" + actualStatus + ") for step " + fileStepIndex, true);
                 conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : conditionalSuccessful;
             } else if (expectedStatus != actualStatus) {
                 //testHelper.UpdateTestResults("Failed comparison results.  Expected value: (" + expectedStatus + ") Actual value: (" + actualStatus + ") for step " + fileStepIndex + "\r\n", true);
-                testHelper.UpdateTestResults("Failed comparison results.  Expected value: (" + expectedStatus + ") Actual value: (" + actualStatus + ") for step " + fileStepIndex, true);
+                //testHelper.UpdateTestResults("Failed comparison results.  Expected value: (" + expectedStatus + ") Actual value: (" + actualStatus + ") for step " + fileStepIndex, true);
+                testHelper.UpdateTestResults("Failed " + getPost + " HTTP Response.  Expected: (" + expectedStatus + ") Actual: (" + actualStatus + ") for step " + fileStepIndex, true);
                 conditionalSuccessful = false;
             }
         } else {
@@ -2093,19 +2096,19 @@ public class TestCentral {
         String timingMessage = null;
 
         if (frontEndTiming >= testHelper.get_frontEndPageLoadDuration() && backEndTiming >= testHelper.get_backEndPageLoadDuration()) {
-            timingMessage = subIndent + AppConstants.ANSI_GREEN_BRIGHT + "Successful Backend Load Expected time (" + backEndTiming + ") actual (" + testHelper.get_backEndPageLoadDuration() + ")\r\n" +
-                    subIndent + "Successful Frontend Load Expected time (" + frontEndTiming + ") actual (" + testHelper.get_frontEndPageLoadDuration() + ")" + AppConstants.ANSI_RESET;
+            timingMessage = subIndent + AppConstants.ANSI_GREEN_BRIGHT + "Successful Backend Load Expected time (" + backEndTiming + " seconds) actual (" + testHelper.get_backEndPageLoadDuration() + " seconds)\r\n" +
+                    subIndent + "Successful Frontend Load Expected time (" + frontEndTiming + " seconds) actual (" + testHelper.get_frontEndPageLoadDuration() + " seconds)" + AppConstants.ANSI_RESET;
         } else if (frontEndTiming < testHelper.get_frontEndPageLoadDuration() && backEndTiming < testHelper.get_backEndPageLoadDuration()) {
-            timingMessage = subIndent + AppConstants.ANSI_RED + "Failed Backend Load Expected time (" + backEndTiming + ") actual (" + testHelper.get_backEndPageLoadDuration() + ")\r\n" +
-                    subIndent + "Failed Frontend Load Expected time (" + frontEndTiming + ") actual (" + testHelper.get_frontEndPageLoadDuration() + ")" + AppConstants.ANSI_RESET;
+            timingMessage = subIndent + AppConstants.ANSI_RED + "Failed Backend Load Expected time (" + backEndTiming + " seconds) actual (" + testHelper.get_backEndPageLoadDuration() + " seconds)\r\n" +
+                    subIndent + "Failed Frontend Load Expected time (" + frontEndTiming + " seconds) actual (" + testHelper.get_frontEndPageLoadDuration() + " seconds)" + AppConstants.ANSI_RESET;
         } else {
             if (backEndTiming < testHelper.get_backEndPageLoadDuration()) {
-                timingMessage = subIndent + AppConstants.ANSI_RED + "Failed Backend Load Expected time (" + backEndTiming + ") actual (" + testHelper.get_backEndPageLoadDuration() + ")\r\n" + AppConstants.ANSI_RESET +
-                        subIndent + AppConstants.ANSI_GREEN_BRIGHT + "Successful Frontend Load Expected time (" + frontEndTiming + ") actual (" + testHelper.get_frontEndPageLoadDuration() + ")" + AppConstants.ANSI_RESET;
+                timingMessage = subIndent + AppConstants.ANSI_RED + "Failed Backend Load Expected time (" + backEndTiming + " seconds) actual (" + testHelper.get_backEndPageLoadDuration() + " seconds)\r\n" + AppConstants.ANSI_RESET +
+                        subIndent + AppConstants.ANSI_GREEN_BRIGHT + "Successful Frontend Load Expected time (" + frontEndTiming + " seconds) actual (" + testHelper.get_frontEndPageLoadDuration() + " seconds)" + AppConstants.ANSI_RESET;
             }
             if (frontEndTiming < testHelper.get_frontEndPageLoadDuration()) {
-                timingMessage = subIndent + AppConstants.ANSI_GREEN_BRIGHT + "Successful Backend Load Expected time (" + backEndTiming + ") actual (" + testHelper.get_backEndPageLoadDuration() + ")\r\n" + AppConstants.ANSI_RESET +
-                        subIndent + AppConstants.ANSI_RED + "Failed Frontend Load Expected time (" + frontEndTiming + ") actual (" + testHelper.get_frontEndPageLoadDuration() + ")" + AppConstants.ANSI_RESET;
+                timingMessage = subIndent + AppConstants.ANSI_GREEN_BRIGHT + "Successful Backend Load Expected time (" + backEndTiming + " seconds) actual (" + testHelper.get_backEndPageLoadDuration() + " seconds)\r\n" + AppConstants.ANSI_RESET +
+                        subIndent + AppConstants.ANSI_RED + "Failed Frontend Load Expected time (" + frontEndTiming + " seconds) actual (" + testHelper.get_frontEndPageLoadDuration() + " seconds)" + AppConstants.ANSI_RESET;
             }
         }
         return timingMessage;
@@ -3449,6 +3452,7 @@ public class TestCentral {
     private String GetHttpResponse(TestStep ts, String fileStepIndex) throws Exception {
         String url = GetArgumentValue(ts, 0, GetCurrentPageUrl());
         StringBuffer response = new StringBuffer();
+
 
         if (url != null && !url.isEmpty()) {
             testHelper.setNavigationMessageIndent(AppConstants.indent8 + AppConstants.indent5);
