@@ -776,9 +776,14 @@ public class TestHelper{
         if (step.contains(" ")) {
             step = step.substring(0, step.indexOf(" "));
         }
-        String status = testMessage.contains("Successful") ? "Successful" : testMessage.contains("Error") ? "Error" : "Failure";
+        String status = testMessage.contains("Successful") ? "Successful" : testMessage.startsWith("Error") ? "Error" : testMessage.startsWith("Fail") ? "Failure" : null;
+        if (status == null) {
+            return;
+        }
+
         int startPos = testMessage.indexOf(status) + status.length();
         int endPos = testMessage.indexOf(" for step ");
+        DebugDisplay("testMessage =" + testMessage);
         String message = testMessage.substring(startPos, endPos).trim();
         message = message.substring(0,1).toUpperCase() + message.substring(1);
         //region {Debugging - CSV Column data}
