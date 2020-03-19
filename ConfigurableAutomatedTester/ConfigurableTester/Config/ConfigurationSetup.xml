@@ -5,7 +5,7 @@
 	<maxScreenShotsToTake>5</maxScreenShotsToTake>
 	<browserType>Chrome</browserType>
 	<!--<browserType>Firefox</browserType>-->
-	<runHeadless>true</runHeadless>
+	<runHeadless>false</runHeadless>
 	<testAllBrowsers>false</testAllBrowsers>
 	<specifyTestFiles>TRUE</specifyTestFiles>
 	<sortSpecifiedTestFiles>true</sortSpecifiedTestFiles>
@@ -93,7 +93,8 @@
 		<!--
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckNuturalBalance_PageLoad-Test.xml</testFileName1>
 		-->
-		<testFileName1>C:\Gary\Alvaro\Tests\Flag-Test.xml</testFileName1>
+		<!-- <testFileName1>C:\Gary\Alvaro\Tests\Flag-Test.xml</testFileName1> -->
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\ParseAndCalculate-Test.xml</testFileName1>
 		<!--
 		<testFileName1></testFileName1>
 		<testFileName1></testFileName1>

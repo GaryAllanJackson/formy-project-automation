@@ -66,6 +66,8 @@ public class AppCommands {
     public static String Get_XML = "get xml";
     public static String Save_XML = "save xml";
     public static String Query_XML = "query xml";
+    public static String ParseAndCalculateDouble = "parse and calculate double";
+    public static String ParseAndCalculateLong = "parse and calculate long";
     //endregion
 
 

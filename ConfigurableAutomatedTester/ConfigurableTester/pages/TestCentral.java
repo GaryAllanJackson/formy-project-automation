@@ -82,12 +82,23 @@ public class TestCentral {
      *      edgeDriverPath
      *
      *      Future updates:
-     *      1.  Look at Login.
+     *      1.  Look at Login. (Currently working on iOS)
      *          Not working on iOS but works on Windows 7.
      *      2.  Screenshot comparison using Image Magic
      *          (https://www.swtestacademy.com/visual-testing-imagemagick-selenium/)
      *      3.  Greater Than and Less Than Operators.
-     *          This would be a good addition when used with Condtional Blocks.
+     *          This would be a good addition when used with Conditional Blocks.
+     *      4.  Parsing text retrieved from an element and performing actions on this such as:
+     *              a. Addition
+     *              b. Subtraction
+     *              c. Multiplication
+     *              d. Division
+     *          i.  Test provides the element accessor and in arguments:
+     *              a. the delimiter
+     *              b. First Number index
+     *              c. Second Number Index
+     *              d. Operator Index or the operator
+     *              String [] elements = element.split(arg1);
      *
      ╚═══════════════════════════════════════════════════════════════════════════════╝ */
      //endregion
@@ -463,7 +474,7 @@ public class TestCentral {
        } else if (csvFileName.contains("/")) {
            csvFileName =  csvFileName.substring(testFileName.lastIndexOf("/") + 1);
        }
-        testHelper.UpdateTestResults("configurationFolder + csvFileName = '" + configurationFolder + "' '" + csvFileName + "'", false);
+        //testHelper.UpdateTestResults("configurationFolder + csvFileName = '" + configurationFolder + "' '" + csvFileName + "'", false);
         testHelper.set_csvFileName(configurationFolder + csvFileName);  //added for individual CSV files
     }
 
@@ -579,6 +590,10 @@ public class TestCentral {
                 JsonController(ts, fileStepIndex);
             } else if (ts.get_command().toLowerCase().equals(AppCommands.Query_XML)) {
                 XmlController(ts, fileStepIndex);
+            } else if (ts.get_command().toLowerCase().equals(AppCommands.ParseAndCalculateDouble)) {
+                ParseAndCalculateDoubleController(ts, fileStepIndex);
+            }  else if (ts.get_command().toLowerCase().equals(AppCommands.ParseAndCalculateLong)) {
+                ParseAndCalculateLongController(ts, fileStepIndex);
             } else {
                 CheckElementText(ts, fileStepIndex);
             }
@@ -616,6 +631,8 @@ public class TestCentral {
             //XmlController
         }
     }
+
+
 
 
     /*****************************************************************
@@ -809,6 +826,180 @@ public class TestCentral {
         }
     }
 
+    private String GetElementText(TestStep ts, String fileStepIndex) {
+        String actual = null;  //element equation retrieved from the page
+        switch (ts.get_accessorType().toLowerCase()) {
+            case xpathCheckValue:
+                testHelper.UpdateTestResults(AppConstants.indent8 + "Element text being retrieved at step " + fileStepIndex + " by xPath: " + ts.get_accessor(), true);
+                actual = CheckElementWithXPath(ts, fileStepIndex);
+                break;
+            case cssSelectorCheckValue:
+                testHelper.UpdateTestResults(AppConstants.indent8 + "Element text being retrieved at step " + fileStepIndex + " by CssSelector: " + ts.get_accessor(), true);
+                actual = CheckElementWithCssSelector(ts, fileStepIndex);
+                break;
+            case tagNameCheckValue:
+                testHelper.UpdateTestResults(AppConstants.indent8 + "Element text being retrieved at step " + fileStepIndex + " by TagName: " + ts.get_accessor(), true);
+                actual = CheckElementWithTagName(ts, fileStepIndex);
+                break;
+            case classNameCheckValue:
+                testHelper.UpdateTestResults(AppConstants.indent8 + "Element text being retrieved at step " + fileStepIndex + " by ClassName: " + ts.get_accessor(), true);
+                actual = CheckElementWithClassName(ts, fileStepIndex);
+                break;
+            case idCheckValue:
+                testHelper.UpdateTestResults(AppConstants.indent8 + "Element text being retrieved at step " + fileStepIndex + " by Id: " + ts.get_accessor(), true);
+                actual = CheckElementWithId(ts, fileStepIndex);
+                break;
+        }
+        return actual;
+    }
+
+
+    private void ParseAndCalculateDoubleController(TestStep ts, String fileStepIndex) {
+        int firstIndex, secondIndex, operatorIndex;
+        double firstNumber;
+        double secondNumber;
+        double resultNumber = 0;
+        String delimiter, operator;
+        String accessorPersist;
+        //String elementEquation;  //retrieve this value
+        String [] equation;
+        delimiter = GetArgumentValue(ts, 0, " ");
+        firstIndex = GetArgumentNumericValue(ts, 1, 0);
+        secondIndex= GetArgumentNumericValue(ts, 2, 2);
+        operatorIndex = GetArgumentNumericValue(ts, 3, 1);
+        accessorPersist = GetArgumentValue(ts, 4, "persist");
+
+
+        String actual = GetElementText(ts, fileStepIndex);
+        if (actual != null && actual.contains(delimiter)) {
+            equation = actual.split(delimiter);
+            testHelper.DebugDisplay("delimiter = (" + delimiter + ")");
+            testHelper.DebugDisplay("firstNumber = equation[" + firstIndex + "] = " + equation[firstIndex]);
+            testHelper.DebugDisplay("secondNumber = equation[" + secondIndex + "] = " + equation[secondIndex]);
+            testHelper.DebugDisplay("operatorIndex = equation[" + operatorIndex + "] = " + equation[operatorIndex]);
+            testHelper.DebugDisplay("accessorPersist = " + accessorPersist);
+            firstNumber = Double.parseDouble(equation[firstIndex]);
+            secondNumber = Double.parseDouble(equation[secondIndex]);
+            operator = equation[operatorIndex];
+            if (operator.equals("+")) {
+                resultNumber = firstNumber + secondNumber;
+            } else if (operator.equals("-")) {
+                resultNumber = firstNumber - secondNumber;
+            } else if (operator.equals("*")) {
+                resultNumber = firstNumber * secondNumber;
+            } else if (operator.equals("/")) {
+                resultNumber = firstNumber / secondNumber;
+            }
+            testHelper.UpdateTestResults("Solving equation: " + firstNumber + " " + operator + " " + secondNumber + " = " + resultNumber + " for step " + fileStepIndex, true);
+
+            if (ts.get_expectedValue() != null) {
+                double expected = Double.parseDouble(ts.get_expectedValue());
+                if (resultNumber == expected) {
+                    testHelper.UpdateTestResults("Successful Parse and Calculate Double Expected: (" + expected + ") Actual: (" + resultNumber + ") for step " + fileStepIndex, true);
+                } else {
+                    testHelper.UpdateTestResults("Failed Parse and Calculate Double Expected: (" + expected + ") Actual: (" + resultNumber + ") for step " + fileStepIndex, true);
+                }
+            }
+
+            //TODO:FINISH THIS SENDING IT OR PERSISTING IT
+            if (accessorPersist.toLowerCase().equals("persist")) {
+                testHelper.CreateSectionHeader(AppConstants.indent5 + "[ Start Persisting Calculated Value ]", "", AppConstants.ANSI_CYAN, true, false, true);
+                testHelper.UpdateTestResults("Persisting Calculated value: (" + resultNumber +  ")", true);
+                persistedString = String.valueOf(resultNumber);
+                //testHelper.CreateSectionHeader(AppConstants.indent5 + "[ End Persisting Calculated Value ]", "", AppConstants.ANSI_CYAN, true, false, true);
+                testHelper.CreateSectionHeader(AppConstants.indent5 + "[ End Persisting Calculated Value, but value persisted and usable until end of test file ]", "", AppConstants.ANSI_CYAN, false, false, true);
+            } else {
+                TestStep testStep = new TestStep();
+                testStep.set_command(AppCommands.SendKeys);
+                testStep.set_crucial(ts.get_crucial());
+                testStep.set_isConditionalBlock(ts.get_isConditionalBlock());
+                testStep.set_accessor(accessorPersist);
+                testStep.set_actionType("write");
+                testStep.set_accessorType(ts.get_accessorType());
+                Argument argument = new Argument();
+                argument.set_parameter(String.valueOf(resultNumber));
+                List<Argument> arguments = new ArrayList<>();
+                arguments.add(argument);
+                testStep.ArgumentList = arguments;
+                PerformAction(testStep, String.valueOf(resultNumber), fileStepIndex);
+            }
+        }
+    }
+
+    private void ParseAndCalculateLongController(TestStep ts, String fileStepIndex) {
+        int firstIndex, secondIndex, operatorIndex;
+        long firstNumber;
+        long secondNumber;
+        long resultNumber = 0;
+        String delimiter, operator;
+        String accessorPersist;
+        //String elementEquation;  //retrieve this value
+        //https://timesofindia.indiatimes.com/poll.cms
+        String [] equation;
+        delimiter = GetArgumentValue(ts, 0, " ");
+        firstIndex = GetArgumentNumericValue(ts, 1, 0);
+        secondIndex= GetArgumentNumericValue(ts, 2, 2);
+        operatorIndex = GetArgumentNumericValue(ts, 3, 1);
+        accessorPersist = GetArgumentValue(ts, 4, "persist");
+
+        String actual = GetElementText(ts, fileStepIndex);
+        if (actual != null && actual.contains(delimiter)) {
+            equation = actual.split(delimiter);
+//            equation[firstIndex] = equation[firstIndex] + ".5";
+//            equation[secondIndex] = equation[secondIndex] + ".8";
+//            testHelper.DebugDisplay("delimiter = (" + delimiter + ")");
+//            testHelper.DebugDisplay("firstNumber = equation[" + firstIndex + "] = " + equation[firstIndex]);
+//            testHelper.DebugDisplay("secondNumber = equation[" + secondIndex + "] = " + equation[secondIndex]);
+//            testHelper.DebugDisplay("operatorIndex = equation[" + operatorIndex + "] = " + equation[operatorIndex]);
+//            testHelper.DebugDisplay("accessorPersist = " + accessorPersist);
+
+            firstNumber = !equation[firstIndex].contains(".") ? Long.parseLong(equation[firstIndex]) : Long.parseLong(equation[firstIndex].substring(0, equation[firstIndex].indexOf(".")));
+            secondNumber = !equation[secondIndex].contains(".") ? Long.parseLong(equation[secondIndex]) : Long.parseLong(equation[secondIndex].substring(0, equation[secondIndex].indexOf(".")));
+
+            operator = equation[operatorIndex];
+            if (operator.equals("+")) {
+                resultNumber = firstNumber + secondNumber;
+            } else if (operator.equals("-")) {
+                resultNumber = firstNumber - secondNumber;
+            } else if (operator.equals("*")) {
+                resultNumber = firstNumber * secondNumber;
+            } else if (operator.equals("/")) {
+                resultNumber = firstNumber / secondNumber;
+            }
+            testHelper.UpdateTestResults("Solving equation: " + firstNumber + " " + operator + " " + secondNumber + " = " + resultNumber + " for step " + fileStepIndex, true);
+
+            if (ts.get_expectedValue() != null) {
+                double expected = Double.parseDouble(ts.get_expectedValue());
+                if (resultNumber == expected) {
+                    testHelper.UpdateTestResults("Successful Parse and Calculate Long Expected: (" + expected + ") Actual: (" + resultNumber + ") for step " + fileStepIndex, true);
+                } else {
+                    testHelper.UpdateTestResults("Failed Parse and Calculate Long Expected: (" + expected + ") Actual: (" + resultNumber + ") for step " + fileStepIndex, true);
+                }
+            }
+
+            //TODO:FINISH THIS SENDING IT OR PERSISTING IT
+            if (accessorPersist.toLowerCase().equals("persist")) {
+                testHelper.CreateSectionHeader(AppConstants.indent5 + "[ Start Persisting Calculated Value ]", "", AppConstants.ANSI_CYAN, true, false, true);
+                testHelper.UpdateTestResults(AppConstants.indent8 + "Persisting Calculated value: (" + resultNumber +  ")", true);
+                persistedString = String.valueOf(resultNumber);
+                testHelper.CreateSectionHeader(AppConstants.indent5 + "[ End Persisting Calculated Value, but value persisted and usable until end of test file ]", "", AppConstants.ANSI_CYAN, false, false, true);
+            } else {
+                TestStep testStep = new TestStep();
+                testStep.set_command(AppCommands.SendKeys);
+                testStep.set_crucial(ts.get_crucial());
+                testStep.set_isConditionalBlock(ts.get_isConditionalBlock());
+                testStep.set_accessor(accessorPersist);
+                testStep.set_actionType("write");
+                testStep.set_accessorType(ts.get_accessorType());
+                Argument argument = new Argument();
+                argument.set_parameter(String.valueOf(resultNumber));
+                List<Argument> arguments = new ArrayList<>();
+                arguments.add(argument);
+                testStep.ArgumentList = arguments;
+                PerformAction(testStep, String.valueOf(resultNumber), fileStepIndex);
+            }
+        }
+    }
 
     /******************************************************************************
      * DESCRIPTION: Control method used to Check the count of a specific element type.

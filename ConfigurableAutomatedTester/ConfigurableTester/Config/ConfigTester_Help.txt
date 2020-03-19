@@ -1,7 +1,7 @@
 
-╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-║                                              TABLE OF CONTENTS                                                                                                         ║
-╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                              TABLE OF CONTENTS                                                                                       ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 
      ═════════[ HELP FILE OVERVIEW  ]════════════════════════════════════════════════════════════════════
 		APPLICATION OVERVIEW
@@ -60,9 +60,10 @@
 		RETRIEVING XML FROM AN API ENDPOINT
 		QUERYING XML FROM AN API ENDPOINT
 		SAVE XML TO FILE
-		CHECK COLOR CONTRAST  
-
+		CHECK COLOR CONTRAST 
 		COMPARE IMAGES AND CREATE DIFFERENCE IMAGE 
+		PARSE AND CALCULATE DOUBLE
+		PARSE AND CALCULATE LONG 
 
      ═════════[ Troubleshooting ]════════════════════════════════════════════════════════════════════════
 		DRIVER ISSUES
@@ -73,14 +74,13 @@
 		XML DOCUMENT MUST START WITH AND END WITH THE SAME ELEMENT
 		CONTEXT MENU TAB SWITCHING IS FAILING
 
-
-═════════[ END OF TABLE OF CONTENTS ]══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-
+═════════[ END OF TABLE OF CONTENTS ]══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 
-╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-║                                              HELP FILE OVERVIEW                                                                                                        ║
-╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                              HELP FILE OVERVIEW                                                                                      ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 WELCOME TO THE CONFIGURABLE AUTOMATED TEST APPLICATION!!!
 This application was designed to perform automated testing using configuration and test step files.
@@ -95,6 +95,9 @@ or using some other automated process tool, or writing one of your own.
 Running outside of the IDE means that it can be quickly executed without opening the IDE and then the source project.
 The Log file name will be preceded with "StandAlone_" when run as a stand-alone application.
 By default, log and CSV files will be created in the "\Config" folder, which is part of this project.
+The log file records all test steps performed as well as the success and fail status of assertion steps which include steps that
+compare a value to a supplied expected value.
+The CSV file records only success and fail status steps but none of the supporting steps surrounding those checks.
 Look at the Project_Setup.txt file for directions on running the stand-alone application as part of a batch file.
 
 The application covers most testing, including: Navigation, Form Population, Value checking, Value Persistence for use in 
@@ -114,7 +117,8 @@ This behavior ensures that necessary steps for subsequent testing are successful
 retrieving JSON from an endpoint etc...  If these steps fail, the subsequent tests reliant upon them will also fail but to avoid
 wasting time waiting for those steps to fail, marking these steps as crucial stops execution when they fail and the tester
 can see where the application terminated and perform further investigation.
-An added test step configuration can be used to create a test step file for a specific page and while this is not a test, it can make creating test files much faster.
+An added test step configuration can be used to create a test step file for a specific page and while this is not a test,
+it can make creating test files much faster.
 
 Creating a Configurable Automated test consists of creating one Configuration file and one or more Test files.
 This application can run any number of Test Files, which need to be configured in the Configuration file either
@@ -153,7 +157,8 @@ This help file is broken up into 4 separate sections:
 Future functionality to be added to this application:
 	Greater Than and Less Than Operator.
 		-	This could be a good addition when used with Conditional Blocks.
-		-	Currently, only validatable(read actionType) commands can be used for the conditional statement such as an text, src, alt or href assertion or element found.
+		-	Currently, only validatable(read actionType) commands can be used for the conditional statement such as an text, src, alt or
+				href assertion or element found.
 
 	Color Contrast code has been implemented to allow for color contrast checking using this page's formula.
 		-	https://www.w3.org/TR/AERT/#color-contrast
@@ -163,21 +168,25 @@ Future functionality to be added to this application:
 	MongoDb Connectivity and Querying will be implemented.
 		-	This was partially implemented but abandoned for a later time when there is access to a MongoDB instance.
 
+	Continuous Total Command
+		-	This would allow for adding to a total throughout a singular test.
+		-	This functionality would be ideal for spreadsheet interactions where values from different cells are retrieved and totaled.
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-
-
-╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-║                                              CONFIGURATION FILE FORMAT                                                                                                 ║
-╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
-═════════[ CONFIGURATION OVERVIEW ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                              CONFIGURATION FILE FORMAT                                                                               ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+═════════[ CONFIGURATION OVERVIEW ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 NOTES: The file format is XML, so to make comments use <!-- to begin the comment and --> to end the comment.
 Comments can span lines but comments cannot include other comment blocks.
 Comments are lightly sprinkled in some of the help XML examples below.
-	THIS APPLICATION IGNORES ALL COMMENTS.
+
+THIS APPLICATION IGNORES ALL COMMENTS.
 COMMENTS ARE FOR THE USER.
+
 Some of the comments are descriptive and some show alternative options, but it is suggested that you read the help file
 to best understand how to use this Configurable Automated Testing Application.
 Refer to an XML guide for proper commenting.  Google it!!!!
@@ -192,6 +201,8 @@ The following is an example of a configuration file which will be explained belo
 	<browserType>Chrome</browserType>
 	<!--<browserType>Firefox</browserType>-->
 	<runHeadless>false</runHeadless>
+	<!-- if <testAllBrowsers> is true, tests all configured browsers(Chrome, Firefox and PhantomJS), 
+		if false, tests using only the selected browser -->
 	<testAllBrowsers>false</testAllBrowsers>
 	<specifyTestFiles>true</specifyTestFiles>
 	<sortSpecifiedTestFiles>false</sortSpecifiedTestFiles>
@@ -272,13 +283,20 @@ The <createCsvStatusFiles></createCsvStatusFiles> element specifies whether to c
 			-	but have a datetime stamp like the log file and with a .csv extension.
 		-	If any value other than those specified above, no CSV files will be produced.
 	The CSV file consists of the following 5 columns:
-		File and Step Number - This column holds the file number and step number, each starting at 0 and in the format F0_S0 where 
+		--------------------------------------------------------------------------------------------------
+		| File And Step Number | Test Performed | Execution Status | Variable Output | Test File Name    |
+		--------------------------------------------------------------------------------------------------
+		| F0_S0                | Navigation ... | Successful       | (2.0)           | C:\....\...       |
+		--------------------------------------------------------------------------------------------------
+		File and Step Number - This column displays the file number and step number, each starting at 0 and in the format F0_S0 where 
 		-	F0 corresponds to File 0, which is the first file, and S0 corresponds to Step 0, which is the first step.
 		-	Since all steps taken are not checks, there may be line number gaps.
-		Test Performed - This column holds type of test being performed such as Navigation and URL Check, Equal comparison results etc..
-		Execution Status - This column holds the word Successful for successful test step checks and the word Failure for failed test step checks.
-		Variable Output - This column holds the difference percentage for image comparisons in percentage format, the http response code in square brackets 
-		-	like [200] and element counts in numeric format like 128 to allow for filtering these separate check types easily.
+		Test Performed - This column displays a description of the test performed such as Navigation and URL Check, 
+		-	Equal comparison results etc..
+		Execution Status - This column displays the word Successful for successful test step checks and the word Failure for failed test step checks.
+		Variable Output - This column holds the difference percentage for image comparisons in percentage format like 28%, 
+		-	the http response code in square brackets like [200], element counts in numeric format like 128 
+		-	and calculations in parentheses like (2.0) or (2) to allow for filtering these separate check types easily.
 		Test File Name - This column holds the name of the test file this entry corresponds with.
 		-	When creating one CSV file for multiple tests, this allows for another method of sorting the data.
 
@@ -299,7 +317,8 @@ The <testFileName1></testFileName1> element specifies the test file to use for t
 The following three settings need to be talked about together since they work together to provide a particularly useful piece of functionality.
 Together, the following settings allow for filtering a particular folder for the files used for testing.
 If a common naming convention is used for test files that include the project name, these settings allow for running 
-Just one Project's test files, just some of a Project's test files or just one test file in a project or one type of test file across all test projects.
+Just one Project's test files, just some of a Project's test files or just one test file in a project or one type of test file across 
+	all test projects.
 
 The <testFolderName></testFolderName> element specifies the folder where test files are located to allow for reading a folder of 
 	test files instead of naming each test file individually.
@@ -312,21 +331,24 @@ The <folderFileFilterType></folderFileFilterType> element specifies the type of 
 
 The <folderFileFilter></folderFileFilter> element specifies the phrase to use to when selecting files in the specified folder.
 
-	When used with the other folder settings, a folder containing a multitude of test files can be pointed to using the <testFolderName></testFolderName> element.
-	Then, using the <folderFileFilterType></folderFileFilterType> element, [Starts With] can be used to return only files starting with a specific value.
-	Finally, using the <folderFileFilter></folderFileFilter> element, a phrase like the project name can be used to select only files in the selected folder that start with the project name.
+	When used with the other folder settings, a folder containing a multitude of test files can be pointed to using the 
+	-	<testFolderName></testFolderName> element.
+	Then, using the <folderFileFilterType></folderFileFilterType> element, [Starts With] can be used to return only files starting with a 
+	-	specific value.
+	Finally, using the <folderFileFilter></folderFileFilter> element, a phrase like the project name can be used to select only files in the 
+	-	selected folder that start with the project name.
 ---------------------[ End of Grouped Configuration Settings ]-------------------
 
 In the example configuration file provided above the explanations, two specific test files are being tested, the screen shot folder is specified, 
-a maximum of 5 screenshots will be taken, only the test Chrome browser will be used and it will be visible, the files will be run in the order entered,
-the TestFolderName, FolderFileFilterType and FolderFileFilter have not been specified but would have been disregarded if specified because
-<specifyTestFiles></specifyTestFiles> is true, meaning only files specifically specified will be used.
+a maximum of 5 screenshots will be taken, only the test Chrome browser will be used and it will be visible, the files will be run in the
+order entered, the TestFolderName, FolderFileFilterType and FolderFileFilter have not been specified but would have been disregarded
+if specified because <specifyTestFiles></specifyTestFiles> is true, meaning only files specifically specified will be used.
 The commented test file lines were included to show a means in which different files can be setup but can be commented so that only
 
 In the example configuration file provided below, a folder of test files are being tested, but only the files that contain the phrase "sql"
 will be used, the screen shot folder is specified, but no screenshots will be taken, only the Chrome browser will be used and it will be visible,
-and although test files are specified, they will be ignored because <specifyTestFiles></specifyTestFiles> is false meaning the folder settings will be used to 
-determine the test files to be used.
+and although test files are specified, they will be ignored because <specifyTestFiles></specifyTestFiles> is false meaning the folder
+settings will be used to determine the test files to be used.
 Additionally, no CSV files will be created because the <createCsvStatusFiles></createCsvStatusFiles> is set to "none".
 <?xml version="1.0" encoding="UTF-8" ?>
 <automatedTestConfiguration>
@@ -355,15 +377,15 @@ Additionally, no CSV files will be created because the <createCsvStatusFiles></c
 </automatedTestConfiguration>
 
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 
 
-╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-║                                              TEST FILE FORMAT                                                                                                          ║
-╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                              TEST FILE FORMAT                                                                                        ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-═════════[ TEST FILE OVERVIEW ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═════════[ TEST FILE OVERVIEW ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 The Test file is an xml file, that can include comments just like any xml file.
 A test file can consist of one or more test steps and there are currently no known limitations as some tests have contained
 tens of thousands of steps.
@@ -382,7 +404,7 @@ The test file allows for:
 4.	Test files are run one after another and most objects are scoped to just the test that required them so
   	Persisted Values, JSON object and SQL Connection object will all be reset and the Unique Identifiers will be reinitialized to a new value.
 
-═════════[ TEST FILE FIELDS AND DESCRIPTIONS ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═════════[ TEST FILE FIELDS AND DESCRIPTIONS ]═════════════════════════════════════════════════════════════════════════════════════════════════════════
 It begins with the XML declaration followed by the <testSteps> root element.
 Each test is grouped in <step> elements, which consist of the all or some of the following nodes:
 
@@ -442,7 +464,7 @@ Usually, the test file will consist of multiple steps like (navigation, check el
 </testSteps>
 
 
-═════════[ NAVIGATION ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═════════[ NAVIGATION ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 The Navigation command navigates the browser to the provided URL.
 All Navigation steps should be marked as crucial, as all subsequent checks require that navigation complete successfully!!!
 An assertion does not have to be part of navigation, but it probably should be!!!
@@ -485,7 +507,7 @@ Please note that making this crucial is irrelevant as no assertions will be made
 	</arguments>
 </step>
 
-═════════[ NAVIGATION WITH SUCCESSFUL NAVIGATION CONFIRMATION ]════════════════════════════════════════════════════════════════════════════════════════════════
+═════════[ NAVIGATION WITH SUCCESSFUL NAVIGATION CONFIRMATION ]════════════════════════════════════════════════════════════════════════════════════════
 To Navigate, assert that the URL is what is in the expectedValue node and to wait 4 thousand milli-seconds before making the assertion to
 allow the page to load,
 and to check that the Back end loads under .5 seconds and that the Front end loads under 3.75 seconds.
@@ -533,7 +555,7 @@ set the expected Frontend page load time to 3.75 seconds and Backend page load t
 	</arguments>
 </step>
 
-═════════[ NAVIGATION WITH AUTHENTICATION WITH AND WITHOUT NAVIGATION CONFIRMATION ]═══════════════════════════════════════════════════════════════════════════
+═════════[ NAVIGATION WITH AUTHENTICATION WITH AND WITHOUT NAVIGATION CONFIRMATION ]═══════════════════════════════════════════════════════════════════
 The Navigate command can be used to authenticate while navigating.
 This is done by passing the username and password as part of the url delimited by a : and ending with the @ symbol.
 It should be mentioned that this does not work for all authentication which is why there are different authentication methods.
@@ -565,7 +587,7 @@ To Navigate and Authenticate with username and password:
 	</arguments>
 </step>
 
-═════════[ LOGIN WITH NAVIGATION ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═════════[ LOGIN WITH NAVIGATION ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 The Login command logs into a site.
 This command is intended for sites that have alert style popup login forms.
 There may be instances in which one or more Login/Authentication commands do not work
@@ -586,7 +608,7 @@ Please note this is for normal passwords which cannot contain spaces or characte
 	</arguments>
 </step>
 
-═════════[ ALERT POPUP LOGIN ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═════════[ ALERT POPUP LOGIN ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 The following Login command does not include the navigation step.
 As mentioned earlier, there may be isseus with logging in related to the operating system or alert type.
 Try different methods if failures happen as one approach may work best for a specific scenario.
@@ -603,9 +625,10 @@ Please note this is for normal passwords which cannot contain spaces or characte
 	</arguments>
 </step>
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ CHECK URL WITHOUT NAVIGATION ]══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ CHECK URL WITHOUT NAVIGATION ]══════════════════════════════════════════════════════════════════════════════════════════════════════════════
 The Check URL command allows for checking the current page's URL without the need to navigate.
 When an command, like a button or link click occurs that navigates to a new page, there is no need to
 perform a navigation command but there is a need to check that the page is where expected before further testing.
@@ -620,9 +643,10 @@ To make it non-crucial change the crucial element to false. <crucial>false</cruc
 	<crucial>TRUE</crucial>
 </step>
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ CHECK GET REQUEST STATUS WITHOUT NAVIGATION ]═══════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ CHECK GET REQUEST STATUS WITHOUT NAVIGATION ]═══════════════════════════════════════════════════════════════════════════════════════════════
 The CheckGet command checks the response status of a get.
 To check the Get Requests status of a URL without navigating and to make it crucial.
 To make it non-crucial change the crucial element to false. <crucial>false</crucial>.
@@ -648,9 +672,10 @@ Alternative way splitting the words apart.
 	</arguments>
 </step>
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ CHECK POST REQUEST STATUS WITHOUT NAVIGATION ]══════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ CHECK POST REQUEST STATUS WITHOUT NAVIGATION ]══════════════════════════════════════════════════════════════════════════════════════════════
 The CheckPost command checks the response status of a post.
 <!-- Test results unconfirmed!!! Need to find suitable URL that allows posting. -->
 To check the Post Requests status of a URL without navigating and to make it crucial.
@@ -676,9 +701,11 @@ Alternative way splitting the words apart.
 		<arg1>https://www.swtestacademy.com/about-software-test-academy/ </arg1>
 	</arguments>
 </step>
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ CHECK DOCUMENT READY STATE COMPLETE WITHOUT NAVIGATION AS A POST NAVIGATION STEP]═══════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+
+═════════[ CHECK DOCUMENT READY STATE COMPLETE WITHOUT NAVIGATION AS A POST NAVIGATION STEP]═══════════════════════════════════════════════════════════
 The Wait for page command waits until document ready state is complete.
 To check that the document ready state is complete after previously navigating to a new page and to make it crucial. 
 NOTE: The first argument must be n/a as shown below.
@@ -695,7 +722,7 @@ This will be most useful for triggered navigation.
 	</arguments>
 </step>
 
-═════════[ CHECK DOCUMENT READY STATE COMPLETE WITH NAVIGATION IN A SINGLE STEP]═══════════════════════════════════════════════════════════════════════════════
+═════════[ CHECK DOCUMENT READY STATE COMPLETE WITH NAVIGATION IN A SINGLE STEP]═══════════════════════════════════════════════════════════════════════
 To check that the document ready state is complete after navigating to a new page and to make it crucial. 
 To make it non-crucial change the crucial element to false. <crucial>false</crucial>.
 <step>
@@ -708,9 +735,10 @@ To make it non-crucial change the crucial element to false. <crucial>false</cruc
 	</arguments>
 </step>
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ SWITCHING TO AN IFRAME ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ SWITCHING TO AN IFRAME ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 IMPORTANT: EACH TIME A SWITCH TO IFRAME COMMAND IS ISSUED, THE CONTEXT IS REVERTED TO THE MAIN WINDOW
 ONCE THAT COMMAND COMPLETES EXECUTION, SO IF SUBSEQUENT TESTS NEED TO ACCESS THE IFRAME, THEY MUST BE
 ENCAPSULATED WITHIN SWITCH TO IFRAME COMMANDS.
@@ -757,9 +785,10 @@ Note that you have to specify the command in <arg2></arg2> as click is not the d
 	</arguments>
 </step>
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ CONDITIONAL BLOCKS ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ CONDITIONAL BLOCKS ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 IMPORTANT: CONDITIONAL BLOCKS CAN NOT BE NESTED!!!!
 
 Creating a conditional block is a two step process.
@@ -797,11 +826,13 @@ The following is the End Conditional command used to end the Conditional Block.
 	<command>end conditional</command>
 </step>
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ CHECK AN ANCHOR HREF ]══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ CHECK AN ANCHOR HREF ]══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 The Check_A_Href command checks the href attribute of a HyperLink.
-To check an anchor's href url and to make it non-crucial.  To make it crucial change the last parameter to true.
+To check an anchor's href url and to make it non-crucial.
+To make it crucial change the last parameter to true.
 This will check the value of the href and compare it to the expected value provided.
 <step>
 	<command>check_a_href</command>
@@ -830,11 +861,13 @@ Alternative way splitting the words.
 </step>
 
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ CHECK ALL PAGE LINKS USING URL ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ CHECK ALL PAGE LINKS USING URL ]════════════════════════════════════════════════════════════════════════════════════════════════════════════
 The Check Links command checks all Hyperlinks on the page.
-To check all page links and to make it non-crucial.  To make it crucial change the last parameter to true.
+To check all page links and to make it non-crucial. 
+To make it crucial change the last parameter to true.
 This will check for a status code of 200 for all links on the page, based on the URL in the arg1 node, 
 but will report the status code for all links.
 <step>
@@ -846,18 +879,21 @@ but will report the status code for all links.
 	</arguments>
 </step>
 
-═════════[ CHECK ALL PAGE LINKS WITHOUT USING URL ]════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═════════[ CHECK ALL PAGE LINKS WITHOUT USING URL ]════════════════════════════════════════════════════════════════════════════════════════════════════
 This will check for a status code of 200 for all links on the current page, but will report the status code for all links.
 <step>
 	<command>check links</command>
 	<actionType>read</actionType>
 	<crucial>FALSE</crucial>
 </step>
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ CHECK THE COUNT OF A SPECIFIC ELEMENT ON A PAGE ]═══════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+
+═════════[ CHECK THE COUNT OF A SPECIFIC ELEMENT ON A PAGE ]═══════════════════════════════════════════════════════════════════════════════════════════
 The Check Count command checks the number of occurrences of a particular element.
-To check the count of a specific element on a page and to make it non-crucial.  To make it crucial change the last parameter to true.
+To check the count of a specific element on a page and to make it non-crucial.
+To make it crucial change the last parameter to true.
 This will count the number of times an element is found on a page and compare that to the expected value.
 In the example below, the test compares the number of "a" tags on the page with the expected number of 18.
 If the page has 18 "a" tags, the test passes, otherwise it fails.
@@ -872,21 +908,29 @@ An optional last argument can be included to use the != operator.
 	</arguments>
 </step>
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ CHECK ALL PAGE IMAGE SRC TAGS WITH SEPARATE NAVIGATION STEP ]═══════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ CHECK ALL PAGE IMAGE SRC TAGS WITH SEPARATE NAVIGATION STEP ]═══════════════════════════════════════════════════════════════════════════════
 The Check Img Src command checks the src of all image tags.
-To check all page image src tags, on the current page, to ensure a source exists and to make it non-crucial.  To make it crucial change the last parameter to true.
-The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sources but will report the status of all image sources.
+To check all page image src tags, on the current page, to ensure a source exists and to make it non-crucial.
+To make it crucial change the last parameter to true.
+The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sources
+but will report the status of all image sources.
 <step>
 	<command>check images src</command>
 	<actionType>read</actionType>
 	<crucial>FALSE</crucial>
 </step>
 
-═════════[ CHECK ALL PAGE IMAGE SRC TAGS WITH NO SEPARATE NAVIGATION STEP ]════════════════════════════════════════════════════════════════════════════════════
-To check all page image src tags, on the page specified in the arg1 node, to ensure a source exists and to make it non-crucial.  To make it crucial change the last parameter to true.
-The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sources but will report the status of all image sources.
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+
+═════════[ CHECK ALL PAGE IMAGE SRC TAGS WITH NO SEPARATE NAVIGATION STEP ]════════════════════════════════════════════════════════════════════════════
+To check all page image src tags, on the page specified in the arg1 node, to ensure a source exists and to make it non-crucial.
+To make it crucial change the last parameter to true.
+The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sources but will report 
+the status of all image sources.
 <step>
 	<command>check images src</command>
 	<actionType>read</actionType>
@@ -896,7 +940,10 @@ The src tag will be checked to see if it exists and if it returns a status code 
 	</arguments>
 </step>
 
-═════════[ CHECK ALL PAGE IMAGE ALT TAGS WITH SEPARATE NAVIGATION STEP ]═══════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+
+═════════[ CHECK ALL PAGE IMAGE ALT TAGS WITH SEPARATE NAVIGATION STEP ]═══════════════════════════════════════════════════════════════════════════════
 The Check Image Alt command checks all page image alt tags for text.
 To check all page image alt tags, for ADA compliance and to make it crucial.
 To make it non-crucial change the crucial element to false. <crucial>false</crucial>.
@@ -908,7 +955,10 @@ This is a small part of 508 compliance.
 	<crucial>FALSE</crucial>
 </step>
 
-═════════[ CHECK ALL PAGE IMAGE ALT TAGS WITH NO SEPARATE NAVIGATION STEP ]════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+
+═════════[ CHECK ALL PAGE IMAGE ALT TAGS WITH NO SEPARATE NAVIGATION STEP ]════════════════════════════════════════════════════════════════════════════
 To check all page image alt tags, for ADA compliance and to make it crucial.
 To make it non-crucial change the crucial element to false. <crucial>false</crucial>.
 The alt tag will checked to see if it exists and is not empty.  Empty tags will be flagged as failed.
@@ -922,9 +972,10 @@ This is a small part of 508 compliance.
 	</arguments>
 </step>
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ WAITING A SPECIFIC AMOUNT OF TIME FOR ITEMS TO BE AVAILABLE ]═══════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ WAITING A SPECIFIC AMOUNT OF TIME FOR ITEMS TO BE AVAILABLE ]═══════════════════════════════════════════════════════════════════════════════
 The Wait command pauses execution for a specified amount of time to allow for page load completion.
 In the event that arguments are not in the correct order, this application attempts to re-order the arguments.
 If the results are not as expected, refer to the examples in this help file for proper argument order.
@@ -938,9 +989,11 @@ To wait for 5 thousand milli-seconds before continuing onto the next step.
 		<arg1>10000</arg1>
 	</arguments>
 </step>
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ WAITING FOR THE PRESENCE OF AN ELEMENT ]════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+
+═════════[ WAITING FOR THE PRESENCE OF AN ELEMENT ]════════════════════════════════════════════════════════════════════════════════════════════════════
 The Wait for Element command waits a maximum amount of time for an element to be available.
 To wait for an element to be present, requires checking for the element using an accessor unlike waiting a specific amount of time.
 To wait for for a maximum of 15 seconds for an element to be present and making this check crucial, use the following.
@@ -953,16 +1006,16 @@ To make it non-crucial change the crucial element to false. <crucial>false</cruc
 	<accessorType>xPath</accessorType>
 </step>
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ WAITING FOR DOCUMENT READY STATE COMPLETE ]═════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ WAITING FOR DOCUMENT READY STATE COMPLETE ]═════════════════════════════════════════════════════════════════════════════════════════════════
 The Wait for Page command waits for Document Ready State to be Complete.
 To wait for the page to fully load and document state to be complete, use the following command.
 Please note that the accessor is set to page and that an accessor type is present.  Any Accessor Type must be present, although it is not used,
 to distinguish this document ready state complete wait from a time interval wait.
 To wait for for a maximum of 15 seconds for document state complete and to make this check crucial, use the following.
 To make it non-crucial change the crucial element to false. <crucial>false</crucial>.
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 <step>
 	<command>wait for page</command>
 	<actionType>write</actionType>
@@ -972,9 +1025,11 @@ To make it non-crucial change the crucial element to false. <crucial>false</cruc
 		<arg2>30</arg2>
 	</arguments>
 </step>
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ UNIQUE IDENTIFIER ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+
+═════════[ UNIQUE IDENTIFIER ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 Before explaining how to fill in text fields, we need to cover the Unique Identifier.
 By default, every time a test is run, a unique identifier is created.
 This unique identifier is composed of the date and time with no delimiters.
@@ -985,7 +1040,10 @@ The Unique Identifier is 17 characters long and has the following format (yyyyMM
 In the Filling in and SendKeys sections, there are examples of exactly how to use this.
 Anytime, the character sequence without parenthesis (**_uid_**), is used, that value is replaced with the Unique Identifier.
 
-═════════[ PERSISTING RETRIEVED TEXT IN A VARIABLE FOR LATER USE ]═════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+
+═════════[ PERSISTING RETRIEVED TEXT IN A VARIABLE FOR LATER USE ]═════════════════════════════════════════════════════════════════════════════════════
 The PersistString command stores the element's text in memory for use later.
 There may be a need to compare the value retrieved from one element with the value of another.
 Unfortunately, this cannot be done directly, but a Persist action can be enacted allowing the storage of 
@@ -1000,9 +1058,13 @@ To persist the value of an element, use the following:
 	<crucial>FALSE</crucial>
 </step>
 
-═════════[ FILLING IN TEXT FIELDS ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+
+═════════[ FILLING IN TEXT FIELDS ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 The SendKeys command sends keystrokes and phrases to form elements and Hyperlink context menus.
-To fill in a field by ID and to make it non-crucial.  To make it crucial change the last parameter to true.
+To fill in a field by ID and to make it non-crucial.
+To make it crucial change the last parameter to true.
 <step>
 	<command>sendkeys</command>
 	<actionType>write</actionType>
@@ -1014,7 +1076,8 @@ To fill in a field by ID and to make it non-crucial.  To make it crucial change 
 	</arguments>
 </step>
 
-To fill in a field by ID, appending the Unique Identifier to the name John, and to make it non-crucial.  To make it crucial change the last parameter to true.
+To fill in a field by ID, appending the Unique Identifier to the name John, and to make it non-crucial.
+To make it crucial change the last parameter to true.
 <step>
 	<command>sendkeys</command>
 	<actionType>write</actionType>
@@ -1026,7 +1089,8 @@ To fill in a field by ID, appending the Unique Identifier to the name John, and 
 	</arguments>
 </step>
 
-To fill in a field by ID and to make it non-crucial when it contains a reserved command like click.  To make it crucial change the last parameter to true.
+To fill in a field by ID and to make it non-crucial when it contains a reserved command like click.
+To make it crucial change the last parameter to true.
 <step>
 	<command>sendkeys</command>
 	<actionType>write</actionType>
@@ -1050,7 +1114,8 @@ To fill in a field using the value you persisted in an earlier step use the foll
 	</arguments>
 </step>
 
-To fill in a field by ID, add the Unique Id, and to make it non-crucial when it contains a reserved command like click.  To make it crucial change the last parameter to true.
+To fill in a field by ID, add the Unique Id, and to make it non-crucial when it contains a reserved command like click.
+To make it crucial change the last parameter to true.
 <step>
 	<command>sendkeys</command>
 	<actionType>write</actionType>
@@ -1062,7 +1127,8 @@ To fill in a field by ID, add the Unique Id, and to make it non-crucial when it 
 	</arguments>
 </step>
 
-To fill in a field by ID with the persisted value, add the Unique Id, and to make it non-crucial.  To make it crucial change the last parameter to true.
+To fill in a field by ID with the persisted value, add the Unique Id, and to make it non-crucial.
+To make it crucial change the last parameter to true.
 <step>
 	<command>sendkeys</command>
 	<actionType>write</actionType>
@@ -1113,9 +1179,10 @@ To send the persisted value to a textbox or textarea form control, use the follo
 	</arguments>
 </step>
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ CLICK AN ELEMENT IN AN IFRAME ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ CLICK AN ELEMENT IN AN IFRAME ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════
 The Switch to iFrame command switches the current scope to the iFrame specified.
 To click an element by xPath in an iFrame.
 Note that the name of the iFrame is the first argument and the action to take is the second argument.
@@ -1131,7 +1198,10 @@ Note that the name of the iFrame is the first argument and the action to take is
 	</arguments>
 </step>
 
-═════════[ SELECT AN OPTION FROM AN HTML SELECT ELEMENT ]══════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+
+═════════[ SELECT AN OPTION FROM AN HTML SELECT ELEMENT ]══════════════════════════════════════════════════════════════════════════════════════════════
 The SendKeys command can also be used to select an Option from an HTML Select control.
 To select an option from an HTML Select (drop down/list) element there are two methods.
 Sendkeys can be used to select an item based on its text or Click can be used on the option
@@ -1154,11 +1224,12 @@ Alternate method of selecting an option from an HTML select element.
 	<crucial>TRUE</crucial>
 	<accessor>option[value='1']</accessor>
 	<accessorType>CssSelector</accessorType>
+</step>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-
-═════════[ TAKING SCREENSHOTS ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═════════[ TAKING SCREENSHOTS ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 The ScreenShot command takes a screenshot of the current page.
 To take a screen shot/print screen, the browser will be resized automatically to capture all page content,
 if browser dimensions are not supplied; however, in the event that browser dimensions are supplied, the browser
@@ -1209,9 +1280,10 @@ This structure allows for separation of images into separate folders for quickly
 	</arguments>
 </step>
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ SWITCHING BROWSER TABS ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ SWITCHING BROWSER TABS ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 The Right Click command can be used to access a link's context menu to open that link in a new tab and switch to that tab.
 Some actions are related and to avoid unnecessary steps the enter key will be pressed after right clicking and arrowing to a particular item.
 When running tests that access the context menu, the mouse and keyboard should not be used as they can change the context and cause the test to fail.
@@ -1298,7 +1370,10 @@ Note that this has no argument and is relying upon the default setting to return
 	<crucial>TRUE</crucial>
 </step>
 
-═════════[ CLOSE ONE OR ALL OPEN TABS ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+
+═════════[ CLOSE ONE OR ALL OPEN TABS ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 The Close Child Tab command closes one or all child tabs but not the main tab
 If the test that is being run opens multiple tabs, at some point before all tests end, there may be a need to close one or all open child tabs.
 The most important reason to do this would be to avoid confusion as opening multiple tabs and keeping track of multiple tabs can become
@@ -1323,9 +1398,10 @@ The following command closes all tabs because no specific child tab was provided
 	<crucial>TRUE</crucial>
 </step>
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ FIND ELEMENTS THAT HAVE SPECIFIC TEXT ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ FIND ELEMENTS THAT HAVE SPECIFIC TEXT ]═════════════════════════════════════════════════════════════════════════════════════════════════════
 The Find command finds elements that have the supplied text.
 There are times when you may need to search for text but do not know the accessor necessary to find that text.
 The Find functionality allows you search all elements regardless of type or just all tags of a specific type for a phrase.
@@ -1363,9 +1439,10 @@ To Find text searching all label elements and make this non-crucial, use the fol
 	</arguments>
 </step>
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ FIND ELEMENTS THAT CONTAIN TEXT ]═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ FIND ELEMENTS THAT CONTAIN TEXT ]═══════════════════════════════════════════════════════════════════════════════════════════════════════════
 There are times when you may need to search for a portion of text but do not know the accessor necessary to find that text.
 A specific instance might be when searching for text that would be in a paragraph.
 You wouldn't want to add the entire paragraph when you can add a snippet to verify that part of it is there.
@@ -1381,9 +1458,11 @@ To Find element containing text searching all div elements and make this non-cru
 		<arg1>contains</arg1>
 	</arguments>
 </step>
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ CREATE TEST PAGE COMMAND TO CREATE PAGE TESTS OR FOR PROVIDING DATA TO HELP CREATE TESTS ]══════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+
+═════════[ CREATE TEST PAGE COMMAND TO CREATE PAGE TESTS OR FOR PROVIDING DATA TO HELP CREATE TESTS ]══════════════════════════════════════════════════
 IMPORTANT NOTE #1: ANY PARENT ELEMENT WILL CONTAIN THE TEXT OF IT'S CHILD ELEMENT(s) SO TO GET THE ELEMENT THAT ACTUALLY 
 			CONTAINS THE INFORMATION DESIRED, TRY TO ELIMINATE THE HIERARCHICAL ITEMS ABOVE THAT ARE NOT DESIRED, 
 			LIKE CONTAINER ELEMENTS.  Examples include (html,head,body,div,table)
@@ -1397,9 +1476,9 @@ IMPORTANT NOTE #2: ENSURE THAT YOUR FILE PATH DOES NOT CONTAIN ANY KEYWORD USED 
   it provides all of the information to create the test command but it is not formatted as a test command.
   The create_test_page_formatted command outputs the element information in a test command format allowing for quick copy and paste to a test file.
   Both files indicate if an element is visible, if an a tag is acting as an anchor or a link.
-  The Formatted File, will create tests for a tags that check text and href, for images that check src, for text fields it create tests that compare text 
-	 provided with the element text, for text input it creates a sendkeys, for buttons, checkboxes and radio buttons it creates a click, 
-	 and for selects it creates a select command, allowing the user to enter one of the option values that is to be selected.
+  The Formatted File, will create tests for a tags that check text and href, for images that check src, for text fields it create tests that 
+	 compare text provided with the element text, for text input it creates a sendkeys, for buttons, checkboxes and radio buttons it creates
+	 a click, and for selects it creates a select command, allowing the user to enter one of the option values that is to be selected.
   The create_test_page command and the create_test_page_formatted command take the following test parameters:
    - arg1 is the Tag Type.  Use * for all tags, or div for just div tags etc...
 		 -    Element Type: A single element with * being all elements and the default if left empty.
@@ -1464,11 +1543,12 @@ The following example is the correct equivalent of the previous command.
 		<arg2>C:\TestPages\Formy-Unformatted-Test.txt</arg2>
 		<arg3>html,head,title,meta,script,body,style,nav,br,div,form</arg3>
 	</arguments>
-	</step>
+</step>
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ CONNECT TO SQL SERVER DATABASE AND CLOSE THE CONNECTION ]═══════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ CONNECT TO SQL SERVER DATABASE AND CLOSE THE CONNECTION ]═══════════════════════════════════════════════════════════════════════════════════
 The Connect To Database command opens and persists a connection object until it is closed.
 There will be times during the course of QA'ing a site where querying the database can confirm that a value has been 
 added or removed.
@@ -1510,14 +1590,18 @@ The alternative method with more control but with more risk of failure.
 		<arg1>SQL Server</arg1>
 		<!-- Connection String or Close to close the connection -->
 		<!-- when using a uri, escape all illegal xml characters (escape: ampersands with &amp;) -->
-		<arg2>jdbc:sqlserver://localhost:1433;database=PocFisForumV2;user=forum_user;password=forum_user;encrypt=false;trustServerCertificate=true;loginTimeout=30;</arg2>
-		<!-- arg2>jdbc:sqlserver://local.database.windows.net:1433;database=PocFisForumV2;user=forum_user;password=forum_user;encrypt=true;trustServerCertificate=false;loginTimeout=30;</arg2 -->
+		<arg2>jdbc:sqlserver://localhost:1433;database=PocFisForumV2;user=forum_user;
+			password=forum_user;encrypt=false;trustServerCertificate=true;loginTimeout=30;
+		</arg2>
+		<!-- arg2>jdbc:sqlserver://local.database.windows.net:1433;database=PocFisForumV2;user=forum_user;
+			password=forum_user;encrypt=true;trustServerCertificate=false;loginTimeout=30;
+		</arg2 -->
 		<!-- currently not implemented but created to distinguish between local and non-local SQL databases -->
 		<arg3>local</arg3>
 	</arguments>
 </step>
 
-═════════[ CLOSING THE DATABASE CONNECTION ]═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═════════[ CLOSING THE DATABASE CONNECTION ]═══════════════════════════════════════════════════════════════════════════════════════════════════════════
 The Close Database Connection command closes an open database connection and destroys the connection object releasing the resource.
 Equally important as opening the database connection object, is closing the database connection object.
 Open connections consume resources and unclosed connections can use up all available memory or an 
@@ -1537,9 +1621,10 @@ The close command is simple and as follows:
 </step>
 
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ QUERYING THE SQL SERVER DATABASE  ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ QUERYING THE SQL SERVER DATABASE  ]═════════════════════════════════════════════════════════════════════════════════════════════════════════
 The Sql Server Query command executes a Sql Server Query for a single field value and compares that to the expected value.
 When testing a site, there sometimes needs to be verification that a value was 
 actually written to, or removed from the database.  
@@ -1589,9 +1674,10 @@ Second Option Alternative type of SQL Select Statement: Specify the entire Selec
 	</arguments>
 </step>
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ RETRIEVING JSON FROM AN API ENDPOINT  ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ RETRIEVING JSON FROM AN API ENDPOINT  ]═════════════════════════════════════════════════════════════════════════════════════════════════════
 The Get JSON command, like the SQL Server Connection, persists an object for use by subsequent commands.
 Unlike the SQL Server Connection command, which opens a connection object, the Get JSON command
 downloads and stores the JSON into a local variable that can later be used to SEARCH for key value pairs.
@@ -1608,7 +1694,8 @@ This step should be conditional or crucial depending upon the subsequent steps i
 In the example below, JSON is retrieved from the current URL and starts a Conditional Block so that
 any query statements can be contained within the Conditional Block preventing their execution if this step fails.
 <step>
-	<!-- Allows you to retrieve JSON from the current end point.  Make this step crucial or conditional as subsequent steps depend on it's success. -->
+	<!-- Allows you to retrieve JSON from the current end point.  
+		Make this step crucial or conditional as subsequent steps depend on it's success. -->
 	<command>Get JSON</command>
 	<conditional>true</conditional>
 	<actionType>read</actionType>
@@ -1619,7 +1706,8 @@ Alternatively, navigation can be included in the same step to first trigger a na
 The only difference between the example below and the one above is that the below example first triggers a navigation event
 by including the URL as an argument in the test step.
 <step>
-	<!-- Allows you to retrieve JSON from a different end point.  Make this step crucial or conditional as subsequent steps depend on it's success.  -->
+	<!-- Allows you to retrieve JSON from a different end point.
+		 Make this step crucial or conditional as subsequent steps depend on it's success.  -->
 	<command>Get JSON</command>
 	<conditional>true</conditional>
 	<actionType>read</actionType>
@@ -1629,9 +1717,10 @@ by including the URL as an argument in the test step.
 	</arguments>
 </step>
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ QUERYING JSON FROM AN API ENDPOINT ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ QUERYING JSON FROM AN API ENDPOINT ]════════════════════════════════════════════════════════════════════════════════════════════════════════
 A QUICK NOTE ABOUT JSON BEFORE REVIEWING THIS COMMAND
 	Returned JSON is a string so numbers are represented without quotation marks while strings
 	are represented with quotation marks.
@@ -1678,9 +1767,10 @@ Notice that the <expectedValue></expectedValue> contains "General" and not Gener
 	<expectedValue>"General"</expectedValue>
 </step>
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ SAVE JSON TO FILE  ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ SAVE JSON TO FILE  ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 The Save JSON command saves the JSON retrieved with the Get JSON command to the path provided.
 Having the downloaded JSON on hand when testing is important for showing proof when providing feedback.
 The command is a read actionType and not a write actionType as it has to read the JSON before writing it.
@@ -1732,10 +1822,10 @@ Alternatively, the previous example could have also been written using the word 
 	</arguments>
 </step>
 
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ RETRIEVING XML FROM AN API ENDPOINT  ]══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═════════[ RETRIEVING XML FROM AN API ENDPOINT  ]══════════════════════════════════════════════════════════════════════════════════════════════════════
 The Get XML command works like the Get JSON command persisting an object for use by subsequent commands.
 The Get XML command downloads and stores the XML into a local variable that can later be used to SEARCH for elements containing text.
 This local variable will contain the retrieved XML until overwritten by a subsequent Get XML request or 
@@ -1751,7 +1841,8 @@ This step should be conditional or crucial depending upon the subsequent steps i
 In the example below, XML is retrieved from the current URL and starts a Conditional Block so that
 any query statements can be contained within the Conditional Block preventing their execution if this step fails.
 <step>
-	<!-- Allows you to retrieve XML from the current end point.  Make this step crucial or conditional as subsequent steps depend on it's success. -->
+	<!-- Allows you to retrieve XML from the current end point.  
+		Make this step crucial or conditional as subsequent steps depend on it's success. -->
 	<command>Get XML</command>
 	<conditional>true</conditional>
 	<actionType>read</actionType>
@@ -1762,7 +1853,8 @@ Alternatively, navigation can be included in the same step to first trigger a na
 The only difference between the example below and the one above is that the below example first triggers a navigation event
 by including the URL as an argument in the test step.
 <step>
-	<!-- Allows you to retrieve XML from a different end point.  Make this step crucial or conditional as subsequent steps depend on it's success.  -->
+	<!-- Allows you to retrieve XML from a different end point.  
+		Make this step crucial or conditional as subsequent steps depend on it's success.  -->
 	<command>Get XML</command>
 	<conditional>true</conditional>
 	<actionType>read</actionType>
@@ -1772,9 +1864,10 @@ by including the URL as an argument in the test step.
 	</arguments>
 </step>
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ QUERYING XML FROM AN API ENDPOINT ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ QUERYING XML FROM AN API ENDPOINT ]═════════════════════════════════════════════════════════════════════════════════════════════════════════
 A QUICK NOTE ABOUT XML BEFORE REVIEWING THIS COMMAND
 	Returned XML is a string, but unlike JSON, it is unnecessary to differentiate between strings and numbers in your test.
 	While XML does allow for adding attributes to distinguish between different value types, for the purposes of this tool .
@@ -1782,7 +1875,8 @@ A QUICK NOTE ABOUT XML BEFORE REVIEWING THIS COMMAND
 	part of the Element/Node tag.
 	The Element/Node is like a variable that references the value it contains.
 	If the Element being queried contains parameters, they must be included as part of the <accessor></accessor>.
-	This application is going to place angle brackets around the accessor provided and search for that complete element from angle bracket to angle bracket.
+	This application is going to place angle brackets around the accessor provided and search for that complete element from angle bracket
+	to angle bracket.
 	For example the XML Element:
 		<ForumId type="int">1</ForumId>
 	Should have the following accessor:
@@ -1834,8 +1928,10 @@ For the following examples, refer to the following XML excerpt:
 	<Description>General Discussion Forum</Description>
 </Forums>
 
-For this example, the Query XML command is being used to find the ForumId Element/Node with a value of 1 but this Element/Node contains a type attribute.
-Notice that this attribute MUST be accounted for in the <accessor></accessor>, as shown below, for the application to recognize this as the correct Element/Node.
+For this example, the Query XML command is being used to find the ForumId Element/Node with a value of 1 but this Element/Node contains 
+a type attribute.
+Notice that this attribute MUST be accounted for in the <accessor></accessor>, as shown below, for the application to recognize this as the 
+correct Element/Node.
 Failing to include existing parameters when querying the XML will result in a failure to find the Element/Node and thus a test step failure. 
 <step>
 	<command>Query XML</command>
@@ -1846,9 +1942,10 @@ Failing to include existing parameters when querying the XML will result in a fa
 	<expectedValue>1</expectedValue>
 </step>
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ SAVE XML TO FILE  ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+═════════[ SAVE XML TO FILE  ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 The Save XML command saves the XML retrieved with the Get XML command to the path provided.
 Having the downloaded XML on hand when testing is important for showing proof when providing feedback.
 The command is a read actionType and not a write actionType as it has to read the XML before writing it.
@@ -1900,14 +1997,10 @@ Alternatively, the previous example could have also been written using the word 
 	</arguments>
 </step>
 
-
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-
-═════════[ CHECK COLOR CONTRAST  ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═════════[ CHECK COLOR CONTRAST  ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 The Check Contrast command compares the forecolor brightness with the backcolor brightness and the color difference between the two.
 Check contrast uses the formula found on the following page to calculate and compare the foreground and background brightness and color differences:
 https://www.w3.org/TR/AERT/#color-contrast
@@ -1929,7 +2022,8 @@ parent element, which will contain that element thus also containing that elemen
 It is best to use p for <p> tags, label for <label> tags, span for <span> tags
 With that said, it is possible to use an asterisk(*) to target all elements.
 	-Note that doing so will take a long long time to complete and the results will likely be too much for the terminal display.
-	-At the time of writing this, a test using an asterisk ran for over 2 hours for one page and was stopped having tested only a fraction of the page!!!
+	-At the time of writing this, a test using an asterisk ran for over 2 hours for one page and was stopped having tested 
+	-	only a fraction of the page!!!
 It is suggested that you never use the overriding arguments but they were included to allow for slightly relaxed requirements.
 The default brightness contrast which can be overridden in the second argument is 125.
 The default color contrast which can be overridden in the third argument is 500.
@@ -1948,10 +2042,10 @@ In the following Check Contrast Test step, the tags being checked are all <p> ta
 	</arguments>
 </step>
 
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ COMPARE IMAGES AND CREATE DIFFERENCE IMAGE  ]═══════════════════════════════════════════════════════════════════════════════════════════════════════
+═════════[ COMPARE IMAGES AND CREATE DIFFERENCE IMAGE  ]═══════════════════════════════════════════════════════════════════════════════════════════════
 The Compare Images command, uses ImageMagick to compares 2 images on your local system and creates a difference image
 outlining all things that differ between the images whether it is spacing, item dimensions, fonts, colors or anything
 else that is not pixel exact.
@@ -1982,10 +2076,11 @@ It is suggested that you create the following three folders when comparing image
 	The arguments for this command are as follows:
 	<arg1>This argument specifies the baseline or comp image and is required.  The path and file must exist!</arg1>
 	<arg2>This argument specifies the actual image being compared to the baseline image and is required. The path and file must exist!</arg2>
-	<arg3>This argument specifies the difference file that will be created.  The path must exist but the file need not exist as it will be created.</arg3>
+	<arg3>This argument specifies the difference file that will be created.  
+		The path must exist but the file need not exist as it will be created.</arg3>
 	<arg4>This argument allows for a global backup of the difference file to be created with a unique name based on the file name provided.</arg4>
-		If this filename exists an incremental integer value will be appended to the base filename to create a unique file name, which will be displayed to .
-		the tester and written to the log file for that test run.
+		If this filename exists an incremental integer value will be appended to the base filename to create a unique file name, 
+		which will be displayed to the tester and written to the log file for that test run.
 		Keeping these files allows for tracking progress and determining differences between test runs.
 		It also allows for comparing difference files, if desired but please note that storing a large number of files
 		may adversely affect computer performance and even overrun free drive space, so monitoring the computer is essential when
@@ -2020,29 +2115,127 @@ which images need further examination to detail the differences to the correspon
 	</arguments>
 </step>
 
-
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 
-╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-║                                              INCLUDED TEST FILES                                                                                                       ║
-╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+═════════[ PARSE AND CALCULATE DOUBLE  ]═══════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Parse and Compare Double command retrieves the text from a single field containing an equation, 
+parses that field based on the delimiter passed in, sets the first number, operator and second number 
+and performs a double calculation, which can be addition, subtraction, multiplication or division.
+The calculation is simple allowing for 2 number calculations like 1.0 + 1.0 = and it will return 2.0. 
+All arguments are required. 
+TAKE NOTE: that the field holding the equation and the field where the answer will be placed must use 
+the same <accessorType></accessorType>. 
+So if accessing by ID, both fields will be accessed by ID and the same goes for xPath, CssSelector, ClassName and TagName accessors.
+	The arguments for this command are as follows:
+	<arg1>This argument specifies the delimiter.  A single space, without quotes, can be used to designate a space as the delimiter.</arg1>
+	<arg2>This argument specifies the index of the first number in the equation.</arg2>
+	<arg3>This argument specifies the index of the second number in the equation.</arg3>
+	<arg4>This argument specifies the index of the operator in the equation.</arg4>
+	<arg5>This argument specifies the form field where this value should be written or can be set to persist to persist the value
+		 for later use.</arg5>
+The following command retrieves the text pointed to by the ID accessor in the format of  "5 + 1 = "
+It them splits the string using the space delimiter shown in <arg1></arg1> to separate the text as follows:
+value[0] = "5", value[1] = "+", value[2] = "1", value[3] = "="
+The first number has the index of 0 as shown in <arg2></arg2>, the second number has the index of 2 as shown in <arg3></arg3>
+and the operator has the index of 1 as shown in <arg4></arg4>, with all of the fields set for the equation, the answer is set 
+to be sent to the element shown in <arg5></arg5>, and it will use the ID accessor, as was used when retrieving the field text initially.
+First, the string representation of the number is converted to a double, which adds the decimal portion to the number if not already 
+in decimal format, prior to performing the calculation.
+<step>
+	<command>parse and calculate double</command>
+	<actionType>read</actionType>
+	<accessor>mathq2</accessor>
+	<accessorType>id</accessorType>
+	<crucial>FALSE</crucial>
+	<expectedValue>5.0</expectedValue>
+	<arguments>
+		<!-- Type of delimiter -->
+		<arg1> </arg1>
+		<!--  index of first number in equation -->
+		<arg2>0</arg2>
+		<!-- index of second number in equation -->
+		<arg3>2</arg3>
+		<!-- index of operator in equation -->
+		<arg3>1</arg3>
+		<!-- form field to write answer or persist to persist this -->
+		<arg4>mathuserans2</arg4>		
+	</arguments>
+</step>
+
+
+═════════[ PARSE AND CALCULATE LONG  ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Parse and Compare Long command retrieves the text from a single field containing an equation, 
+parses that field based on the delimiter passed in, sets the first number, operator and second number 
+and performs a double calculation, which can be addition, subtraction, multiplication or division.
+The calculation is simple allowing for 2 number calculations like 1 + 1 = and it will return 2. 
+All arguments are required. 
+TAKE NOTE: that the field holding the equation and the field where the answer will be placed must use the same <accessorType></accessorType>. 
+So if accessing by ID, both fields will be accessed by ID and the same goes for xPath, CssSelector, ClassName and TagName accessors.
+	The arguments for this command are as follows:
+	<arg1>This argument specifies the delimiter.  A single space, without quotes, can be used to designate a space as the delimiter.</arg1>
+	<arg2>This argument specifies the index of the first number in the equation.</arg2>
+	<arg3>This argument specifies the index of the second number in the equation.</arg3>
+	<arg4>This argument specifies the index of the operator in the equation.</arg4>
+	<arg5>This argument specifies the form field where this value should be written or can be set to persist to persist the value
+		 for later use.</arg5>
+The following command retrieves the text pointed to by the ID accessor in the format of  "5 + 1 = "
+It them splits the string using the space delimiter shown in <arg1></arg1> to separate the text as follows:
+value[0] = "5", value[1] = "+", value[2] = "1", value[3] = "="
+The first number has the index of 0 as shown in <arg2></arg2>, the second number has the index of 2 as shown in <arg3></arg3>
+and the operator has the index of 1 as shown in <arg4></arg4>, with all of the fields set for the equation, the answer is set 
+The first number has the index of 0 as shown in <arg2></arg2>, the second number has the index of 2 as shown in <arg3></arg3>
+and the operator has the index of 1 as shown in <arg4></arg4>, with all of the fields set for the equation, the answer is set 
+to be persisted by using the persist keyword in <arg5></arg5>
+First, the string representation of the number is converted to a long, which is a long integer, before the calculation is performed.
+It should be noted that attempting to retrieve decimal formatted numbers with this will truncate the decimal portion of the value.
+This truncation is purposely done in code to prevent the Java conversion error that would occur if this conversion were attempted.
+<step>
+	<command>parse and calculate long</command>
+	<actionType>read</actionType>
+	<accessor>mathq2</accessor>
+	<accessorType>id</accessorType>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<!-- Type of delimiter -->
+		<arg1> </arg1>
+		<!--  index of first number in equation -->
+		<arg2>0</arg2>
+		<!-- index of second number in equation -->
+		<arg3>2</arg3>
+		<!-- index of operator in equation -->
+		<arg4>1</arg4>
+		<!-- form field to write answer or persist to persist this -->
+		<arg5>persist</arg5>		
+	</arguments>
+</step>
+
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+
+
+╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                              INCLUDED TEST FILES                                                                                     ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 The following is a list of test files that are included with the Application.   Each of these files have been tested and are working.
 They have been included to provide samples of how to create coherent tests to test different functionality.
 While some tests cover one specific command, many include a variety of different commands but these test files are just to 
 provide you with a starting point and certainly don't define the scope of the application's functionality.
-All Test files below, except the SQL Server tests begin by navigating to a page so that step will be omitted to avoid unnecessary typing and redundancy.
+All Test files below, except the SQL Server tests begin by navigating to a page so that step will be omitted to avoid unnecessary typing 
+and redundancy.
 
-CheckAllPageImageAltAttributes-Test.xml - Checks All Image Alt tag attributes on the page to ensure that they are not empty and includes a separate navigation step.
+CheckAllPageImageAltAttributes-Test.xml - Checks All Image Alt tag attributes on the page to ensure that they are not empty and includes a separate 
+	- navigation step.
 
-CheckAllPageImageAltAttributesNoSeparateNavigationStep-Test.xml - Checks All Image Alt tag attributes on the page to ensure that they are not empty but instead of 
-	- using a separate navigation step, it includes navigation as part of the check command.
+CheckAllPageImageAltAttributesNoSeparateNavigationStep-Test.xml - Checks All Image Alt tag attributes on the page to ensure that they are not
+	- empty but instead of using a separate navigation step, it includes navigation as part of the check command.
 
-CheckAllPageImageSrcWithNoSeparateNavigationStep-Test.xml - Checks All Image Src tag attributes on the page to ensure that they resolve but instead of 
-	- using a separate navigation step, it includes navigation as part of the check command.
+CheckAllPageImageSrcWithNoSeparateNavigationStep-Test.xml - Checks All Image Src tag attributes on the page to ensure that they resolve 
+	- but instead of using a separate navigation step, it includes navigation as part of the check command.
 
-CheckAllPageImageSrcWithSeparateNavigationStep-Test.xml - Checks All Image Src tag attributes on the page to ensure that they resolve and includes a separate navigation step.
+CheckAllPageImageSrcWithSeparateNavigationStep-Test.xml - Checks All Image Src tag attributes on the page to ensure that they resolve
+	- and includes a separate navigation step.
 
 CheckAllPageLinks-Test.xml - Checks All Link tags href attributes on the page to ensure that they resolve and uses a separate navigation step.
 
@@ -2053,9 +2246,11 @@ CheckColorContrast-Test.xml - Checks the Color Brightness and Contrast of the Fo
 
 CheckCount-Test.xml - Checks the count of a specific element type on a page.  Counts all Anchor 'a' tags and compares that to the expected count.
 
-CheckGet-Test.xml - Checks the Get response for a specific URL and compares that to the expected response code which should be 200 for a successful get response.
+CheckGet-Test.xml - Checks the Get response for a specific URL and compares that to the expected response code which should be 200 for a
+	- successful get response.
 
-CheckPageWithoutNavigation-Test.xml - Performs Check Gets, Check Post, Wait for Page, Check A Hrefs, and Checks the current page URL outside of a navigation step and compares that to the expected value.
+CheckPageWithoutNavigation-Test.xml - Performs Check Gets, Check Post, Wait for Page, Check A Hrefs, and Checks the current page URL outside of a
+	- navigation step and compares that to the expected value.
 
 CheckSingleImageSrcWithSeparateNavigationStep-Test.xml - Checks the Src attribute of a specific Image tag and compares that to the expected value.
 
@@ -2063,9 +2258,11 @@ CheckSpecificAnchorhref-Test.xml - Checks the Href attribute of a specific Ancho
 
 CheckSpecificImageSource-Test.xml - Checks the Src and Href attributes of specific Image Tags against expected values.
 
-CompareImages-Alternate-Test.xml - Takes ScreenShot, partially fills in form fields and takes second ScreenShot then compares the ScreenShot images and creates a difference image file and displays the pixel difference between the images in a percentage.
+CompareImages-Alternate-Test.xml - Takes ScreenShot, partially fills in form fields and takes second ScreenShot then compares the ScreenShot images
+	- and creates a difference image file and displays the pixel difference between the images in a percentage.
 
-CompareImages-Test.xml - Compares two images stored on the computer and creates a difference image file and displays the pixel difference between the images in a percentage. 
+CompareImages-Test.xml - Compares two images stored on the computer and creates a difference image file and displays the pixel
+	- difference between the images in a percentage.
 	- (Paths will need to be changed to images on your computer.
 
 Conditional-Test.xml - Creates a Conditional Block with dependent tests inside the block and one test after the block.
@@ -2088,10 +2285,11 @@ ContextMenu-Test.xml - Performs the following test steps.
 
 CreateTestPage-Test.xml - Creates an XML formatted test page that can be run immediately afterwards as a test.
 
-CreateUnformattedTestPage-Test.xml - Creates an unformatted page that contains xPath, text, href, src, alt text that can be used for creating tests manually.
+CreateUnformattedTestPage-Test.xml - Creates an unformatted page that contains xPath, text, href, src, alt text 
+		- that can be used for creating tests manually.
 
 Fill_out_FormMy_Form_and_submit-Test.xml - Fills out a form and submits it and checks the confirmation message on the subsequent page.
-	- This form has various different form controls such as text boxes, radio buttons, check boxes, select list box and a date picker.
+		- This form has various different form controls such as text boxes, radio buttons, check boxes, select list box and a date picker.
 
 FindPhrase-Test.xml - Performs the following test steps.
 	1. Waits for Page, 
@@ -2132,7 +2330,8 @@ iFrame_AccessElement-Test.xml - Performs the following test steps.
 RunSqlQueries_Alternate-Test.xml -  Performs the following test steps.
 	1. Connects to Sql Server,
 	2. Performs 3 queries using two different command formats and checks the values against the expected values.
-	- This command does not close the Open Sql Server connection and was used to implement the failsafe close connection cleanup method and display the message informing the user that the connection was not properly closed.
+	- This command does not close the Open Sql Server connection and was used to implement the failsafe
+		- close connection cleanup method and display the message informing the user that the connection was not properly closed.
 
 SqlServerAccess-Test.xml -  Performs the following test steps. 
 	1. Connects to Sql Server,
@@ -2140,29 +2339,36 @@ SqlServerAccess-Test.xml -  Performs the following test steps.
 	3. Performs 1 query where the value is expected not to equal the expected value,
 	4. Properly Closed the Open Connection.
 
+ParseAndCalculate-Test.xml - Performs the following steps:
+	1. Navigates to page
+	2. Performs a Parse and Calculate Double command retrieving the specified field, splitting it based on the delimiter,
+		- converting numerical values to double based on indexes and the operator index indicates
+		- the operation to perform and the answer is written to the element specified.
+	3. performs a wait and repeats steps 1 and 2 for the Parse and Calculate Long command and
+		- persists that value in the persistance variable for possible later use.
 
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 
 
-╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-║                                              TROUBLESHOOTING                                                                                                           ║
-╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
-═════════[ DRIVER ISSUES ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                              TROUBLESHOOTING                                                                                         ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+═════════[ DRIVER ISSUES ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 If you run the application and the browser briefly opens and then closes:
 Check you local browser version and compare that with the corresponding web driver for that browser.
 If these are not the same, upgrade the web driver for this browser and it should work.
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ URL VALIDATION FAILURE ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═════════[ URL VALIDATION FAILURE ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 When you enter a url into your web browser although the trailing slash may be there or may not be there, the returned URL from the test app differs.
 Update your test to reflect what the test app is returning as this is the actual URL for this page.
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ MISSING CONFIGURATION FILE ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═════════[ MISSING CONFIGURATION FILE ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 If you are running in JUnit and see the following message:
  the config file is not in the correct location or has the wrong name.
 Configuration File not found! (Config/ConfigurationSetup.xml)
@@ -2172,9 +2378,9 @@ configSettings is null!!!
 Although the reported error seems self explanatory, this means that the configuration file is not where
 the application expects it to be, so place it into the correct location, specified in the error message, and re-run the test.
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ UNEXPECTED OUTPUT FROM A TEST STEP ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═════════[ UNEXPECTED OUTPUT FROM A TEST STEP ]════════════════════════════════════════════════════════════════════════════════════════════════════════
 If you have an unexpected output or outcome of a test step, check the Action/Expected value field in your test 
 and ensure that there is no keyword in there that the application may attempt to execute instead of the action intended.
 The test will have to be re-written to account for this.
@@ -2182,9 +2388,9 @@ A specific SendKeys keyword was added to send text that could be misconstrued be
 While this particular solution may not be the one you need, there is likely a solution but if not, please document the issue 
 so that it can be addressed in future implementations.
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ OVERALL TEST RESULT SHOWS FAILURE ALTHOUGH TEST STEPS PASS (LAST TEST STEP PASSED) ]════════════════════════════════════════════════════════════════
+═════════[ OVERALL TEST RESULT SHOWS FAILURE ALTHOUGH TEST STEPS PASS (LAST TEST STEP PASSED) ]════════════════════════════════════════════════════════
 When running tests, if a step marked as crucial does not fail, the overall JUnit test should 
 show as having passed.
 If the last step passes but the overall JUnit test shows a failure and the error doesn't point to 
@@ -2193,18 +2399,18 @@ This intermittent failure was noticed during testing and while it is believed to
 that was fixed, this has been added, as the exact cause has not been identified.
 If during testing, this no longer occurs, this tip may be removed.
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ XML DOCUMENT MUST START WITH AND END WITH THE SAME ELEMENT ]════════════════════════════════════════════════════════════════════════════════════════
+═════════[ XML DOCUMENT MUST START WITH AND END WITH THE SAME ELEMENT ]════════════════════════════════════════════════════════════════════════════════
 This means that the start and end element are not proper opening and closing XML tags.
 1.	First, ensure that the document has the start and end tags.
 2.	Next, check that the end tag contains a </ as the first two characters as a common mistake is 
 		copying and pasting and forgetting to update.
 3.	Finally, check that the spelling, if this was not a copy paste issue, as it may have been a typo.
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ CONTEXT MENU TAB SWITCHING IS FAILING ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═════════[ CONTEXT MENU TAB SWITCHING IS FAILING ]═════════════════════════════════════════════════════════════════════════════════════════════════════
 If a test is running that accesses the context menu or switches tabs, the MOUSE and KEYBOARD CANNOT BE USED
 WHILE THE TEST IS IN PROGRESS or it will change the context and thus cause the test step to fail, which may in turn
 cause subsequent test steps to fail.
@@ -2217,13 +2423,13 @@ causing the Switch to Tab command to fail.
 While the wait doesn't have to be long it needs to be long enough for the tab to register in the number of reported tabs for this to work.
 If performing these steps separately continues to be an issue, try extending the wait time or adding the switch to tab argument to the 
 context menu command that opens the new tab.
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-═════════[ SCREENSHOTS SAVING TO CONFIG FOLDER INSTEAD OF CONFIGURATION FILE SETTING  ]════════════════════════════════════════════════════════════════════════
+═════════[ SCREENSHOTS SAVING TO CONFIG FOLDER INSTEAD OF CONFIGURATION FILE SETTING  ]════════════════════════════════════════════════════════════════
 If a <screenShotSaveFolder></screenShotSaveFolder> setting was added to the configuration file but
 the screenshots are not being saved there, check that the entire specified folder structure exists!!!
 The most likely cause of this issue is that all or part of the path specified does not exist.
 Copy the path from Windows Explorer or File Explorer and paste it into the  <screenShotSaveFolder></screenShotSaveFolder> setting.
 
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 

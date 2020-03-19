@@ -811,6 +811,10 @@ public class TestHelper{
             startPos = message.indexOf("Actual: (") + "Actual: (".length();
             endPos = message.lastIndexOf(")");
             variableOutput = "[" + message.substring(startPos, endPos).trim() + "]";
+        } else if (message.contains("Parse and Calculate")) {
+            startPos = message.indexOf("Actual: (") + "Actual: (".length();
+            endPos = message.lastIndexOf(")");
+            variableOutput = "=\"(" + message.substring(startPos, endPos).trim() + ")\"";
         }
 
         String csv = step.replace("\n","") + "," + message.replace("\n","") + "," + status + "," + variableOutput + "," + get_testFileName();
@@ -944,9 +948,9 @@ public class TestHelper{
             }
 
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
-            WriteToFile(get_helpFileName(), "║                                              TABLE OF CONTENTS                                                                                                         ║");
-            WriteToFile(get_helpFileName(), "╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+            WriteToFile(get_helpFileName(), "╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+            WriteToFile(get_helpFileName(), "║                                              TABLE OF CONTENTS                                                                                       ║");
+            WriteToFile(get_helpFileName(), "╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), AppConstants.indent5 + PrePostPad( "[ HELP FILE OVERVIEW  ]", "═", 9, 100));
             WriteToFile(get_helpFileName(), "\t\tAPPLICATION OVERVIEW");
@@ -1005,8 +1009,10 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\t\tRETRIEVING XML FROM AN API ENDPOINT");
             WriteToFile(get_helpFileName(), "\t\tQUERYING XML FROM AN API ENDPOINT");
             WriteToFile(get_helpFileName(), "\t\tSAVE XML TO FILE");
-            WriteToFile(get_helpFileName(), "\t\tCHECK COLOR CONTRAST  \r\n");
-            WriteToFile(get_helpFileName(), "\t\tCOMPARE IMAGES AND CREATE DIFFERENCE IMAGE \r\n");
+            WriteToFile(get_helpFileName(), "\t\tCHECK COLOR CONTRAST ");
+            WriteToFile(get_helpFileName(), "\t\tCOMPARE IMAGES AND CREATE DIFFERENCE IMAGE ");
+            WriteToFile(get_helpFileName(), "\t\tPARSE AND CALCULATE DOUBLE");
+            WriteToFile(get_helpFileName(), "\t\tPARSE AND CALCULATE LONG \r\n");
             WriteToFile(get_helpFileName(), AppConstants.indent5 + PrePostPad("[ Troubleshooting ]", "═", 9, 100));
             WriteToFile(get_helpFileName(), "\t\tDRIVER ISSUES");
             WriteToFile(get_helpFileName(), "\t\tURL VALIDATION FAILURE");
@@ -1015,15 +1021,16 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\t\tOVERALL TEST RESULT SHOWS FAILURE ALTHOUGH TEST STEPS PASS (LAST TEST STEP PASSED)");
             WriteToFile(get_helpFileName(), "\t\tXML DOCUMENT MUST START WITH AND END WITH THE SAME ELEMENT");
             WriteToFile(get_helpFileName(), "\t\tCONTEXT MENU TAB SWITCHING IS FAILING");
+
+            //WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ END OF TABLE OF CONTENTS ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ END OF TABLE OF CONTENTS ]", "═", 9, 159));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
-            WriteToFile(get_helpFileName(), "║                                              HELP FILE OVERVIEW                                                                                                        ║");
-            WriteToFile(get_helpFileName(), "╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+            WriteToFile(get_helpFileName(), "╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+            WriteToFile(get_helpFileName(), "║                                              HELP FILE OVERVIEW                                                                                      ║");
+            WriteToFile(get_helpFileName(), "╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "WELCOME TO THE CONFIGURABLE AUTOMATED TEST APPLICATION!!!");
             WriteToFile(get_helpFileName(), "This application was designed to perform automated testing using configuration and test step files.");
@@ -1037,6 +1044,12 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "Running outside of the IDE means that it can be quickly executed without opening the IDE and then the source project.");
             WriteToFile(get_helpFileName(), "The Log file name will be preceded with \"StandAlone_\" when run as a stand-alone application.");
             WriteToFile(get_helpFileName(), "By default, log and CSV files will be created in the \"\\Config\" folder, which is part of this project.");
+            WriteToFile(get_helpFileName(), "The log file records all test steps performed as well as the success and fail status of assertion steps which include steps that");
+            WriteToFile(get_helpFileName(), "compare a value to a supplied expected value.");
+            WriteToFile(get_helpFileName(), "The CSV file records only success and fail status steps but none of the supporting steps surrounding those checks.");
+
+
+            //WriteToFile(get_helpFileName(), "File And Step Number | Test Performed | Execution Status | Variable Output | Test File Name");
             WriteToFile(get_helpFileName(), "Look at the Project_Setup.txt file for directions on running the stand-alone application as part of a batch file.\r\n");
             WriteToFile(get_helpFileName(), "The application covers most testing, including: Navigation, Form Population, Value checking, Value Persistence for use in ");
             WriteToFile(get_helpFileName(), "upcoming test step comparisons or form populations, context menu access, iFrame access, switching  browser tabs, ");
@@ -1054,8 +1067,8 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "retrieving JSON from an endpoint etc...  If these steps fail, the subsequent tests reliant upon them will also fail but to avoid");
             WriteToFile(get_helpFileName(), "wasting time waiting for those steps to fail, marking these steps as crucial stops execution when they fail and the tester");
             WriteToFile(get_helpFileName(), "can see where the application terminated and perform further investigation.");
-            WriteToFile(get_helpFileName(), "An added test step configuration can be used to create a test step file for a specific page and while " +
-                                                        "this is not a test, it can make creating test files much faster.\r\n");
+            WriteToFile(get_helpFileName(), "An added test step configuration can be used to create a test step file for a specific page and while this is not a test,\r\n" +
+                                                        "it can make creating test files much faster.\r\n");
             WriteToFile(get_helpFileName(), "Creating a Configurable Automated test consists of creating one Configuration file and one or more Test files.");
             WriteToFile(get_helpFileName(), "This application can run any number of Test Files, which need to be configured in the Configuration file either");
             WriteToFile(get_helpFileName(), "individually or within a specified folder which can be filtered to select just targeted files.\r\n");
@@ -1084,29 +1097,33 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "Future functionality to be added to this application:");
             WriteToFile(get_helpFileName(), "\tGreater Than and Less Than Operator.");
             WriteToFile(get_helpFileName(), "\t\t-\tThis could be a good addition when used with Conditional Blocks.");
-            WriteToFile(get_helpFileName(), "\t\t-\tCurrently, only validatable(read actionType) commands can be used for the conditional statement such as an text, src, alt or href assertion or element found.\r\n");
+            WriteToFile(get_helpFileName(), "\t\t-\tCurrently, only validatable(read actionType) commands can be used for the conditional statement such as an text, src, alt or\r\n" +
+                    "\t\t\t\thref assertion or element found.\r\n");
             WriteToFile(get_helpFileName(), "\tColor Contrast code has been implemented to allow for color contrast checking using this page's formula.");
             WriteToFile(get_helpFileName(), "\t\t-\thttps://www.w3.org/TR/AERT/#color-contrast");
             WriteToFile(get_helpFileName(), "\t\t-\tCurrently reviewing and comparing pages to determine whether to implement color contrast using this page:");
             WriteToFile(get_helpFileName(), "\t\t-\thttps://www.w3.org/TR/WCAG20-TECHS/G17.html\r\n");
             WriteToFile(get_helpFileName(), "\tMongoDb Connectivity and Querying will be implemented.");
             WriteToFile(get_helpFileName(), "\t\t-\tThis was partially implemented but abandoned for a later time when there is access to a MongoDB instance.\r\n");
+            WriteToFile(get_helpFileName(), "\tContinuous Total Command");
+            WriteToFile(get_helpFileName(), "\t\t-\tThis would allow for adding to a total throughout a singular test.");
+            WriteToFile(get_helpFileName(), "\t\t-\tThis functionality would be ideal for spreadsheet interactions where values from different cells are retrieved and totaled.");
+            WriteToFile(get_helpFileName(), "");
+//            WriteToFile(get_helpFileName(), "");
 
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
-            WriteToFile(get_helpFileName(), "║                                              CONFIGURATION FILE FORMAT                                                                                                 ║");
-            WriteToFile(get_helpFileName(), "╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
-            WriteToFile(get_helpFileName(), PrePostPad("[ CONFIGURATION OVERVIEW ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+            WriteToFile(get_helpFileName(), "║                                              CONFIGURATION FILE FORMAT                                                                               ║");
+            WriteToFile(get_helpFileName(), "╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CONFIGURATION OVERVIEW ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "NOTES: The file format is XML, so to make comments use <!-- to begin the comment and --> to end the comment.");
             WriteToFile(get_helpFileName(), "Comments can span lines but comments cannot include other comment blocks.");
-            WriteToFile(get_helpFileName(), "Comments are lightly sprinkled in some of the help XML examples below.");
-            WriteToFile(get_helpFileName(), "\tTHIS APPLICATION IGNORES ALL COMMENTS.\r\nCOMMENTS ARE FOR THE USER.");
+            WriteToFile(get_helpFileName(), "Comments are lightly sprinkled in some of the help XML examples below.\r\n");
+            WriteToFile(get_helpFileName(), "THIS APPLICATION IGNORES ALL COMMENTS.\r\nCOMMENTS ARE FOR THE USER.\r\n");
             WriteToFile(get_helpFileName(), "Some of the comments are descriptive and some show alternative options, but it is suggested that you read the help file");
             WriteToFile(get_helpFileName(), "to best understand how to use this Configurable Automated Testing Application.");
             WriteToFile(get_helpFileName(), "Refer to an XML guide for proper commenting.  Google it!!!!");
@@ -1121,6 +1138,8 @@ public class TestHelper{
                     "\t<browserType>Chrome</browserType>\r\n" +
                     "\t<!--<browserType>Firefox</browserType>-->\r\n" +
                     "\t<runHeadless>false</runHeadless>\r\n" +
+                    "\t<!-- if <testAllBrowsers> is true, tests all configured browsers(Chrome, Firefox and PhantomJS), \r\n" +
+                    "\t\tif false, tests using only the selected browser -->\r\n" +
                     "\t<testAllBrowsers>false</testAllBrowsers>\r\n" +
                     "\t<specifyTestFiles>true</specifyTestFiles>\r\n" +
                     "\t<sortSpecifiedTestFiles>false</sortSpecifiedTestFiles>\r\n" +
@@ -1192,14 +1211,19 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\t\t\t-\tbut have a datetime stamp like the log file and with a .csv extension.");
             WriteToFile(get_helpFileName(), "\t\t-\tIf any value other than those specified above, no CSV files will be produced.");
             WriteToFile(get_helpFileName(), "\tThe CSV file consists of the following 5 columns:");
-            WriteToFile(get_helpFileName(), "\t\tFile and Step Number - This column holds the file number and step number, each starting at 0 and in the format F0_S0 where ");
+            WriteToFile(get_helpFileName(), "\t\t--------------------------------------------------------------------------------------------------");
+            WriteToFile(get_helpFileName(), "\t\t| File And Step Number | Test Performed | Execution Status | Variable Output | Test File Name    |");
+            WriteToFile(get_helpFileName(), "\t\t--------------------------------------------------------------------------------------------------");
+            WriteToFile(get_helpFileName(), "\t\t| F0_S0                | Navigation ... | Successful       | (2.0)           | C:\\....\\...       |");
+            WriteToFile(get_helpFileName(), "\t\t--------------------------------------------------------------------------------------------------");
+            WriteToFile(get_helpFileName(), "\t\tFile and Step Number - This column displays the file number and step number, each starting at 0 and in the format F0_S0 where ");
             WriteToFile(get_helpFileName(), "\t\t-\tF0 corresponds to File 0, which is the first file, and S0 corresponds to Step 0, which is the first step.");
             WriteToFile(get_helpFileName(), "\t\t-\tSince all steps taken are not checks, there may be line number gaps.");
-            WriteToFile(get_helpFileName(), "\t\tTest Performed - This column holds type of test being performed such as Navigation and URL Check, Equal comparison results etc..");
-            WriteToFile(get_helpFileName(), "\t\tExecution Status - This column holds the word Successful for successful test step checks and the word Failure for failed test step checks.");
+            WriteToFile(get_helpFileName(), "\t\tTest Performed - This column displays a description of the test performed such as Navigation and URL Check, \r\n\t\t-\tEqual comparison results etc..");
+            WriteToFile(get_helpFileName(), "\t\tExecution Status - This column displays the word Successful for successful test step checks and the word Failure for failed test step checks.");
             WriteToFile(get_helpFileName(), "\t\tVariable Output - This column holds the difference percentage for image comparisons in percentage format like 28%, ");
-            WriteToFile(get_helpFileName(), "\t\t-\tthe http response code in square brackets like [200] and element counts in numeric format like 128 to allow ");
-            WriteToFile(get_helpFileName(), "\t\t-\tfor filtering these separate check types easily.");
+            WriteToFile(get_helpFileName(), "\t\t-\tthe http response code in square brackets like [200], element counts in numeric format like 128 ");
+            WriteToFile(get_helpFileName(), "\t\t-\tand calculations in parentheses like (2.0) or (2) to allow for filtering these separate check types easily.");
             //WriteToFile(get_helpFileName(), "\t\t-\tSQL Server queries as well as JSON and XML endpoint queries.");
             WriteToFile(get_helpFileName(), "\t\tTest File Name - This column holds the name of the test file this entry corresponds with.");
             WriteToFile(get_helpFileName(), "\t\t-\tWhen creating one CSV file for multiple tests, this allows for another method of sorting the data.\r\n");
@@ -1216,7 +1240,8 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "The following three settings need to be talked about together since they work together to provide a particularly useful piece of functionality.");
             WriteToFile(get_helpFileName(), "Together, the following settings allow for filtering a particular folder for the files used for testing.");
             WriteToFile(get_helpFileName(), "If a common naming convention is used for test files that include the project name, these settings allow for running ");
-            WriteToFile(get_helpFileName(), "Just one Project's test files, just some of a Project's test files or just one test file in a project or one type of test file across all test projects.\r\n");
+            WriteToFile(get_helpFileName(), "Just one Project's test files, just some of a Project's test files or just one test file in a project or one type of test file across \r\n" +
+                    "\tall test projects.\r\n");
             WriteToFile(get_helpFileName(), "The <testFolderName></testFolderName> element specifies the folder where test files are located to allow for reading a folder of ");
             WriteToFile(get_helpFileName(), "\ttest files instead of naming each test file individually.\r\n");
             WriteToFile(get_helpFileName(), "The <folderFileFilterType></folderFileFilterType> element specifies the type of filtering to perform on the files in the folder.  Options are: ");
@@ -1225,22 +1250,25 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\t\t-\t[Contains] - will select only test files containing the filter entered");
             WriteToFile(get_helpFileName(), "\t\t-\t[Ends With] - will select only test files ending with the filter entered\r\n");
             WriteToFile(get_helpFileName(), "The <folderFileFilter></folderFileFilter> element specifies the phrase to use to when selecting files in the specified folder.\r\n");
-            WriteToFile(get_helpFileName(), "\tWhen used with the other folder settings, a folder containing a multitude of test files can be pointed to using the <testFolderName></testFolderName> element.");
-            WriteToFile(get_helpFileName(), "\tThen, using the <folderFileFilterType></folderFileFilterType> element, [Starts With] can be used to return only files starting with a specific value.");
-            WriteToFile(get_helpFileName(), "\tFinally, using the <folderFileFilter></folderFileFilter> element, a phrase like the project name can be used to select only files in the selected folder that start with the project name.");
+            WriteToFile(get_helpFileName(), "\tWhen used with the other folder settings, a folder containing a multitude of test files can be pointed to using the \r\n" +
+                    "\t-\t<testFolderName></testFolderName> element.");
+            WriteToFile(get_helpFileName(), "\tThen, using the <folderFileFilterType></folderFileFilterType> element, [Starts With] can be used to return only files starting with a \r\n" +
+                    "\t-\tspecific value.");
+            WriteToFile(get_helpFileName(), "\tFinally, using the <folderFileFilter></folderFileFilter> element, a phrase like the project name can be used to select only files in the \r\n" +
+                    "\t-\tselected folder that start with the project name.");
             WriteToFile(get_helpFileName(), "---------------------[ End of Grouped Configuration Settings ]-------------------");
 
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "In the example configuration file provided above the explanations, two specific test files are being tested, the screen shot folder is specified, ");
-            WriteToFile(get_helpFileName(), "a maximum of 5 screenshots will be taken, only the test Chrome browser will be used and it will be visible, the files will be run in the order entered,");
-            WriteToFile(get_helpFileName(), "the TestFolderName, FolderFileFilterType and FolderFileFilter have not been specified but would have been disregarded if specified because");
-            WriteToFile(get_helpFileName(), "<specifyTestFiles></specifyTestFiles> is true, meaning only files specifically specified will be used.");
+            WriteToFile(get_helpFileName(), "a maximum of 5 screenshots will be taken, only the test Chrome browser will be used and it will be visible, the files will be run in the");
+            WriteToFile(get_helpFileName(), "order entered, the TestFolderName, FolderFileFilterType and FolderFileFilter have not been specified but would have been disregarded");
+            WriteToFile(get_helpFileName(), "if specified because <specifyTestFiles></specifyTestFiles> is true, meaning only files specifically specified will be used.");
             WriteToFile(get_helpFileName(), "The commented test file lines were included to show a means in which different files can be setup but can be commented so that only");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "In the example configuration file provided below, a folder of test files are being tested, but only the files that contain the phrase \"sql\"");
             WriteToFile(get_helpFileName(), "will be used, the screen shot folder is specified, but no screenshots will be taken, only the Chrome browser will be used and it will be visible,");
-            WriteToFile(get_helpFileName(), "and although test files are specified, they will be ignored because <specifyTestFiles></specifyTestFiles> is false meaning the folder settings will be used to ");
-            WriteToFile(get_helpFileName(), "determine the test files to be used.");
+            WriteToFile(get_helpFileName(), "and although test files are specified, they will be ignored because <specifyTestFiles></specifyTestFiles> is false meaning the folder");
+            WriteToFile(get_helpFileName(), "settings will be used to determine the test files to be used.");
             WriteToFile(get_helpFileName(), "Additionally, no CSV files will be created because the <createCsvStatusFiles></createCsvStatusFiles> is set to \"none\".");
             WriteToFile(get_helpFileName(), "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\r\n" +
                     "<automatedTestConfiguration>\r\n" +
@@ -1269,16 +1297,16 @@ public class TestHelper{
                     "</automatedTestConfiguration>");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
 
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
-            WriteToFile(get_helpFileName(), "║                                              TEST FILE FORMAT                                                                                                          ║");
-            WriteToFile(get_helpFileName(), "╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+            WriteToFile(get_helpFileName(), "╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+            WriteToFile(get_helpFileName(), "║                                              TEST FILE FORMAT                                                                                        ║");
+            WriteToFile(get_helpFileName(), "╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ TEST FILE OVERVIEW ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ TEST FILE OVERVIEW ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Test file is an xml file, that can include comments just like any xml file.");
             WriteToFile(get_helpFileName(), "A test file can consist of one or more test steps and there are currently no known limitations as some tests have contained");
             WriteToFile(get_helpFileName(), "tens of thousands of steps.");
@@ -1297,7 +1325,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "4.\tTest files are run one after another and most objects are scoped to just the test that required them so");
             WriteToFile(get_helpFileName(), "  \tPersisted Values, JSON object and SQL Connection object will all be reset and the Unique Identifiers will be reinitialized to a new value.");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ TEST FILE FIELDS AND DESCRIPTIONS ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ TEST FILE FIELDS AND DESCRIPTIONS ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "It begins with the XML declaration followed by the <testSteps> root element.");
             WriteToFile(get_helpFileName(), "Each test is grouped in <step> elements, which consist of the all or some of the following nodes:\r\n");
             WriteToFile(get_helpFileName(), "<command>Command to execute</command> - The command node, describes the command to execute and is always required.\r\n");
@@ -1345,7 +1373,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\t</step>");
             WriteToFile(get_helpFileName(), "</testSteps>\r\n");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ NAVIGATION ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ NAVIGATION ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Navigation command navigates the browser to the provided URL.");
             WriteToFile(get_helpFileName(), "All Navigation steps should be marked as crucial, as all subsequent checks require that navigation complete successfully!!!");
             WriteToFile(get_helpFileName(), "An assertion does not have to be part of navigation, but it probably should be!!!");
@@ -1388,7 +1416,7 @@ public class TestHelper{
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ NAVIGATION WITH SUCCESSFUL NAVIGATION CONFIRMATION ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ NAVIGATION WITH SUCCESSFUL NAVIGATION CONFIRMATION ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "To Navigate, assert that the URL is what is in the expectedValue node and to wait 4 thousand milli-seconds before making the assertion to");
             WriteToFile(get_helpFileName(), "allow the page to load,");
             WriteToFile(get_helpFileName(), "and to check that the Back end loads under .5 seconds and that the Front end loads under 3.75 seconds.");
@@ -1424,7 +1452,7 @@ public class TestHelper{
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ NAVIGATION WITH AUTHENTICATION WITH AND WITHOUT NAVIGATION CONFIRMATION ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ NAVIGATION WITH AUTHENTICATION WITH AND WITHOUT NAVIGATION CONFIRMATION ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Navigate command can be used to authenticate while navigating.");
             WriteToFile(get_helpFileName(), "This is done by passing the username and password as part of the url delimited by a : and ending with the @ symbol.");
             WriteToFile(get_helpFileName(), "It should be mentioned that this does not work for all authentication which is why there are different authentication methods.");
@@ -1449,7 +1477,7 @@ public class TestHelper{
                                                         "</step>");
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), PrePostPad("[ LOGIN WITH NAVIGATION ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ LOGIN WITH NAVIGATION ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Login command logs into a site.");
             WriteToFile(get_helpFileName(), "This command is intended for sites that have alert style popup login forms.");
             WriteToFile(get_helpFileName(), "There may be instances in which one or more Login/Authentication commands do not work");
@@ -1467,7 +1495,7 @@ public class TestHelper{
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ ALERT POPUP LOGIN ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ ALERT POPUP LOGIN ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The following Login command does not include the navigation step.");
             WriteToFile(get_helpFileName(), "As mentioned earlier, there may be isseus with logging in related to the operating system or alert type.");
             WriteToFile(get_helpFileName(), "Try different methods if failures happen as one approach may work best for a specific scenario.");
@@ -1479,9 +1507,10 @@ public class TestHelper{
                     "\t\t<arg2>password</arg2>\r\n\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK URL WITHOUT NAVIGATION ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK URL WITHOUT NAVIGATION ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Check URL command allows for checking the current page's URL without the need to navigate.");
             WriteToFile(get_helpFileName(), "When an command, like a button or link click occurs that navigates to a new page, there is no need to");
             WriteToFile(get_helpFileName(), "perform a navigation command but there is a need to check that the page is where expected before further testing.");
@@ -1495,9 +1524,10 @@ public class TestHelper{
                     "\t<crucial>TRUE</crucial>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK GET REQUEST STATUS WITHOUT NAVIGATION ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK GET REQUEST STATUS WITHOUT NAVIGATION ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The CheckGet command checks the response status of a get.");
             WriteToFile(get_helpFileName(), "To check the Get Requests status of a URL without navigating and to make it crucial.\r\nTo make it non-crucial change the crucial element to false. <crucial>false</crucial>.");
             WriteToFile(get_helpFileName(), "The Space between check and get is optional as shown below.");
@@ -1522,9 +1552,10 @@ public class TestHelper{
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK POST REQUEST STATUS WITHOUT NAVIGATION ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK POST REQUEST STATUS WITHOUT NAVIGATION ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The CheckPost command checks the response status of a post.");
             WriteToFile(get_helpFileName(), "<!-- Test results unconfirmed!!! Need to find suitable URL that allows posting. -->");
             WriteToFile(get_helpFileName(), "To check the Post Requests status of a URL without navigating and to make it crucial.\r\nTo make it non-crucial change the crucial element to false. <crucial>false</crucial>.");
@@ -1549,9 +1580,11 @@ public class TestHelper{
                     "\t\t<arg1>https://www.swtestacademy.com/about-software-test-academy/ </arg1>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK DOCUMENT READY STATE COMPLETE WITHOUT NAVIGATION AS A POST NAVIGATION STEP]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK DOCUMENT READY STATE COMPLETE WITHOUT NAVIGATION AS A POST NAVIGATION STEP]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Wait for page command waits until document ready state is complete.");
             WriteToFile(get_helpFileName(), "To check that the document ready state is complete after previously navigating to a new page and to make it crucial. ");
             WriteToFile(get_helpFileName(), "NOTE: The first argument must be n/a as shown below.");
@@ -1568,7 +1601,7 @@ public class TestHelper{
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK DOCUMENT READY STATE COMPLETE WITH NAVIGATION IN A SINGLE STEP]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK DOCUMENT READY STATE COMPLETE WITH NAVIGATION IN A SINGLE STEP]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "To check that the document ready state is complete after navigating to a new page and to make it crucial. ");
             WriteToFile(get_helpFileName(), "To make it non-crucial change the crucial element to false. <crucial>false</crucial>.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
@@ -1581,10 +1614,11 @@ public class TestHelper{
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
+            WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             //SWITCH TO IFRAME"
-            WriteToFile(get_helpFileName(), PrePostPad("[ SWITCHING TO AN IFRAME ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ SWITCHING TO AN IFRAME ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "IMPORTANT: EACH TIME A SWITCH TO IFRAME COMMAND IS ISSUED, THE CONTEXT IS REVERTED TO THE MAIN WINDOW");
             WriteToFile(get_helpFileName(), "ONCE THAT COMMAND COMPLETES EXECUTION, SO IF SUBSEQUENT TESTS NEED TO ACCESS THE IFRAME, THEY MUST BE");
             WriteToFile(get_helpFileName(), "ENCAPSULATED WITHIN SWITCH TO IFRAME COMMANDS.");
@@ -1631,10 +1665,11 @@ public class TestHelper{
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
-
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ CONDITIONAL BLOCKS ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "");
+
+            WriteToFile(get_helpFileName(), PrePostPad("[ CONDITIONAL BLOCKS ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "IMPORTANT: CONDITIONAL BLOCKS CAN NOT BE NESTED!!!!\r\n");
             WriteToFile(get_helpFileName(), "Creating a conditional block is a two step process.");
             WriteToFile(get_helpFileName(), "1.\tFirst, the conditional block must be started by adding the <conditional>true</conditional> node to a ");
@@ -1670,12 +1705,14 @@ public class TestHelper{
                     "\t<command>end conditional</command>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
+            WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK AN ANCHOR HREF ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK AN ANCHOR HREF ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Check_A_Href command checks the href attribute of a HyperLink.");
-            WriteToFile(get_helpFileName(), "To check an anchor's href url and to make it non-crucial.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "To check an anchor's href url and to make it non-crucial.");
+            WriteToFile(get_helpFileName(), "To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "This will check the value of the href and compare it to the expected value provided.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>check_a_href</command>\r\n" +
@@ -1702,11 +1739,13 @@ public class TestHelper{
                     "\t</arguments>\r\n" +
                     "</step>\r\n");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK ALL PAGE LINKS USING URL ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK ALL PAGE LINKS USING URL ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Check Links command checks all Hyperlinks on the page.");
-            WriteToFile(get_helpFileName(), "To check all page links and to make it non-crucial.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "To check all page links and to make it non-crucial. ");
+            WriteToFile(get_helpFileName(), "To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "This will check for a status code of 200 for all links on the page, based on the URL in the arg1 node, ");
             WriteToFile(get_helpFileName(), "but will report the status code for all links.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
@@ -1718,18 +1757,21 @@ public class TestHelper{
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK ALL PAGE LINKS WITHOUT USING URL ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK ALL PAGE LINKS WITHOUT USING URL ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "This will check for a status code of 200 for all links on the current page, but will report the status code for all links.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>check links</command>\r\n" +
                     "\t<actionType>read</actionType>\r\n" +
                     "\t<crucial>FALSE</crucial>\r\n" +
                     "</step>");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK THE COUNT OF A SPECIFIC ELEMENT ON A PAGE ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK THE COUNT OF A SPECIFIC ELEMENT ON A PAGE ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Check Count command checks the number of occurrences of a particular element.");
-            WriteToFile(get_helpFileName(), "To check the count of a specific element on a page and to make it non-crucial.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "To check the count of a specific element on a page and to make it non-crucial.");
+            WriteToFile(get_helpFileName(), "To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "This will count the number of times an element is found on a page and compare that to the expected value.");
             WriteToFile(get_helpFileName(), "In the example below, the test compares the number of \"a\" tags on the page with the expected number of 18.");
             WriteToFile(get_helpFileName(), "If the page has 18 \"a\" tags, the test passes, otherwise it fails.");
@@ -1744,22 +1786,29 @@ public class TestHelper{
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK ALL PAGE IMAGE SRC TAGS WITH SEPARATE NAVIGATION STEP ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK ALL PAGE IMAGE SRC TAGS WITH SEPARATE NAVIGATION STEP ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Check Img Src command checks the src of all image tags.");
-            WriteToFile(get_helpFileName(), "To check all page image src tags, on the current page, to ensure a source exists and to make it non-crucial.  To make it crucial change the last parameter to true.");
-            WriteToFile(get_helpFileName(), "The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sources but will report the status of all image sources.");
+            WriteToFile(get_helpFileName(), "To check all page image src tags, on the current page, to ensure a source exists and to make it non-crucial.");
+            WriteToFile(get_helpFileName(), "To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sources");
+            WriteToFile(get_helpFileName(), "but will report the status of all image sources.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>check images src</command>\r\n" +
                     "\t<actionType>read</actionType>\r\n" +
                     "\t<crucial>FALSE</crucial>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK ALL PAGE IMAGE SRC TAGS WITH NO SEPARATE NAVIGATION STEP ]", "═", 9, 159));
-            WriteToFile(get_helpFileName(), "To check all page image src tags, on the page specified in the arg1 node, to ensure a source exists and to make it non-crucial.  To make it crucial change the last parameter to true.");
-            WriteToFile(get_helpFileName(), "The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sources but will report the status of all image sources.");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK ALL PAGE IMAGE SRC TAGS WITH NO SEPARATE NAVIGATION STEP ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "To check all page image src tags, on the page specified in the arg1 node, to ensure a source exists and to make it non-crucial.");
+            WriteToFile(get_helpFileName(), "To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sources but will report \r\nthe status of all image sources.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>check images src</command>\r\n" +
                     "\t<actionType>read</actionType>\r\n" +
@@ -1770,7 +1819,10 @@ public class TestHelper{
                     "</step>");
 
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK ALL PAGE IMAGE ALT TAGS WITH SEPARATE NAVIGATION STEP ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK ALL PAGE IMAGE ALT TAGS WITH SEPARATE NAVIGATION STEP ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Check Image Alt command checks all page image alt tags for text.");
             WriteToFile(get_helpFileName(), "To check all page image alt tags, for ADA compliance and to make it crucial.\r\nTo make it non-crucial change the crucial element to false. <crucial>false</crucial>.");
             WriteToFile(get_helpFileName(), "The alt tag will checked to see if it exists and is not empty.  Empty tags will be flagged as failed.");
@@ -1781,7 +1833,10 @@ public class TestHelper{
                     "\t<crucial>FALSE</crucial>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK ALL PAGE IMAGE ALT TAGS WITH NO SEPARATE NAVIGATION STEP ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK ALL PAGE IMAGE ALT TAGS WITH NO SEPARATE NAVIGATION STEP ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "To check all page image alt tags, for ADA compliance and to make it crucial.\r\nTo make it non-crucial change the crucial element to false. <crucial>false</crucial>.");
             WriteToFile(get_helpFileName(), "The alt tag will checked to see if it exists and is not empty.  Empty tags will be flagged as failed.");
             WriteToFile(get_helpFileName(), "This is a small part of 508 compliance.");
@@ -1793,11 +1848,11 @@ public class TestHelper{
                     "\t\t<arg1>https://semantic-ui.com/modules/dropdown.html</arg1>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
-
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ WAITING A SPECIFIC AMOUNT OF TIME FOR ITEMS TO BE AVAILABLE ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ WAITING A SPECIFIC AMOUNT OF TIME FOR ITEMS TO BE AVAILABLE ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Wait command pauses execution for a specified amount of time to allow for page load completion.");
             WriteToFile(get_helpFileName(), "In the event that arguments are not in the correct order, this application attempts to re-order the arguments.");
             WriteToFile(get_helpFileName(), "If the results are not as expected, refer to the examples in this help file for proper argument order.");
@@ -1811,9 +1866,11 @@ public class TestHelper{
                     "\t\t<arg1>10000</arg1>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
-            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ WAITING FOR THE PRESENCE OF AN ELEMENT ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 151));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ WAITING FOR THE PRESENCE OF AN ELEMENT ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Wait for Element command waits a maximum amount of time for an element to be available.");
             WriteToFile(get_helpFileName(), "To wait for an element to be present, requires checking for the element using an accessor unlike waiting a specific amount of time.");
             WriteToFile(get_helpFileName(), "To wait for for a maximum of 15 seconds for an element to be present and making this check crucial, use the following.");
@@ -1826,16 +1883,17 @@ public class TestHelper{
                     "\t<accessorType>xPath</accessorType>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ WAITING FOR DOCUMENT READY STATE COMPLETE ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ WAITING FOR DOCUMENT READY STATE COMPLETE ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Wait for Page command waits for Document Ready State to be Complete.");
             WriteToFile(get_helpFileName(), "To wait for the page to fully load and document state to be complete, use the following command.");
             WriteToFile(get_helpFileName(), "Please note that the accessor is set to page and that an accessor type is present.  Any Accessor Type must be present, although it is not used,");
             WriteToFile(get_helpFileName(), "to distinguish this document ready state complete wait from a time interval wait.");
             WriteToFile(get_helpFileName(), "To wait for for a maximum of 15 seconds for document state complete and to make this check crucial, use the following.");
             WriteToFile(get_helpFileName(), "To make it non-crucial change the crucial element to false. <crucial>false</crucial>.");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+//            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>wait for page</command>\r\n" +
                     "\t<actionType>write</actionType>\r\n" +
@@ -1845,9 +1903,11 @@ public class TestHelper{
                     "\t\t<arg2>30</arg2>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ UNIQUE IDENTIFIER ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ UNIQUE IDENTIFIER ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "Before explaining how to fill in text fields, we need to cover the Unique Identifier.");
             WriteToFile(get_helpFileName(), "By default, every time a test is run, a unique identifier is created.");
             WriteToFile(get_helpFileName(), "This unique identifier is composed of the date and time with no delimiters.");
@@ -1858,7 +1918,10 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "In the Filling in and SendKeys sections, there are examples of exactly how to use this.");
             WriteToFile(get_helpFileName(), "Anytime, the character sequence without parenthesis (**_uid_**), is used, that value is replaced with the Unique Identifier.");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ PERSISTING RETRIEVED TEXT IN A VARIABLE FOR LATER USE ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ PERSISTING RETRIEVED TEXT IN A VARIABLE FOR LATER USE ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The PersistString command stores the element's text in memory for use later.");
             WriteToFile(get_helpFileName(), "There may be a need to compare the value retrieved from one element with the value of another.");
             WriteToFile(get_helpFileName(), "Unfortunately, this cannot be done directly, but a Persist action can be enacted allowing the storage of ");
@@ -1873,9 +1936,13 @@ public class TestHelper{
                     "\t<crucial>FALSE</crucial>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ FILLING IN TEXT FIELDS ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ FILLING IN TEXT FIELDS ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The SendKeys command sends keystrokes and phrases to form elements and Hyperlink context menus.");
-            WriteToFile(get_helpFileName(), "To fill in a field by ID and to make it non-crucial.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "To fill in a field by ID and to make it non-crucial.");
+            WriteToFile(get_helpFileName(), "To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>sendkeys</command>\r\n" +
                     "\t<actionType>write</actionType>\r\n" +
@@ -1887,7 +1954,8 @@ public class TestHelper{
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "To fill in a field by ID, appending the Unique Identifier to the name John, and to make it non-crucial.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "To fill in a field by ID, appending the Unique Identifier to the name John, and to make it non-crucial.");
+            WriteToFile(get_helpFileName(), "To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>sendkeys</command>\r\n" +
                     "\t<actionType>write</actionType>\r\n" +
@@ -1899,7 +1967,8 @@ public class TestHelper{
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "To fill in a field by ID and to make it non-crucial when it contains a reserved command like click.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "To fill in a field by ID and to make it non-crucial when it contains a reserved command like click.");
+            WriteToFile(get_helpFileName(), "To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>sendkeys</command>\r\n" +
                     "\t<actionType>write</actionType>\r\n" +
@@ -1923,7 +1992,8 @@ public class TestHelper{
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "To fill in a field by ID, add the Unique Id, and to make it non-crucial when it contains a reserved command like click.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "To fill in a field by ID, add the Unique Id, and to make it non-crucial when it contains a reserved command like click.");
+            WriteToFile(get_helpFileName(), "To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>sendkeys</command>\r\n" +
                     "\t<actionType>write</actionType>\r\n" +
@@ -1935,7 +2005,8 @@ public class TestHelper{
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "To fill in a field by ID with the persisted value, add the Unique Id, and to make it non-crucial.  To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "To fill in a field by ID with the persisted value, add the Unique Id, and to make it non-crucial.");
+            WriteToFile(get_helpFileName(), "To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>sendkeys</command>\r\n" +
                     "\t<actionType>write</actionType>\r\n" +
@@ -1986,9 +2057,10 @@ public class TestHelper{
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ CLICK AN ELEMENT IN AN IFRAME ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CLICK AN ELEMENT IN AN IFRAME ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Switch to iFrame command switches the current scope to the iFrame specified.");
             WriteToFile(get_helpFileName(), "To click an element by xPath in an iFrame.");
             WriteToFile(get_helpFileName(), "Note that the name of the iFrame is the first argument and the action to take is the second argument.");
@@ -2004,7 +2076,10 @@ public class TestHelper{
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ SELECT AN OPTION FROM AN HTML SELECT ELEMENT ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ SELECT AN OPTION FROM AN HTML SELECT ELEMENT ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The SendKeys command can also be used to select an Option from an HTML Select control.");
             WriteToFile(get_helpFileName(), "To select an option from an HTML Select (drop down/list) element there are two methods.");
             WriteToFile(get_helpFileName(), "Sendkeys can be used to select an item based on its text or Click can be used on the option");
@@ -2026,12 +2101,14 @@ public class TestHelper{
                     "\t<actionType>write</actionType>\r\n" +
                     "\t<crucial>TRUE</crucial>\r\n" +
                     "\t<accessor>option[value='1']</accessor>\r\n" +
-                    "\t<accessorType>CssSelector</accessorType>\r\n");
+                    "\t<accessorType>CssSelector</accessorType>\r\n" +
+                    "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
+            WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), PrePostPad("[ TAKING SCREENSHOTS ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ TAKING SCREENSHOTS ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The ScreenShot command takes a screenshot of the current page.");
             WriteToFile(get_helpFileName(), "To take a screen shot/print screen, the browser will be resized automatically to capture all page content,");
             WriteToFile(get_helpFileName(), "if browser dimensions are not supplied; however, in the event that browser dimensions are supplied, the browser");
@@ -2083,10 +2160,10 @@ public class TestHelper{
                     "</step>");
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
-
-            WriteToFile(get_helpFileName(), PrePostPad("[ SWITCHING BROWSER TABS ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ SWITCHING BROWSER TABS ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Right Click command can be used to access a link's context menu to open that link in a new tab and switch to that tab.");
             WriteToFile(get_helpFileName(), "Some actions are related and to avoid unnecessary steps the enter key will be pressed after right clicking and arrowing to a particular item.");
             WriteToFile(get_helpFileName(), "When running tests that access the context menu, the mouse and keyboard should not be used as they can change the context and cause the test to fail.");
@@ -2173,7 +2250,10 @@ public class TestHelper{
                     "\t<crucial>TRUE</crucial>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ CLOSE ONE OR ALL OPEN TABS ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CLOSE ONE OR ALL OPEN TABS ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Close Child Tab command closes one or all child tabs but not the main tab");
             WriteToFile(get_helpFileName(), "If the test that is being run opens multiple tabs, at some point before all tests end, there may be a need to close one or all open child tabs.");
             WriteToFile(get_helpFileName(), "The most important reason to do this would be to avoid confusion as opening multiple tabs and keeping track of multiple tabs can become");
@@ -2198,10 +2278,10 @@ public class TestHelper{
                     "\t<crucial>TRUE</crucial>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
-
-            WriteToFile(get_helpFileName(), PrePostPad("[ FIND ELEMENTS THAT HAVE SPECIFIC TEXT ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ FIND ELEMENTS THAT HAVE SPECIFIC TEXT ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Find command finds elements that have the supplied text.");
             WriteToFile(get_helpFileName(), "There are times when you may need to search for text but do not know the accessor necessary to find that text.");
             WriteToFile(get_helpFileName(), "The Find functionality allows you search all elements regardless of type or just all tags of a specific type for a phrase.");
@@ -2239,10 +2319,10 @@ public class TestHelper{
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
-
-            WriteToFile(get_helpFileName(), PrePostPad("[ FIND ELEMENTS THAT CONTAIN TEXT ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ FIND ELEMENTS THAT CONTAIN TEXT ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "There are times when you may need to search for a portion of text but do not know the accessor necessary to find that text.");
             WriteToFile(get_helpFileName(), "A specific instance might be when searching for text that would be in a paragraph.");
             WriteToFile(get_helpFileName(), "You wouldn't want to add the entire paragraph when you can add a snippet to verify that part of it is there.");
@@ -2258,10 +2338,11 @@ public class TestHelper{
                     "\t\t<arg1>contains</arg1>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
-
-            WriteToFile(get_helpFileName(), PrePostPad("[ CREATE TEST PAGE COMMAND TO CREATE PAGE TESTS OR FOR PROVIDING DATA TO HELP CREATE TESTS ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CREATE TEST PAGE COMMAND TO CREATE PAGE TESTS OR FOR PROVIDING DATA TO HELP CREATE TESTS ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "IMPORTANT NOTE #1: ANY PARENT ELEMENT WILL CONTAIN THE TEXT OF IT'S CHILD ELEMENT(s) SO TO GET THE ELEMENT THAT ACTUALLY ");
             WriteToFile(get_helpFileName(), "\t\t\tCONTAINS THE INFORMATION DESIRED, TRY TO ELIMINATE THE HIERARCHICAL ITEMS ABOVE THAT ARE NOT DESIRED, ");
             WriteToFile(get_helpFileName(), "\t\t\tLIKE CONTAINER ELEMENTS.  Examples include (html,head,body,div,table)");
@@ -2275,9 +2356,9 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "  it provides all of the information to create the test command but it is not formatted as a test command.");
             WriteToFile(get_helpFileName(), "  The create_test_page_formatted command outputs the element information in a test command format allowing for quick copy and paste to a test file.");
             WriteToFile(get_helpFileName(), "  Both files indicate if an element is visible, if an a tag is acting as an anchor or a link.");
-            WriteToFile(get_helpFileName(), "  The Formatted File, will create tests for a tags that check text and href, for images that check src, for text fields it create tests that compare text ");
-            WriteToFile(get_helpFileName(), "\t provided with the element text, for text input it creates a sendkeys, for buttons, checkboxes and radio buttons it creates a click, ");
-            WriteToFile(get_helpFileName(), "\t and for selects it creates a select command, allowing the user to enter one of the option values that is to be selected.");
+            WriteToFile(get_helpFileName(), "  The Formatted File, will create tests for a tags that check text and href, for images that check src, for text fields it create tests that ");
+            WriteToFile(get_helpFileName(), "\t compare text provided with the element text, for text input it creates a sendkeys, for buttons, checkboxes and radio buttons it creates");
+            WriteToFile(get_helpFileName(), "\t a click, and for selects it creates a select command, allowing the user to enter one of the option values that is to be selected.");
             WriteToFile(get_helpFileName(), "  The create_test_page command and the create_test_page_formatted command take the following test parameters:");
             WriteToFile(get_helpFileName(), "   - arg1 is the Tag Type.  Use * for all tags, or div for just div tags etc...");
             WriteToFile(get_helpFileName(), "\t\t -    Element Type: A single element with * being all elements and the default if left empty.");
@@ -2342,11 +2423,12 @@ public class TestHelper{
                     "\t\t<arg2>C:\\TestPages\\Formy-Unformatted-Test.txt</arg2>\n" +
                     "\t\t<arg3>html,head,title,meta,script,body,style,nav,br,div,form</arg3>\r\n" +
                     "\t</arguments>\r\n" +
-                    "\t</step>");
+                    "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ CONNECT TO SQL SERVER DATABASE AND CLOSE THE CONNECTION ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CONNECT TO SQL SERVER DATABASE AND CLOSE THE CONNECTION ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Connect To Database command opens and persists a connection object until it is closed.");
             WriteToFile(get_helpFileName(), "There will be times during the course of QA'ing a site where querying the database can confirm that a value has been ");
             WriteToFile(get_helpFileName(), "added or removed.");
@@ -2388,14 +2470,14 @@ public class TestHelper{
                     "\t\t<arg1>SQL Server</arg1>\r\n" +
                     "\t\t<!-- Connection String or Close to close the connection -->\r\n" +
                     "\t\t<!-- when using a uri, escape all illegal xml characters (escape: ampersands with &amp;) -->\r\n" +
-                    "\t\t<arg2>jdbc:sqlserver://localhost:1433;database=PocFisForumV2;user=forum_user;password=forum_user;encrypt=false;trustServerCertificate=true;loginTimeout=30;</arg2>\r\n" +
-                    "\t\t<!-- arg2>jdbc:sqlserver://local.database.windows.net:1433;database=PocFisForumV2;user=forum_user;password=forum_user;encrypt=true;trustServerCertificate=false;loginTimeout=30;</arg2 -->\r\n" +
+                    "\t\t<arg2>jdbc:sqlserver://localhost:1433;database=PocFisForumV2;user=forum_user;\r\n\t\t\tpassword=forum_user;encrypt=false;trustServerCertificate=true;loginTimeout=30;\r\n\t\t</arg2>\r\n" +
+                    "\t\t<!-- arg2>jdbc:sqlserver://local.database.windows.net:1433;database=PocFisForumV2;user=forum_user;\r\n\t\t\tpassword=forum_user;encrypt=true;trustServerCertificate=false;loginTimeout=30;\r\n\t\t</arg2 -->\r\n" +
                     "\t\t<!-- currently not implemented but created to distinguish between local and non-local SQL databases -->\r\n" +
                     "\t\t<arg3>local</arg3>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ CLOSING THE DATABASE CONNECTION ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ CLOSING THE DATABASE CONNECTION ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Close Database Connection command closes an open database connection and destroys the connection object releasing the resource.");
             WriteToFile(get_helpFileName(), "Equally important as opening the database connection object, is closing the database connection object.");
             WriteToFile(get_helpFileName(), "Open connections consume resources and unclosed connections can use up all available memory or an ");
@@ -2414,9 +2496,10 @@ public class TestHelper{
                     "\t</arguments>\r\n" +
                     "</step>\r\n");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ QUERYING THE SQL SERVER DATABASE  ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ QUERYING THE SQL SERVER DATABASE  ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Sql Server Query command executes a Sql Server Query for a single field value and compares that to the expected value.");
             WriteToFile(get_helpFileName(), "When testing a site, there sometimes needs to be verification that a value was ");
             WriteToFile(get_helpFileName(), "actually written to, or removed from the database.  ");
@@ -2466,9 +2549,10 @@ public class TestHelper{
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ RETRIEVING JSON FROM AN API ENDPOINT  ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ RETRIEVING JSON FROM AN API ENDPOINT  ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Get JSON command, like the SQL Server Connection, persists an object for use by subsequent commands.");
             WriteToFile(get_helpFileName(), "Unlike the SQL Server Connection command, which opens a connection object, the Get JSON command");
             WriteToFile(get_helpFileName(), "downloads and stores the JSON into a local variable that can later be used to SEARCH for key value pairs.");
@@ -2485,7 +2569,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "In the example below, JSON is retrieved from the current URL and starts a Conditional Block so that");
             WriteToFile(get_helpFileName(), "any query statements can be contained within the Conditional Block preventing their execution if this step fails.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
-                    "\t<!-- Allows you to retrieve JSON from the current end point.  Make this step crucial or conditional as subsequent steps depend on it's success. -->\r\n" +
+                    "\t<!-- Allows you to retrieve JSON from the current end point.  \r\n\t\tMake this step crucial or conditional as subsequent steps depend on it's success. -->\r\n" +
                     "\t<command>Get JSON</command>\r\n" +
                     "\t<conditional>true</conditional>\r\n" +
                     "\t<actionType>read</actionType>\r\n" +
@@ -2496,7 +2580,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "The only difference between the example below and the one above is that the below example first triggers a navigation event");
             WriteToFile(get_helpFileName(), "by including the URL as an argument in the test step.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
-                    "\t<!-- Allows you to retrieve JSON from a different end point.  Make this step crucial or conditional as subsequent steps depend on it's success.  -->\r\n" +
+                    "\t<!-- Allows you to retrieve JSON from a different end point.\r\n\t\t Make this step crucial or conditional as subsequent steps depend on it's success.  -->\r\n" +
                     "\t<command>Get JSON</command>\r\n" +
                     "\t<conditional>true</conditional>\r\n" +
                     "\t<actionType>read</actionType>\r\n" +
@@ -2506,9 +2590,10 @@ public class TestHelper{
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ QUERYING JSON FROM AN API ENDPOINT ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ QUERYING JSON FROM AN API ENDPOINT ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "A QUICK NOTE ABOUT JSON BEFORE REVIEWING THIS COMMAND");
             WriteToFile(get_helpFileName(), "\tReturned JSON is a string so numbers are represented without quotation marks while strings");
             WriteToFile(get_helpFileName(), "\tare represented with quotation marks.");
@@ -2555,9 +2640,10 @@ public class TestHelper{
                     "\t<expectedValue>\"General\"</expectedValue>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ SAVE JSON TO FILE  ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ SAVE JSON TO FILE  ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Save JSON command saves the JSON retrieved with the Get JSON command to the path provided.");
             WriteToFile(get_helpFileName(), "Having the downloaded JSON on hand when testing is important for showing proof when providing feedback.");
             WriteToFile(get_helpFileName(), "The command is a read actionType and not a write actionType as it has to read the JSON before writing it.");
@@ -2608,12 +2694,13 @@ public class TestHelper{
                     "\t\t<arg2>overwrite</arg2>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
+
             WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
             //XML API help starts here
-            WriteToFile(get_helpFileName(), PrePostPad("[ RETRIEVING XML FROM AN API ENDPOINT  ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ RETRIEVING XML FROM AN API ENDPOINT  ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Get XML command works like the Get JSON command persisting an object for use by subsequent commands.");
             WriteToFile(get_helpFileName(), "The Get XML command downloads and stores the XML into a local variable that can later be used to SEARCH for elements containing text.");
             WriteToFile(get_helpFileName(), "This local variable will contain the retrieved XML until overwritten by a subsequent Get XML request or ");
@@ -2629,7 +2716,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "In the example below, XML is retrieved from the current URL and starts a Conditional Block so that");
             WriteToFile(get_helpFileName(), "any query statements can be contained within the Conditional Block preventing their execution if this step fails.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
-                    "\t<!-- Allows you to retrieve XML from the current end point.  Make this step crucial or conditional as subsequent steps depend on it's success. -->\r\n" +
+                    "\t<!-- Allows you to retrieve XML from the current end point.  \r\n\t\tMake this step crucial or conditional as subsequent steps depend on it's success. -->\r\n" +
                     "\t<command>Get XML</command>\r\n" +
                     "\t<conditional>true</conditional>\r\n" +
                     "\t<actionType>read</actionType>\r\n" +
@@ -2640,7 +2727,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "The only difference between the example below and the one above is that the below example first triggers a navigation event");
             WriteToFile(get_helpFileName(), "by including the URL as an argument in the test step.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
-                    "\t<!-- Allows you to retrieve XML from a different end point.  Make this step crucial or conditional as subsequent steps depend on it's success.  -->\r\n" +
+                    "\t<!-- Allows you to retrieve XML from a different end point.  \r\n\t\tMake this step crucial or conditional as subsequent steps depend on it's success.  -->\r\n" +
                     "\t<command>Get XML</command>\r\n" +
                     "\t<conditional>true</conditional>\r\n" +
                     "\t<actionType>read</actionType>\r\n" +
@@ -2650,9 +2737,10 @@ public class TestHelper{
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ QUERYING XML FROM AN API ENDPOINT ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ QUERYING XML FROM AN API ENDPOINT ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "A QUICK NOTE ABOUT XML BEFORE REVIEWING THIS COMMAND");
             WriteToFile(get_helpFileName(), "\tReturned XML is a string, but unlike JSON, it is unnecessary to differentiate between strings and numbers in your test.");
             WriteToFile(get_helpFileName(), "\tWhile XML does allow for adding attributes to distinguish between different value types, for the purposes of this tool .");
@@ -2660,7 +2748,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\tpart of the Element/Node tag.");
             WriteToFile(get_helpFileName(), "\tThe Element/Node is like a variable that references the value it contains.");
             WriteToFile(get_helpFileName(), "\tIf the Element being queried contains parameters, they must be included as part of the <accessor></accessor>.");
-            WriteToFile(get_helpFileName(), "\tThis application is going to place angle brackets around the accessor provided and search for that complete element from angle bracket to angle bracket.");
+            WriteToFile(get_helpFileName(), "\tThis application is going to place angle brackets around the accessor provided and search for that complete element from angle bracket\r\n\tto angle bracket.");
             WriteToFile(get_helpFileName(), "\tFor example the XML Element:\r\n\t\t<ForumId type=\"int\">1</ForumId>\r\n\tShould have the following accessor:\r\n\t\t<accessor>ForumId type=\"int\"</accessor>\r\n");
             WriteToFile(get_helpFileName(), "The Query XML command is actually just a CASE SENSITIVE search and not a querying framework like the SQL Query command.");
             WriteToFile(get_helpFileName(), "For this reason, the != operator is not supported for XML Queries.");
@@ -2708,8 +2796,8 @@ public class TestHelper{
                     "\t<Description>General Discussion Forum</Description>\r\n" +
                     "</Forums>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "For this example, the Query XML command is being used to find the ForumId Element/Node with a value of 1 but this Element/Node contains a type attribute.");
-            WriteToFile(get_helpFileName(), "Notice that this attribute MUST be accounted for in the <accessor></accessor>, as shown below, for the application to recognize this as the correct Element/Node.");
+            WriteToFile(get_helpFileName(), "For this example, the Query XML command is being used to find the ForumId Element/Node with a value of 1 but this Element/Node contains \r\na type attribute.");
+            WriteToFile(get_helpFileName(), "Notice that this attribute MUST be accounted for in the <accessor></accessor>, as shown below, for the application to recognize this as the \r\ncorrect Element/Node.");
             WriteToFile(get_helpFileName(), "Failing to include existing parameters when querying the XML will result in a failure to find the Element/Node and thus a test step failure. ");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>Query XML</command>\r\n" +
@@ -2720,9 +2808,10 @@ public class TestHelper{
                     "\t<expectedValue>1</expectedValue>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ SAVE XML TO FILE  ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ SAVE XML TO FILE  ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Save XML command saves the XML retrieved with the Get XML command to the path provided.");
             WriteToFile(get_helpFileName(), "Having the downloaded XML on hand when testing is important for showing proof when providing feedback.");
             WriteToFile(get_helpFileName(), "The command is a read actionType and not a write actionType as it has to read the XML before writing it.");
@@ -2773,16 +2862,13 @@ public class TestHelper{
                     "\t\t<arg2>overwrite</arg2>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
-            WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
-            WriteToFile(get_helpFileName(), "");
+
             //XML API help ends here
             WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK COLOR CONTRAST  ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ CHECK COLOR CONTRAST  ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Check Contrast command compares the forecolor brightness with the backcolor brightness and the color difference between the two.");
             WriteToFile(get_helpFileName(), "Check contrast uses the formula found on the following page to calculate and compare the foreground and background brightness and color differences:");
             WriteToFile(get_helpFileName(), "https://www.w3.org/TR/AERT/#color-contrast\r\n");
@@ -2802,7 +2888,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "It is best to use p for <p> tags, label for <label> tags, span for <span> tags");
             WriteToFile(get_helpFileName(), "With that said, it is possible to use an asterisk(*) to target all elements.");
             WriteToFile(get_helpFileName(), "\t-Note that doing so will take a long long time to complete and the results will likely be too much for the terminal display.");
-            WriteToFile(get_helpFileName(), "\t-At the time of writing this, a test using an asterisk ran for over 2 hours for one page and was stopped having tested " +
+            WriteToFile(get_helpFileName(), "\t-At the time of writing this, a test using an asterisk ran for over 2 hours for one page and was stopped having tested \r\n\t-\t" +
                     "only a fraction of the page!!!");
             WriteToFile(get_helpFileName(), "It is suggested that you never use the overriding arguments but they were included to allow for slightly relaxed requirements.");
             WriteToFile(get_helpFileName(), "The default brightness contrast which can be overridden in the second argument is 125.");
@@ -2822,11 +2908,10 @@ public class TestHelper{
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
             WriteToFile(get_helpFileName(), "");
-
-            WriteToFile(get_helpFileName(), PrePostPad("[ COMPARE IMAGES AND CREATE DIFFERENCE IMAGE  ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ COMPARE IMAGES AND CREATE DIFFERENCE IMAGE  ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Compare Images command, uses ImageMagick to compares 2 images on your local system and creates a difference image");
             WriteToFile(get_helpFileName(), "outlining all things that differ between the images whether it is spacing, item dimensions, fonts, colors or anything");
             WriteToFile(get_helpFileName(), "else that is not pixel exact.");
@@ -2857,10 +2942,10 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\tThe arguments for this command are as follows:");
             WriteToFile(get_helpFileName(), "\t<arg1>This argument specifies the baseline or comp image and is required.  The path and file must exist!</arg1>");
             WriteToFile(get_helpFileName(), "\t<arg2>This argument specifies the actual image being compared to the baseline image and is required. The path and file must exist!</arg2>");
-            WriteToFile(get_helpFileName(), "\t<arg3>This argument specifies the difference file that will be created.  The path must exist but the file need not exist as it will be created.</arg3>");
+            WriteToFile(get_helpFileName(), "\t<arg3>This argument specifies the difference file that will be created.  \r\n\t\tThe path must exist but the file need not exist as it will be created.</arg3>");
             WriteToFile(get_helpFileName(), "\t<arg4>This argument allows for a global backup of the difference file to be created with a unique name based on the file name provided.</arg4>");
-            WriteToFile(get_helpFileName(), "\t\tIf this filename exists an incremental integer value will be appended to the base filename to create a unique file name, which will be displayed to .");
-            WriteToFile(get_helpFileName(), "\t\tthe tester and written to the log file for that test run.");
+            WriteToFile(get_helpFileName(), "\t\tIf this filename exists an incremental integer value will be appended to the base filename to create a unique file name, ");
+            WriteToFile(get_helpFileName(), "\t\twhich will be displayed to the tester and written to the log file for that test run.");
             WriteToFile(get_helpFileName(), "\t\tKeeping these files allows for tracking progress and determining differences between test runs.");
             WriteToFile(get_helpFileName(), "\t\tIt also allows for comparing difference files, if desired but please note that storing a large number of files");
             WriteToFile(get_helpFileName(), "\t\tmay adversely affect computer performance and even overrun free drive space, so monitoring the computer is essential when");
@@ -2895,88 +2980,246 @@ public class TestHelper{
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ PARSE AND CALCULATE DOUBLE  ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "The Parse and Compare Double command retrieves the text from a single field containing an equation, ");
+            WriteToFile(get_helpFileName(), "parses that field based on the delimiter passed in, sets the first number, operator and second number ");
+            WriteToFile(get_helpFileName(), "and performs a double calculation, which can be addition, subtraction, multiplication or division.");
+            WriteToFile(get_helpFileName(), "The calculation is simple allowing for 2 number calculations like 1.0 + 1.0 = and it will return 2.0. ");
+            WriteToFile(get_helpFileName(), "All arguments are required. ");
+            WriteToFile(get_helpFileName(), "TAKE NOTE: that the field holding the equation and the field where the answer will be placed must use \r\nthe same <accessorType></accessorType>. ");
+            WriteToFile(get_helpFileName(), "So if accessing by ID, both fields will be accessed by ID and the same goes for xPath, CssSelector, ClassName and TagName accessors.");
+            WriteToFile(get_helpFileName(), "\tThe arguments for this command are as follows:");
+            WriteToFile(get_helpFileName(), "\t<arg1>This argument specifies the delimiter.  A single space, without quotes, can be used to designate a space as the delimiter.</arg1>");
+            WriteToFile(get_helpFileName(), "\t<arg2>This argument specifies the index of the first number in the equation.</arg2>");
+            WriteToFile(get_helpFileName(), "\t<arg3>This argument specifies the index of the second number in the equation.</arg3>");
+            WriteToFile(get_helpFileName(), "\t<arg4>This argument specifies the index of the operator in the equation.</arg4>");
+            WriteToFile(get_helpFileName(), "\t<arg5>This argument specifies the form field where this value should be written or can be set to persist to persist the value\r\n\t\t for later use.</arg5>");
+            WriteToFile(get_helpFileName(), "The following command retrieves the text pointed to by the ID accessor in the format of  \"5 + 1 = \"");
+            WriteToFile(get_helpFileName(), "It them splits the string using the space delimiter shown in <arg1></arg1> to separate the text as follows:");
+            WriteToFile(get_helpFileName(), "value[0] = \"5\", value[1] = \"+\", value[2] = \"1\", value[3] = \"=\"");
+            WriteToFile(get_helpFileName(), "The first number has the index of 0 as shown in <arg2></arg2>, the second number has the index of 2 as shown in <arg3></arg3>");
+            WriteToFile(get_helpFileName(), "and the operator has the index of 1 as shown in <arg4></arg4>, with all of the fields set for the equation, the answer is set ");
+            WriteToFile(get_helpFileName(), "to be sent to the element shown in <arg5></arg5>, and it will use the ID accessor, as was used when retrieving the field text initially.");
+            WriteToFile(get_helpFileName(), "First, the string representation of the number is converted to a double, which adds the decimal portion to the number if not already ");
+            WriteToFile(get_helpFileName(), "in decimal format, prior to performing the calculation.");
+            WriteToFile(get_helpFileName(), "<step>\n" +
+                    "\t<command>parse and calculate double</command>\n" +
+                    "\t<actionType>read</actionType>\n" +
+                    "\t<accessor>mathq2</accessor>\n" +
+                    "\t<accessorType>id</accessorType>\n" +
+                    "\t<crucial>FALSE</crucial>\n" +
+                    "\t<expectedValue>5.0</expectedValue>\n" +
+                    "\t<arguments>\n" +
+                    "\t\t<!-- Type of delimiter -->\n" +
+                    "\t\t<arg1> </arg1>\n" +
+                    "\t\t<!--  index of first number in equation -->\n" +
+                    "\t\t<arg2>0</arg2>\n" +
+                    "\t\t<!-- index of second number in equation -->\n" +
+                    "\t\t<arg3>2</arg3>\n" +
+                    "\t\t<!-- index of operator in equation -->\n" +
+                    "\t\t<arg3>1</arg3>\n" +
+                    "\t\t<!-- form field to write answer or persist to persist this -->\n" +
+                    "\t\t<arg4>mathuserans2</arg4>\t\t\n" +
+                    "\t</arguments>\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+
+            WriteToFile(get_helpFileName(), PrePostPad("[ PARSE AND CALCULATE LONG  ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "The Parse and Compare Long command retrieves the text from a single field containing an equation, ");
+            WriteToFile(get_helpFileName(), "parses that field based on the delimiter passed in, sets the first number, operator and second number ");
+            WriteToFile(get_helpFileName(), "and performs a double calculation, which can be addition, subtraction, multiplication or division.");
+            WriteToFile(get_helpFileName(), "The calculation is simple allowing for 2 number calculations like 1 + 1 = and it will return 2. ");
+            WriteToFile(get_helpFileName(), "All arguments are required. ");
+            WriteToFile(get_helpFileName(), "TAKE NOTE: that the field holding the equation and the field where the answer will be placed must use the same <accessorType></accessorType>. ");
+            WriteToFile(get_helpFileName(), "So if accessing by ID, both fields will be accessed by ID and the same goes for xPath, CssSelector, ClassName and TagName accessors.");
+            WriteToFile(get_helpFileName(), "\tThe arguments for this command are as follows:");
+            WriteToFile(get_helpFileName(), "\t<arg1>This argument specifies the delimiter.  A single space, without quotes, can be used to designate a space as the delimiter.</arg1>");
+            WriteToFile(get_helpFileName(), "\t<arg2>This argument specifies the index of the first number in the equation.</arg2>");
+            WriteToFile(get_helpFileName(), "\t<arg3>This argument specifies the index of the second number in the equation.</arg3>");
+            WriteToFile(get_helpFileName(), "\t<arg4>This argument specifies the index of the operator in the equation.</arg4>");
+            WriteToFile(get_helpFileName(), "\t<arg5>This argument specifies the form field where this value should be written or can be set to persist to persist the value\r\n\t\t for later use.</arg5>");
+            WriteToFile(get_helpFileName(), "The following command retrieves the text pointed to by the ID accessor in the format of  \"5 + 1 = \"");
+            WriteToFile(get_helpFileName(), "It them splits the string using the space delimiter shown in <arg1></arg1> to separate the text as follows:");
+            WriteToFile(get_helpFileName(), "value[0] = \"5\", value[1] = \"+\", value[2] = \"1\", value[3] = \"=\"");
+            WriteToFile(get_helpFileName(), "The first number has the index of 0 as shown in <arg2></arg2>, the second number has the index of 2 as shown in <arg3></arg3>");
+            WriteToFile(get_helpFileName(), "and the operator has the index of 1 as shown in <arg4></arg4>, with all of the fields set for the equation, the answer is set ");
+            WriteToFile(get_helpFileName(), "The first number has the index of 0 as shown in <arg2></arg2>, the second number has the index of 2 as shown in <arg3></arg3>");
+            WriteToFile(get_helpFileName(), "and the operator has the index of 1 as shown in <arg4></arg4>, with all of the fields set for the equation, the answer is set ");
+            WriteToFile(get_helpFileName(), "to be persisted by using the persist keyword in <arg5></arg5>");
+            WriteToFile(get_helpFileName(), "First, the string representation of the number is converted to a long, which is a long integer, before the calculation is performed.");
+            WriteToFile(get_helpFileName(), "It should be noted that attempting to retrieve decimal formatted numbers with this will truncate the decimal portion of the value.");
+            WriteToFile(get_helpFileName(), "This truncation is purposely done in code to prevent the Java conversion error that would occur if this conversion were attempted.");
+            WriteToFile(get_helpFileName(), "<step>\n" +
+                    "\t<command>parse and calculate long</command>\n" +
+                    "\t<actionType>read</actionType>\n" +
+                    "\t<accessor>mathq2</accessor>\n" +
+                    "\t<accessorType>id</accessorType>\n" +
+                    "\t<crucial>FALSE</crucial>\n" +
+                    "\t<arguments>\n" +
+                    "\t\t<!-- Type of delimiter -->\n" +
+                    "\t\t<arg1> </arg1>\n" +
+                    "\t\t<!--  index of first number in equation -->\n" +
+                    "\t\t<arg2>0</arg2>\n" +
+                    "\t\t<!-- index of second number in equation -->\n" +
+                    "\t\t<arg3>2</arg3>\n" +
+                    "\t\t<!-- index of operator in equation -->\n" +
+                    "\t\t<arg4>1</arg4>\n" +
+                    "\t\t<!-- form field to write answer or persist to persist this -->\n" +
+                    "\t\t<arg5>persist</arg5>\t\t\n" +
+                    "\t</arguments>\n" +
+                    "</step>");
+
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
+
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), "╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
-            WriteToFile(get_helpFileName(), "║                                              INCLUDED TEST FILES                                                                                                       ║");
-            WriteToFile(get_helpFileName(), "╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+            WriteToFile(get_helpFileName(), "╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+            WriteToFile(get_helpFileName(), "║                                              INCLUDED TEST FILES                                                                                     ║");
+            WriteToFile(get_helpFileName(), "╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
             WriteToFile(get_helpFileName(), "The following is a list of test files that are included with the Application.   Each of these files have been tested and are working.");
             WriteToFile(get_helpFileName(), "They have been included to provide samples of how to create coherent tests to test different functionality.");
             WriteToFile(get_helpFileName(), "While some tests cover one specific command, many include a variety of different commands but these test files are just to ");
             WriteToFile(get_helpFileName(), "provide you with a starting point and certainly don't define the scope of the application's functionality.");
-            WriteToFile(get_helpFileName(), "All Test files below, except the SQL Server tests begin by navigating to a page so that step will be omitted to avoid unnecessary typing and redundancy.\r\n");
-            WriteToFile(get_helpFileName(), "CheckAllPageImageAltAttributes-Test.xml - Checks All Image Alt tag attributes on the page to ensure that they are not empty and includes a separate navigation step.\r\n");
-            WriteToFile(get_helpFileName(), "CheckAllPageImageAltAttributesNoSeparateNavigationStep-Test.xml - Checks All Image Alt tag attributes on the page to ensure that they are not empty but instead of \r\n\t- using a separate navigation step, it includes navigation as part of the check command.\r\n");
-            WriteToFile(get_helpFileName(), "CheckAllPageImageSrcWithNoSeparateNavigationStep-Test.xml - Checks All Image Src tag attributes on the page to ensure that they resolve but instead of \r\n\t- using a separate navigation step, it includes navigation as part of the check command.\r\n");
-            WriteToFile(get_helpFileName(), "CheckAllPageImageSrcWithSeparateNavigationStep-Test.xml - Checks All Image Src tag attributes on the page to ensure that they resolve and includes a separate navigation step.\r\n");
+            WriteToFile(get_helpFileName(), "All Test files below, except the SQL Server tests begin by navigating to a page so that step will be omitted to avoid unnecessary typing \r\nand redundancy.\r\n");
+            WriteToFile(get_helpFileName(), "CheckAllPageImageAltAttributes-Test.xml - Checks All Image Alt tag attributes on the page to ensure that they are not empty and includes a separate ");
+            WriteToFile(get_helpFileName(), "\t- navigation step.\r\n");
+
+            WriteToFile(get_helpFileName(), "CheckAllPageImageAltAttributesNoSeparateNavigationStep-Test.xml - Checks All Image Alt tag attributes on the page to ensure that they are not");
+            WriteToFile(get_helpFileName(), "\t- empty but instead of using a separate navigation step, it includes navigation as part of the check command.\r\n");
+            WriteToFile(get_helpFileName(), "CheckAllPageImageSrcWithNoSeparateNavigationStep-Test.xml - Checks All Image Src tag attributes on the page to ensure that they resolve ");
+            WriteToFile(get_helpFileName(), "\t- but instead of using a separate navigation step, it includes navigation as part of the check command.\r\n");
+            WriteToFile(get_helpFileName(), "CheckAllPageImageSrcWithSeparateNavigationStep-Test.xml - Checks All Image Src tag attributes on the page to ensure that they resolve");
+            WriteToFile(get_helpFileName(), "\t- and includes a separate navigation step.\r\n");
             WriteToFile(get_helpFileName(), "CheckAllPageLinks-Test.xml - Checks All Link tags href attributes on the page to ensure that they resolve and uses a separate navigation step.\r\n");
-            WriteToFile(get_helpFileName(), "CheckAllPageLinksWithNoSeparateNavigationStep-Test.xml - Checks All Link tags href attributes on the page to ensure that they resolve but instead of \r\n\t- using a separate navigation step, it includes navigation as part of the check command.\r\n");
+            WriteToFile(get_helpFileName(), "CheckAllPageLinksWithNoSeparateNavigationStep-Test.xml - Checks All Link tags href attributes on the page to ensure that they resolve but instead of ");
+            WriteToFile(get_helpFileName(), "\t- using a separate navigation step, it includes navigation as part of the check command.\r\n");
             WriteToFile(get_helpFileName(), "CheckColorContrast-Test.xml - Checks the Color Brightness and Contrast of the Font color compared with the Background color.\r\n");
             WriteToFile(get_helpFileName(), "CheckCount-Test.xml - Checks the count of a specific element type on a page.  Counts all Anchor 'a' tags and compares that to the expected count.\r\n");
-            WriteToFile(get_helpFileName(), "CheckGet-Test.xml - Checks the Get response for a specific URL and compares that to the expected response code which should be 200 for a successful get response.\r\n");
-            WriteToFile(get_helpFileName(), "CheckPageWithoutNavigation-Test.xml - Performs Check Gets, Check Post, Wait for Page, Check A Hrefs, and Checks the current page URL outside of a navigation step and compares that to the expected value.\r\n");
+            WriteToFile(get_helpFileName(), "CheckGet-Test.xml - Checks the Get response for a specific URL and compares that to the expected response code which should be 200 for a");
+            WriteToFile(get_helpFileName(), "\t- successful get response.\r\n");
+            WriteToFile(get_helpFileName(), "CheckPageWithoutNavigation-Test.xml - Performs Check Gets, Check Post, Wait for Page, Check A Hrefs, and Checks the current page URL outside of a");
+            WriteToFile(get_helpFileName(), "\t- navigation step and compares that to the expected value.\r\n");
             WriteToFile(get_helpFileName(), "CheckSingleImageSrcWithSeparateNavigationStep-Test.xml - Checks the Src attribute of a specific Image tag and compares that to the expected value.\r\n");
             WriteToFile(get_helpFileName(), "CheckSpecificAnchorhref-Test.xml - Checks the Href attribute of a specific Anchor tag and compares that to the expected value.\r\n");
             WriteToFile(get_helpFileName(), "CheckSpecificImageSource-Test.xml - Checks the Src and Href attributes of specific Image Tags against expected values.\r\n");
-            WriteToFile(get_helpFileName(), "CompareImages-Alternate-Test.xml - Takes ScreenShot, partially fills in form fields and takes second ScreenShot then compares the ScreenShot images and creates a difference image file and displays the pixel difference between the images in a percentage.\r\n");
-            WriteToFile(get_helpFileName(), "CompareImages-Test.xml - Compares two images stored on the computer and creates a difference image file and displays the pixel difference between the images in a percentage. \r\n\t- (Paths will need to be changed to images on your computer.\r\n");
+            WriteToFile(get_helpFileName(), "CompareImages-Alternate-Test.xml - Takes ScreenShot, partially fills in form fields and takes second ScreenShot then compares the ScreenShot images");
+            WriteToFile(get_helpFileName(), "\t- and creates a difference image file and displays the pixel difference between the images in a percentage.\r\n");
+            WriteToFile(get_helpFileName(), "CompareImages-Test.xml - Compares two images stored on the computer and creates a difference image file and displays the pixel");
+            WriteToFile(get_helpFileName(), "\t- difference between the images in a percentage.");
+            WriteToFile(get_helpFileName(), "\t- (Paths will need to be changed to images on your computer.\r\n");
             WriteToFile(get_helpFileName(), "Conditional-Test.xml - Creates a Conditional Block with dependent tests inside the block and one test after the block.\r\n");
-            WriteToFile(get_helpFileName(), "ContextMenu-Test.xml - Performs the following test steps.\r\n\t1. Right clicks on a menu anchor tag,\r\n\t2. Opens URL in a new tab,\r\n\t3. Waits,\r\n\t4. Switches to that tab,\r\n\t5. Waits,\r\n\t6. Performs an assertion,\r\n\t7. Switches to first tab,\r\n\t8. Right clicks and opens another link in another tab,\r\n\t9. Switches to that tab,\r\n\t10. Waits,\r\n\t11. Performs an assertion,\r\n\t12. Closes all child tabs, waits,\r\n\t13. Switches back to first tab,\r\n\t14. Waits and then ends.\r\n");
+            WriteToFile(get_helpFileName(), "ContextMenu-Test.xml - Performs the following test steps.\r\n" +
+                    "\t1. Right clicks on a menu anchor tag,\r\n" +
+                    "\t2. Opens URL in a new tab,\r\n" +
+                    "\t3. Waits,\r\n" +
+                    "\t4. Switches to that tab,\r\n" +
+                    "\t5. Waits,\r\n" +
+                    "\t6. Performs an assertion,\r\n" +
+                    "\t7. Switches to first tab,\r\n" +
+                    "\t8. Right clicks and opens another link in another tab,\r\n" +
+                    "\t9. Switches to that tab,\r\n" +
+                    "\t10. Waits,\r\n" +
+                    "\t11. Performs an assertion,\r\n" +
+                    "\t12. Closes all child tabs, waits,\r\n" +
+                    "\t13. Switches back to first tab,\r\n" +
+                    "\t14. Waits and then ends.\r\n");
 
             WriteToFile(get_helpFileName(), "CreateTestPage-Test.xml - Creates an XML formatted test page that can be run immediately afterwards as a test.\r\n");
-            WriteToFile(get_helpFileName(), "CreateUnformattedTestPage-Test.xml - Creates an unformatted page that contains xPath, text, href, src, alt text that can be used for creating tests manually.\r\n");
+            WriteToFile(get_helpFileName(), "CreateUnformattedTestPage-Test.xml - Creates an unformatted page that contains xPath, text, href, src, alt text \r\n" +
+                    "\t\t- that can be used for creating tests manually.\r\n");
             WriteToFile(get_helpFileName(), "Fill_out_FormMy_Form_and_submit-Test.xml - Fills out a form and submits it and checks the confirmation message on the subsequent page.");
-            WriteToFile(get_helpFileName(), "\t- This form has various different form controls such as text boxes, radio buttons, check boxes, select list box and a date picker.\r\n");
+            WriteToFile(get_helpFileName(), "\t\t- This form has various different form controls such as text boxes, radio buttons, check boxes, select list box and a date picker.\r\n");
 
-            WriteToFile(get_helpFileName(), "FindPhrase-Test.xml - Performs the following test steps.\r\n\t1. Waits for Page, \r\n\t2. Checks URL,\r\n\t3. Checks Get\r\n\t4. Checks Count,\r\n\t5. Waits for Element");
-            WriteToFile(get_helpFileName(), "\t6. Performs a Find Equals with no element specified,\r\n\t7. Performs a Find Equals with a 'div' element specified\r\n\t8. Performs a Find Equals with a 'label' element specified");
+            WriteToFile(get_helpFileName(), "FindPhrase-Test.xml - Performs the following test steps.\r\n" +
+                    "\t1. Waits for Page, \r\n" +
+                    "\t2. Checks URL,\r\n" +
+                    "\t3. Checks Get\r\n" +
+                    "\t4. Checks Count,\r\n" +
+                    "\t5. Waits for Element");
+            WriteToFile(get_helpFileName(), "\t6. Performs a Find Equals with no element specified,\r\n" +
+                    "\t7. Performs a Find Equals with a 'div' element specified\r\n" +
+                    "\t8. Performs a Find Equals with a 'label' element specified");
             WriteToFile(get_helpFileName(),"\t9. Performs a find Contains with a 'label' element specified.\r\n");
 //            WriteToFile(get_helpFileName(), "GaryXMLstepsShell - Updated backup.xml - Contains a list of some commands.  This was originally going to be used before the help file was created.\r\n");
 //            WriteToFile(get_helpFileName(), "GaryXMLstepsShell.xml - Contains a list of some commands.  This was originally going to be used before the help file was created.\r\n");
 
-            WriteToFile(get_helpFileName(), "GetAndQueryJson-Test.xml - Performs the following test steps.\r\n\t1. Gets JSON from API end point as a conditional block start\r\n\t2. Performs 4 JSON Queries and compares against the expected values,\r\n\t3. Saves the JSON to a file\r\n\t4. Ends the Conditional Block\r\n\t5. Navigates to another page.\r\n");
+            WriteToFile(get_helpFileName(), "GetAndQueryJson-Test.xml - Performs the following test steps.\r\n" +
+                    "\t1. Gets JSON from API end point as a conditional block start\r\n" +
+                    "\t2. Performs 4 JSON Queries and compares against the expected values,\r\n" +
+                    "\t3. Saves the JSON to a file\r\n" +
+                    "\t4. Ends the Conditional Block\r\n" +
+                    "\t5. Navigates to another page.\r\n");
 
-            WriteToFile(get_helpFileName(), "GetAndQueryXML-Test.xml - Performs the following test steps.\r\n\t1. Gets XML from API end point as a conditional block start\r\n\t2. Performs 4 XML Queries and compares against the expected values,\r\n\t3. Saves the XML to a file\r\n\t4. Ends the Conditional Block\r\n\t5. Navigates to another page.\r\n");
+            WriteToFile(get_helpFileName(), "GetAndQueryXML-Test.xml - Performs the following test steps.\r\n" +
+                    "\t1. Gets XML from API end point as a conditional block start\r\n" +
+                    "\t2. Performs 4 XML Queries and compares against the expected values,\r\n" +
+                    "\t3. Saves the XML to a file\r\n" +
+                    "\t4. Ends the Conditional Block\r\n" +
+                    "\t5. Navigates to another page.\r\n");
 
-            WriteToFile(get_helpFileName(), "iFrame_AccessElement-Test.xml - Performs the following test steps.\r\n\t1. Waits for Page, \r\n\t2. Switches to an iFrame and checks the text of the button agains the expected value,\r\n\t3. Switches to an iFrame and persists the text of an element,\r\n\t4. Switches to an iFrame with arguments out of order to force argument shuffling and checks the text of a button,");
-            WriteToFile(get_helpFileName(), "\t5. Switches to an iFrame and checks the value of a button,\r\n\t6. Switches to an iFrame and checks the value of a button against the persisted value, \r\n\t7. Switches to an iFrame and clicks a link,\r\n\t8. Navigates to another page,");
+            WriteToFile(get_helpFileName(), "iFrame_AccessElement-Test.xml - Performs the following test steps.\r\n" +
+                    "\t1. Waits for Page, \r\n" +
+                    "\t2. Switches to an iFrame and checks the text of the button agains the expected value,\r\n" +
+                    "\t3. Switches to an iFrame and persists the text of an element,\r\n" +
+                    "\t4. Switches to an iFrame with arguments out of order to force argument shuffling and checks the text of a button,");
+            WriteToFile(get_helpFileName(), "\t5. Switches to an iFrame and checks the value of a button,\r\n" +
+                    "\t6. Switches to an iFrame and checks the value of a button against the persisted value, \r\n" +
+                    "\t7. Switches to an iFrame and clicks a link,\r\n" +
+                    "\t8. Navigates to another page,");
             WriteToFile(get_helpFileName(), "\t9. Switches to an iFrame and checks the value of a Select with the expected value.\r\n");
 
-            WriteToFile(get_helpFileName(), "RunSqlQueries_Alternate-Test.xml -  Performs the following test steps.\r\n\t1. Connects to Sql Server,\r\n\t2. Performs 3 queries using two different command formats and checks the values against the expected values.");
-            WriteToFile(get_helpFileName(), "\t- This command does not close the Open Sql Server connection and was used to implement the failsafe close connection cleanup method and display the message informing the user that the connection was not properly closed.\r\n");
+            WriteToFile(get_helpFileName(), "RunSqlQueries_Alternate-Test.xml -  Performs the following test steps.\r\n" +
+                    "\t1. Connects to Sql Server,\r\n" +
+                    "\t2. Performs 3 queries using two different command formats and checks the values against the expected values.");
+            WriteToFile(get_helpFileName(), "\t- This command does not close the Open Sql Server connection and was used to implement the failsafe\r\n" +
+                    "\t\t- close connection cleanup method and display the message informing the user that the connection was not properly closed.\r\n");
 
-            WriteToFile(get_helpFileName(), "SqlServerAccess-Test.xml -  Performs the following test steps. \r\n\t1. Connects to Sql Server,\r\n\t2. Performs 2 queries where the value is expected to equal the expected value,\r\n\t3. Performs 1 query where the value is expected not to equal the expected value,\r\n\t4. Properly Closed the Open Connection.");
-            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "SqlServerAccess-Test.xml -  Performs the following test steps. \r\n" +
+                    "\t1. Connects to Sql Server,\r\n" +
+                    "\t2. Performs 2 queries where the value is expected to equal the expected value,\r\n" +
+                    "\t3. Performs 1 query where the value is expected not to equal the expected value,\r\n" +
+                    "\t4. Properly Closed the Open Connection.\r\n");
+            WriteToFile(get_helpFileName(), "ParseAndCalculate-Test.xml - Performs the following steps:\r\n" +
+                    "\t1. Navigates to page\r\n" +
+                    "\t2. Performs a Parse and Calculate Double command retrieving the specified field, splitting it based on the delimiter,");
+            WriteToFile(get_helpFileName(), "\t\t- converting numerical values to double based on indexes and the operator index indicates\r\n" +
+                    "\t\t- the operation to perform and the answer is written to the element specified.");
+            WriteToFile(get_helpFileName(), "\t3. performs a wait and repeats steps 1 and 2 for the Parse and Calculate Long command and\r\n" +
+                    "\t\t- persists that value in the persistance variable for possible later use.");
 
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
-            WriteToFile(get_helpFileName(), "║                                              TROUBLESHOOTING                                                                                                           ║");
-            WriteToFile(get_helpFileName(), "╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
-            WriteToFile(get_helpFileName(), PrePostPad("[ DRIVER ISSUES ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), "╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+            WriteToFile(get_helpFileName(), "║                                              TROUBLESHOOTING                                                                                         ║");
+            WriteToFile(get_helpFileName(), "╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+            WriteToFile(get_helpFileName(), PrePostPad("[ DRIVER ISSUES ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "If you run the application and the browser briefly opens and then closes:");
             WriteToFile(get_helpFileName(), "Check you local browser version and compare that with the corresponding web driver for that browser.");
             WriteToFile(get_helpFileName(), "If these are not the same, upgrade the web driver for this browser and it should work.");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), PrePostPad("[ URL VALIDATION FAILURE ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ URL VALIDATION FAILURE ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "When you enter a url into your web browser although the trailing slash may be there or may not be there, the returned URL from the test app differs.");
             WriteToFile(get_helpFileName(), "Update your test to reflect what the test app is returning as this is the actual URL for this page.");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), PrePostPad("[ MISSING CONFIGURATION FILE ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ MISSING CONFIGURATION FILE ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "If you are running in JUnit and see the following message:\r\n" +
                     " the config file is not in the correct location or has the wrong name.");
             WriteToFile(get_helpFileName(), "Configuration File not found! (Config/ConfigurationSetup.xml)");
@@ -2986,10 +3229,10 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "Although the reported error seems self explanatory, this means that the configuration file is not where");
             WriteToFile(get_helpFileName(), "the application expects it to be, so place it into the correct location, specified in the error message, and re-run the test.");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), PrePostPad("[ UNEXPECTED OUTPUT FROM A TEST STEP ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ UNEXPECTED OUTPUT FROM A TEST STEP ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "If you have an unexpected output or outcome of a test step, check the Action/Expected value field in your test ");
             WriteToFile(get_helpFileName(), "and ensure that there is no keyword in there that the application may attempt to execute instead of the action intended.");
             WriteToFile(get_helpFileName(), "The test will have to be re-written to account for this.");
@@ -2997,10 +3240,10 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "While this particular solution may not be the one you need, there is likely a solution but if not, please document the issue ");
             WriteToFile(get_helpFileName(), "so that it can be addressed in future implementations.");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), PrePostPad("[ OVERALL TEST RESULT SHOWS FAILURE ALTHOUGH TEST STEPS PASS (LAST TEST STEP PASSED) ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ OVERALL TEST RESULT SHOWS FAILURE ALTHOUGH TEST STEPS PASS (LAST TEST STEP PASSED) ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "When running tests, if a step marked as crucial does not fail, the overall JUnit test should ");
             WriteToFile(get_helpFileName(), "show as having passed.");
             WriteToFile(get_helpFileName(), "If the last step passes but the overall JUnit test shows a failure and the error doesn't point to ");
@@ -3009,20 +3252,20 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "that was fixed, this has been added, as the exact cause has not been identified.");
             WriteToFile(get_helpFileName(), "If during testing, this no longer occurs, this tip may be removed.");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), PrePostPad("[ XML DOCUMENT MUST START WITH AND END WITH THE SAME ELEMENT ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ XML DOCUMENT MUST START WITH AND END WITH THE SAME ELEMENT ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "This means that the start and end element are not proper opening and closing XML tags.");
             WriteToFile(get_helpFileName(), "1.\tFirst, ensure that the document has the start and end tags.");
             WriteToFile(get_helpFileName(), "2.\tNext, check that the end tag contains a </ as the first two characters as a common mistake is ");
             WriteToFile(get_helpFileName(), "\t\tcopying and pasting and forgetting to update.");
             WriteToFile(get_helpFileName(), "3.\tFinally, check that the spelling, if this was not a copy paste issue, as it may have been a typo.");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), PrePostPad("[ CONTEXT MENU TAB SWITCHING IS FAILING ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ CONTEXT MENU TAB SWITCHING IS FAILING ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "If a test is running that accesses the context menu or switches tabs, the MOUSE and KEYBOARD CANNOT BE USED");
             WriteToFile(get_helpFileName(), "WHILE THE TEST IS IN PROGRESS or it will change the context and thus cause the test step to fail, which may in turn");
             WriteToFile(get_helpFileName(), "cause subsequent test steps to fail.");
@@ -3035,16 +3278,16 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "While the wait doesn't have to be long it needs to be long enough for the tab to register in the number of reported tabs for this to work.");
             WriteToFile(get_helpFileName(), "If performing these steps separately continues to be an issue, try extending the wait time or adding the switch to tab argument to the ");
             WriteToFile(get_helpFileName(), "context menu command that opens the new tab.");
-            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
 
-            WriteToFile(get_helpFileName(), PrePostPad("[ SCREENSHOTS SAVING TO CONFIG FOLDER INSTEAD OF CONFIGURATION FILE SETTING  ]", "═", 9, 159));
+            WriteToFile(get_helpFileName(), PrePostPad("[ SCREENSHOTS SAVING TO CONFIG FOLDER INSTEAD OF CONFIGURATION FILE SETTING  ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "If a <screenShotSaveFolder></screenShotSaveFolder> setting was added to the configuration file but");
             WriteToFile(get_helpFileName(), "the screenshots are not being saved there, check that the entire specified folder structure exists!!!");
             WriteToFile(get_helpFileName(), "The most likely cause of this issue is that all or part of the path specified does not exist.");
             WriteToFile(get_helpFileName(), "Copy the path from Windows Explorer or File Explorer and paste it into the  <screenShotSaveFolder></screenShotSaveFolder> setting.");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
+            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
             //region { Template }
 //            WriteToFile(get_helpFileName(),  PrePostPad("═", "═", 1, 159));
