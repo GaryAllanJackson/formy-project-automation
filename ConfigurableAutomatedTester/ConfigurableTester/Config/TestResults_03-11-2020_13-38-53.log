@@ -1,0 +1,72 @@
+     Configured Browser Selection = Chrome
+     [Setting ChromeDriver]
+╔═════════[ Running Test Script ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+Running Test Script file: C:\Gary\Alvaro\Tests\Flag-Test.xml
+CSV Status file: N/A
+     «═════════[ Start Explicit Navigation Event ]════════════════════════════════════»
+        Navigating to https://www.bofaml.com/en-us/content/trader-insights/corporate-bond-trading-strategy-direct-connectivity.html for step F0_S0
+        Backend Performance Timing: 2.05 seconds.
+        Frontend Performance Timing: -1.583948361078E9 seconds.
+        Successful Navigation and URL Check.  Expected: (https://www.bofaml.com/en-us/content/trader-insights/corporate-bond-trading-strategy-direct-connectivity.html) Actual: (https://www.bofaml.com/en-us/content/trader-insights/corporate-bond-trading-strategy-direct-connectivity.html) for step F0_S0
+
+     «═════════[ End Explicit Navigation Event ]══════════════════════════════════════»
+
+     «═════════[ Start Explicit Navigation Event ]════════════════════════════════════»
+        Navigating to https://www.bofaml.com/en-us/content/trader-insights/alternative-risk-premia-systematic-investing.html for step F0_S1
+        Backend Performance Timing: 2.05 seconds.
+        Frontend Performance Timing: -1.583948364216E9 seconds.
+        Successful Navigation and URL Check.  Expected: (https://www.bofaml.com/en-us/content/trader-insights/alternative-risk-premia-systematic-investing.html) Actual: (https://www.bofaml.com/en-us/content/trader-insights/alternative-risk-premia-systematic-investing.html) for step F0_S1
+
+     «═════════[ End Explicit Navigation Event ]══════════════════════════════════════»
+
+╔═════════[ Start Image Comparison Test ]═══════════════════════════════════════════════════════════════════════════════════════════════════════╗
+     Performing Image Comparison for step F0_S2
+        (Baseline)Expected Image:C:\Gary\Alvaro\ScreenShots\DirectConnectivity.png
+        Actual Image: C:\Gary\Alvaro\ScreenShots\AlternativeRisk.png
+
+Successful comparison of images.  View the images to see the comparison results:
+     Baseline Image: (C:\Gary\Alvaro\ScreenShots\DirectConnectivity.png)
+     Actual Image: (C:\Gary\Alvaro\ScreenShots\AlternativeRisk.png)
+     Difference Image:(C:\Gary\Alvaro\ScreenShots\ComparisonDifferences\DirectConnectivity-AlternativeRisk-DifferenceImage.png)
+     Global Difference Image:(C:\Gary\Alvaro\ScreenShots\GlobalDifferences\DirectConnectivity-AlternativeRisk-DifferenceImag8.png)
+     	The GlobalDifferences folder contains 22 files totaling 6 MB.
+        Available Space: 
+	        C:\ = 112 GB
+	        S:\ = 1 TB
+
+     Difference Percentage: 25.661025466099872%
+╚═════════[ End Image Comparison Test ]═════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+╔═════════[ Start Image Comparison Test ]═══════════════════════════════════════════════════════════════════════════════════════════════════════╗
+     Performing Image Comparison for step F0_S3
+        (Baseline)Expected Image:C:\Gary\Alvaro\ScreenShots\DirectConnectivity.png
+        Actual Image: C:\Gary\Alvaro\ScreenShots\AlternativeRisk - Copy.png
+
+Successful comparison of images.  View the images to see the comparison results:
+     Baseline Image: (C:\Gary\Alvaro\ScreenShots\DirectConnectivity.png)
+     Actual Image: (C:\Gary\Alvaro\ScreenShots\AlternativeRisk - Copy.png)
+     Difference Image:(C:\Gary\Alvaro\ScreenShots\ComparisonDifferences\DirectConnectivity-AlternativeRiskCopy-DifferenceImage.png)
+     Global Difference Image:(C:\Gary\Alvaro\ScreenShots\GlobalDifferences\DirectConnectivity-AlternativeRiskCopy-DifferenceImag5.png)
+     	The GlobalDifferences folder contains 23 files totaling 6 MB.
+        Available Space: 
+	        C:\ = 111 GB
+	        S:\ = 1 TB
+
+     Difference Percentage: 38.8630631893912%
+╚═════════[ End Image Comparison Test ]═════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+╔═════════[ Start Image Comparison Test ]═══════════════════════════════════════════════════════════════════════════════════════════════════════╗
+     Performing Image Comparison for step F0_S4
+        (Baseline)Expected Image:C:\Gary\Alvaro\ScreenShots\AlternativeRisk.png
+        Actual Image: C:\Gary\Alvaro\ScreenShots\AlternativeRisk - Copy.png
+
+Successful comparison of images.  View the images to see the comparison results:
+     Baseline Image: (C:\Gary\Alvaro\ScreenShots\AlternativeRisk.png)
+     Actual Image: (C:\Gary\Alvaro\ScreenShots\AlternativeRisk - Copy.png)
+     Difference Image:(C:\Gary\Alvaro\ScreenShots\ComparisonDifferences\AlternativeRisk-AlternativeRiskCopy-DifferenceImage.png)
+     Global Difference Image:(C:\Gary\Alvaro\ScreenShots\GlobalDifferences\AlternativeRisk-AlternativeRiskCopy-DifferenceImag4.png)
+     	The GlobalDifferences folder contains 24 files totaling 7 MB.
+        Available Space: 
+	        C:\ = 109 GB
+	        S:\ = 1 TB
+

@@ -627,8 +627,6 @@ public class TestCentral {
             } else if (ts.get_command().toLowerCase().equals(AppCommands.Get_XML) || ts.get_command().toLowerCase().equals(AppCommands.Save_XML) ) {
                 XmlController(ts, fileStepIndex);
             }
-
-            //XmlController
         }
     }
 
@@ -826,6 +824,14 @@ public class TestCentral {
         }
     }
 
+    /***************************************************************************************
+     * Description: This method retrieves the text from a page element and returns it to
+     *              the calling method.
+     * @param ts -  Test Step Object containing all related information
+     *              for the particular test step.
+     * @param fileStepIndex - the file index and the step index.
+     * @return  - Text from page element.
+     ***************************************************************************************/
     private String GetElementText(TestStep ts, String fileStepIndex) {
         String actual = null;  //element equation retrieved from the page
         switch (ts.get_accessorType().toLowerCase()) {
@@ -853,7 +859,16 @@ public class TestCentral {
         return actual;
     }
 
-
+    /***************************************************************************************
+     * Description: This method retrieves the simple calculation from a page element,
+     *              parses that calculation text based on the arguments and performs
+     *              the intended calculation using double data types and if the expected
+     *              value is present, compares the calculated value to the expected
+     *              value and reports the success or failure of that comparison.
+     * @param ts -  Test Step Object containing all related information
+     *              for the particular test step.
+     * @param fileStepIndex - the file index and the step index.
+     ***************************************************************************************/
     private void ParseAndCalculateDoubleController(TestStep ts, String fileStepIndex) {
         int firstIndex, secondIndex, operatorIndex;
         double firstNumber;
@@ -861,7 +876,6 @@ public class TestCentral {
         double resultNumber = 0;
         String delimiter, operator;
         String accessorPersist;
-        //String elementEquation;  //retrieve this value
         String [] equation;
         delimiter = GetArgumentValue(ts, 0, " ");
         firstIndex = GetArgumentNumericValue(ts, 1, 0);
@@ -869,15 +883,16 @@ public class TestCentral {
         operatorIndex = GetArgumentNumericValue(ts, 3, 1);
         accessorPersist = GetArgumentValue(ts, 4, "persist");
 
-
         String actual = GetElementText(ts, fileStepIndex);
         if (actual != null && actual.contains(delimiter)) {
             equation = actual.split(delimiter);
-            testHelper.DebugDisplay("delimiter = (" + delimiter + ")");
-            testHelper.DebugDisplay("firstNumber = equation[" + firstIndex + "] = " + equation[firstIndex]);
-            testHelper.DebugDisplay("secondNumber = equation[" + secondIndex + "] = " + equation[secondIndex]);
-            testHelper.DebugDisplay("operatorIndex = equation[" + operatorIndex + "] = " + equation[operatorIndex]);
-            testHelper.DebugDisplay("accessorPersist = " + accessorPersist);
+            //region {Debugging information}
+//            testHelper.DebugDisplay("delimiter = (" + delimiter + ")");
+//            testHelper.DebugDisplay("firstNumber = equation[" + firstIndex + "] = " + equation[firstIndex]);
+//            testHelper.DebugDisplay("secondNumber = equation[" + secondIndex + "] = " + equation[secondIndex]);
+//            testHelper.DebugDisplay("operatorIndex = equation[" + operatorIndex + "] = " + equation[operatorIndex]);
+//            testHelper.DebugDisplay("accessorPersist = " + accessorPersist);
+            //endregion
             firstNumber = Double.parseDouble(equation[firstIndex]);
             secondNumber = Double.parseDouble(equation[secondIndex]);
             operator = equation[operatorIndex];
@@ -901,12 +916,10 @@ public class TestCentral {
                 }
             }
 
-            //TODO:FINISH THIS SENDING IT OR PERSISTING IT
             if (accessorPersist.toLowerCase().equals("persist")) {
                 testHelper.CreateSectionHeader(AppConstants.indent5 + "[ Start Persisting Calculated Value ]", "", AppConstants.ANSI_CYAN, true, false, true);
                 testHelper.UpdateTestResults("Persisting Calculated value: (" + resultNumber +  ")", true);
                 persistedString = String.valueOf(resultNumber);
-                //testHelper.CreateSectionHeader(AppConstants.indent5 + "[ End Persisting Calculated Value ]", "", AppConstants.ANSI_CYAN, true, false, true);
                 testHelper.CreateSectionHeader(AppConstants.indent5 + "[ End Persisting Calculated Value, but value persisted and usable until end of test file ]", "", AppConstants.ANSI_CYAN, false, false, true);
             } else {
                 TestStep testStep = new TestStep();
@@ -926,6 +939,16 @@ public class TestCentral {
         }
     }
 
+    /***************************************************************************************
+     * Description: This method retrieves the simple calculation from a page element,
+     *              parses that calculation text based on the arguments and performs
+     *              the intended calculation using long data types and if the expected
+     *              value is present, compares the calculated value to the expected
+     *              value and reports the success or failure of that comparison.
+     * @param ts -  Test Step Object containing all related information
+     *              for the particular test step.
+     * @param fileStepIndex - the file index and the step index.
+     ***************************************************************************************/
     private void ParseAndCalculateLongController(TestStep ts, String fileStepIndex) {
         int firstIndex, secondIndex, operatorIndex;
         long firstNumber;
@@ -933,7 +956,6 @@ public class TestCentral {
         long resultNumber = 0;
         String delimiter, operator;
         String accessorPersist;
-        //String elementEquation;  //retrieve this value
         //https://timesofindia.indiatimes.com/poll.cms
         String [] equation;
         delimiter = GetArgumentValue(ts, 0, " ");
@@ -945,6 +967,7 @@ public class TestCentral {
         String actual = GetElementText(ts, fileStepIndex);
         if (actual != null && actual.contains(delimiter)) {
             equation = actual.split(delimiter);
+            //region {Debugging code testing how decimals affect long conversion}
 //            equation[firstIndex] = equation[firstIndex] + ".5";
 //            equation[secondIndex] = equation[secondIndex] + ".8";
 //            testHelper.DebugDisplay("delimiter = (" + delimiter + ")");
@@ -952,7 +975,7 @@ public class TestCentral {
 //            testHelper.DebugDisplay("secondNumber = equation[" + secondIndex + "] = " + equation[secondIndex]);
 //            testHelper.DebugDisplay("operatorIndex = equation[" + operatorIndex + "] = " + equation[operatorIndex]);
 //            testHelper.DebugDisplay("accessorPersist = " + accessorPersist);
-
+            //endregion
             firstNumber = !equation[firstIndex].contains(".") ? Long.parseLong(equation[firstIndex]) : Long.parseLong(equation[firstIndex].substring(0, equation[firstIndex].indexOf(".")));
             secondNumber = !equation[secondIndex].contains(".") ? Long.parseLong(equation[secondIndex]) : Long.parseLong(equation[secondIndex].substring(0, equation[secondIndex].indexOf(".")));
 
@@ -977,7 +1000,6 @@ public class TestCentral {
                 }
             }
 
-            //TODO:FINISH THIS SENDING IT OR PERSISTING IT
             if (accessorPersist.toLowerCase().equals("persist")) {
                 testHelper.CreateSectionHeader(AppConstants.indent5 + "[ Start Persisting Calculated Value ]", "", AppConstants.ANSI_CYAN, true, false, true);
                 testHelper.UpdateTestResults(AppConstants.indent8 + "Persisting Calculated value: (" + resultNumber +  ")", true);
@@ -1710,8 +1732,8 @@ public class TestCentral {
 
         testHelper.UpdateTestResults(AppConstants.indent5 + "Retrieved " + images.size() + " image tags", true);
         for(WebElement link : images) {
-            altTag = link.getAttribute("alt");
-            imgSrc = link.getAttribute("src");
+            altTag = link != null ? link.getAttribute("alt") : null;
+            imgSrc = link != null ? link.getAttribute("src") : null;
             if (checkType.toLowerCase().trim().equals("alt")) {
                 if (altTag != null && !altTag.trim().isEmpty()) {
                     altTagCount++;

@@ -1,0 +1,217 @@
+<html>
+	<head>
+		<title>Latest Link And File Launcher....by Gary A. Jackson</title>
+		<style type="text/css">
+			body {
+				margin:0;
+				font: 12pt arial, sans-serif;
+				background-color:#ffffcc;
+			}
+			p {
+				padding: 0 0 10 30;
+				margin:0;
+			}
+			ol, li {
+				padding-top: 0;
+				margin-top: 0;
+				margin-left:10;
+			}
+			ul, li {
+				padding-top: 0;
+				margin-left:10;
+				margin-top:0;
+				/*border: solid 1px #000000;*/
+			}
+			div {
+				position:relative;
+			}
+			table {
+				background-color:#000000;
+				margin-left:100px;
+				margin-top:20px;
+				margin-bottom:20px;
+			}
+           th {
+				background-color:#f5f5f5;
+			    font-weight:bold;
+			    width:500px;
+			}
+			td {
+				background-color:#f5f5f5;
+			}
+           td.head {
+				background-color:#f5f5f5;
+			    font-weight:bold;
+			    width:500px;
+			}
+			a.headingLink {
+				color:#FFFFFF;
+			}
+			.heading {
+				font: 24pt arial, sans-serif;
+				background-color:#0060F0;
+				padding: 5 0 5 20;
+				color:#FFFFFF;
+				border: solid 1px #000000;
+				border-radius: 10px;
+				margin-bottom:8px;
+			}
+			.sectionTitle {
+				font: 18pt arial, sans-serif;
+				padding: 10 0 10 10;
+				margin:auto;
+				margin-top:10px;
+				margin-bottom:8px;
+				background-color:#00F060;
+				width:98%;
+				display:block;
+				border: solid 1px #000000;
+				border-radius: 25px;
+			}
+			.topOfPage {
+				width:98%;
+				display:block;
+				text-align:center;
+				margin-top:15;
+				
+			}
+			.topOfPageLink {
+				text-decoration:none;
+				background-color:#f2ffe6;
+				padding:4;
+				border: solid 1px #000000;
+				border-radius: 25px;
+			}
+			.bold {
+				font-weight:bold;
+			}
+			.tableOfContentsSectionHeader {
+				font-weight:bold;
+				margin-top:20px;
+				display:block;
+				background-color:#ffffc8;
+			}
+			.tableOfContentsLink {
+				text-decoration:none;
+				display:block;
+			}
+			.examples {
+				font-weight:bold;
+               font-size:18pt;
+               color:#0000F5
+			}
+			.indented {
+				margin-left:30px;
+				display:block;
+				padding-bottom:0px;
+				
+			}
+			.hide {
+				height: 0px;
+				display:none;
+			}
+		</style>
+		
+	</head>
+	<body>
+		<a name="top"/>
+		<!--=<div class="primary">-->
+			<div class="heading"><a class="headingLink" id="tableofcontents">TABLE OF CONTENTS</a></div>
+			<div id="div_tableofcontents" class="container">
+				<span class="tableOfContentsSectionHeader">HELP FILE OVERVIEW</span>
+				<a href="#applicationoverview" class="tableOfContentsLink">APPLICATION OVERVIEW</a>
+				<a href="#helpfilesections" class="tableOfContentsLink">HELP FILE SECTIONS</a>
+				<a href="#futurefunctionality" class="tableOfContentsLink">FUTURE FUNCTIONALITY</a>
+				<span class="tableOfContentsSectionHeader">Configuration</span>
+				<a href="#configurationoverview" class="tableOfContentsLink">CONFIGURATION OVERVIEW</a>
+				<a href="#configurationfilefieldsanddescriptions" class="tableOfContentsLink">CONFIGURATION FILE FIELDS AND DESCRIPTIONS</a>
+				<a href="#configurationfileexamples" class="tableOfContentsLink">CONFIGURATION FILE EXAMPLES</a>
+				<a href="#examplesexplained" class="tableOfContentsLink">EXAMPLES EXPLAINED</a>
+				<span class="tableOfContentsSectionHeader">Test Steps</span>
+				<a href="#testfileoverview" class="tableOfContentsLink">TEST FILE OVERVIEW</a>
+				<a href="#testfilefieldsanddescriptions" class="tableOfContentsLink">TEST FILE FIELDS AND DESCRIPTIONS</a>
+				<a href="#navigation" class="tableOfContentsLink">NAVIGATION</a>
+				<a href="#navigationwithsuccessfulnavigationconfirmation" class="tableOfContentsLink">NAVIGATION WITH SUCCESSFUL NAVIGATION CONFIRMATION</a>
+				<a href="#navigationwithauthenticationwithandwithoutnavigationconfirmation" class="tableOfContentsLink">NAVIGATION WITH AUTHENTICATION WITH AND WITHOUT NAVIGATION CONFIRMATION</a>
+				<a href="#loginwithnavigation" class="tableOfContentsLink">LOGIN WITH NAVIGATION</a>
+				<a href="#alertpopuplogin" class="tableOfContentsLink">ALERT POPUP LOGIN</a>
+				<a href="#checkurlwithoutnavigation" class="tableOfContentsLink">CHECK URL WITHOUT NAVIGATION</a>
+				<a href="#checkgetrequeststatuswithoutnavigation" class="tableOfContentsLink">CHECK GET REQUEST STATUS WITHOUT NAVIGATION</a>
+				<a href="#checkpostrequeststatuswithoutnavigation" class="tableOfContentsLink">CHECK POST REQUEST STATUS WITHOUT NAVIGATION</a>
+				<a href="#checkdocumentreadystatecompletewithoutnavigationasapostnavigationstep" class="tableOfContentsLink">CHECK DOCUMENT READY STATE COMPLETE WITHOUT NAVIGATION AS A POST NAVIGATION STEP</a>
+				<a href="#checkdocumentreadystatecompletewithnavigationinasinglestep" class="tableOfContentsLink">CHECK DOCUMENT READY STATE COMPLETE WITH NAVIGATION IN A SINGLE STEP</a>
+				<a href="#switchtoiframe" class="tableOfContentsLink">SWITCH TO IFRAME</a>
+				<a href="#conditionalblocks" class="tableOfContentsLink">CONDITIONAL BLOCKS</a>
+				<a href="#checkananchorhref" class="tableOfContentsLink">CHECK AN ANCHOR HREF</a>
+				<a href="#checkallpagelinksusingurl" class="tableOfContentsLink">CHECK ALL PAGE LINKS USING URL</a>
+				<a href="#checkallpagelinkswithoutusingurl" class="tableOfContentsLink">CHECK ALL PAGE LINKS WITHOUT USING URL</a>
+				<a href="#checkthecountofaspecificelementonapage" class="tableOfContentsLink">CHECK THE COUNT OF A SPECIFIC ELEMENT ON A PAGE</a>
+				<a href="#checkallpageimagesrctagswithseparatenavigationstep" class="tableOfContentsLink">CHECK ALL PAGE IMAGE SRC TAGS WITH SEPARATE NAVIGATION STEP</a>
+				<a href="#checkallpageimagesrctagswithnoseparatenavigationstep" class="tableOfContentsLink">CHECK ALL PAGE IMAGE SRC TAGS WITH NO SEPARATE NAVIGATION STEP</a>
+				<a href="#checkallpageimagealttagswithseparatenavigationstep" class="tableOfContentsLink">CHECK ALL PAGE IMAGE ALT TAGS WITH SEPARATE NAVIGATION STEP</a>
+				<a href="#checkallpageimagealttagswithnoseparatenavigationstep" class="tableOfContentsLink">CHECK ALL PAGE IMAGE ALT TAGS WITH NO SEPARATE NAVIGATION STEP</a>
+				<a href="#waitingaspecificamountoftimeforitemstobeavailable" class="tableOfContentsLink">WAITING A SPECIFIC AMOUNT OF TIME FOR ITEMS TO BE AVAILABLE</a>
+				<a href="#waitingforthepresenceofanelement" class="tableOfContentsLink">WAITING FOR THE PRESENCE OF AN ELEMENT</a>
+				<a href="#waitingfordocumentreadystatecomplete" class="tableOfContentsLink">WAITING FOR DOCUMENT READY STATE COMPLETE</a>
+				<a href="#uniqueidentifier" class="tableOfContentsLink">UNIQUE IDENTIFIER</a>
+				<a href="#persistingretrievedtextinavariableforlateruse" class="tableOfContentsLink">PERSISTING RETRIEVED TEXT IN A VARIABLE FOR LATER USE</a>
+				<a href="#fillingintextfields" class="tableOfContentsLink">FILLING IN TEXT FIELDS</a>
+				<a href="#clickanelementinaniframe" class="tableOfContentsLink">CLICK AN ELEMENT IN AN IFRAME</a>
+				<a href="#selectanoptionfromanhtmlselectelement" class="tableOfContentsLink">SELECT AN OPTION FROM AN HTML SELECT ELEMENT</a>
+				<a href="#takingscreenshots" class="tableOfContentsLink">TAKING SCREENSHOTS</a>
+				<a href="#switchingbrowsertabs" class="tableOfContentsLink">SWITCHING BROWSER TABS</a>
+				<a href="#closeoneorallopentabs" class="tableOfContentsLink">CLOSE ONE OR ALL OPEN TABS</a>
+				<a href="#findelementsthathavespecifictext" class="tableOfContentsLink">FIND ELEMENTS THAT HAVE SPECIFIC TEXT</a>
+				<a href="#findelementsthatcontaintext" class="tableOfContentsLink">FIND ELEMENTS THAT CONTAIN TEXT</a>
+				<a href="#createtestpagecommandtocreatepagetestsorforprovidingdatatohelpcreatetests" class="tableOfContentsLink">CREATE TEST PAGE COMMAND TO CREATE PAGE TESTS OR FOR PROVIDING DATA TO HELP CREATE TESTS</a>
+				<a href="#connecttosqlserverdatabaseandclosetheconnection" class="tableOfContentsLink">CONNECT TO SQL SERVER DATABASE AND CLOSE THE CONNECTION</a>
+				<a href="#closingthedatabaseconnection" class="tableOfContentsLink">CLOSING THE DATABASE CONNECTION</a>
+				<a href="#queryingthesqlserverdatabase" class="tableOfContentsLink">QUERYING THE SQL SERVER DATABASE</a>
+				<a href="#retrievingjsonfromanapiendpoint" class="tableOfContentsLink">RETRIEVING JSON FROM AN API ENDPOINT</a>
+				<a href="#queryingjsonfromanapiendpoint" class="tableOfContentsLink">QUERYING JSON FROM AN API ENDPOINT</a>
+				<a href="#savejsontofile" class="tableOfContentsLink">SAVE JSON TO FILE</a>
+				<a href="#retrievingxmlfromanapiendpoint" class="tableOfContentsLink">RETRIEVING XML FROM AN API ENDPOINT</a>
+				<a href="#queryingxmlfromanapiendpoint" class="tableOfContentsLink">QUERYING XML FROM AN API ENDPOINT</a>
+				<a href="#savexmltofile" class="tableOfContentsLink">SAVE XML TO FILE</a>
+				<a href="#checkcolorcontrast" class="tableOfContentsLink">CHECK COLOR CONTRAST</a>
+				<a href="#compareimagesandcreatedifferenceimage" class="tableOfContentsLink">COMPARE IMAGES AND CREATE DIFFERENCE IMAGE</a>
+				<a href="#parseandcalculatedouble" class="tableOfContentsLink">PARSE AND CALCULATE DOUBLE</a>
+				<a href="#parseandcalculatelong" class="tableOfContentsLink">PARSE AND CALCULATE LONG</a>
+				<span class="tableOfContentsSectionHeader">Troubleshooting</span>
+				<a href="#driverissues" class="tableOfContentsLink">DRIVER ISSUES</a>
+				<a href="#urlvalidationfailure" class="tableOfContentsLink">URL VALIDATION FAILURE</a>
+				<a href="#missingconfigurationfile" class="tableOfContentsLink">MISSING CONFIGURATION FILE</a>
+				<a href="#unexpectedoutputfromateststep" class="tableOfContentsLink">UNEXPECTED OUTPUT FROM A TEST STEP</a>
+				<a href="#overalltestresultshowsfailurealthoughteststepspass(lastteststeppassed)" class="tableOfContentsLink">OVERALL TEST RESULT SHOWS FAILURE ALTHOUGH TEST STEPS PASS (LAST TEST STEP PASSED)</a>
+				<a href="#xmldocumentmuststartwithandendwiththesameelement" class="tableOfContentsLink">XML DOCUMENT MUST START WITH AND END WITH THE SAME ELEMENT</a>
+				<a href="#contextmenutabswitchingisfailing" class="tableOfContentsLink">CONTEXT MENU TAB SWITCHING IS FAILING</a>
+			</div>
+		<!--</div>-->
+		<div class="heading">HELP FILE OVERVIEW</div>
+		<div class="heading">CONFIGURATION FILE FORMAT</div>
+		<div class="heading">TEST FILE FORMAT</div>
+		<div class="heading">INCLUDED TEST FILES</div>
+		<div class="heading">TROUBLESHOOTING</div>
+		
+		<script>
+			document.querySelector("a.headingLink").addEventListener("click", Toggle);
+			function Toggle() {
+				var element = this;
+				var targetElement = document.getElementById("div_" + element.id);
+				/*console.log(element);
+				console.log(element.id);
+				console.log(targetElement);
+				console.log(targetElement.id);
+				console.log(targetElement.className);*/
+				if (targetElement.className != null && targetElement.className.indexOf("hide") >= 0) {
+					targetElement.classList.remove("hide")
+				} else {
+					targetElement.classList.add("hide")
+				}
+				
+			}
+		</script>
+</body>
+	
+</html>
+

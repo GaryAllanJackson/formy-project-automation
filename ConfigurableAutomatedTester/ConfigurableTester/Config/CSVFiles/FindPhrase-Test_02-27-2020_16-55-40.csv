@@ -1,0 +1,9 @@
+FILE AND STEP NUMBER,TEST PERFORMED,EXECUTION STATUS
+F1_S0,Navigation and URL Check.  Expected: (https://formy-project.herokuapp.com/form) Actual: (https://formy-project.herokuapp.com/form),Successful
+F1_S2[0m,URL Check.  Expected: (https://formy-project.herokuapp.com/form) Actual: (https://formy-project.herokuapp.com/form),Successful
+F1_S3,Comparison results.  Expected value: (200) Actual value: (200),Successful
+F1_S4,Not equal count of 'a' tags.  Expected: 17 !=  Actual: 18,Successful
+F1_S6,Found (Highest level of education) in element: /html[1]/body[1]/div[1]/form[1]/div[1]/div[4]/div[1]/strong[1]/label[1],Successful
+F1_S7,Found (Highest level of education) in element: /html[1]/body[1]/div[1]/form[1]/div[1]/div[4]/div[1],Successful
+F1_S8,Found (Highest level of education) in element: /html[1]/body[1]/div[1]/form[1]/div[1]/div[4]/div[1]/strong[1]/label[1],Successful
+F1_S9,Found (Highest level) in element: /html[1]/body[1]/div[1]/form[1]/div[1]/div[4]/div[1]/strong[1]/label[1],Successful

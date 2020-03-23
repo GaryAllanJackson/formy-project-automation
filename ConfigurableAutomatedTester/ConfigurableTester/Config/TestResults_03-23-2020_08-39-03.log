@@ -1,0 +1,111 @@
+     Configured Browser Selection = Chrome
+     [Setting ChromeDriver]
+╔═════════[ Running Test Script ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+Running Test Script file: C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckAllPageImageAltAttributes-Test.xml
+CSV Status file: Config/TestResults_03-23-2020_08-39-03.csv
+*********[ Argument Order Error!!! - Attempting to reorder ]****************************************
+Navigation command arguments out of order!!! 
+Refer to the help file for the proper order, shown below!!!
+	<arg1>>Navigation Url</arg1>
+	<arg2>Delay Time</arg2>
+	<arg3>Browser Window Dimensions</arg3>
+	<arg4>Page Load Max Timings</arg4>
+****************************************************************************************************
+
+     «═════════[ Start Explicit Navigation Event ]════════════════════════════════════»
+        Navigating to https://nutrish.com/ for step F0_S0
+        Backend Performance Timing: 1.06 seconds.
+        Frontend Performance Timing: -1.584967156019E9 seconds.
+        Successful Navigation and URL Check.  Expected: (https://nutrish.com/) Actual: (https://nutrish.com/) for step F0_S0
+
+     «═════════[ End Explicit Navigation Event ]══════════════════════════════════════»
+
+     Retrieved 45 image tags
+Successful image alt tag found: Loading Indicator Animation for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc4/assets/profilejms/images/loading.gif for step F0_S1
+
+Successful image alt tag found: Rachael Ray Nutrish - Real Recipes. Real Ingredients. Real Good. for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/assets/nutrish/header/rachael_ray_nutrish_logo_sm.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/assets/nutrish/original/header/buy_now_pin.png for step F0_S1
+
+Successful image alt tag found: Rachael Ray Nutrish for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/assets/nutrish/header/rachael_ray_nutrish_logo_sm.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/assets/nutrish/header/social_icons/facebook_dog.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/assets/nutrish/header/social_icons/facebook_cat.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/assets/nutrish/header/social_icons/twitter.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/assets/nutrish/header/social_icons/instagram.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/assets/nutrish/header/social_icons/pinterest.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/assets/nutrish/header/all_dog.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/tmp/image-thumbnails/nutrish/header/categories/image-thumb__8066__auto_1412d73b810b1ebac11cc92be04bb04f/dog-dry-nutrish.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/tmp/image-thumbnails/nutrish/header/categories/image-thumb__8063__auto_1412d73b810b1ebac11cc92be04bb04f/dog-dry-peak.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/tmp/image-thumbnails/nutrish/header/categories/image-thumb__8061__auto_1412d73b810b1ebac11cc92be04bb04f/dog-dry-dish.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/tmp/image-thumbnails/nutrish/header/categories/image-thumb__8062__auto_1412d73b810b1ebac11cc92be04bb04f/dog-dry-just6.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/tmp/image-thumbnails/nutrish/header/categories/image-thumb__8064__auto_1412d73b810b1ebac11cc92be04bb04f/dog-dry-zero-grain.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/tmp/image-thumbnails/nutrish/header/categories/image-thumb__2645__auto_1412d73b810b1ebac11cc92be04bb04f/dog_wet-food_dish-stews.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/tmp/image-thumbnails/nutrish/header/categories/image-thumb__2646__auto_1412d73b810b1ebac11cc92be04bb04f/dog_wet-food_peak-wet.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/tmp/image-thumbnails/nutrish/header/categories/image-thumb__2651__auto_1412d73b810b1ebac11cc92be04bb04f/dog_wet-food_wet.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/tmp/image-thumbnails/nutrish/header/categories/image-thumb__2641__auto_1412d73b810b1ebac11cc92be04bb04f/dog_treats_base.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/tmp/image-thumbnails/nutrish/header/categories/image-thumb__2650__auto_1412d73b810b1ebac11cc92be04bb04f/dog_treats_soupbones.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/tmp/image-thumbnails/nutrish/header/categories/image-thumb__2642__auto_1412d73b810b1ebac11cc92be04bb04f/dog_treats_peak-treats.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/tmp/image-thumbnails/nutrish/header/categories/image-thumb__2643__auto_1412d73b810b1ebac11cc92be04bb04f/dog_treats_smoochies.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/assets/nutrish/header/all_cat.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/tmp/image-thumbnails/nutrish/header/categories/image-thumb__8067__auto_1412d73b810b1ebac11cc92be04bb04f/cat-dry-nutrish.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/tmp/image-thumbnails/nutrish/header/categories/image-thumb__8065__auto_1412d73b810b1ebac11cc92be04bb04f/cat-dry-peak.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/tmp/image-thumbnails/nutrish/header/categories/image-thumb__8068__auto_1412d73b810b1ebac11cc92be04bb04f/cat-dry-zero-grain.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/tmp/image-thumbnails/nutrish/header/categories/image-thumb__2653__auto_1412d73b810b1ebac11cc92be04bb04f/cat_wet-food_wet.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/tmp/image-thumbnails/nutrish/header/categories/image-thumb__2621__auto_1412d73b810b1ebac11cc92be04bb04f/cat_wet-food_peak-cat-wet.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/tmp/image-thumbnails/nutrish/header/categories/image-thumb__2636__auto_1412d73b810b1ebac11cc92be04bb04f/cat_wet-food_purrfect-broths.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/tmp/image-thumbnails/nutrish/header/categories/image-thumb__2648__auto_1412d73b810b1ebac11cc92be04bb04f/cat_wet-food_purrfect-entrees.png for step F0_S1
+
+Successful image alt tag found: Rachael Ray Nutrish for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/assets/nutrish/header/rachael_ray_nutrish_logo_sm.png for step F0_S1
+
+Successful image alt tag found: Find a food as amazing as your dog thinks you are. for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/assets/nutrish/homepage/DOG.png for step F0_S1
+
+Successful image alt tag found: Find a food as amazing as your cat thinks you are. for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/assets/nutrish/homepage/CATS.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/assets/nutrish/homepage/InnerHealth.jpg for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/assets/nutrish/homepage/InnerHealth-logo.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/assets/nutrish/homepage/InnerHealth-icons.png for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/assets/nutrish/homepage/Broths.jpg for step F0_S1
+
+Failed image alt tag missing for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/assets/nutrish/homepage/Broths-logo.png for step F0_S1
+
+Failed image alt tag missing for img src:  for step F0_S1
+
+Successful image alt tag found: Saving data... for img src: https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/assets/nutrish/static/spinner2.gif for step F0_S1
+
+Failed image alt tag missing for img src: https://s.amazon-adsystem.com/iui3?d=3p-hbg&ex-src=rachaelray.com&ex-hargs=v%3D1.0%3Bc%3DRRAY%3Bp%3DH for step F0_S1
+
+Failed image alt tag missing for img src: https://s.amazon-adsystem.com/iui3?d=forester-did&ex-fargs=%3Fid%3D4add3fd3-3afe-02c4-31d3-1776050378d8%26type%3D55%26m%3D1&ex-fch=416613&ex-src=nutrish.rachaelray.com&ex-hargs=v%3D1.0%3Bc%3D6164482415712%3Bp%3D4add3fd3-3afe-02c4-31d3-1776050378d8 for step F0_S1
+
+Failed image alt tag missing for img src: https://bat.bing.com/action/0?ti=5707990&Ver=2&mid=776e9df7-aad1-9a1b-dcc5-5885cb820ad3&pi=1200101525&lg=en-US&sw=1280&sh=720&sc=24&tl=Natural%20Pet%20Food%20%7C%20Rachael%20Ray%20Nutrish&p=https%3A%2F%2Fnutrish.com%2F&r=&lt=2740&evt=pageLoad&msclkid=N&rn=269282 for step F0_S1
+
+Failed image alt tag missing for img src: https://insight.adsrvr.org/track/evnt/?adv=5poau4i&ct=0:e5ev00j&fmt=3 for step F0_S1
+

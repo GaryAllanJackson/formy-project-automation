@@ -1,0 +1,3 @@
+File And Step Number,Test Performed,Execution Status,Test File Name
+F0_S0,Navigation and URL Check.  Expected: (https://www.bofaml.com/en-us/content/trader-insights/corporate-bond-trading-strategy-direct-connectivity.html) Actual: (https://www.bofaml.com/en-us/content/trader-insights/corporate-bond-trading-strategy-direct-connectivity.html),Successful,C:\Gary\Alvaro\Tests\Flag-Test.xml
+F0_S1,Navigation and URL Check.  Expected: (https://www.bofaml.com/en-us/content/trader-insights/alternative-risk-premia-systematic-investing.html) Actual: (https://www.bofaml.com/en-us/content/trader-insights/alternative-risk-premia-systematic-investing.html),Successful,C:\Gary\Alvaro\Tests\Flag-Test.xml

@@ -1,0 +1,30 @@
+     Configured Browser Selection = Chrome
+     [Setting ChromeDriver]
+╔═════════[ Running Test Script ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+Running Test Script file: C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\ParseAndCalculate-Test.xml
+CSV Status file: Config/TestResults_03-16-2020_16-38-38.csv
+*********[ Argument Order Error!!! - Attempting to reorder ]****************************************
+Navigation command arguments out of order!!! 
+Refer to the help file for the proper order, shown below!!!
+	<arg1>>Navigation Url</arg1>
+	<arg2>Delay Time</arg2>
+	<arg3>Browser Window Dimensions</arg3>
+	<arg4>Page Load Max Timings</arg4>
+****************************************************************************************************
+
+     «═════════[ Start Explicit Navigation Event ]════════════════════════════════════»
+        Navigating to https://timesofindia.indiatimes.com/poll.cms for step F0_S0
+        Backend Performance Timing: 0.156 seconds.
+        Frontend Performance Timing: 0.205 seconds.
+        Successful Navigation and URL Check.  Expected: (https://timesofindia.indiatimes.com/poll.cms) Actual: (https://timesofindia.indiatimes.com/poll.cms) for step F0_S0
+
+     «═════════[ End Explicit Navigation Event ]══════════════════════════════════════»
+
+        Element text being retrieved at step F0_S1 by Id: mathq2
+     Checking element by ID: mathq2 for script F0_S1 Actual Value: "0 + 4 ="
+Solving equation: 0.0 + 4.0 = 4.0 for step F0_S1
+     Performing SendKeys value = 4.0 for step F0_S1
+        Performing default SendKeys value = 4.0 for step F0_S1
+     Sleeping for 10000 milliseconds for script F0_S2
+╚═════════[ End of Test Script ]══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+

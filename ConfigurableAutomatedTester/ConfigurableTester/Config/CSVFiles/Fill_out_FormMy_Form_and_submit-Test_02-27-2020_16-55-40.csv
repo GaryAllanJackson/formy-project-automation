@@ -1,0 +1,7 @@
+FILE AND STEP NUMBER,TEST PERFORMED,EXECUTION STATUS
+F0_S0,Navigation and URL Check.  Expected: (https://formy-project.herokuapp.com/form) Actual: (https://formy-project.herokuapp.com/form),Successful
+F0_S1,Equal comparison results.  Expected value: (Complete Web Form) Actual value: (Complete Web Form),Successful
+F0_S11,Equal comparison results.  Expected value: (Complete Web Form) Actual value: (Complete Web Form),Successful
+F0_S12,Equal comparison results.  Expected value: (Complete Web Form) Actual value: (Complete Web Form20200227165549016),Failure
+F0_S24,Post Action results.  Expected URL: (https://formy-project.herokuapp.com/thanks) Actual URL: (https://formy-project.herokuapp.com/thanks),Successful
+F0_S26,Equal comparison results.  Expected value: (The form was successfully submitted!) Actual value: (The form was successfully submitted!),Successful

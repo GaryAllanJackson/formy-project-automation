@@ -1048,8 +1048,6 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "compare a value to a supplied expected value.");
             WriteToFile(get_helpFileName(), "The CSV file records only success and fail status steps but none of the supporting steps surrounding those checks.");
 
-
-            //WriteToFile(get_helpFileName(), "File And Step Number | Test Performed | Execution Status | Variable Output | Test File Name");
             WriteToFile(get_helpFileName(), "Look at the Project_Setup.txt file for directions on running the stand-alone application as part of a batch file.\r\n");
             WriteToFile(get_helpFileName(), "The application covers most testing, including: Navigation, Form Population, Value checking, Value Persistence for use in ");
             WriteToFile(get_helpFileName(), "upcoming test step comparisons or form populations, context menu access, iFrame access, switching  browser tabs, ");
