@@ -514,20 +514,24 @@ public class TestHelper{
      * @param indent - the amount of space to indent to keep the output consistent.
      ******************************************************************************/
     private void CheckPageLoadTiming(WebDriver driver, String indent) {
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        double backendPerformance_calc = (double)js.executeScript("return (window.performance.timing.responseStart - window.performance.timing.navigationStart) / 1000");
-        double frontendPerformance_calc = (double)js.executeScript("return (window.performance.timing.domComplete - window.performance.timing.responseStart) / 1000");
-        //region { alternate method for doing this with separate variables but not as good as combinations above }
-        //double navigationStart = (long)js.executeScript("return window.performance.timing.navigationStart");
-        //double responseStart = (long)js.executeScript("return window.performance.timing.responseStart");
-        //double domComplete = (long)js.executeScript("return window.performance.timing.domComplete");
-        //double backendPerformance_calc = (double) (responseStart - navigationStart);
-        //double frontendPerformance_calc = (double) (domComplete - responseStart);
-        //endregion
-        UpdateTestResults(indent + "Backend Performance Timing: " + backendPerformance_calc  + " seconds.", true);
-        UpdateTestResults(indent + "Frontend Performance Timing: " + frontendPerformance_calc + " seconds.", true);
-        set_backEndPageLoadDuration(backendPerformance_calc);
-        set_frontEndPageLoadDuration(frontendPerformance_calc);
+        try {
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            double backendPerformance_calc = (double) js.executeScript("return (window.performance.timing.responseStart - window.performance.timing.navigationStart) / 1000");
+            double frontendPerformance_calc = (double) js.executeScript("return (window.performance.timing.domComplete - window.performance.timing.responseStart) / 1000");
+            //region { alternate method for doing this with separate variables but not as good as combinations above }
+            //double navigationStart = (long)js.executeScript("return window.performance.timing.navigationStart");
+            //double responseStart = (long)js.executeScript("return window.performance.timing.responseStart");
+            //double domComplete = (long)js.executeScript("return window.performance.timing.domComplete");
+            //double backendPerformance_calc = (double) (responseStart - navigationStart);
+            //double frontendPerformance_calc = (double) (domComplete - responseStart);
+            //endregion
+            UpdateTestResults(indent + "Backend Performance Timing: " + backendPerformance_calc + " seconds.", true);
+            UpdateTestResults(indent + "Frontend Performance Timing: " + frontendPerformance_calc + " seconds.", true);
+            set_backEndPageLoadDuration(backendPerformance_calc);
+            set_frontEndPageLoadDuration(frontendPerformance_calc);
+        } catch (Exception e) {
+            UpdateTestResults("Error getting page timings: " + e.getMessage(), true);
+        }
     }
 
 
@@ -1073,7 +1077,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), PrePostPad("[ IMPORTANT NOTES ]", "*", 10, 100));
             WriteToFile(get_helpFileName(), "NOTE: Test Steps are numbered by File underscore then Test Step.");
             WriteToFile(get_helpFileName(), "\tThe F describes the Test File being run while the S describes the Test Step being run.");
-            WriteToFile(get_helpFileName(), "\tTest Files and Test Steps begin at 0, so F0_S0 is the first Test File and the first Test Step in that file.");
+            WriteToFile(get_helpFileName(), "\tTest Files and Test Steps begin at 0, so F0_S0 is the first Test File and the first Test Step in that file.\r\n");
             WriteToFile(get_helpFileName(), "NOTE: The != operator is currently only supported for the following commands: Assert, Sql Server Query, Check Count.");
             WriteToFile(get_helpFileName(), "\tThere was no viable use case for implementing this functionality for other commands ");
             WriteToFile(get_helpFileName(), "\tand the reason it is not supported in the JSON query is explained in the JSON Query section.\r\n");
@@ -1090,7 +1094,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\t\tTwo example configurations are provided to showcase two different means of configuring the way test files are specified.\r\n");
             WriteToFile(get_helpFileName(), "\t3.\tTEST FILE FORMAT - Describes the format of the test file(s) and details the use and settings of each field.");
             WriteToFile(get_helpFileName(), "\t\tVarious examples and alternate steps are outlined describing the test settings necessary to perform each test function.\r\n");
-            WriteToFile(get_helpFileName(), "\t4.\tINCLUDED TEST FILES - this section describes the test files that have been included with this application in the Tests folder.");
+            WriteToFile(get_helpFileName(), "\t4.\tINCLUDED TEST FILES - this section describes the test files that have been included with this application in the Tests folder.\r\n");
             WriteToFile(get_helpFileName(), "\t5.\tTROUBLESHOOTING - describes common issues and how to address them to get the desired results.\r\n");
             WriteToFile(get_helpFileName(), "Future functionality to be added to this application:");
             WriteToFile(get_helpFileName(), "\tGreater Than and Less Than Operator.");

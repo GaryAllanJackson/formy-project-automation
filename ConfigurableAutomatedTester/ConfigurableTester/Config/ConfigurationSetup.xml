@@ -2,9 +2,12 @@
 <automatedTestConfiguration>
 	<!-- folder where screenshots should be saved -->
 	<screenShotSaveFolder>C:\Gary\Java Utilities\ScreenShots\Mashup\</screenShotSaveFolder>
-	<maxScreenShotsToTake>5</maxScreenShotsToTake>
-	<browserType>Chrome</browserType>
+	<maxScreenShotsToTake>5</maxScreenShotsToTake>	
+	<!--<browserType>edge</browserType>-->
+	 <browserType>internet explorer</browserType> 
+	<!--<browserType>Chrome</browserType>-->
 	<!--<browserType>Firefox</browserType>-->
+	<!--<browserType>phantomjs</browserType>-->
 	<runHeadless>false</runHeadless>
 	<testAllBrowsers>false</testAllBrowsers>
 	<specifyTestFiles>TRUE</specifyTestFiles>
@@ -15,13 +18,14 @@
 		<!-- alphabetical order -->
 		<!-- Group 1 - All elements of specified type tests -->
 		
+		<!--
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckAllPageImageAltAttributes-Test.xml</testFileName1>
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckAllPageImageAltAttributesNoSeparateNavigationStep-Test.xml</testFileName1>
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckAllPageImageSrcWithNoSeparateNavigationStep-Test.xml</testFileName1>
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckAllPageImageSrcWithSeparateNavigationStep-Test.xml</testFileName1>
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckAllPageLinks-Test.xml</testFileName1>
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckAllPageLinksWithNoSeparateNavigationStep-Test.xml</testFileName1>
-		
+		-->
 		
 		<!-- Group 2 - Contrast, Count, Get and Current Page URL -->
 		<!--		
@@ -41,9 +45,9 @@
 		
 		<!-- Group 4 - Image Comparison tests -->
 		
-		<!--<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CompareImages-Alternate-Test.xml</testFileName1>
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CompareImages-Alternate-Test.xml</testFileName1>
 	
-		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CompareImages-Test.xml</testFileName1>-->
+		<!--<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CompareImages-Test.xml</testFileName1>-->
 		
 		
 		<!-- Group 5 -  Conditional Block and Context Menu tests -->

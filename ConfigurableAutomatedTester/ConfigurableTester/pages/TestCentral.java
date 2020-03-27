@@ -2,6 +2,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.*;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import io.restassured.RestAssured;
 import org.bson.BSONObject;
 import org.bson.Document;
@@ -12,13 +13,13 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriverService;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.Color;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
@@ -141,11 +142,11 @@ public class TestCentral {
     private List<String> testFiles = new ArrayList<>();
 
     //region { WebDriver Browser Driver Configured Locations }
-    private String chromeDriverPath = "/gary/java utilities/BrowserDrivers/chromedriver.exe";
-    private String fireFoxDriverPath = "/gary/java utilities/BrowserDrivers/geckodriver.exe";
+    //private String chromeDriverPath = "/gary/java utilities/BrowserDrivers/chromedriver.exe";
+    //private String fireFoxDriverPath = "/gary/java utilities/BrowserDrivers/geckodriver.exe";
     private String phantomJsDriverPath = "/gary/java utilities/BrowserDrivers/phantomjs.exe";
-    private String internetExplorerDriverPath = "/gary/java utilities/BrowserDrivers/IEDriverServer.exe";
-    private String edgeDriverPath = "/gary/java utilities/BrowserDrivers/msedgedriver.exe";
+   // private String internetExplorerDriverPath = "/gary/java utilities/BrowserDrivers/IEDriverServer.exe";
+    //private String edgeDriverPath = "/gary/java utilities/BrowserDrivers/msedgedriver.exe";
     //endregion
 
     //local global variables for values that need to live outside of a single method
@@ -255,10 +256,15 @@ public class TestCentral {
      ***********************************************************/
     @AfterAll
     private void TearDown() throws Exception {
-        driver.close();
-        driver.quit();
+        try {
+            driver.close();
+            driver.quit();
+        } catch(Exception e) {
+            //the driver was never instantiated so do nothing here
+        }
         PerformCleanup();
     }
+
 
 
     /**************************************************************************
@@ -312,7 +318,7 @@ public class TestCentral {
                 SetFireFoxDriver();
             } else if (get_selectedBrowserType() == BrowserTypes.Internet_Explorer) {
                 SetInternetExplorerDriver();
-            }else if (get_selectedBrowserType() == BrowserTypes.Edge) {
+            } else if (get_selectedBrowserType() == BrowserTypes.Edge) {
                 SetEdgeDriver();
             }
             testHelper.CreateSectionHeader("[ Ending Configuration ]", AppConstants.FRAMED + AppConstants.ANSI_GREEN_BACKGROUND_BRIGHT + AppConstants.ANSI_BOLD, AppConstants.ANSI_BLUE, false, true, false);
@@ -335,11 +341,11 @@ public class TestCentral {
                 set_selectedBrowserType(BrowserTypes.Chrome);
             } else if (tmpBrowserType.contains("firefox")) {
                 set_selectedBrowserType(BrowserTypes.Firefox);
-            } /* else if (tmpBrowserTypes.indexOf("internetexplorer") >= 0 || tmpBrowserType.indexOf("internet explorer") >= 0) {
-                set_selectedBrowserType(BrowserType.Internet_Explorer);
-            } else if (tmpBrowserTypes.indexOf("edge") >= 0) {
-                set_selectedBrowserType(BrowserType.Edge);
-            } */ else {
+            }  else if (tmpBrowserType.indexOf("internetexplorer") >= 0 || tmpBrowserType.indexOf("internet explorer") >= 0) {
+                set_selectedBrowserType(BrowserTypes.Internet_Explorer);
+            } else if (tmpBrowserType.indexOf("edge") >= 0) {
+                set_selectedBrowserType(BrowserTypes.Edge);
+            } else {
                 set_selectedBrowserType(BrowserTypes.PhantomJS);
             }
             testFiles = configSettings.get_testFiles();
@@ -4222,6 +4228,18 @@ public class TestCentral {
     private void SetPhantomJsDriver() {
         testHelper.UpdateTestResults( AppConstants.indent5 + "[" + AppConstants.ANSI_GREEN + "Setting " + AppConstants.ANSI_RESET + "PhantomJSDriver]" + AppConstants.ANSI_RESET , true);
         File src = new File(phantomJsDriverPath);
+        System.setProperty("phantomjs.binary.path", src.getAbsolutePath());
+        WebDriverManager.phantomjs().setup();
+
+        driver = new PhantomJSDriver();
+        driver.manage().window().maximize(); //added 8-14-2019
+        testHelper.set_is_Maximized(true);
+    }
+
+    private void SetPhantomJsDriver_old() {
+        /*
+        testHelper.UpdateTestResults( AppConstants.indent5 + "[" + AppConstants.ANSI_GREEN + "Setting " + AppConstants.ANSI_RESET + "PhantomJSDriver]" + AppConstants.ANSI_RESET , true);
+        File src = new File(phantomJsDriverPath);
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, src.getAbsolutePath());
         //IMPORTANT: for phantomJS you may need to add a user agent for automation testing as the default user agent is old
@@ -4230,16 +4248,20 @@ public class TestCentral {
         System.setProperty("phantomjs.binary.path", src.getAbsolutePath());
         this.driver = new PhantomJSDriver(capabilities);
         driver.manage().window().maximize(); //added 8-14-2019
-        testHelper.set_is_Maximized(true);
+        testHelper.set_is_Maximized(true); */
     }
 
     /****************************************************************************
      *  DESCRIPTION:
      *  Sets the WebDriver to the Chrome Driver
+     *  This method has been updated to use the WebDriverManager so there is
+     *  no longer a need to download the ChromeDriver as the WebDriverManager
+     *  will automatically do this.
      **************************************************************************** */
     private void SetChromeDriver() {
         testHelper.UpdateTestResults( AppConstants.indent5 + "[" + AppConstants.ANSI_GREEN + "Setting " + AppConstants.ANSI_RESET + "ChromeDriver]" + AppConstants.ANSI_RESET , true);
-        System.setProperty("webdriver.chrome.driver", chromeDriverPath);
+        //System.setProperty("webdriver.chrome.driver", chromeDriverPath);
+        WebDriverManager.chromedriver().setup();
 
         if (runHeadless) {
             ChromeOptions options = new ChromeOptions();
@@ -4261,20 +4283,16 @@ public class TestCentral {
     /****************************************************************************
      *  DESCRIPTION:
      *  Sets the WebDriver to the FireFox Driver
+     *  This method has been updated to use the WebDriverManager so there is
+     *  no longer a need to download the gecko/FireFoxDriver as the WebDriverManager
+     *  will automatically do this.
      **************************************************************************** */
     private void SetFireFoxDriver() {
-        testHelper.UpdateTestResults( AppConstants.indent5 + "[" + AppConstants.ANSI_GREEN + "Setting " + AppConstants.ANSI_RESET + "FireFoxDriver]" + AppConstants.ANSI_RESET , true);
-        File gecko = new File(fireFoxDriverPath);
-        System.setProperty("webdriver.gecko.driver", gecko.getAbsolutePath());
-        FirefoxOptions options = new FirefoxOptions();
-        //options.setCapability("marionette", false);
-        String loggingLevel = "fatal";   //"trace"
-        options.setCapability("marionette.logging", "trace");
-
+        WebDriverManager.firefoxdriver().setup();
         if (runHeadless) {
             FirefoxBinary firefoxBinary = new FirefoxBinary();
             firefoxBinary.addCommandLineOptions("-headless");
-            options.setBinary(firefoxBinary);
+            FirefoxOptions options = new FirefoxOptions();
             driver = new FirefoxDriver(options);
             testHelper.set_is_Maximized(false);
         } else {
@@ -4284,6 +4302,8 @@ public class TestCentral {
         }
     }
 
+
+
     /****************************************************************************
      *  DESCRIPTION:
      *  Sets the WebDriver to the Internet Explorer Driver
@@ -4291,21 +4311,20 @@ public class TestCentral {
      *  slowly when sending text.
      **************************************************************************** */
     private void SetInternetExplorerDriver() {
-        testHelper.UpdateTestResults("The Internet Explorer Browser was fully implemented but ran too slowly to be useful.  Please select another browser.", true);
-        //internetExplorerDriverPath
-        /*
-        testHelper.UpdateTestResults( AppConstants.indent5 + "[" + AppConstants.ANSI_GREEN + "Setting " + AppConstants.ANSI_RESET + "InternetExplorerDriver]" + AppConstants.ANSI_RESET , testResults);
-        File internetExplorer = new File(internetExplorerDriverPath);
-        testHelper.UpdateTestResults("internetExplorer.getAbsolutePath() = " + internetExplorer.getAbsolutePath());
-
-        System.setProperty("webdriver.ie.driver", internetExplorer.getAbsolutePath());
-        File tmp = new File("C:\\Temp\\");
-
-        DesiredCapabilities capab = DesiredCapabilities.internetExplorer();
-        capab.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
-        driver = new InternetExplorerDriver(capab);
-        */
+        WebDriverManager.iedriver().setup();
+        if (runHeadless) {
+            testHelper.UpdateTestResults("The Internet Explorer Browser does not support headless execution.  Running with Graphical User Interface.", true);
+        }
+//        if (runHeadless) {
+//            DesiredCapabilities capab = DesiredCapabilities.internetExplorer();
+//            capab.setCapability("headless", true);
+//
+//        }
+        driver = new InternetExplorerDriver();
+        driver.manage().window().maximize();
     }
+
+
 
     /****************************************************************************
      *  DESCRIPTION:
@@ -4314,20 +4333,18 @@ public class TestCentral {
      *                    which is not available for Windows 7 yet)
      *  Think this reference is wrong but saving just in case.
      *  (https://stackoverflow.com/questions/51621782/osprocess-checkforerror-createprocess-error-193-1-is-not-a-valid-win32-appl)
+     *  -------------------------------------------------------------------------
+     *  UPDATE 3/27/2020: Sets the WebDriver to the Edge Driver
+     *  This method has been updated to use the WebDriverManager so there is
+     *  no longer a need to download the ChromeDriver as the WebDriverManager
+     *  will automatically do this.
      **************************************************************************** */
     private void SetEdgeDriver() {
-        testHelper.UpdateTestResults("The Edge Browser Driver was not available at the time this application was created.  Please select another browser.", true);
-        /*
-        testHelper.UpdateTestResults( AppConstants.indent5 + "[" + AppConstants.ANSI_GREEN + "Setting " + AppConstants.ANSI_RESET + "EdgeDriver]" + AppConstants.ANSI_RESET , testResults);
-        File edge = new File(edgeDriverPath);
-        testHelper.UpdateTestResults("edge.getAbsolutePath() = " + edge.getAbsolutePath());
-
-        System.setProperty("webdriver.edge.driver", edge.getAbsolutePath());
-//        File tmp = new File("C:\\Temp\\");
-//        EdgeOptions options = new EdgeOptions();
-//        options.setCapability();
+        WebDriverManager.edgedriver().setup();
         driver = new EdgeDriver();
-        */
+        if (runHeadless) {
+            testHelper.UpdateTestResults("The Edge Browser does not support headless execution.  Running with Graphical User Interface.", true);
+        }
     }
     //endregion
 
@@ -5131,5 +5148,62 @@ public class TestCentral {
     }
     //endregion
 
+
+    //region {Updated and Replaced Methods}
+    /*private void SetFireFoxDriver_old() {
+        testHelper.UpdateTestResults( AppConstants.indent5 + "[" + AppConstants.ANSI_GREEN + "Setting " + AppConstants.ANSI_RESET + "FireFoxDriver]" + AppConstants.ANSI_RESET , true);
+        File gecko = new File(fireFoxDriverPath);
+        System.setProperty("webdriver.gecko.driver", gecko.getAbsolutePath());
+        FirefoxOptions options = new FirefoxOptions();
+        //options.setCapability("marionette", false);
+        String loggingLevel = "fatal";   //"trace"
+        options.setCapability("marionette.logging", "trace");
+        options.setBinary(gecko.getAbsolutePath());
+
+        if (runHeadless) {
+            FirefoxBinary firefoxBinary = new FirefoxBinary();
+            firefoxBinary.addCommandLineOptions("-headless");
+            options.setBinary(firefoxBinary);
+            driver = new FirefoxDriver(options);
+            testHelper.set_is_Maximized(false);
+        } else {
+            driver = new FirefoxDriver();
+            driver.manage().window().maximize(); //added 8-14-2019
+            testHelper.set_is_Maximized(true);
+        }
+    }
+
+    private void SetEdgeDriver_old() {
+        testHelper.UpdateTestResults("The Edge Browser Driver was not available at the time this application was created.  Please select another browser.", true);
+
+        testHelper.UpdateTestResults( AppConstants.indent5 + "[" + AppConstants.ANSI_GREEN + "Setting " + AppConstants.ANSI_RESET + "EdgeDriver]" + AppConstants.ANSI_RESET , true);
+        File edge = new File(edgeDriverPath);
+        testHelper.UpdateTestResults("edge.getAbsolutePath() = " + edge.getAbsolutePath(), true);
+
+        System.setProperty("webdriver.edge.driver", edge.getAbsolutePath());
+        //System.setProperty("webdriver.chrome.driver", edge.getAbsolutePath());
+//        File tmp = new File("C:\\Temp\\");
+          //EdgeOptions options = new EdgeOptions();
+          //options.
+//        options.setCapability();
+        driver = new EdgeDriver();
+    }
+    private void SetInternetExplorerDriver_old() {
+            testHelper.UpdateTestResults("The Internet Explorer Browser was fully implemented but ran too slowly to be useful.  Please select another browser.", true);
+            //internetExplorerDriverPath
+
+            testHelper.UpdateTestResults( AppConstants.indent5 + "[" + AppConstants.ANSI_GREEN + "Setting " + AppConstants.ANSI_RESET + "InternetExplorerDriver]" + AppConstants.ANSI_RESET , true);
+            File internetExplorer = new File(internetExplorerDriverPath);
+            testHelper.UpdateTestResults("internetExplorer.getAbsolutePath() = " + internetExplorer.getAbsolutePath(), true);
+
+            System.setProperty("webdriver.ie.driver", internetExplorer.getAbsolutePath());
+            File tmp = new File("C:\\Temp\\");
+
+            DesiredCapabilities capab = DesiredCapabilities.internetExplorer();
+            capab.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
+            driver = new InternetExplorerDriver(capab);
+
+    }
+     */
 
 }

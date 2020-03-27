@@ -128,6 +128,7 @@ individually or within a specified folder which can be filtered to select just t
 NOTE: Test Steps are numbered by File underscore then Test Step.
 	The F describes the Test File being run while the S describes the Test Step being run.
 	Test Files and Test Steps begin at 0, so F0_S0 is the first Test File and the first Test Step in that file.
+
 NOTE: The != operator is currently only supported for the following commands: Assert, Sql Server Query, Check Count.
 	There was no viable use case for implementing this functionality for other commands 
 	and the reason it is not supported in the JSON query is explained in the JSON Query section.
@@ -152,6 +153,7 @@ This help file is broken up into 4 separate sections:
 		Various examples and alternate steps are outlined describing the test settings necessary to perform each test function.
 
 	4.	INCLUDED TEST FILES - this section describes the test files that have been included with this application in the Tests folder.
+
 	5.	TROUBLESHOOTING - describes common issues and how to address them to get the desired results.
 
 Future functionality to be added to this application:
