@@ -787,7 +787,7 @@ public class TestHelper{
 
         int startPos = testMessage.indexOf(status) + status.length();
         int endPos = testMessage.indexOf(" for step ");
-        DebugDisplay("testMessage =" + testMessage);
+        //DebugDisplay("testMessage =" + testMessage);
         String message = testMessage.substring(startPos, endPos).trim();
         message = message.substring(0,1).toUpperCase() + message.substring(1);
         //region {Debugging - CSV Column data}
@@ -957,15 +957,15 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), AppConstants.indent5 + PrePostPad( "[ HELP FILE OVERVIEW  ]", "═", 9, 100));
-            WriteToFile(get_helpFileName(), "\t\tAPPLICATION OVERVIEW");
+            WriteToFile(get_helpFileName(), "\t\tHELP FILE OVERVIEW");
             WriteToFile(get_helpFileName(), "\t\tHELP FILE SECTIONS");
             WriteToFile(get_helpFileName(), "\t\tFUTURE FUNCTIONALITY\r\n");
 
             WriteToFile(get_helpFileName(), AppConstants.indent5 + PrePostPad( "[ Configuration ]", "═", 9, 100));
             WriteToFile(get_helpFileName(), "\t\tCONFIGURATION OVERVIEW");
             WriteToFile(get_helpFileName(), "\t\tCONFIGURATION FILE FIELDS AND DESCRIPTIONS");
-            WriteToFile(get_helpFileName(), "\t\tCONFIGURATION FILE EXAMPLES");
-            WriteToFile(get_helpFileName(), "\t\tEXAMPLES EXPLAINED \r\n");
+            WriteToFile(get_helpFileName(), "\t\tCONFIGURATION FILE EXAMPLES EXPLAINED");
+            //WriteToFile(get_helpFileName(), "\t\tEXAMPLES EXPLAINED \r\n");
 
             WriteToFile(get_helpFileName(), AppConstants.indent5 + PrePostPad( "[ Test Steps ]", "═", 9, 100));
             WriteToFile(get_helpFileName(), "\t\tTEST FILE OVERVIEW");
@@ -1017,7 +1017,10 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\t\tCOMPARE IMAGES AND CREATE DIFFERENCE IMAGE ");
             WriteToFile(get_helpFileName(), "\t\tPARSE AND CALCULATE DOUBLE");
             WriteToFile(get_helpFileName(), "\t\tPARSE AND CALCULATE LONG \r\n");
+            WriteToFile(get_helpFileName(), AppConstants.indent5 + PrePostPad("[ INCLUDED TEST FILES ]", "═", 9, 100));
+            WriteToFile(get_helpFileName(), "\t\tTEST FILES DESCRIBED \r\n");
             WriteToFile(get_helpFileName(), AppConstants.indent5 + PrePostPad("[ Troubleshooting ]", "═", 9, 100));
+
             WriteToFile(get_helpFileName(), "\t\tDRIVER ISSUES");
             WriteToFile(get_helpFileName(), "\t\tURL VALIDATION FAILURE");
             WriteToFile(get_helpFileName(), "\t\tMISSING CONFIGURATION FILE");
@@ -1088,6 +1091,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\twas not configured at all.\r\n\tLOOK AT ALL ITEMS IN RED AND MAKE UPDATES ACCORDINGLY!!!");
             WriteToFile(get_helpFileName(), PrePostPad("", "*", 30, 100) + "\r\n");
 
+            WriteToFile(get_helpFileName(), PrePostPad("[ HELP FILE SECTIONS ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "This help file is broken up into 4 separate sections:\r\n");
             WriteToFile(get_helpFileName(), "\t1.\tHELP FILE OVERVIEW - This is that section and it is intended to provide an overview of the application and this help file.\r\n");
             WriteToFile(get_helpFileName(), "\t2.\tCONFIGURATION FILE FORMAT  - Describes the format of the configuration file and details the use and settings of each field.");
@@ -1096,6 +1100,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\t\tVarious examples and alternate steps are outlined describing the test settings necessary to perform each test function.\r\n");
             WriteToFile(get_helpFileName(), "\t4.\tINCLUDED TEST FILES - this section describes the test files that have been included with this application in the Tests folder.\r\n");
             WriteToFile(get_helpFileName(), "\t5.\tTROUBLESHOOTING - describes common issues and how to address them to get the desired results.\r\n");
+            WriteToFile(get_helpFileName(), PrePostPad("[ FUTURE FUNCTIONALITY ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "Future functionality to be added to this application:");
             WriteToFile(get_helpFileName(), "\tGreater Than and Less Than Operator.");
             WriteToFile(get_helpFileName(), "\t\t-\tThis could be a good addition when used with Conditional Blocks.");
@@ -1131,6 +1136,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "Refer to an XML guide for proper commenting.  Google it!!!!");
             WriteToFile(get_helpFileName(), "Both configuration file examples can be used as starting points, just substitute values accordingly.");
             WriteToFile(get_helpFileName(), "The terms element and node may be used interchangeably below to refer to the same thing.");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CONFIGURATION FILE FIELDS AND DESCRIPTIONS ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The following is an example of a configuration file which will be explained below.");
             WriteToFile(get_helpFileName(), "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\r\n" +
                     "<automatedTestConfiguration>\r\n" +
@@ -1238,7 +1244,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\tTo avoid any possible issues related to this, it is suggested that you follow the best practice and number appropriately, as described.");
             WriteToFile(get_helpFileName(), "\tThe commented test file lines were included to show a means in which different files can be setup but can be commented so that only ");
             WriteToFile(get_helpFileName(), "\tthe intended test files run.\r\n");
-            WriteToFile(get_helpFileName(), "---------------------[ Start of Grouped Configuration Settings ]-------------------");
+            WriteToFile(get_helpFileName(), "**********************[ Start of Grouped Configuration Settings ]************************");
             WriteToFile(get_helpFileName(), "The following three settings need to be talked about together since they work together to provide a particularly useful piece of functionality.");
             WriteToFile(get_helpFileName(), "Together, the following settings allow for filtering a particular folder for the files used for testing.");
             WriteToFile(get_helpFileName(), "If a common naming convention is used for test files that include the project name, these settings allow for running ");
@@ -1258,8 +1264,10 @@ public class TestHelper{
                     "\t-\tspecific value.");
             WriteToFile(get_helpFileName(), "\tFinally, using the <folderFileFilter></folderFileFilter> element, a phrase like the project name can be used to select only files in the \r\n" +
                     "\t-\tselected folder that start with the project name.");
-            WriteToFile(get_helpFileName(), "---------------------[ End of Grouped Configuration Settings ]-------------------");
+            //WriteToFile(get_helpFileName(), "**********************[ End of Grouped Configuration Settings ]**********************");
+            WriteToFile(get_helpFileName(), "****************************************************************************************\r\n\r\n");
 
+            WriteToFile(get_helpFileName(), PrePostPad("[ CONFIGURATION FILE EXAMPLES EXPLAINED ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "In the example configuration file provided above the explanations, two specific test files are being tested, the screen shot folder is specified, ");
             WriteToFile(get_helpFileName(), "a maximum of 5 screenshots will be taken, only the test Chrome browser will be used and it will be visible, the files will be run in the");
@@ -1364,14 +1372,14 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
             WriteToFile(get_helpFileName(), "<testSteps>");
             WriteToFile(get_helpFileName(), "\t<step>");
-            WriteToFile(get_helpFileName(), "\t<command>navigate</command>");
-            WriteToFile(get_helpFileName(), "\t<actionType>write</actionType>");
-            WriteToFile(get_helpFileName(), "\t<expectedValue>https://www.marvel.com/</expectedValue>");
-            WriteToFile(get_helpFileName(), "\t<crucial>TRUE</crucial>");
-            WriteToFile(get_helpFileName(), "\t<arguments>");
-            WriteToFile(get_helpFileName(), "\t\t<arg1>https://www.marvel.com</arg1>");
-            WriteToFile(get_helpFileName(), "\t\t<arg2>1000</arg2>");
-            WriteToFile(get_helpFileName(), "\t</arguments>");
+            WriteToFile(get_helpFileName(), "\t\t<command>navigate</command>");
+            WriteToFile(get_helpFileName(), "\t\t<actionType>write</actionType>");
+            WriteToFile(get_helpFileName(), "\t\t<expectedValue>https://www.marvel.com/</expectedValue>");
+            WriteToFile(get_helpFileName(), "\t\t<crucial>TRUE</crucial>");
+            WriteToFile(get_helpFileName(), "\t\t<arguments>");
+            WriteToFile(get_helpFileName(), "\t\t\t<arg1>https://www.marvel.com</arg1>");
+            WriteToFile(get_helpFileName(), "\t\t\t<arg2>1000</arg2>");
+            WriteToFile(get_helpFileName(), "\t\t</arguments>");
             WriteToFile(get_helpFileName(), "\t</step>");
             WriteToFile(get_helpFileName(), "</testSteps>\r\n");
             WriteToFile(get_helpFileName(), "");
@@ -1425,14 +1433,16 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "PLEASE NOTE: Asserting that the URL is correct does not mean that a server transfer didn't redirect the URL to a different page but");
             WriteToFile(get_helpFileName(), "leave the URL untouched. ");
             WriteToFile(get_helpFileName(), "<step>\r\n\t<command>navigate</command>\r\n\t<actionType>write</actionType>\r\n" +
-                                                        "\t<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>\r\n" +
-                                                        "\t<crucial>TRUE</crucial>\r\n\t<arguments>\r\n" +
-                                                        "\t\t<arg1>https://formy-project.herokuapp.com/form</arg1>\r\n" +
-                                                        "\t\t<arg2>4000</arg2>\r\n\t</arguments>\r\n" +
-                                                        "\t\t<arg3></arg3>\r\n" +
-                                                        "\t\t<!-- fourth argument, optional - Back End (BE) and Front End (FE) Page Max Load time in seconds --> \r\n" +
-                                                        "\t\t<arg4>FE=3.75 BE=.5</arg4>\r\n" +
-                                                        "</step>");
+                    "\t<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>https://formy-project.herokuapp.com/form</arg1>\r\n" +
+                    "\t\t<arg2>4000</arg2>\r\n" +
+                    "\t\t<arg3></arg3>\r\n" +
+                    "\t\t<!-- fourth argument, optional - Back End (BE) and Front End (FE) Page Max Load time in seconds --> \r\n" +
+                    "\t\t<arg4>FE=3.75 BE=.5</arg4>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "To Navigate, assert that the URL is as expected, add a time delay and set the browser dimensions to 800 width by 800 height:");
             WriteToFile(get_helpFileName(), "<step>\r\n\t<command>navigate</command>\r\n\t<actionType>write</actionType>\r\n" +
@@ -1620,7 +1630,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             //SWITCH TO IFRAME"
-            WriteToFile(get_helpFileName(), PrePostPad("[ SWITCHING TO AN IFRAME ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), PrePostPad("[ SWITCH TO IFRAME ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "IMPORTANT: EACH TIME A SWITCH TO IFRAME COMMAND IS ISSUED, THE CONTEXT IS REVERTED TO THE MAIN WINDOW");
             WriteToFile(get_helpFileName(), "ONCE THAT COMMAND COMPLETES EXECUTION, SO IF SUBSEQUENT TESTS NEED TO ACCESS THE IFRAME, THEY MUST BE");
             WriteToFile(get_helpFileName(), "ENCAPSULATED WITHIN SWITCH TO IFRAME COMMANDS.");
@@ -3091,6 +3101,7 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "While some tests cover one specific command, many include a variety of different commands but these test files are just to ");
             WriteToFile(get_helpFileName(), "provide you with a starting point and certainly don't define the scope of the application's functionality.");
             WriteToFile(get_helpFileName(), "All Test files below, except the SQL Server tests begin by navigating to a page so that step will be omitted to avoid unnecessary typing \r\nand redundancy.\r\n");
+            WriteToFile(get_helpFileName(), PrePostPad("[ TEST FILES DESCRIBED ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "CheckAllPageImageAltAttributes-Test.xml - Checks All Image Alt tag attributes on the page to ensure that they are not empty and includes a separate ");
             WriteToFile(get_helpFileName(), "\t- navigation step.\r\n");
 

@@ -4,16 +4,14 @@
 ╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 
      ═════════[ HELP FILE OVERVIEW  ]════════════════════════════════════════════════════════════════════
-		APPLICATION OVERVIEW
+		HELP FILE OVERVIEW
 		HELP FILE SECTIONS
 		FUTURE FUNCTIONALITY
 
      ═════════[ Configuration ]══════════════════════════════════════════════════════════════════════════
 		CONFIGURATION OVERVIEW
 		CONFIGURATION FILE FIELDS AND DESCRIPTIONS
-		CONFIGURATION FILE EXAMPLES
-		EXAMPLES EXPLAINED 
-
+		CONFIGURATION FILE EXAMPLES EXPLAINED
      ═════════[ Test Steps ]═════════════════════════════════════════════════════════════════════════════
 		TEST FILE OVERVIEW
 		TEST FILE FIELDS AND DESCRIPTIONS
@@ -64,6 +62,9 @@
 		COMPARE IMAGES AND CREATE DIFFERENCE IMAGE 
 		PARSE AND CALCULATE DOUBLE
 		PARSE AND CALCULATE LONG 
+
+     ═════════[ INCLUDED TEST FILES ]════════════════════════════════════════════════════════════════════
+		TEST FILES DESCRIBED 
 
      ═════════[ Troubleshooting ]════════════════════════════════════════════════════════════════════════
 		DRIVER ISSUES
@@ -142,6 +143,7 @@ NOTE: For most verifiable operations the success or failure output will be left 
 	LOOK AT ALL ITEMS IN RED AND MAKE UPDATES ACCORDINGLY!!!
 ****************************************************************************************************
 
+═════════[ HELP FILE SECTIONS ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 This help file is broken up into 4 separate sections:
 
 	1.	HELP FILE OVERVIEW - This is that section and it is intended to provide an overview of the application and this help file.
@@ -156,6 +158,7 @@ This help file is broken up into 4 separate sections:
 
 	5.	TROUBLESHOOTING - describes common issues and how to address them to get the desired results.
 
+═════════[ FUTURE FUNCTIONALITY ]══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 Future functionality to be added to this application:
 	Greater Than and Less Than Operator.
 		-	This could be a good addition when used with Conditional Blocks.
@@ -194,6 +197,7 @@ to best understand how to use this Configurable Automated Testing Application.
 Refer to an XML guide for proper commenting.  Google it!!!!
 Both configuration file examples can be used as starting points, just substitute values accordingly.
 The terms element and node may be used interchangeably below to refer to the same thing.
+═════════[ CONFIGURATION FILE FIELDS AND DESCRIPTIONS ]════════════════════════════════════════════════════════════════════════════════════════════════
 The following is an example of a configuration file which will be explained below.
 <?xml version="1.0" encoding="UTF-8" ?>
 <automatedTestConfiguration>
@@ -315,7 +319,7 @@ The <testFileName1></testFileName1> element specifies the test file to use for t
 	The commented test file lines were included to show a means in which different files can be setup but can be commented so that only 
 	the intended test files run.
 
----------------------[ Start of Grouped Configuration Settings ]-------------------
+**********************[ Start of Grouped Configuration Settings ]************************
 The following three settings need to be talked about together since they work together to provide a particularly useful piece of functionality.
 Together, the following settings allow for filtering a particular folder for the files used for testing.
 If a common naming convention is used for test files that include the project name, these settings allow for running 
@@ -339,7 +343,10 @@ The <folderFileFilter></folderFileFilter> element specifies the phrase to use to
 	-	specific value.
 	Finally, using the <folderFileFilter></folderFileFilter> element, a phrase like the project name can be used to select only files in the 
 	-	selected folder that start with the project name.
----------------------[ End of Grouped Configuration Settings ]-------------------
+****************************************************************************************
+
+
+═════════[ CONFIGURATION FILE EXAMPLES EXPLAINED ]═════════════════════════════════════════════════════════════════════════════════════════════════════
 
 In the example configuration file provided above the explanations, two specific test files are being tested, the screen shot folder is specified, 
 a maximum of 5 screenshots will be taken, only the test Chrome browser will be used and it will be visible, the files will be run in the
@@ -454,14 +461,14 @@ Usually, the test file will consist of multiple steps like (navigation, check el
 <?xml version="1.0" encoding="UTF-8" ?>
 <testSteps>
 	<step>
-	<command>navigate</command>
-	<actionType>write</actionType>
-	<expectedValue>https://www.marvel.com/</expectedValue>
-	<crucial>TRUE</crucial>
-	<arguments>
-		<arg1>https://www.marvel.com</arg1>
-		<arg2>1000</arg2>
-	</arguments>
+		<command>navigate</command>
+		<actionType>write</actionType>
+		<expectedValue>https://www.marvel.com/</expectedValue>
+		<crucial>TRUE</crucial>
+		<arguments>
+			<arg1>https://www.marvel.com</arg1>
+			<arg2>1000</arg2>
+		</arguments>
 	</step>
 </testSteps>
 
@@ -523,10 +530,10 @@ leave the URL untouched.
 	<arguments>
 		<arg1>https://formy-project.herokuapp.com/form</arg1>
 		<arg2>4000</arg2>
-	</arguments>
 		<arg3></arg3>
 		<!-- fourth argument, optional - Back End (BE) and Front End (FE) Page Max Load time in seconds --> 
 		<arg4>FE=3.75 BE=.5</arg4>
+	</arguments>
 </step>
 
 To Navigate, assert that the URL is as expected, add a time delay and set the browser dimensions to 800 width by 800 height:
@@ -740,7 +747,7 @@ To make it non-crucial change the crucial element to false. <crucial>false</cruc
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
 
-═════════[ SWITCHING TO AN IFRAME ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+═════════[ SWITCH TO IFRAME ]══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 IMPORTANT: EACH TIME A SWITCH TO IFRAME COMMAND IS ISSUED, THE CONTEXT IS REVERTED TO THE MAIN WINDOW
 ONCE THAT COMMAND COMPLETES EXECUTION, SO IF SUBSEQUENT TESTS NEED TO ACCESS THE IFRAME, THEY MUST BE
 ENCAPSULATED WITHIN SWITCH TO IFRAME COMMANDS.
@@ -2227,6 +2234,7 @@ provide you with a starting point and certainly don't define the scope of the ap
 All Test files below, except the SQL Server tests begin by navigating to a page so that step will be omitted to avoid unnecessary typing 
 and redundancy.
 
+═════════[ TEST FILES DESCRIBED ]══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 CheckAllPageImageAltAttributes-Test.xml - Checks All Image Alt tag attributes on the page to ensure that they are not empty and includes a separate 
 	- navigation step.
 

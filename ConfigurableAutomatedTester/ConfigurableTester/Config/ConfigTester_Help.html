@@ -38,12 +38,16 @@
 			}
 			td {
 				background-color:#f5f5f5;
+               padding:5 10
 			}
            td.head {
 				background-color:#f5f5f5;
 			    font-weight:bold;
 			    width:500px;
 			}
+			pre {
+               padding-left:30px;
+           }
 			.heading {
 				font: 24pt arial, sans-serif;
 				background-color:#0060F0;
@@ -246,9 +250,10 @@ This application can run any number of Test Files, which need to be configured i
 individually or within a specified folder which can be filtered to select just targeted files.
 		</p>
 </br>
+<hr>
+<span class="topOfPage"><strong> IMPORTANT NOTES </strong></span>
 		<p>
-**********[ IMPORTANT NOTES ]***********************************************************************
-</br>
+
 NOTE: Test Steps are numbered by File underscore then Test Step.
 	The F describes the Test File being run while the S describes the Test Step being run.
 	Test Files and Test Steps begin at 0, so F0_S0 is the first Test File and the first Test Step in that file.
@@ -267,8 +272,8 @@ NOTE: For most verifiable operations the success or failure output will be left 
 	was not configured at all.
 	LOOK AT ALL ITEMS IN RED AND MAKE UPDATES ACCORDINGLY!!!
 </br>
-****************************************************************************************************
-</br>
+<hr>
+
 		</p>
 <a name="helpfilesections" class="sectionTitle">HELP FILE SECTIONS</a>
 		<p>
@@ -442,17 +447,14 @@ The &lt;createCsvStatusFiles&gt;&lt;/createCsvStatusFiles&gt; element specifies 
 			-	but have a datetime stamp like the log file and with a .csv extension.
 		-	If any value other than those specified above, no CSV files will be produced.
 	The CSV file consists of the following 5 columns:
+		</p>
+<table><tr>
+<td> File And Step Number </td><td> Test Performed </td><td> Execution Status </td><td> Variable Output </td><td> Test File Name    </td>
+</tr><tr>
+<td> F0_S0                </td><td> Navigation ... </td><td> Successful       </td><td> (2.0)           </td><td> C:\....\...       </td>
+</tr></table>
 </br>
-		--------------------------------------------------------------------------------------------------
-</br>
-		| File And Step Number | Test Performed | Execution Status | Variable Output | Test File Name    |
-</br>
-		--------------------------------------------------------------------------------------------------
-</br>
-		| F0_S0                | Navigation ... | Successful       | (2.0)           | C:\....\...       |
-</br>
-		--------------------------------------------------------------------------------------------------
-</br>
+		<p>
 		File and Step Number - This column displays the file number and step number, each starting at 0 and in the format F0_S0 where 
 		-	F0 corresponds to File 0, which is the first file, and S0 corresponds to Step 0, which is the first step.
 		-	Since all steps taken are not checks, there may be line number gaps.
@@ -482,9 +484,10 @@ The &lt;testFileName1&gt;&lt;/testFileName1&gt; element specifies the test file 
 	the intended test files run.
 		</p>
 </br>
+<hr>
+<span class="topOfPage"><strong> Start of Grouped Configuration Settings </strong></span>
 		<p>
----------------------[ Start of Grouped Configuration Settings ]-------------------
-</br>
+
 The following three settings need to be talked about together since they work together to provide a particularly useful piece of functionality.
 Together, the following settings allow for filtering a particular folder for the files used for testing.
 If a common naming convention is used for test files that include the project name, these settings allow for running 
@@ -513,8 +516,8 @@ The &lt;folderFileFilter&gt;&lt;/folderFileFilter&gt; element specifies the phra
 	Finally, using the &lt;folderFileFilter&gt;&lt;/folderFileFilter&gt; element, a phrase like the project name can be used to select only files in the 
 	-	selected folder that start with the project name.
 </br>
----------------------[ End of Grouped Configuration Settings ]-------------------
-</br>
+<hr>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="configurationfileexamplesexplained" class="sectionTitle">CONFIGURATION FILE EXAMPLES EXPLAINED</a>

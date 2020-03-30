@@ -19,7 +19,7 @@
 		<!-- Group 1 - All elements of specified type tests -->
 		
 		
-		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckAllPageImageAltAttributes-Test.xml</testFileName1>
+		<!--<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckAllPageImageAltAttributes-Test.xml</testFileName1>-->
 		<!--<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckAllPageImageAltAttributesNoSeparateNavigationStep-Test.xml</testFileName1>
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckAllPageImageSrcWithNoSeparateNavigationStep-Test.xml</testFileName1>
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckAllPageImageSrcWithSeparateNavigationStep-Test.xml</testFileName1>
@@ -44,9 +44,9 @@
 		-->
 		
 		<!-- Group 4 - Image Comparison tests -->
-		
+		<!--
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CompareImages-Alternate-Test.xml</testFileName1>
-	
+		-->
 		<!--<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CompareImages-Test.xml</testFileName1>-->
 		
 		
@@ -67,9 +67,9 @@
 		
 		<!-- Group 7 - Fill out form and Find Phrase tests -->
 		<!--
-		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1>	
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1>	-->
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\FindPhrase-Test.xml</testFileName1>
-		-->
+		
 		
 		<!-- Group 8 - SQL Server Query and JSON Search content tests -->
 		<!-- 
