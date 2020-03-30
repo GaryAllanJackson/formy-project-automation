@@ -228,11 +228,11 @@ public class TestCentral {
                          /*
                     case 3:
                         SetInternetExplorerDriver();
-                        break;
+                        break;*/
                     case 4:
                         SetEdgeDriver();
                         break;
-                        */
+
                     default:
                         SetPhantomJsDriver();
                         break;
@@ -4228,7 +4228,7 @@ public class TestCentral {
     private void SetPhantomJsDriver() {
         testHelper.UpdateTestResults( AppConstants.indent5 + "[" + AppConstants.ANSI_GREEN + "Setting " + AppConstants.ANSI_RESET + "PhantomJSDriver]" + AppConstants.ANSI_RESET , true);
         File src = new File(phantomJsDriverPath);
-        System.setProperty("phantomjs.binary.path", src.getAbsolutePath());
+        //System.setProperty("phantomjs.binary.path", src.getAbsolutePath());
         WebDriverManager.phantomjs().setup();
 
         driver = new PhantomJSDriver();
@@ -4342,6 +4342,7 @@ public class TestCentral {
     private void SetEdgeDriver() {
         WebDriverManager.edgedriver().setup();
         driver = new EdgeDriver();
+        driver.manage().window().maximize();
         if (runHeadless) {
             testHelper.UpdateTestResults("The Edge Browser does not support headless execution.  Running with Graphical User Interface.", true);
         }

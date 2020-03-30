@@ -87,5 +87,10 @@
             <artifactId>im4java</artifactId>
             <version>1.4.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.codeborne</groupId>
+            <artifactId>phantomjsdriver</artifactId>
+            <version>1.4.1</version>
+        </dependency>
     </dependencies>
 </project>

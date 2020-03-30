@@ -75,14 +75,21 @@ CONFIGURING THE APPLICATION TO ALLOW IT TO BUILD:
 	1.  First, open your Chrome and FireFox help and find out the version of each that you have.  
 		This will determine which associated driver version you will need to download.
 	
-	2.	Next, download the same driver version as your current browser version.  
+	2.	Next, ensure that your browsers are all added to your path so that they can be executed from anywhere on your computer.
+		You may have to download the latest PhantomJS driver or execute a test using PhantomJS as the browser and then search for 
+		PhantomJS.exe and add that folder path to your path.   
+		All previous browser instantiation methods besides Chrome, remain in the code and are commented out.
+		These methods will remain until the new functionality is confirmed to be working on another installation.
+		------------------------------------[ OLD INSTRUCTIONS FOR PREVIOUS SELENIUM VERSION ]--------------------
+		OLD SELENIUM INSTRUCTIONS NO LONGER RELEVANT BUT REMAIN JUST IN CASE DRIVER ISSUES PLAGUE AN INSTALLATION.
+		Next, download the same driver version as your current browser version.  
 		Don't download a version that is earlier or later because the application will not work!!!
 		It must be the same version number!!!
 		For FireFox - download the gecko driver.
 		For Chrome - download the ChromeDriver.
 		Download the latest PhantomJS driver.
 		It is suggested that you place all of the executables in one location for easier mapping and updating.
-
+		-----------------------------------------------------------------------------------------------------------
 	3.  It may be a good idea at this time to also create folders for the Test Files, and for saving Screenshots and JSON files.
 		This application will not create paths so mapping to a path that doesn't exist will throw an exception.
 		Screenshots are mapped in the Configuration File and the folder MUST exist before running any test.
