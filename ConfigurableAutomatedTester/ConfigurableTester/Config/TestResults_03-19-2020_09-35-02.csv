@@ -1,4 +1,0 @@
-File And Step Number,Test Performed,Execution Status,Variable Output,Test File Name
-F0_S0,Navigation and URL Check.  Expected: (https://timesofindia.indiatimes.com/poll.cms) Actual: (https://timesofindia.indiatimes.com/poll.cms),Successful,,C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\ParseAndCalculate-Test.xml
-F0_S1,Parse and Calculate Double Expected: (5.0) Actual: (11.0),Failure,="(11.0)",C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\ParseAndCalculate-Test.xml
-F0_S3,Navigation and URL Check.  Expected: (https://timesofindia.indiatimes.com/poll.cms) Actual: (https://timesofindia.indiatimes.com/poll.cms),Successful,,C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\ParseAndCalculate-Test.xml
