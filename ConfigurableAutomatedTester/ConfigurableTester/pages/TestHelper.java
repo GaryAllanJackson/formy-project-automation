@@ -502,6 +502,7 @@ public class TestHelper{
         int defaultMilliSecondsForNavigation = 10000;
         UpdateTestResults(indent + "Waiting the default wait time of " + defaultMilliSecondsForNavigation + " milliseconds for navigation to complete!", false);
         driver.get(webAddress);
+
         CheckPageLoadTiming(driver, indent);
         Thread.sleep(defaultMilliSecondsForNavigation);
     }
@@ -548,7 +549,9 @@ public class TestHelper{
         if (milliseconds > 0) {
             UpdateTestResults(AppConstants.indent8 + "Waiting " + milliseconds  + " milliseconds, as directed, for navigation to complete!", false);
             driver.get(webAddress);
+            //driver.navigate().to(webAddress);
             CheckPageLoadTiming(driver, AppConstants.indent8);
+            //DebugDisplay("CheckPageLoadTiming Complete");
             Thread.sleep(milliseconds);
         } else {
             NavigateToPage(driver, webAddress);

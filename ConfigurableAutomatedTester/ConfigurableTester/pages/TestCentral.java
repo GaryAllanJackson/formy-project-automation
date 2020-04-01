@@ -20,6 +20,7 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.Color;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
@@ -144,8 +145,8 @@ public class TestCentral {
     //region { WebDriver Browser Driver Configured Locations }
     //private String chromeDriverPath = "/gary/java utilities/BrowserDrivers/chromedriver.exe";
     //private String fireFoxDriverPath = "/gary/java utilities/BrowserDrivers/geckodriver.exe";
-    private String phantomJsDriverPath = "/gary/java utilities/BrowserDrivers/phantomjs.exe";
-   // private String internetExplorerDriverPath = "/gary/java utilities/BrowserDrivers/IEDriverServer.exe";
+    //private String phantomJsDriverPath = "/gary/java utilities/BrowserDrivers/phantomjs.exe";
+    private String internetExplorerDriverPath = "/gary/java utilities/BrowserDrivers/IEDriverServer.exe";
     //private String edgeDriverPath = "/gary/java utilities/BrowserDrivers/msedgedriver.exe";
     //endregion
 
@@ -2152,17 +2153,21 @@ public class TestCentral {
             }
         } else {
             for (WebElement element : elements) {
-                if (element.getText().equals(ts.get_expectedValue().trim())) {
-                    wasFound = true;
-                    foundElements.add(GenerateXPath(element, ""));
+                try {
+                    if (element.getText().equals(ts.get_expectedValue().trim())) {
+                        wasFound = true;
+                        foundElements.add(GenerateXPath(element, ""));
+                    }
+                } catch (Exception e) {
+                    //do nothing likely stale element exception
                 }
             }
         }
 
         if (!wasFound) {
-            String message = "Failed to find (" + ts.get_expectedValue().trim() + ") searching all elements.";
+            String message = "Failed to find (" + ts.get_expectedValue().trim() + ") searching all elements for step " + fileStepIndex;
             if (!cssSelector.trim().isEmpty()) {
-                message = "Failed to find (" + ts.get_expectedValue().trim() + ") searching all " + cssSelector + " elements.";
+                message = "Failed to find (" + ts.get_expectedValue().trim() + ") searching all " + cssSelector + " elements for step " + fileStepIndex;
                 conditionalSuccessful = false;
             }
             testHelper.UpdateTestResults(AppConstants.ANSI_RED + message + AppConstants.ANSI_RESET, true);
@@ -4227,7 +4232,7 @@ public class TestCentral {
      **************************************************************************** */
     private void SetPhantomJsDriver() {
         testHelper.UpdateTestResults( AppConstants.indent5 + "[" + AppConstants.ANSI_GREEN + "Setting " + AppConstants.ANSI_RESET + "PhantomJSDriver]" + AppConstants.ANSI_RESET , true);
-        File src = new File(phantomJsDriverPath);
+        //File src = new File(phantomJsDriverPath);
         //System.setProperty("phantomjs.binary.path", src.getAbsolutePath());
         WebDriverManager.phantomjs().setup();
 
@@ -4236,20 +4241,7 @@ public class TestCentral {
         testHelper.set_is_Maximized(true);
     }
 
-    private void SetPhantomJsDriver_old() {
-        /*
-        testHelper.UpdateTestResults( AppConstants.indent5 + "[" + AppConstants.ANSI_GREEN + "Setting " + AppConstants.ANSI_RESET + "PhantomJSDriver]" + AppConstants.ANSI_RESET , true);
-        File src = new File(phantomJsDriverPath);
-        DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, src.getAbsolutePath());
-        //IMPORTANT: for phantomJS you may need to add a user agent for automation testing as the default user agent is old
-        // and may not be supported by the website.
-        capabilities.setCapability("phantomjs.page.settings.userAgent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36");
-        System.setProperty("phantomjs.binary.path", src.getAbsolutePath());
-        this.driver = new PhantomJSDriver(capabilities);
-        driver.manage().window().maximize(); //added 8-14-2019
-        testHelper.set_is_Maximized(true); */
-    }
+
 
     /****************************************************************************
      *  DESCRIPTION:
@@ -4310,7 +4302,7 @@ public class TestCentral {
      *  This has been commented out because Internet Explorer runs incredibly
      *  slowly when sending text.
      **************************************************************************** */
-    private void SetInternetExplorerDriver() {
+    private void SetInternetExplorerDriver_new() {
         WebDriverManager.iedriver().setup();
         if (runHeadless) {
             testHelper.UpdateTestResults("The Internet Explorer Browser does not support headless execution.  Running with Graphical User Interface.", true);
@@ -4324,6 +4316,24 @@ public class TestCentral {
         driver.manage().window().maximize();
     }
 
+
+    private void SetInternetExplorerDriver() {
+        testHelper.UpdateTestResults("The Internet Explorer Browser was fully implemented but ran too slowly to be useful.  Please select another browser.", true);
+        //internetExplorerDriverPath
+
+        testHelper.UpdateTestResults( AppConstants.indent5 + "[" + AppConstants.ANSI_GREEN + "Setting " + AppConstants.ANSI_RESET + "InternetExplorerDriver]" + AppConstants.ANSI_RESET , true);
+        File internetExplorer = new File(internetExplorerDriverPath);
+        testHelper.UpdateTestResults("internetExplorer.getAbsolutePath() = " + internetExplorer.getAbsolutePath(), true);
+
+        System.setProperty("java.net.preferIPv4Stack", "true");
+        System.setProperty("webdriver.ie.driver", internetExplorer.getAbsolutePath());
+        File tmp = new File("C:\\Temp\\");
+
+        DesiredCapabilities capab = DesiredCapabilities.internetExplorer();
+        capab.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
+        driver = new InternetExplorerDriver(capab);
+
+    }
 
 
     /****************************************************************************
@@ -5205,6 +5215,24 @@ public class TestCentral {
             driver = new InternetExplorerDriver(capab);
 
     }
+
+     private void SetPhantomJsDriver_old() {
+        /*
+        testHelper.UpdateTestResults( AppConstants.indent5 + "[" + AppConstants.ANSI_GREEN + "Setting " + AppConstants.ANSI_RESET + "PhantomJSDriver]" + AppConstants.ANSI_RESET , true);
+        File src = new File(phantomJsDriverPath);
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+        capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, src.getAbsolutePath());
+        //IMPORTANT: for phantomJS you may need to add a user agent for automation testing as the default user agent is old
+        // and may not be supported by the website.
+        capabilities.setCapability("phantomjs.page.settings.userAgent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36");
+        System.setProperty("phantomjs.binary.path", src.getAbsolutePath());
+        this.driver = new PhantomJSDriver(capabilities);
+        driver.manage().window().maximize(); //added 8-14-2019
+        testHelper.set_is_Maximized(true);
+        }
      */
 
+
+
 }
+

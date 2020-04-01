@@ -74,6 +74,7 @@ CONFIGURING THE APPLICATION TO ALLOW IT TO BUILD:
 	
 	1.  First, open your Chrome and FireFox help and find out the version of each that you have.  
 		This will determine which associated driver version you will need to download.
+		Download the 32 bit version of the IEDriverServer version 3.150.1 (IEDriverServer_Win32_3.150.1.zip)
 	
 	2.	Next, ensure that your browsers are all added to your path so that they can be executed from anywhere on your computer.
 		You may have to download the latest PhantomJS driver or execute a test using PhantomJS as the browser and then search for 
@@ -106,7 +107,7 @@ CONFIGURING THE APPLICATION TO ALLOW IT TO BUILD:
 		Optionally, it may be desireable to create a Test File output folder to store tests files created by the application.
 			Output Test Files are mapped as part of the Test File, so these folders can be created anytime before running the test.
 		
-	4. 	Next, open the TestCentral.java file and update hardcoded paths for the Chrome, Firefox and PhantomJs drivers.
+	4. 	Next, open the TestCentral.java file and update hardcoded paths for the Internet Explorer and PhantomJs drivers.
 
 	5.	Next, mark the Pages, test and Entities folders as Sources Root folders.
 
