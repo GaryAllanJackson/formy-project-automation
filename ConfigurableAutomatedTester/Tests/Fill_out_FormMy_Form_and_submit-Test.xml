@@ -255,7 +255,7 @@
 		<accessorType>ID</accessorType>
 		<arguments>
 			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
-			<arg1>05/28/2019</arg1>
+			<arg1>05/28/2020</arg1>
 		</arguments>
 	</step>
 	<step>
@@ -269,7 +269,7 @@
 		<accessorType>ID</accessorType>
 		<arguments>
 			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
-			<arg1>05/28/2019</arg1>
+			<arg1>05/28/2020</arg1>
 		</arguments>
 	</step>
 	<step>
@@ -291,10 +291,12 @@
 		<!-- click command  -->
 		<command>click</command>
 		<actionType>write</actionType>
-		<crucial>TRUE</crucial>
+		<crucial>false</crucial>
 		<!-- the accessor is the target element where the key strokes will be sent to -->
-		<accessor>.btn.btn-lg.btn-primary </accessor>
-		<accessorType>CssSelector</accessorType>
+		<!-- <accessor>a.btn.btn-lg.btn-primary</accessor> -->
+		<accessor>/html/body/div[1]/form/div/div[8]/a</accessor>
+		<!-- <accessorType>CssSelector</accessorType> -->
+		<accessorType>xPath</accessorType>
 		<expectedValue>https://formy-project.herokuapp.com/thanks</expectedValue>
 		<arguments>
 			<!-- This first argument is the delay in milliseconds -->

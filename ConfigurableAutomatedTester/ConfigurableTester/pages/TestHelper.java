@@ -463,7 +463,7 @@ public class TestHelper{
     void CreateSectionHeader(String sectionHeading, String backgroundColor, String foregroundColor, Boolean isSectionStart, Boolean hasMessageBackground, Boolean writeToLog) {
         //UpdateTestResults(AppConstants.ANSI_PURPLE + AppConstants.sectionLeftUp + PrePostPad("[ End of Reading Test Settings File  ]", "═", 9, 157) + AppConstants.sectionRightUp + AppConstants.ANSI_RESET, false);
         int prePad = 9;
-        int totalSize = 157;
+        int totalSize = 151;  //157;
         String sectionHeader;
         String leftUpDown = isSectionStart ? AppConstants.sectionLeftDown : AppConstants.sectionLeftUp;
         String rightUpDown = isSectionStart ? AppConstants.sectionRightDown : AppConstants.sectionRightUp;

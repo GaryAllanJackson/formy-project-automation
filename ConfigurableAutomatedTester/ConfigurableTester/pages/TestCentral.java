@@ -2365,7 +2365,12 @@ public class TestCentral {
                     case xpathCheckValue:
                         if (!command.toLowerCase().contains(AppCommands.Right_Click)) {
                             if (!command.toLowerCase().contains(AppCommands.DoubleClick)) {
-                                this.driver.findElement(By.xpath(ts.get_accessor())).click();
+                                if (get_selectedBrowserType().equals(BrowserTypes.Internet_Explorer)) {
+                                    JavascriptExecutor js = (JavascriptExecutor) driver;
+                                    js.executeScript("arguments[0].click()", this.driver.findElement(By.xpath(ts.get_accessor())));
+                                } else {
+                                    this.driver.findElement(By.xpath(ts.get_accessor())).click();
+                                }
                                 testHelper.UpdateTestResults("Successful - Click performed for step " + fileStepIndex, false);
                             } else {
                                 //doubleclick
@@ -2389,7 +2394,12 @@ public class TestCentral {
                         if (!command.toLowerCase().contains(AppCommands.Right_Click)) {
                             if (!command.toLowerCase().contains(AppCommands.DoubleClick)) {
                                 //click
-                                this.driver.findElement(By.id(ts.get_accessor())).click();
+                                if (get_selectedBrowserType().equals(BrowserTypes.Internet_Explorer)) {
+                                    JavascriptExecutor js = (JavascriptExecutor) driver;
+                                    js.executeScript("arguments[0].click()", this.driver.findElement(By.id(ts.get_accessor())));
+                                } else {
+                                    this.driver.findElement(By.id(ts.get_accessor())).click();
+                                }
                                 testHelper.UpdateTestResults("Successful - Click performed for step " + fileStepIndex, false);
                             } else {
                                 //doubleclick
@@ -2413,7 +2423,12 @@ public class TestCentral {
                         if (!command.toLowerCase().contains(AppCommands.Right_Click)) {
                             if (!command.toLowerCase().contains(AppCommands.DoubleClick)) {
                                 //click
-                                this.driver.findElement(By.className(ts.get_accessor())).click();
+                                if (get_selectedBrowserType().equals(BrowserTypes.Internet_Explorer)) {
+                                    JavascriptExecutor js = (JavascriptExecutor) driver;
+                                    js.executeScript("arguments[0].click()", this.driver.findElement(By.className(ts.get_accessor())));
+                                } else {
+                                    this.driver.findElement(By.className(ts.get_accessor())).click();
+                                }
                                 testHelper.UpdateTestResults("Successful - Click performed for step " + fileStepIndex, false);
                             } else {
                                 //doubleclick
@@ -2437,7 +2452,12 @@ public class TestCentral {
                         if (!command.toLowerCase().contains(AppCommands.Right_Click)) {
                             if (!command.toLowerCase().contains(AppCommands.DoubleClick)) {
                                 //click
-                                this.driver.findElement(By.cssSelector(ts.get_accessor())).click();
+                                if (get_selectedBrowserType().equals(BrowserTypes.Internet_Explorer)) {
+                                    JavascriptExecutor js = (JavascriptExecutor) driver;
+                                    js.executeScript("arguments[0].click()", this.driver.findElement(By.cssSelector(ts.get_accessor())));
+                                } else {
+                                    this.driver.findElement(By.cssSelector(ts.get_accessor())).click();
+                                }
                                 testHelper.UpdateTestResults("Successful - Click performed for step " + fileStepIndex, false);
                             } else {
                                 //doubleclick
@@ -2461,7 +2481,12 @@ public class TestCentral {
                         if (!command.toLowerCase().contains(AppCommands.Right_Click)) {
                             if (!command.toLowerCase().contains(AppCommands.DoubleClick)) {
                                 //click
-                                this.driver.findElement(By.tagName(ts.get_accessor())).click();
+                                if (get_selectedBrowserType().equals(BrowserTypes.Internet_Explorer)) {
+                                    JavascriptExecutor js = (JavascriptExecutor) driver;
+                                    js.executeScript("arguments[0].click()",  this.driver.findElement(By.tagName(ts.get_accessor())));
+                                } else {
+                                    this.driver.findElement(By.tagName(ts.get_accessor())).click();
+                                }
                                 testHelper.UpdateTestResults("Successful - Click performed for step " + fileStepIndex, false);
                             } else {
                                 //doubleclick
@@ -4318,21 +4343,36 @@ public class TestCentral {
 
 
     private void SetInternetExplorerDriver() {
-        testHelper.UpdateTestResults("The Internet Explorer Browser was fully implemented but ran too slowly to be useful.  Please select another browser.", true);
+        //testHelper.UpdateTestResults("The Internet Explorer Browser was fully implemented but ran too slowly to be useful.  Please select another browser.", true);
         //internetExplorerDriverPath
 
+
         testHelper.UpdateTestResults( AppConstants.indent5 + "[" + AppConstants.ANSI_GREEN + "Setting " + AppConstants.ANSI_RESET + "InternetExplorerDriver]" + AppConstants.ANSI_RESET , true);
+
+        //testHelper.UpdateTestResults("**********************************************************************************", true);
+        testHelper.UpdateTestResults(testHelper.PrePostPad("*", "*", 1, 151), true);
+
+        testHelper.UpdateTestResults("IMPORTANT: INTERNET EXPLORER HAS LIMITED IMPLEMENTATION!!!\r\n" +
+                "Click functionality required Internet Explorer specific code implementation, but further specific actions for this browser have yet to be implemented.\r\n" +
+                "Right Click and Double Click actions have not been implemented and will not likely work until a specific implementation is implemented.\r\n", true);
+        //testHelper.UpdateTestResults("**********************************************************************************", true);
+        testHelper.UpdateTestResults(testHelper.PrePostPad("*", "*", 1, 151), true);
         File internetExplorer = new File(internetExplorerDriverPath);
-        testHelper.UpdateTestResults("internetExplorer.getAbsolutePath() = " + internetExplorer.getAbsolutePath(), true);
+        //testHelper.UpdateTestResults("internetExplorer.getAbsolutePath() = " + internetExplorer.getAbsolutePath(), true);
 
         System.setProperty("java.net.preferIPv4Stack", "true");
         System.setProperty("webdriver.ie.driver", internetExplorer.getAbsolutePath());
         File tmp = new File("C:\\Temp\\");
 
         DesiredCapabilities capab = DesiredCapabilities.internetExplorer();
-        capab.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
+        //capab.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
+        capab.setCapability("nativeEvents", false);
+        capab.setCapability("unexpectedAlertBehaviour", "accept");
+        capab.setCapability("ignoreProtectedModeSettings", true);
+        capab.setCapability("disable-popup-blocking", true);
+        capab.setCapability("enablePersistentHover", true);
+        capab.setCapability("ignoreZoomSetting", true);
         driver = new InternetExplorerDriver(capab);
-
     }
 
 
