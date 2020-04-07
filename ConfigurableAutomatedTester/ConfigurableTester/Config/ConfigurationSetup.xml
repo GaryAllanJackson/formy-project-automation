@@ -3,11 +3,11 @@
 	<!-- folder where screenshots should be saved -->
 	<screenShotSaveFolder>C:\Gary\Java Utilities\ScreenShots\Mashup\</screenShotSaveFolder>
 	<maxScreenShotsToTake>5</maxScreenShotsToTake>	
-	<!--<browserType>edge</browserType>-->
+	<!-- <browserType>edge</browserType> -->
 	<browserType>internet explorer</browserType>
-	<!--<browserType>Chrome</browserType>-->
+	<!-- <browserType>Chrome</browserType> -->
 	<!--<browserType>Firefox</browserType>-->
-	<!--<browserType>phantomjs</browserType>-->
+	<!-- <browserType>phantomjs</browserType> -->
 	<runHeadless>false</runHeadless>
 	<testAllBrowsers>false</testAllBrowsers>
 	<specifyTestFiles>TRUE</specifyTestFiles>
@@ -17,7 +17,6 @@
 	<testFiles>
 		<!-- alphabetical order -->
 		<!-- Group 1 - All elements of specified type tests -->
-		
 		
 		
 		<!--<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CheckAllPageImageAltAttributes-Test.xml</testFileName1>-->
@@ -45,9 +44,9 @@
 		-->
 		
 		<!-- Group 4 - Image Comparison tests -->
-		<!--
-		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CompareImages-Alternate-Test.xml</testFileName1>
-		 -->
+		
+		<!-- <testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CompareImages-Alternate-Test.xml</testFileName1> -->
+		<!-- -->
 		<!--<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\CompareImages-Test.xml</testFileName1>-->
 		
 		
@@ -67,9 +66,7 @@
 		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\TestPages\List_of_MeowMix_URLs-Test.xml</testFileName1>-->
 		
 		<!-- Group 7 - Fill out form and Find Phrase tests -->
-		
-		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\Fill_out_FormMy_Form_and_submit-IE-Test.xml</testFileName1>
-		<!-- <testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1> -->
+		<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1>
 		<!--<testFileName1>C:\Gary\Java Utilities\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\FindPhrase-Test.xml</testFileName1>-->
 		
 		

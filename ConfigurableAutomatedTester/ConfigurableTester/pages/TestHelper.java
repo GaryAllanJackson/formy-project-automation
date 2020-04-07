@@ -1,15 +1,23 @@
 //import com.sun.java.util.jar.pack.Attribute;
 
 import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Actions;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import ru.yandex.qatools.ashot.AShot;
+import ru.yandex.qatools.ashot.Screenshot;
+import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
+import ru.yandex.qatools.ashot.shooting.ShootingStrategy;
 
 import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.awt.*;
+import java.awt.datatransfer.Transferable;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -17,6 +25,7 @@ import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -575,7 +584,86 @@ public class TestHelper{
      * @param screenShotFolder - Folder where the ScreenShot should be saved.
      * @param isError - Is this ScreenShot for an error condition.
      ************************************************************************************** */
-    void CaptureScreenShot(WebDriver driver, String screenShotName, String screenShotFolder, boolean isError, String fileStepIndex) {
+     void CaptureScreenShot(WebDriver driver, String screenShotName, String screenShotFolder, boolean isError, String fileStepIndex) {
+        if ((maxScreenShotsToTake > 0 && screenShotsTaken < maxScreenShotsToTake) || (maxScreenShotsToTake == 0)) {
+            try {
+                //get the original dimensions and save them
+                Dimension originalDimension = driver.manage().window().getSize();
+                //savedDimension = savedDimension == null ? originalDimension : savedDimension;
+                int height = originalDimension.height;
+                int width = originalDimension.width;
+                //region { This is how to get the screen dimensions but found that the maximized value and screen dimensions didn't match }
+//                java.awt.Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//                int screenHeight = screenSize.height;
+//                int screenWidth = screenSize.width;
+//                DebugDisplay("height = " + height);
+//                DebugDisplay("width = " + width);
+//                DebugDisplay("screenHeight = " + screenHeight);
+//                DebugDisplay("screenWidth = " + screenWidth);
+                //endregion
+
+                //reset the browser dimensions to capture all content
+                Dimension dimension = GetWindowContentDimensions(driver);
+                if (savedDimension != null) {
+                    driver.manage().window().setSize(savedDimension);
+                } else {
+                    driver.manage().window().setSize(dimension);
+                }
+
+                screenShotName = MakeValidFileName(screenShotName);
+                String fileExtension = screenShotName.endsWith(".png") ? "" : ".png";
+
+                //take the screen shot
+                TakesScreenshot ts = (TakesScreenshot) driver;
+                File source = ts.getScreenshotAs(OutputType.FILE);
+
+                if (screenShotFolder != null && !screenShotFolder.isEmpty() && Files.exists(Paths.get(screenShotFolder))) {
+                    if (!screenShotFolder.endsWith("\\")) {
+                        screenShotFolder = screenShotFolder + "\\";
+                    }
+                    //FileUtils.copyFile(source, new File(screenShotFolder + screenShotName + ".png"));
+                    FileUtils.copyFile(source, new File(screenShotFolder + screenShotName + fileExtension));
+                } else { //this will never happen, as the configuration folder is set in the calling method for errors
+                    if (!Files.exists(Paths.get("Config/ScreenShots"))) {
+                        Files.createDirectory(Paths.get("Config/ScreenShots"));
+                    }
+                    //FileUtils.copyFile(source, new File("Config/ScreenShots/" + screenShotName + ".png"));
+                    FileUtils.copyFile(source, new File("Config/ScreenShots/" + screenShotName + fileExtension));
+                    screenShotFolder = "Config/ScreenShots/";
+                }
+
+                if (!isError) {
+                    //UpdateTestResults(AppConstants.indent5 + AppConstants.ANSI_GREEN + "Screenshot successfully taken for step " + fileStepIndex + AppConstants.ANSI_RESET, true);
+                    String asSpecified = (savedDimension != null) ? " as specified." : " per content area check. ";
+                    UpdateTestResults(AppConstants.ANSI_GREEN + "Screenshot successfully taken for step " + fileStepIndex + "\r\n\tImage saved to: " + screenShotFolder + screenShotName + fileExtension + "\r\n\tImage Dimensions: " + GetImageDimensions(screenShotFolder + screenShotName + fileExtension) + asSpecified + AppConstants.ANSI_RESET, true);
+                } else {
+                    UpdateTestResults(AppConstants.ANSI_RED + "Screenshot taken for step " + fileStepIndex + " - Error condition!" + AppConstants.ANSI_RESET, true);
+                }
+
+                //resize the browser to the original dimensions
+                if (get_is_Maximized()) {
+                    driver.manage().window().maximize();
+                } else {
+                    driver.manage().window().setSize(originalDimension);
+                }
+                //increment the counter only for non-error conditions
+//                if (!isError) {
+                screenShotsTaken++;
+//                }
+            } catch (Exception e) {
+                UpdateTestResults(AppConstants.ANSI_RED + "Exception while taking screenshot (" + screenShotName + "): " + e.getMessage() + AppConstants.ANSI_RESET, true);
+            }
+        }
+        else if (isError) {
+            UpdateTestResults(AppConstants.indent5 + "Screenshot (" + screenShotName + ") for error condition not taken due to screenshot limit.  Increase MaxScreenShotsToTake in configuration file to capture this screenshot.", true);
+        }
+        else {
+            UpdateTestResults(AppConstants.indent5 + "Screenshot (" + screenShotName + ") not taken due to screenshot limit.  Increase MaxScreenShotsToTake in configuration file to capture this screenshot.", true);
+        }
+        UpdateTestResults("", true);
+    }
+
+    void CaptureScreenShot_altered(WebDriver driver, String screenShotName, String screenShotFolder, boolean isError, String fileStepIndex) {
         if ((maxScreenShotsToTake > 0 && screenShotsTaken < maxScreenShotsToTake) || (maxScreenShotsToTake == 0)) {
             try {
                 //get the original dimensions and save them
@@ -595,11 +683,21 @@ public class TestHelper{
 
                 //reset the browser dimensions to capture all content
                 Dimension dimension = GetWindowContentDimensions(driver);
+                DebugDisplay("Original Screen Dimensions = Height = " + originalDimension.height + " - Width = " + originalDimension.width);
+                DebugDisplay("Resized Screen Dimensions = Height = " + dimension.height + " - Width = " + dimension.width);
+                DebugDisplay("Scripted Screen Dimensions = Height = " + savedDimension.height + " - Width = " + savedDimension.width);
+
                 //if (savedDimension != originalDimension) {
+                JavascriptExecutor js = (JavascriptExecutor) driver;
+
                 if (savedDimension != null) {
                     driver.manage().window().setSize(savedDimension);
+                    //js.executeScript("window.resizeTo(" + savedDimension.width + "," + savedDimension.height + ")");
+                    //js.executeScript("var w = $(window), d = $(document), b = $('body');window.resizeBy(0, ((b.height() - w.height()) || d.height() - w.height()));");
                 } else {
                     driver.manage().window().setSize(dimension);
+                    //js.executeScript("window.resizeTo(" + dimension.width + "," + dimension.height + ")");
+                    //js.executeScript("var w = $(window), d = $(document), b = $('body');window.resizeBy(0, ((b.height() - w.height()) || d.height() - w.height()));");
                 }
 
                 screenShotName = MakeValidFileName(screenShotName);
@@ -607,7 +705,19 @@ public class TestHelper{
 
                 //take the screen shot
                 TakesScreenshot ts = (TakesScreenshot) driver;
+                //Screenshot screenshot=new AShot().shootingStrategy(ShootingStrategies.viewportPasting(1000)).takeScreenshot(driver);
+               // Screenshot screenshot=new AShot().shootingStrategy(ShootingStrategies.scaling(1)).takeScreenshot(driver);
+                ShootingStrategy shootingStrategy = ShootingStrategies.viewportNonRetina(1000, 0, 0);
+                //Screenshot screenshot=new AShot().shootingStrategy(shootingStrategy).takeScreenshot(driver);
+                Screenshot screenshot=new AShot().takeScreenshot(driver);
+
                 File source = ts.getScreenshotAs(OutputType.FILE);
+                String aShotFileExtension = "PNG";
+                String aShotScreenShotName = screenShotName.replace(".","__" + ".");
+                DebugDisplay("aShotScreenShotName = " + aShotScreenShotName);
+                Actions action = new Actions(driver);
+                BufferedImage fullScreen ;
+
 
                 if (screenShotFolder != null && !screenShotFolder.isEmpty() && Files.exists(Paths.get(screenShotFolder))) {
                     if (HelperUtilities.isWindows() &&  !screenShotFolder.endsWith("\\")) {
@@ -616,11 +726,23 @@ public class TestHelper{
                         screenShotFolder = screenShotFolder + "/";
                     }
                     FileUtils.copyFile(source, new File(screenShotFolder + screenShotName + fileExtension));
+                    try {
+                        fullScreen = screenshot.getImage();
+                        ImageIO.write(fullScreen, aShotFileExtension, new File(screenShotFolder + aShotScreenShotName));
+                    } catch(Exception e) {
+                        UpdateTestResults("The following Error occurred: " + e.getMessage(), true);
+                    }
                 } else { //this will never happen, as the configuration folder is set in the calling method for errors
                     if (!Files.exists(Paths.get("Config/ScreenShots"))) {
                         Files.createDirectory(Paths.get("Config/ScreenShots"));
                     }
                     FileUtils.copyFile(source, new File("Config/ScreenShots/" + screenShotName + fileExtension));
+                    try {
+                        fullScreen = screenshot.getImage();
+                        ImageIO.write(fullScreen, aShotFileExtension, new File(screenShotFolder + aShotScreenShotName));
+                    } catch(Exception e) {
+                        UpdateTestResults("The following Error occurred: " + e.getMessage(), true);
+                    }
                     screenShotFolder = "Config/ScreenShots/";
                 }
 
@@ -654,6 +776,49 @@ public class TestHelper{
         UpdateTestResults("", true);
     }
 
+    void CopyBrowserToClipBoard(WebDriver driver, String screenShotName, String screenShotFolder, boolean isError, String fileStepIndex) {
+        Dimension originalDimension = driver.manage().window().getSize();
+        Dimension dimension = GetWindowContentDimensions(driver);
+        DebugDisplay("Original Screen Dimensions = Height = " + originalDimension.height + " - Width = " + originalDimension.width);
+        DebugDisplay("Resized Screen Dimensions = Height = " + dimension.height + " - Width = " + dimension.width);
+        DebugDisplay("Scripted Screen Dimensions = Height = " + savedDimension.height + " - Width = " + savedDimension.width);
+        String fileExtension = screenShotName.endsWith(".png") ? "" : ".png";
+        //if (savedDimension != originalDimension) {
+        //JavascriptExecutor js = (JavascriptExecutor) driver;
+
+        if (savedDimension != null) {
+            driver.manage().window().setSize(savedDimension);
+        } else {
+            driver.manage().window().setSize(dimension);
+        }
+        Actions action = new Actions(driver);
+        DebugDisplay("Attempting to Select all");
+        WebElement element = driver.findElement(By.tagName("body"));
+        DebugDisplay("Attempting to Select all body content");
+        action.sendKeys(Keys.CONTROL + "A");
+        action.sendKeys(Keys.CONTROL + "C");
+        //BufferedImage fullScreen ;
+        Image fullScreen ;
+        String aShotFileExtension = "PNG";
+        String aShotScreenShotName = screenShotName.replace(".","__" + ".");
+
+
+        Transferable transferable; // = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+        //transferable = Toolkit.getDefaultToolkit().getImage(driver.getCurrentUrl());
+        //if (transferable != null && transferable.isDataFlavorSupported(DataFlavor.imageFlavor)) {
+            try {
+                //fullScreen = (BufferedImage) transferable.getTransferData(DataFlavor.imageFlavor);
+                fullScreen = (Image) Toolkit.getDefaultToolkit().getImage(driver.getCurrentUrl());
+                //FileUtils.copyFile(fullScreen, new File(screenShotFolder + screenShotName + fileExtension));
+                ImageIO.write((BufferedImage)fullScreen, aShotFileExtension, new File(screenShotFolder + aShotScreenShotName));
+            } catch (Exception e) {
+                DebugDisplay("Error: " + e.getMessage());
+            }
+        //}
+
+
+    }
+
     /*****************************************************************
      * DESCRIPTION:  This method gets the dimensions of the content
      * area so that the screen dimensions can be reset before a
@@ -664,6 +829,9 @@ public class TestHelper{
         JavascriptExecutor js = (JavascriptExecutor) driver;
         int contentHeight = ((Number) js.executeScript("return document.documentElement.scrollHeight")).intValue();
         int contentWidth = ((Number) js.executeScript("return document.documentElement.scrollWidth")).intValue();
+
+//        contentHeight = contentHeight + 100;
+//        contentWidth = contentWidth + 100;
 
         return new Dimension(contentWidth, contentHeight);
     }
@@ -999,6 +1167,9 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), "\t\tUNIQUE IDENTIFIER");
             WriteToFile(get_helpFileName(), "\t\tPERSISTING RETRIEVED TEXT IN A VARIABLE FOR LATER USE");
             WriteToFile(get_helpFileName(), "\t\tFILLING IN TEXT FIELDS");
+            WriteToFile(get_helpFileName(), "\t\tCLICK A PAGE ELEMENT");
+            WriteToFile(get_helpFileName(), "\t\tDOUBLE CLICK A PAGE ELEMENT");
+            WriteToFile(get_helpFileName(), "\t\tRIGHT CLICK A PAGE ELEMENT");
             WriteToFile(get_helpFileName(), "\t\tCLICK AN ELEMENT IN AN IFRAME");
             WriteToFile(get_helpFileName(), "\t\tSELECT AN OPTION FROM AN HTML SELECT ELEMENT");
             WriteToFile(get_helpFileName(), "\t\tTAKING SCREENSHOTS");
@@ -2075,6 +2246,103 @@ public class TestHelper{
             WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("[ CLICK A PAGE ELEMENT ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "The Click command clicks a page element.");
+            WriteToFile(get_helpFileName(), "IMPORTANT NOTE: THIS COMMAND WORKS DIFFERENTLY IN INTERNET EXPLORER THAN IN ALL OTHER BROWSERS!");
+            WriteToFile(get_helpFileName(), "FOR INTERNET EXPLORER, A JAVASCRIPT CLICK COMMAND IS USED INSTEAD OF USING THE SELENIUM DRIVER\r\n" +
+                    "COMMAND, AS THIS IS UNRELIABLE FOR INTERNET EXPLORER BECAUSE OF ITS IMPLEMENTATION IN THAT BROWSER!");
+            WriteToFile(get_helpFileName(), "This allows for selecting options, clicking checkboxes, clicking buttons and hyperlinks.");
+            WriteToFile(get_helpFileName(), "Like many commands, click, right click and double click can be set to crucial but only\r\n" +
+                    "when an expected value is provided, which is not always necessary.");
+            WriteToFile(get_helpFileName(), "When clicking submit buttons or links, the expected value can be used to check the URL but for checking\r\n" +
+                    "values, it is suggested that a subsequent step be used.");
+            WriteToFile(get_helpFileName(), "Arguments may be necessary for some right click commands but not for click and double click commands.");
+            WriteToFile(get_helpFileName(), "The following command performs a click on radio button using the ID as the type of accessor.");
+            WriteToFile(get_helpFileName(), "<step>\n" +
+                    "\t\t<!-- click command  -->\n" +
+                    "\t\t<command>click</command>\n" +
+                    "\t\t<actionType>write</actionType>\n" +
+                    "\t\t<crucial>TRUE</crucial>\n" +
+                    "\t\t<!-- the accessor is the target element to be clicked -->\n" +
+                    "\t\t<accessor>radio-button-2</accessor>\n" +
+                    "\t\t<accessorType>ID</accessorType>\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "The following command performs a click on a submit link using xPath as the type of accessor.");
+            WriteToFile(get_helpFileName(), "The expected value for this command allows the URL to be checked against this expected value\r\n" +
+                    " and is specifically designed for form submissions or link clicks to validate navigation changes.");
+            WriteToFile(get_helpFileName(), "If there is a need to check anything besides the URL use a preceding or subsequent test command.");
+            WriteToFile(get_helpFileName(), "<step>\n" +
+                    "\t\t<!-- click command  -->\n" +
+                    "\t\t<command>click</command>\n" +
+                    "\t\t<actionType>write</actionType>\n" +
+                    "\t\t<crucial>false</crucial>\n" +
+                    "\t\t<accessor>/html/body/div[1]/form/div/div[8]/a</accessor>\n" +
+                    "\t\t<accessorType>xPath</accessorType>\n" +
+                    "\t\t<expectedValue>https://formy-project.herokuapp.com/thanks</expectedValue>\n" +
+                    "</step>");
+
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            //DOUBLE CLICK A PAGE ELEMENT
+            WriteToFile(get_helpFileName(), PrePostPad("[ DOUBLE CLICK A PAGE ELEMENT ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "The Double Click command double-clicks a page element in all browsers except Internet Explorer, ");
+            WriteToFile(get_helpFileName(), "where it performs a select to select all text, since that is the main use of double-clicking.");
+            WriteToFile(get_helpFileName(), "IMPORTANT NOTE: THIS COMMAND WORKS DIFFERENTLY IN INTERNET EXPLORER THAN IN ALL OTHER BROWSERS!");
+            WriteToFile(get_helpFileName(), "FOR INTERNET EXPLORER, A JAVASCRIPT DOUBLE-CLICK COMMAND IS USED INSTEAD OF USING THE SELENIUM DRIVER\r\n" +
+                    "COMMAND, AS THIS IS UNRELIABLE FOR INTERNET EXPLORER BECAUSE OF ITS IMPLEMENTATION IN THAT BROWSER!");
+            WriteToFile(get_helpFileName(), "The following command performs a double click on a input text box to select all text in that control, which");
+            WriteToFile(get_helpFileName(), "allows for overwriting any content currently inside that input text box with a subsequent sendkeys command.");
+            WriteToFile(get_helpFileName(), "<step>\n" +
+                    "\t\t<!-- double-click command  -->\n" +
+                    "\t\t<command>doubleclick</command>\n" +
+                    "\t\t<actionType>write</actionType>\n" +
+                    "\t\t<crucial>FALSE</crucial>\n" +
+                    "\t\t<!-- the accessor is the target element to double-click -->\n" +
+                    "\t\t<accessor>last-name</accessor>\n" +
+                    "\t\t<accessorType>ID</accessorType>\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            //DOUBLE CLICK A PAGE ELEMENT
+            WriteToFile(get_helpFileName(), PrePostPad("[ RIGHT CLICK A PAGE ELEMENT ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "The Right Click command right-clicks a page element in all browsers except Internet Explorer,");
+            WriteToFile(get_helpFileName(), "as no replacement functionality has been implemented yet to replicate this functionality in ");
+            WriteToFile(get_helpFileName(), "Internet Explorer.");
+            WriteToFile(get_helpFileName(), "The Right Click command allows for accessing context menus, such as Open link in new tab,\r\n" +
+                            "Open link in new window, etc.. on hyperlinks.");
+            WriteToFile(get_helpFileName(), "Unlike the Click and Double-Click commands, the Right Click command expects arguments that\r\n" +
+                            "direct the subsequent Click to select the context menu item.");
+            WriteToFile(get_helpFileName(), "This is the only method of accessing context menu items.");
+            WriteToFile(get_helpFileName(), "The following command Right Clicks and opens the contenxt menu then selects the first menu item,\r\n" +
+                            "to Open the link in a new tab.");
+            WriteToFile(get_helpFileName(), "<step>\n" +
+                    "\t\t<!-- Tested - Good -->\n" +
+                    "\t\t<!-- multiple keystroke command... SENDKEYS! -->\n" +
+                    "\t\t<command>right click</command>\n" +
+                    "\t\t<actionType>write</actionType>\n" +
+                    "\t\t<crucial>TRUE</crucial>\n" +
+                    "\t\t<!-- the accessor is the target element where the key strokes will be sent to -->\n" +
+                    "\t\t<accessor>//*[@id=\"block-menu-menu-dc-menu\"]/div/div/ul/li[2]/a</accessor>\n" +
+                    "\t\t<accessorType>xPath</accessorType>\n" +
+                    "\t\t<arguments>\n" +
+                    "\t\t\t<!-- There can be as many key strokes as desired. The arg tags are for storing each character/command. The order is sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->\n" +
+                    "\t\t\t<arg1>Keys.Arrow_Down</arg1>\n" +
+                    "\t\t\t<arg2>Keys.Enter</arg2>\n" +
+                    "\t\t</arguments>\n" +
+                    "</step>");
+
+
+            //TODO: FINISH DOUBLE CLICK HELP AND THEN RIGHT CLICK HELP
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), PrePostPad("═", "═", 1, 151));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+
             WriteToFile(get_helpFileName(), PrePostPad("[ CLICK AN ELEMENT IN AN IFRAME ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Switch to iFrame command switches the current scope to the iFrame specified.");
             WriteToFile(get_helpFileName(), "To click an element by xPath in an iFrame.");

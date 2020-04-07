@@ -2374,8 +2374,16 @@ public class TestCentral {
                                 testHelper.UpdateTestResults("Successful - Click performed for step " + fileStepIndex, false);
                             } else {
                                 //doubleclick
-                                Actions action = new Actions(driver);
-                                action.doubleClick(driver.findElement(By.xpath(ts.get_accessor()))).build().perform();
+                                if (get_selectedBrowserType().equals(BrowserTypes.Internet_Explorer)) {
+                                    JavascriptExecutor js = (JavascriptExecutor) driver;
+                                    String script = "var input = document.evaluate('" + ts.get_accessor() + "', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;\r\n" +
+                                            "input.focus();\r\n" +
+                                            "input.select();";
+                                    js.executeScript(script);
+                                } else {
+                                    Actions action = new Actions(driver);
+                                    action.doubleClick(driver.findElement(By.xpath(ts.get_accessor()))).build().perform();
+                                }
                                 testHelper.UpdateTestResults("Successful - Double Click performed for step " + fileStepIndex, false);
                             }
                         } else {  //right click element
@@ -2403,8 +2411,16 @@ public class TestCentral {
                                 testHelper.UpdateTestResults("Successful - Click performed for step " + fileStepIndex, false);
                             } else {
                                 //doubleclick
-                                Actions action = new Actions(driver);
-                                action.doubleClick(driver.findElement(By.id(ts.get_accessor()))).build().perform();
+                                if (get_selectedBrowserType().equals(BrowserTypes.Internet_Explorer)) {
+                                    JavascriptExecutor js = (JavascriptExecutor) driver;
+                                    String script = "var input = document.getElementById('" + ts.get_accessor() + "');\r\n" +
+                                            "input.focus();\r\n" +
+                                            "input.select();";
+                                    js.executeScript(script);
+                                } else {
+                                    Actions action = new Actions(driver);
+                                    action.doubleClick(driver.findElement(By.id(ts.get_accessor()))).build().perform();
+                                }
                                 testHelper.UpdateTestResults("Successful - Double Click performed for step " + fileStepIndex, false);
                             }
                         } else {  //right click element
@@ -2432,8 +2448,16 @@ public class TestCentral {
                                 testHelper.UpdateTestResults("Successful - Click performed for step " + fileStepIndex, false);
                             } else {
                                 //doubleclick
-                                Actions action = new Actions(driver);
-                                action.doubleClick(driver.findElement(By.className(ts.get_accessor()))).build().perform();
+                                if (get_selectedBrowserType().equals(BrowserTypes.Internet_Explorer)) {
+                                    JavascriptExecutor js = (JavascriptExecutor) driver;
+                                    String script = "var input = document.getElementsByClassName('" + ts.get_accessor() + "')[0];\r\n" +
+                                            "input.focus();\r\n" +
+                                            "input.select();";
+                                    js.executeScript(script);
+                                } else {
+                                    Actions action = new Actions(driver);
+                                    action.doubleClick(driver.findElement(By.className(ts.get_accessor()))).build().perform();
+                                }
                                 testHelper.UpdateTestResults("Successful - Double Click performed for step " + fileStepIndex, false);
                             }
                         } else {  //right click element
@@ -2461,8 +2485,16 @@ public class TestCentral {
                                 testHelper.UpdateTestResults("Successful - Click performed for step " + fileStepIndex, false);
                             } else {
                                 //doubleclick
-                                Actions action = new Actions(driver);
-                                action.doubleClick(driver.findElement(By.cssSelector(ts.get_accessor()))).build().perform();
+                                if (get_selectedBrowserType().equals(BrowserTypes.Internet_Explorer)) {
+                                    JavascriptExecutor js = (JavascriptExecutor) driver;
+                                    String script = "var input = document.querySelector('" + ts.get_accessor() + "');\r\n" +
+                                            "input.focus();\r\n" +
+                                            "input.select();";
+                                    js.executeScript(script);
+                                } else {
+                                    Actions action = new Actions(driver);
+                                    action.doubleClick(driver.findElement(By.cssSelector(ts.get_accessor()))).build().perform();
+                                }
                                 testHelper.UpdateTestResults("Successful - Double Click performed for step " + fileStepIndex, false);
                             }
                         } else {  //right click element
@@ -2490,8 +2522,17 @@ public class TestCentral {
                                 testHelper.UpdateTestResults("Successful - Click performed for step " + fileStepIndex, false);
                             } else {
                                 //doubleclick
-                                Actions action = new Actions(driver);
-                                action.doubleClick(driver.findElement(By.tagName(ts.get_accessor()))).build().perform();
+                                if (get_selectedBrowserType().equals(BrowserTypes.Internet_Explorer)) {
+                                    JavascriptExecutor js = (JavascriptExecutor) driver;
+                                    testHelper.DebugDisplay("In Tagname if ts.get_accessor().toUpperCase() = " + ts.get_accessor().toUpperCase());
+                                    String script = "var input = document.getElementsByTagName('" + ts.get_accessor().toUpperCase() + "')[0];\r\n" +
+                                            "input.focus();\r\n" +
+                                            "input.select();";
+                                    js.executeScript(script);
+                                } else {
+                                    Actions action = new Actions(driver);
+                                    action.doubleClick(driver.findElement(By.tagName(ts.get_accessor()))).build().perform();
+                                }
                                 testHelper.UpdateTestResults("Successful - Double Click performed for step " + fileStepIndex, false);
                             }
                         } else {  //right click element
@@ -2973,10 +3014,12 @@ public class TestCentral {
         String delimiter = System.getProperty("file.separator");
         if (!value.contains(delimiter)) {
             testHelper.CaptureScreenShot(driver, value, screenShotSaveFolder, false, fileStepIndex);
+            //testHelper.CopyBrowserToClipBoard(driver, value, screenShotSaveFolder, false, fileStepIndex);
         } else {
             String folder = value.substring(0, value.lastIndexOf(delimiter));
             String fileName = value.substring(value.lastIndexOf(delimiter));
             testHelper.CaptureScreenShot(driver, fileName, folder, false, fileStepIndex);
+            //testHelper.CopyBrowserToClipBoard(driver, fileName, folder, false, fileStepIndex);
         }
     }
 
@@ -4350,13 +4393,13 @@ public class TestCentral {
         testHelper.UpdateTestResults( AppConstants.indent5 + "[" + AppConstants.ANSI_GREEN + "Setting " + AppConstants.ANSI_RESET + "InternetExplorerDriver]" + AppConstants.ANSI_RESET , true);
 
         //testHelper.UpdateTestResults("**********************************************************************************", true);
-        testHelper.UpdateTestResults(testHelper.PrePostPad("*", "*", 1, 151), true);
+        testHelper.UpdateTestResults(AppConstants.ANSI_YELLOW + testHelper.PrePostPad("*", "*", 1, 151), true);
 
         testHelper.UpdateTestResults("IMPORTANT: INTERNET EXPLORER HAS LIMITED IMPLEMENTATION!!!\r\n" +
                 "Click functionality required Internet Explorer specific code implementation, but further specific actions for this browser have yet to be implemented.\r\n" +
                 "Right Click and Double Click actions have not been implemented and will not likely work until a specific implementation is implemented.\r\n", true);
         //testHelper.UpdateTestResults("**********************************************************************************", true);
-        testHelper.UpdateTestResults(testHelper.PrePostPad("*", "*", 1, 151), true);
+        testHelper.UpdateTestResults(testHelper.PrePostPad("*", "*", 1, 151) + AppConstants.ANSI_RESET, true);
         File internetExplorer = new File(internetExplorerDriverPath);
         //testHelper.UpdateTestResults("internetExplorer.getAbsolutePath() = " + internetExplorer.getAbsolutePath(), true);
 
@@ -4372,6 +4415,7 @@ public class TestCentral {
         capab.setCapability("disable-popup-blocking", true);
         capab.setCapability("enablePersistentHover", true);
         capab.setCapability("ignoreZoomSetting", true);
+        capab.setCapability("enableFullPageScreenshot", true);
         driver = new InternetExplorerDriver(capab);
     }
 

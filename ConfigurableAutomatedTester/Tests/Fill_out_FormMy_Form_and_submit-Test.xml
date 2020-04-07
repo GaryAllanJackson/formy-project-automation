@@ -291,13 +291,13 @@
 		<!-- click command  -->
 		<command>click</command>
 		<actionType>write</actionType>
-		<crucial>false</crucial>
+		<crucial>true</crucial>
 		<!-- the accessor is the target element where the key strokes will be sent to -->
 		<!-- <accessor>a.btn.btn-lg.btn-primary</accessor> -->
 		<accessor>/html/body/div[1]/form/div/div[8]/a</accessor>
 		<!-- <accessorType>CssSelector</accessorType> -->
 		<accessorType>xPath</accessorType>
-		<expectedValue>https://formy-project.herokuapp.com/thanks</expectedValue>
+		<expectedValue>https://formy-project.herokuapp.com/thanks1</expectedValue>
 		<arguments>
 			<!-- This first argument is the delay in milliseconds -->
 			<!-- <arg1>4000</arg1> -->

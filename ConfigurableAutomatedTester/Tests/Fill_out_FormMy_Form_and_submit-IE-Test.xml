@@ -67,8 +67,17 @@
 		<actionType>write</actionType>
 		<crucial>FALSE</crucial>
 		<!-- the accessor is the target element where the key strokes will be sent to -->
-		<accessor>last-name</accessor>
-		<accessorType>ID</accessorType>
+		
+		<!-- <accessor>//*[@id="last-name"]</accessor> -->
+		<!-- <accessorType>xpath</accessorType> -->
+		<!-- <accessor>last-name</accessor> -->
+		<!-- <accessorType>ID</accessorType> -->
+		<!-- <accessor>form-control</accessor> -->
+		<!-- <accessorType>classname</accessorType> -->
+		<!-- <accessor>#last-name</accessor> -->
+		<!-- <accessorType>cssselector</accessorType> -->
+		<accessor>input</accessor>
+		<accessorType>tagname</accessorType>
 	</step>
 	<step>
 		<!-- Tested - Good -->
@@ -101,8 +110,16 @@
 		<actionType>write</actionType>
 		<crucial>FALSE</crucial>
 		<!-- the accessor is the target element where the key strokes will be sent to -->
-		<accessor>last-name</accessor>
-		<accessorType>ID</accessorType>
+		<!-- <accessor>last-name</accessor> -->
+		<!-- <accessorType>ID</accessorType> -->
+		<!-- <accessor>//*[@id="last-name"]</accessor> -->
+		<!-- <accessorType>xpath</accessorType> -->
+		<!-- <accessor>form-control</accessor> -->
+		<!-- <accessorType>classname</accessorType> -->
+		<!-- <accessor>#last-name</accessor> -->
+		<!-- <accessorType>cssselector</accessorType> -->
+		<accessor>input</accessor>
+		<accessorType>tagname</accessorType>
 	</step>
 	<step>
 		<!-- Tested - Good -->

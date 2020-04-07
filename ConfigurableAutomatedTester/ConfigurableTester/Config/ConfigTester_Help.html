@@ -166,6 +166,9 @@
 		<a href="#uniqueidentifier" class="tableOfContentsLink">UNIQUE IDENTIFIER</a>
 		<a href="#persistingretrievedtextinavariableforlateruse" class="tableOfContentsLink">PERSISTING RETRIEVED TEXT IN A VARIABLE FOR LATER USE</a>
 		<a href="#fillingintextfields" class="tableOfContentsLink">FILLING IN TEXT FIELDS</a>
+		<a href="#clickapageelement" class="tableOfContentsLink">CLICK A PAGE ELEMENT</a>
+		<a href="#doubleclickapageelement" class="tableOfContentsLink">DOUBLE CLICK A PAGE ELEMENT</a>
+		<a href="#rightclickapageelement" class="tableOfContentsLink">RIGHT CLICK A PAGE ELEMENT</a>
 		<a href="#clickanelementinaniframe" class="tableOfContentsLink">CLICK AN ELEMENT IN AN IFRAME</a>
 		<a href="#selectanoptionfromanhtmlselectelement" class="tableOfContentsLink">SELECT AN OPTION FROM AN HTML SELECT ELEMENT</a>
 		<a href="#takingscreenshots" class="tableOfContentsLink">TAKING SCREENSHOTS</a>
@@ -1464,6 +1467,102 @@ To send the persisted value to a textbox or textarea form control, use the follo
 	&lt;arguments&gt;
 		&lt;arg1&gt;PersistedString&lt;/arg1&gt;
 	&lt;/arguments&gt;
+&lt;/step&gt;
+</pre>
+		</p>
+<span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
+<a name="clickapageelement" class="sectionTitle">CLICK A PAGE ELEMENT</a>
+		<p>
+The Click command clicks a page element.
+IMPORTANT NOTE: THIS COMMAND WORKS DIFFERENTLY IN INTERNET EXPLORER THAN IN ALL OTHER BROWSERS!
+FOR INTERNET EXPLORER, A JAVASCRIPT CLICK COMMAND IS USED INSTEAD OF USING THE SELENIUM DRIVER
+COMMAND, AS THIS IS UNRELIABLE FOR INTERNET EXPLORER BECAUSE OF ITS IMPLEMENTATION IN THAT BROWSER!
+This allows for selecting options, clicking checkboxes, clicking buttons and hyperlinks.
+Like many commands, click, right click and double click can be set to crucial but only
+when an expected value is provided, which is not always necessary.
+When clicking submit buttons or links, the expected value can be used to check the URL but for checking
+values, it is suggested that a subsequent step be used.
+Arguments may be necessary for some right click commands but not for click and double click commands.
+The following command performs a click on radio button using the ID as the type of accessor.
+<pre>
+&lt;step&gt;
+		&lt;!-- click command  --&gt;
+		&lt;command&gt;click&lt;/command&gt;
+		&lt;actionType&gt;write&lt;/actionType&gt;
+		&lt;crucial&gt;TRUE&lt;/crucial&gt;
+		&lt;!-- the accessor is the target element to be clicked --&gt;
+		&lt;accessor&gt;radio-button-2&lt;/accessor&gt;
+		&lt;accessorType&gt;ID&lt;/accessorType&gt;
+&lt;/step&gt;
+</pre>
+		</p>
+		<p>
+The following command performs a click on a submit link using xPath as the type of accessor.
+The expected value for this command allows the URL to be checked against this expected value
+ and is specifically designed for form submissions or link clicks to validate navigation changes.
+If there is a need to check anything besides the URL use a preceding or subsequent test command.
+<pre>
+&lt;step&gt;
+		&lt;!-- click command  --&gt;
+		&lt;command&gt;click&lt;/command&gt;
+		&lt;actionType&gt;write&lt;/actionType&gt;
+		&lt;crucial&gt;false&lt;/crucial&gt;
+		&lt;accessor&gt;/html/body/div[1]/form/div/div[8]/a&lt;/accessor&gt;
+		&lt;accessorType&gt;xPath&lt;/accessorType&gt;
+		&lt;expectedValue&gt;https://formy-project.herokuapp.com/thanks&lt;/expectedValue&gt;
+&lt;/step&gt;
+</pre>
+		</p>
+<span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
+<a name="doubleclickapageelement" class="sectionTitle">DOUBLE CLICK A PAGE ELEMENT</a>
+		<p>
+The Double Click command double-clicks a page element in all browsers except Internet Explorer, 
+where it performs a select to select all text, since that is the main use of double-clicking.
+IMPORTANT NOTE: THIS COMMAND WORKS DIFFERENTLY IN INTERNET EXPLORER THAN IN ALL OTHER BROWSERS!
+FOR INTERNET EXPLORER, A JAVASCRIPT DOUBLE-CLICK COMMAND IS USED INSTEAD OF USING THE SELENIUM DRIVER
+COMMAND, AS THIS IS UNRELIABLE FOR INTERNET EXPLORER BECAUSE OF ITS IMPLEMENTATION IN THAT BROWSER!
+The following command performs a double click on a input text box to select all text in that control, which
+allows for overwriting any content currently inside that input text box with a subsequent sendkeys command.
+<pre>
+&lt;step&gt;
+		&lt;!-- double-click command  --&gt;
+		&lt;command&gt;doubleclick&lt;/command&gt;
+		&lt;actionType&gt;write&lt;/actionType&gt;
+		&lt;crucial&gt;FALSE&lt;/crucial&gt;
+		&lt;!-- the accessor is the target element to double-click --&gt;
+		&lt;accessor&gt;last-name&lt;/accessor&gt;
+		&lt;accessorType&gt;ID&lt;/accessorType&gt;
+&lt;/step&gt;
+</pre>
+		</p>
+<span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
+<a name="rightclickapageelement" class="sectionTitle">RIGHT CLICK A PAGE ELEMENT</a>
+		<p>
+The Right Click command right-clicks a page element in all browsers except Internet Explorer,
+as no replacement functionality has been implemented yet to replicate this functionality in 
+Internet Explorer.
+The Right Click command allows for accessing context menus, such as Open link in new tab,
+Open link in new window, etc.. on hyperlinks.
+Unlike the Click and Double-Click commands, the Right Click command expects arguments that
+direct the subsequent Click to select the context menu item.
+This is the only method of accessing context menu items.
+The following command Right Clicks and opens the contenxt menu then selects the first menu item,
+to Open the link in a new tab.
+<pre>
+&lt;step&gt;
+		&lt;!-- Tested - Good --&gt;
+		&lt;!-- multiple keystroke command... SENDKEYS! --&gt;
+		&lt;command&gt;right click&lt;/command&gt;
+		&lt;actionType&gt;write&lt;/actionType&gt;
+		&lt;crucial&gt;TRUE&lt;/crucial&gt;
+		&lt;!-- the accessor is the target element where the key strokes will be sent to --&gt;
+		&lt;accessor&gt;//*[@id="block-menu-menu-dc-menu"]/div/div/ul/li[2]/a&lt;/accessor&gt;
+		&lt;accessorType&gt;xPath&lt;/accessorType&gt;
+		&lt;arguments&gt;
+			&lt;!-- There can be as many key strokes as desired. The arg tags are for storing each character/command. The order is sequetial: arg1 &gt; arg2 &gt; arg3 &gt; etc. If you want to send a string, just enter the whole string in one arg tag--&gt;
+			&lt;arg1&gt;Keys.Arrow_Down&lt;/arg1&gt;
+			&lt;arg2&gt;Keys.Enter&lt;/arg2&gt;
+		&lt;/arguments&gt;
 &lt;/step&gt;
 </pre>
 		</p>

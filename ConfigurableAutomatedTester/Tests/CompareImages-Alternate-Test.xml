@@ -26,7 +26,7 @@
 		<actionType>write</actionType>
 		<crucial>false</crucial>
 		<arguments>
-			<arg2>h=1000 w=1400</arg2>
+			<arg2>h=1500 w=1400</arg2>
 			<arg1>C:\Gary\Java Utilities\ScreenShots\Mashup\Baseline\MyScreenShot.png</arg1>
 		</arguments>
 	</step>
@@ -64,7 +64,7 @@
 		<crucial>false</crucial>
 		<arguments>
 			<arg1>C:\Gary\Java Utilities\ScreenShots\Mashup\Actual\MyScreenShot.png</arg1>
-			<arg2>w=1400 h=1000</arg2>
+			<!-- <arg2>w=1400 h=1500</arg2> -->
 		</arguments>
 	</step><!---->
 	<step>
