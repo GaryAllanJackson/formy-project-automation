@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testSteps>
+	<step>
+		<!-- Tested - Good -->
+		<!-- Command - ALWAYS required -->
+		<command>navigate</command>
+		
+		<!-- Read or write -->
+		<actionType>write</actionType>
+
+		<!-- Expected value - required only when we want to validate something as part of our step. For this command it is optional -->
+		<expectedValue>http://local.forums.com/?productId=1</expectedValue>
+		
+		<!-- crucial or non crucial -->
+		<crucial>TRUE</crucial>
+		<arguments>
+		<!--<arg3>w=800 h=800</arg3>
+		<arg2>1000</arg2>-->
+		
+			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
+			<arg1>http://local.forums.com/?productId=1</arg1>
+			<!-- second argument, can be optional but required when including window dimension argument. 
+				For this example we send 1000ms as the time to wait before continuing. -->
+			
+			<!-- third argument, can be optional - Window Dimensions width then height --> 		
+						
+		</arguments>
+	</step>
+	<step>
+		<!-- Allows you to retrieve JSON from an end point.  
+			Make this step crucial or conditional as subsequent steps depend on getting this.
+			All values will be treated as text(default) and wrapped in quotes,
+			unless an argument is included describing the response as numeric. 
+			-->
+		<!-- Allows you to retrieve JSON from an end point.  Make this step crucial or conditional as subsequent steps depend on getting this -->
+		<command>Get JSON</command>
+		<conditional>true</conditional>
+		<actionType>read</actionType>
+		<crucial>FALSE</crucial>
+		<arguments>
+			<arg1>http://local.forums.com/?productId=1&amp;id=true&amp;wantJson=true</arg1>
+			<!--<arg1>http://local.forums.com/?productId=1&amp;id=true</arg1>-->
+			<!--<arg1>http://local.forums.com/?productId=2&amp;id=true</arg1>-->
+		</arguments>
+	</step>
+	<step>
+		<command>Query JSON</command>
+		<actionType>read</actionType>
+		<crucial>FALSE</crucial>
+		<accessor>ForumId</accessor>
+		<accessorType>JSON</accessorType>
+		<expectedValue>1</expectedValue>
+	</step>
+	<step>
+		<!-- Allows you to retrieve JSON from an end point.  Make this step crucial or conditional as subsequent steps depend on getting this -->
+		<command>Query JSON</command>
+		<actionType>read</actionType>
+		<crucial>FALSE</crucial>
+		<accessor>ForumId</accessor>
+		<accessorType>JSON</accessorType>
+		<expectedValue>2</expectedValue>
+	</step>	
+	<step>
+		<!-- Allows you to retrieve JSON from an end point.  Make this step crucial or conditional as subsequent steps depend on getting this -->
+		<command>Query JSON</command>
+		<actionType>read</actionType>
+		<crucial>FALSE</crucial>
+		<accessor>ForumId</accessor>
+		<accessorType>JSON</accessorType>
+		<expectedValue>3</expectedValue>
+		<arguments>
+			<arg1>numeric</arg1>
+		</arguments>
+	</step>
+	<step>
+		<command>Query JSON</command>
+		<actionType>read</actionType>
+		<crucial>FALSE</crucial>
+		<accessor>Forum</accessor>
+		<accessorType>JSON</accessorType>
+		<expectedValue>"General"</expectedValue>
+	</step>
+	<step>
+		<command>Save JSON</command>
+		<actionType>read</actionType>
+		<crucial>FALSE</crucial>
+		<arguments>
+			<!-- first parameter expected by the command - The file name; it is also required -->
+			<arg1>C:\Gary\Java Utilities\ScreenShots\JSON\forums.json</arg1>
+			<!-- second parameter is optional can be overwrite or true to overwrite existing file or 
+				 false to create a new file name using the filename and appending an integer to the end of the name before the extension -->
+			<arg2>overwrite</arg2>
+		</arguments>
+	</step>
+	<step>
+		<command>end conditional</command>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- Navigate to a page - The driver will go to the page in arg1 and compare that URL with the expected value if provided -->
+		<!-- Command - ALWAYS required -->		
+		<command>navigate</command>
+		
+		<!-- Read or write -->
+		<actionType>write</actionType>
+
+		<!-- Expected value - required only when we want to validate something as part of our step. For this command it is optional -->
+		<expectedValue>https://formy-project.herokuapp.com/form </expectedValue>
+		
+		<!-- crucial or non crucial -->
+		<crucial>TRUE</crucial>
+		<arguments>
+			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
+			<arg1>https://formy-project.herokuapp.com/form </arg1>
+			
+			<!-- second argument, can be optional but required if we include the expectedValue. For this example we send 1000ms as the time to wait before the assertion is made -->
+			<arg2>1000</arg2> 
+			<!-- third argument is the window dimensions -->
+			<arg3>w=800 h=800</arg3> 
+		</arguments>
+	</step>
+</testSteps>
+	

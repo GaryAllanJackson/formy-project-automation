@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<automatedTestConfiguration>
+	<!-- folder where screenshots should be saved -->
+	<screenShotSaveFolder>C:\Gary\Java Utilities\ScreenShots\Mashup\</screenShotSaveFolder>
+	<maxScreenShotsToTake>5</maxScreenShotsToTake>	
+	<!-- <browserType>edge</browserType> -->
+	<!-- <browserType>internet explorer</browserType> -->
+	<browserType>Chrome</browserType>
+	<!--<browserType>Firefox</browserType>-->
+	<!-- <browserType>phantomjs</browserType> -->
+	<runHeadless>false</runHeadless>
+	<testAllBrowsers>false</testAllBrowsers>
+	<specifyTestFiles>TRUE</specifyTestFiles>
+	<sortSpecifiedTestFiles>true</sortSpecifiedTestFiles>
+	<!-- createCsvStatusFiles settings - many, one or none -->
+	<createCsvStatusFiles>none</createCsvStatusFiles>
+	<!-- Individual File Settings -->
+	<testFiles>
+		<!-- alphabetical order -->
+		<!-- specific tests to grab information -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Other_Tests\GetPageLinks-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Tests\Find_NutrishLinks_Explore.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Tests\Find_SahaleLinks_Explore.xml</testFileName1> -->
+		
+		<!-- Group 1 - All elements of specified type tests -->
+		
+		<!--working in new refactored app structure-->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\CheckAllPageImageAltAttributes-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\CheckAllPageImageAltAttributesNoSeparateNavigationStep-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\CheckAllPageImageSrcWithNoSeparateNavigationStep-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\CheckAllPageImageSrcWithSeparateNavigationStep-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\CheckAllPageLinks-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\CheckAllPageLinksWithNoSeparateNavigationStep-Test.xml</testFileName1> -->
+		<!---->
+		
+		<!-- Group 2 - Contrast, Count, Get and Current Page URL -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\CheckColorContrast-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\CheckCount-Test.xml</testFileName1> -->
+		
+		
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\CheckGet-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\CheckPageWithoutNavigation-Test.xml</testFileName1> -->
+			
+			
+		<!-- Group 3 - Single or Specific Element checks -->
+		
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\CheckSingleImageSrcWithSeparateNavigationStep-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\CheckSpecificAnchorhref-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\CheckSpecificImageSource-Test.xml</testFileName1> -->
+		
+		
+		<!-- Group 4 - Image Comparison tests -->		
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\CompareImages-Alternate-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\CompareImages-Test.xml</testFileName1> -->
+		
+		
+		<!-- Group 5 -  Conditional Block and Context Menu tests -->		
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\Conditional-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\ContextMenu-Test.xml</testFileName1> -->
+		
+		
+		
+		<!-- Group 6 - Create Test Page tests -->
+		
+		<testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\CreateTestPage-Test.xml</testFileName1>
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\CreateUnformattedTestPage-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\CreateCNNTestPage-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\TestPages\List_of_MeowMix_URLs-Test.xml</testFileName1> -->
+		
+		
+		<!-- Group 7 - Fill out form and Find Phrase tests -->		
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\FindPhrase-Test.xml</testFileName1> -->
+		
+		
+		<!-- Group 8 - SQL Server Query and JSON Search content tests -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\GetAndQueryJson-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\GetAndQueryXML-Test.xml</testFileName1> -->
+		<!-- <testFileName2>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\RunSqlQueries_Alternate-Test.xml</testFileName2> -->
+		<!-- <testFileName2>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\SqlServerAccess-Test.xml</testFileName2> -->
+		
+		<!-- Group 9 - Access iFrame elements tests -->
+		
+		<!-- <testFileName2>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\iFrame_AccessElement-Test.xml</testFileName2> -->
+		
+		
+		<!-- Group 10 - Run Created Tests tests -->		
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\TestPages\Formy-Test.xml</testFileName1> -->
+		
+		<!-- test in section below saved from .Net Desktop Test Composition Application -->		
+		<!-- <testFileName1>C:\Gary\TestFiles\From_Desktop_App\Gary_Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\From_Desktop_App\Gary2_Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\From_Desktop_App\Gary3_Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1>   -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\Navigation-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\CheckConditionalPersistence-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\CheckNuturalBalance_PageLoad-Test.xml</testFileName1> -->
+		
+		<!-- not test in new refactored app structure -->
+		<!-- <testFileName1>C:\Gary\Alvaro\Tests\Flag-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\ParseAndCalculate-Test.xml</testFileName1> -->
+
+		<!--
+		<testFileName1></testFileName1>
+		<testFileName1></testFileName1>
+		<testFileName1></testFileName1>
+		<testFileName1></testFileName1> -->
+	</testFiles>
+	<!-- Folder Testing Settings -->
+	<testFolderName>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\</testFolderName>
+	<folderFileFilterType>contains</folderFileFilterType>
+	<folderFileFilter>RunSql</folderFileFilter>	
+</automatedTestConfiguration>

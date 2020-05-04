@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<automatedTestConfiguration>
+	<!-- folder where screenshots should be saved -->
+	<screenShotSaveFolder>C:\Gary\ScreenShots\Mashup</screenShotSaveFolder>
+	<maxScreenShotsToTake>5</maxScreenShotsToTake>
+	<!-- browserTypes settings Chrome, FireFox, PhantomJS, Internet Explorer, Edge -->
+	<browserType>Chrome</browserType>
+	<runHeadless>false</runHeadless>
+	<testAllBrowsers>false</testAllBrowsers>
+	<specifyTestFiles>true</specifyTestFiles>
+	<!-- sortSpecifiedTestFiles settings - true to sort alphabetically, false to run in order listed -->
+	<sortSpecifiedTestFiles>false</sortSpecifiedTestFiles>	
+	<!-- createCsvStatusFiles settings - many, one or none -->
+	<createCsvStatusFiles>none</createCsvStatusFiles>
+	<!-- Individual File Settings -->
+	<testFiles>
+		<!--<testFileName1>C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\SqlServerAccess-Test.xml</testFileName1>
+		<testFileName2>C:\Users\gjackson\Downloads\Ex_Files_Selenium_EssT\Ex_Files_Selenium_EssT\Exercise Files\ConfigurableAutomatedTester\Tests\RunSqlQueries_Alternate-Test.xml</testFileName2>-->
+		<testFileName1>C:\Test_Files\Fill_out_FormMy_Form_and_submit-Test.xml</testFileName1>
+		<testFileName2>C:\Test_Files\CheckImageSource-Test.xml</testFileName2>
+	</testFiles>
+	<!-- Folder Testing Settings -->
+	<testFolderName></testFolderName>
+	<folderFileFilterType></folderFileFilterType>
+	<folderFileFilter></folderFileFilter>	
+</automatedTestConfiguration>

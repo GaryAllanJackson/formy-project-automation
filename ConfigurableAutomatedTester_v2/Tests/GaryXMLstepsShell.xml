@@ -1,0 +1,537 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testSteps>
+	<step>
+		<!-- Tested - Good -->
+		<!-- Navigate to a page - The driver will go to the page in arg1 and compare that URL with the expected value if provided -->
+		<!-- Command - ALWAYS required -->		
+		<command>navigate</command>
+		
+		<!-- Read or write -->
+		<actionType>write</actionType>
+
+		<!-- Expected value - required only when we want to validate something as part of our step. For this command it is optional -->
+		<expectedValue>https://www.marvel.com/</expectedValue>
+		
+		<!-- crucial or non crucial -->
+		<crucial>TRUE</crucial>
+		<arguments>
+			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
+			<arg1>https://www.marvel.com</arg1>
+			
+			<!-- second argument, can be optional but required if we include the expectedValue. For this example we send 1000ms as the time to wait before the assertion is made -->
+			<arg2>1000</arg2> 
+			<!-- third argument is the window dimensions -->
+			<arg3></arg3> 
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- Compares the value of the accessor with the expectedValue.  -->
+		<command>assert</command>
+		<actionType>read</actionType>
+		<expectedValue>FEATURED CHARACTERS</expectedValue>
+		<crucial>TRUE</crucial>				   	
+		<accessor>//*[@id="slider-3"]/div/div[1]/div/h3</accessor>
+		<accessorType>xPath</accessorType>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- Normal hardcoded wait time -->
+		<command>wait</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<arguments>
+			<arg1>10000</arg1>
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- wait for an element to load in the page -->
+		<command>wait for element</command>
+		<actionType>write</actionType>
+		<crucial>FALSE</crucial>
+		<accessor>//*[@id="slider-3"]/div/div[1]/div/h3</accessor>
+		<accessorType>xPath</accessorType>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- wait for the page to be fully loaded document state ready -->
+		<command>wait for page</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<arguments>
+			<!-- we will use arg1 as the element we are waiting on. In this command it would be the page iteself.  
+				Must be present! (set to n/a when waiting on page already navigated to.) -->
+			<arg1>https://www.marvel.com/</arg1>
+			
+			<!-- Max time in Seconds (30 is default) -->
+			<arg2>30</arg2>
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good - Example of Navigation being repeated for subsequent test steps -->
+		<command>navigate</command>
+		
+		<!-- Read or write -->
+		<actionType>write</actionType>
+
+		<!-- Expected value - required only when we want to validate something as part of our step. For this command it is optional -->
+		<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>
+		
+		<!-- crucial or non crucial -->
+		<crucial>TRUE</crucial>
+		<arguments>
+			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
+			<arg1>https://formy-project.herokuapp.com/form</arg1>
+			
+			<!-- second argument, can be optional but required if we include the expectedValue. For this example we send 1000ms as the time to wait before the assertion is made -->
+			<arg2>1000</arg2> 
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- multiple keystroke command... SENDKEYS! -->
+		<command>sendkeys</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<!-- the accessor is the target element where the key strokes will be sent to -->
+		<accessor>first-name</accessor>
+		<accessorType>ID</accessorType>
+		<arguments>
+			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
+			<arg1>John</arg1>
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- multiple keystroke command... SENDKEYS! -->
+		<command>sendkeys</command>
+		<actionType>write</actionType>
+		<crucial>FALSE</crucial>
+		<!-- the accessor is the target element where the key strokes will be sent to -->
+		<accessor>last-name</accessor>
+		<accessorType>ID</accessorType>
+		<arguments>
+			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
+			<arg1>Doe</arg1>
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- multiple keystroke command... SENDKEYS! -->
+		<command>sendkeys</command>
+		<actionType>write</actionType>
+		<crucial>FALSE</crucial>
+		<!-- the accessor is the target element where the key strokes will be sent to -->
+		<accessor>job-title</accessor>
+		<accessorType>ID</accessorType>
+		<arguments>
+			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
+			<arg1>QA Engineer</arg1>
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- Click command... clicks on the element based on the accessor, this selects a radio button -->
+		<command>click</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<!-- the accessor is the target element where the key strokes will be sent to -->
+		<accessor>radio-button-2</accessor>
+		<accessorType>ID</accessorType>
+		<arguments>
+			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
+			<!-- <arg1>Doe</arg1> -->
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- Click command... clicks on the element based on the accessor, this checks a checkbox -->
+		<command>click</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<!-- the accessor is the target element where the key strokes will be sent to -->
+		<accessor>checkbox-2</accessor>
+		<accessorType>ID</accessorType>
+		<arguments>
+			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
+			<!-- <arg1>Doe</arg1> -->
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- context menu allows for sending multiple keystroke commands after the right click! -->
+		<command>right click</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<!-- the accessor is the target element where the key strokes will be sent to -->
+		<accessor>//*[@id="block-menu-menu-dc-menu"]/div/div/ul/li[2]/a</accessor>
+		<accessorType>xPath</accessorType>
+		<arguments>
+			<!-- We can have as many key strokes as we want to traverse the context menu. We will use the arg tags for storing each character/command. -->
+			<!-- The order or writing would be sequetial: arg1 > arg2 > arg3 > etc.-->
+			<arg1>Keys.Arrow_Down</arg1>
+			<arg2>Keys.Enter</arg2>
+		</arguments>
+	</step>	
+	<step>
+		<!-- Tested - Good -->
+		<!-- Switch to tab, if 1 is not provided as part of the argument list, it switches to tab 0.  Only can be used to switch to tab 0 or 1.  1 child tab per test. -->
+		<command>Switch to tab</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- Compares the value of the accessor with the expectedValue. Note that only xml acceptable characters are allowed and all other characters must be encoded as shown.  -->
+		<command>assert</command>
+		<actionType>read</actionType>
+		<expectedValue>COMICS &amp; GRAPHIC NOVELS</expectedValue>
+		<crucial>TRUE</crucial>				   	
+		<accessor>//*[@id="block-system-main"]/div/div/div[1]/div/div[1]/h2</accessor>
+		<accessorType>xPath</accessorType>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- Switch to tab, if 1 is not provided as part of the argument list, it switches to tab 0.  Only can be used to switch to tab 0 or 1.  1 child tab per test. -->
+		<command>Switch to tab 0</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+	</step>
+	<step>
+		<!-- Tested - Good (actually going down one extra time, have to check this) -->
+		<!-- multiple keystroke command... SENDKEYS! -->
+		<command>sendkeys</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<!-- the accessor is the target element where the key strokes will be sent to -->
+		<accessor>select-menu</accessor>
+		<accessorType>ID</accessorType>
+		<arguments>
+			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
+			<arg1>key.ARROW_DOWN</arg1>
+			<arg2>key.ARROW_DOWN</arg2>
+			<arg3>key.ENTER</arg3>
+			<!-- Last argument is the override time delay between sending keystrokes and is not required -->
+			<arg4>500</arg4>
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- multiple keystroke command... SENDKEYS! -->
+		<command>sendkeys</command>
+		<actionType>write</actionType>
+		<crucial>FALSE</crucial>
+		<!-- the accessor is the target element where the key strokes will be sent to -->
+		<accessor>datepicker</accessor>
+		<accessorType>ID</accessorType>
+		<arguments>
+			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
+			<arg1>05/28/2019</arg1>
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- multiple keystroke command... SENDKEYS! -->
+		<command>sendkeys</command>
+		<actionType>write</actionType>
+		<crucial>FALSE</crucial>
+		<!-- the accessor is the target element where the key strokes will be sent to -->
+		<accessor>datepicker</accessor>
+		<accessorType>ID</accessorType>
+		<arguments>
+			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
+			<arg1>05/28/2019</arg1>
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- multiple keystroke command... SENDKEYS! -->
+		<command>sendkeys</command>
+		<actionType>write</actionType>
+		<crucial>FALSE</crucial>
+		<!-- the accessor is the target element where the key strokes will be sent to -->
+		<accessor>datepicker</accessor>
+		<accessorType>ID</accessorType>
+		<arguments>
+			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
+			<arg1>Keys.RETURN</arg1>
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- click command  -->
+		<command>click</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<!-- the accessor is the target element where the key strokes will be sent to -->
+		<accessor>.btn.btn-lg.btn-primary </accessor>
+		<accessorType>CssSelector</accessorType>
+		<expectedValue>https://formy-project.herokuapp.com/thanks</expectedValue>
+		<arguments>
+			<!-- This first argument is the delay in milliseconds -->
+			<!-- <arg1>4000</arg1> -->
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- Normal hardcoded wait time -->
+		<command>wait</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<arguments>
+			<arg1>7000</arg1>
+		</arguments>
+	</step>
+	<!-- assert -->
+	<step>
+		<!-- Tested - Good -->
+		<command>assert</command>
+		<actionType>read</actionType>
+		<expectedValue>The form was successfully submitted!</expectedValue>
+		<crucial>TRUE</crucial>				   	
+		<accessor>alert</accessor>
+		<accessorType>ClassName</accessorType>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<command>Find</command>
+		<actionType>read</actionType>
+		<expectedValue>A Class</expectedValue>
+		<crucial>FALSE</crucial>
+		<accessor></accessor>
+		<accessorType></accessorType>
+		<arguments>
+			<!-- Type of Element to check -->
+			<arg1>label</arg1>
+			<!-- Type of Search to perform valid values are Equals and Contains -->
+			<arg2>contains</arg2>
+			<arg3></arg3>
+			<arg4></arg4>
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<command>Check_image_src</command>
+		<actionType>read</actionType>
+		<expectedValue>https://s3.us-east-2.amazonaws.com/jms-s3-cx-rel-p-pmc5/assets/cafe-bustelo/hero-coffee-web.svg</expectedValue>
+		<crucial>FALSE</crucial>
+		<accessor>//*[@id="content"]/div[1]/div/div/img</accessor>
+		<accessorType>xPath</accessorType>
+		<arguments>
+			<arg1>src</arg1>
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<command>Check_image_alt</command>
+		<actionType>read</actionType>
+		<expectedValue>Envelope Icon (Hover State)</expectedValue>
+		<crucial>FALSE</crucial>
+		<accessor>//*[@id="main-nav-ul"]/li[5]/a/img[2]</accessor>
+		<accessorType>xPath</accessorType>
+		<arguments>
+			<arg1>alt</arg1>
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- Compares the href of the anchor link element using the accessor against the expectedValue -->
+		<command>CHECK_A_HREF</command>
+		<actionType>read</actionType>
+		<crucial>TRUE</crucial>
+		<!-- the accessor is the anchor whose href attribute will be checked against the expectedValue -->
+		<accessor>//*[@id="menu-item-21"]/a</accessor>
+		<accessorType>xPath</accessorType>
+		<expectedValue>https://www.swtestacademy.com/about-software-test-academy/</expectedValue>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- Compares the href of the anchor link element using the accessor against the expectedValue -->
+		<command>CHECK A HREF</command>
+		<actionType>read</actionType>
+		<crucial>TRUE</crucial>
+		<!-- the accessor is the anchor whose href attribute will be checked against the expectedValue -->
+		<accessor>//*[@id="menu-item-21"]/a</accessor>
+		<accessorType>xPath</accessorType>
+		<expectedValue>https://www.swtestacademy.com/about-software-test-academy/</expectedValue>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- Checks all links ensuring that each returns a 200 -->
+		<command>check links</command>
+		<actionType>read</actionType>
+		<crucial>FALSE</crucial>
+		<arguments>
+			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
+			<arg1>https://nutrish.com/</arg1>
+		</arguments>
+	</step>	
+	<step>
+		<command>check links</command>
+		<actionType>read</actionType>
+		<crucial>FALSE</crucial>
+	</step>	
+	<step>
+		<command>Check Contrast</command>
+		<actionType>read</actionType>
+		<expectedValue></expectedValue>
+		<crucial>FALSE</crucial>
+		<accessor></accessor>
+		<accessorType></accessorType>
+		<arguments>
+			<!-- URL to check -->
+			<arg1>http://www.myCoolPage.com</arg1>
+			
+			<!-- Type of Element to check -->
+			<arg2>p</arg2>
+			
+			<!-- brightness Contrast -->
+			<arg3>b=85</arg3>
+			
+			<!-- difference Contrast -->
+			<arg4>d=450</arg4>
+		</arguments>
+	</step>	
+	<step>
+		<command>Connect to Database</command>
+		<actionType>write</actionType>
+		<expectedValue></expectedValue>
+		<crucial>true</crucial>
+		<accessor></accessor>
+		<accessorType></accessorType>
+		<arguments>
+			<!-- Type of Database (MongoDb, Sql Server)-->
+			<arg1>MongoDb</arg1>
+			
+			<!-- Connection String or Close to close the connection -->
+			<!-- when using a uri, escape all illegal xml characters (escape: ampersands with &amp;) -->
+			<arg2>mongodb://mlabs-project-tracker-dev:paVzWfyLuOrweLAc@mlabs-project-tracker-shard-00-00-mhate.azure.mongodb.net:27017,mlabs-project-tracker-shard-00-01-mhate.azure.mongodb.net:27017,mlabs-project-tracker-shard-00-02-mhate.azure.mongodb.net:27017/project-tracker-dev?ssl=true&amp;replicaSet=MLABS-PROJECT-TRACKER-shard-0&amp;authSource=admin</arg2>
+
+			<arg3>uri</arg3>
+			<arg4></arg4>
+		</arguments>
+	</step>
+	<step>
+		<command>MongoDb Query</command>
+		<actionType>read</actionType>
+		<expectedValue>The weather is 85 in Atlanta</expectedValue>
+		<crucial>false</crucial>
+		<accessor></accessor>
+		<accessorType></accessorType>
+		<arguments>
+			<!-- Database to query -->
+			<arg1>project-tracker-admin-dev</arg1>
+			<!-- Table to query -->
+			<arg1>cellHistories</arg1>
+			<!-- Field to query -->
+			<arg2>cellHistories</arg2>
+			<!-- where clause - optional -->
+			<arg3>where "Assigned To" = 5</arg3>
+			<arg4></arg4>
+		</arguments>
+	</step>
+	<step>
+		<command>Connect to Database</command>
+		<actionType>write</actionType>
+		<expectedValue></expectedValue>
+		<crucial>true</crucial>
+		<accessor></accessor>
+		<accessorType></accessorType>
+		<arguments>
+			<!-- Type of Database (MongoDb, Sql Server)-->
+			<arg1>MongoDb</arg1>
+			
+			<!-- Connection String or Close to close the connection -->
+			<arg2>close</arg2>
+
+			<arg3>uri</arg3>
+			<arg4></arg4>
+		</arguments>
+	</step>
+	<step>
+		<command>Switch to iFrame [iframeResult]</command>
+		<actionType>read</actionType>
+		<expectedValue>Tutorials</expectedValue>
+		<crucial>false</crucial>
+		<accessor>//button[contains(@id,'menu1')]</accessor>
+		<accessorType>xPath</accessorType>
+		<arguments>			
+			<arg1></arg1>
+			<arg2></arg2>
+			<arg3></arg3>
+			<arg4></arg4>
+		</arguments>
+	</step>
+	<step>
+		<command>Login</command>
+		<actionType>write</actionType>
+		<expectedValue></expectedValue>
+		<crucial>true</crucial>
+		<accessor>n/a</accessor>
+		<accessorType></accessorType>
+		<arguments>
+			<arg1>[UserName]</arg1>
+			<arg2>[Password]</arg2>
+			<arg3>http://www.myCoolPage.com</arg3>
+			<arg4></arg4>
+		</arguments>
+	</step>
+	<step>
+		<command>Create Test Page Formatted</command>
+		<actionType>write</actionType>
+		<expectedValue></expectedValue>
+		<crucial>false</crucial>
+		<accessor></accessor>
+		<accessorType></accessorType>
+		<arguments>
+			<!-- CssSelector (* for all elements - default) -->
+			<arg1>a</arg1>
+			
+			<!-- File where tests are written -->
+			<arg2>C:\MyTestPages\MyTestFile.txt</arg2>
+			
+			<!-- Tag types to ignore comma delimited -->
+			<arg3>html,head,title,meta,script,body,style,nav,br,div,form</arg3>
+			
+			<arg4></arg4>
+		</arguments>
+	</step>
+	<step>
+		<command>checkget</command>
+		<actionType>read</actionType>
+		<expectedValue>200</expectedValue>
+		<crucial>FALSE</crucial>
+		<arguments>
+			<arg1>https://www.swtestacademy.com/about-software-test-academy/ </arg1>
+		</arguments>
+	</step>
+	<step>
+		<command></command>
+		<actionType></actionType>
+		<expectedValue></expectedValue>
+		<crucial></crucial>
+		<accessor></accessor>
+		<accessorType></accessorType>
+		<arguments>
+			<arg1></arg1>
+			<arg2></arg2>
+			<arg3></arg3>
+			<arg4></arg4>
+		</arguments>
+	</step>
+	<step>
+		<command></command>
+		<actionType></actionType>
+		<expectedValue></expectedValue>
+		<crucial></crucial>
+		<accessor></accessor>
+		<accessorType></accessorType>
+		<arguments>
+			<arg1></arg1>
+			<arg2></arg2>
+			<arg3></arg3>
+			<arg4></arg4>
+		</arguments>
+	</step>
+</testSteps>
