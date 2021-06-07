@@ -1,6 +1,12 @@
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import net.lightbody.bmp.BrowserMobProxy;
+import net.lightbody.bmp.BrowserMobProxyServer;
+import net.lightbody.bmp.client.ClientUtil;
+import net.lightbody.bmp.core.har.Har;
+import net.lightbody.bmp.core.har.HarEntry;
+import org.junit.Assert;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -13,10 +19,13 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -86,10 +95,42 @@ public class TestCentral {
      *      4.   Updated WebDriverManager to eliminate the need to download drivers for
      *           Chrome, FireFox and Edge but currently PhantomJS and Internet Explorer still require
      *           referencing the path of the driver on the system.
+     *      5.  Implemented JavaScript Variable testing so that DataLayer values could be tested.
+     *          This test currently allows for testing one dataLayer value but this value cannot be persisted yet.
      *
      *      Future updates:
-     *      1.  Greater Than and Less Than Operators.
+     *      1.  Google Tag Manager tag checking which will allow for checking the following:
+     *          May require generating a new HAR for each test step.
+     *          This may involve enhancing all Click, Navigate, and Wait Commands and implementing Scrolling Commands.
+     *          But instead of enhancing these commands, I think it is best to create new commands such as
+     *          gtm pageview, gtm click, gtm wait and gtm scroll
+     *          Either the Expected value field can contain name value pairs such as:
+     *          <expectedValue>ec="footer", ea="contact us", el="url", gtm="TGL99T2" dl="https://www.mypage.com"</expectedValue>
+     *          or the  arguments can be used
+     *          a.  Document Location  - <arg1></arg1>
+     *              - used to help locate the correct HAR entry
+     *          b.  GTM Container - <arg2></arg2>
+     *          c.  Event Category - <arg3></arg3>
+     *          d.  Event Action - <arg4></arg4>
+     *          e.  Event Label - <arg5></arg5>
+     *          f.  Event Value - <arg6></arg6>
+     *      2.  Greater Than and Less Than Operators.
      *          This would be a good addition when used with Conditional Blocks.
+     *      2.  SiteMap Generator - while not part of testing, it could help to find all pages that
+     *          require testing.
+     *      3.  Complex Equation Command
+     *          a.  Splits equation by space character.
+     *          b.  Requires a List of Calculation objects
+     *              The Calculation object contains the following types of fields
+     *                  i.      Open Parenthesis - string can be null for no parenthesis
+     *                  ii.     First Number  - Need to figure out what type works best double/long (both)
+     *                  iii.    Operator - operation to perform (*, /, +, -)
+     *                  iv.     Second Number - calculate with first number
+     *                  v.      Close Parenthesis - string can be null for no parenthesis
+     *              Iterate through the List of calculations in order to properly implement "PEMDAS"
+     *                  Exponential example: - int exp = (int) Math.pow(firstNumber, secondNumber);
+     *
+     *
      *
      ╚═══════════════════════════════════════════════════════════════════════════════╝ */
      //endregion
@@ -98,6 +139,7 @@ public class TestCentral {
     //region { Application Configuration Variables }
     private String configurationFile = "Config/ConfigurationSetup.xml";
     String configurationFolder = "Config/";
+    String harFolder = configurationFolder + "HAR_files/";
     static String testPage = "https://www.myWebsite.com/";
     private boolean runHeadless = true;
     String screenShotSaveFolder;
@@ -110,11 +152,16 @@ public class TestCentral {
     TestHelper testHelper;
     ReadCommands readCommands;
     WriteCommands writeCommands;
+    //browser mob proxy declarations
+    Proxy seleniumProxy;
+    public static BrowserMobProxyServer proxy;
+    //end browser mob proxy declarations
 
 //    private HelperUtilities helperUtilities = new HelperUtilities();
     private boolean testAllBrowsers = false;  //true;
     private List<TestStep> testSteps = new ArrayList<>();
     private String testFileName;
+    //private String _testFileName;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy_HH-mm-ss");
     private String logFileUniqueName = dateFormat.format(new Date());
     private String logFileRootFileName = "TestResults_";   //root name of the log file, change this not the logfile name
@@ -125,6 +172,9 @@ public class TestCentral {
             configurationFile.substring(0, configurationFile.lastIndexOf("\\")) + "\\ConfigTester_Help.txt" :
             configurationFile.substring(0, configurationFile.lastIndexOf("/")) + "/ConfigTester_Help.txt";
     private List<String> testFiles = new ArrayList<>();
+    public List<GtmTag> GtmTagList;
+
+    public String get_testFileName() {return testFileName;}
 
     //region { WebDriver Browser Driver Configured Locations }
     private String phantomJsDriverPath = "/gary/java utilities/BrowserDrivers/phantomjs.exe";
@@ -144,7 +194,10 @@ public class TestCentral {
     boolean conditionalSuccessful = false;
     String jsonContent = null;
     String xmlContent = null;
+    String _csvFileName;
 
+    public void set_csvFileName(String _csvFileName) { this._csvFileName = _csvFileName;}
+    public String get_csvFileName() { return _csvFileName;}
 
     //region { Properties }
     boolean is_executedFromMain() {
@@ -247,14 +300,45 @@ public class TestCentral {
     @AfterAll
     private void TearDown() throws Exception {
         try {
+            WriteHarContent();
             driver.close();
             driver.quit();
+            proxy.stop();
         } catch(Exception e) {
             //the driver was never instantiated so do nothing here
+            testHelper.UpdateTestResults("Error Closing Application: " + e.getMessage(), false);
         }
         PerformCleanup();
     }
 
+    /**************************************************************
+     *  Description: This method writes the HAR content to a file.
+     *               Currently, this has been called from the TearDown
+     *               but may be moved at a later time
+     ***************************************************************/
+    private void WriteHarContent() {
+
+        try {
+            Har har = proxy.getHar();
+            SaveHarFile(har, testPage);
+            testHelper.UpdateTestResults("Start Writing HAR file for end of test!", true);
+            List<HarEntry> entries = proxy.getHar().getLog().getEntries();
+            /*
+            for (HarEntry entry : entries) {
+                //System.out.println(entry.getRequest().getUrl());
+                //testHelper.UpdateTestResults(entry.getRequest().getUrl(), false);
+                //testHelper.UpdateTestResults("getStatusText() = " + entry.getResponse().getStatusText(), false);
+                //testHelper.UpdateTestResults(entry.getRequest().getPostData().getParams().toString(), false);
+                int size = entry.getRequest().getQueryString().size();
+                for (int x=0;x<size;x++) {
+                    testHelper.UpdateTestResults(entry.getRequest().getQueryString().get(x).getName() + " = " + entry.getRequest().getQueryString().get(x).getValue(), false);
+                }
+            }*/
+            testHelper.UpdateTestResults("End Writing HAR file!", true);
+        } catch(Exception ex) {
+            testHelper.UpdateTestResults("Error writing HAR file: " + ex.getMessage(), true);
+        }
+    }
 
 
     /**************************************************************************
@@ -287,12 +371,15 @@ public class TestCentral {
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 +  "Config File absolute path = " + AppConstants.ANSI_RESET + tmp.getAbsolutePath(), false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 +  "Log File Name = " + AppConstants.ANSI_RESET  + logFileName, false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 +  "Help File Name = " + AppConstants.ANSI_RESET + helpFileName, false);
+        testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 +  "HTML Help File Name = " + AppConstants.ANSI_RESET + helpFileName.replace(".txt", ".html"), false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 + "Executed From Main or as JUnit Test = " + AppConstants.ANSI_RESET + (is_executedFromMain() ? "Standalone App" : "JUnit Test"), false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 + "Running on "  + AppConstants.ANSI_RESET + (HelperUtilities.isWindows() ? "Windows" : "Mac"), false);
         testHelper.CreateSectionHeader("[ End Test Application Initialization ]", AppConstants.FRAMED + AppConstants.ANSI_WHITE_BACKGROUND + AppConstants.ANSI_BOLD, AppConstants.ANSI_BLUE, false, false, false);
         testHelper.UpdateTestResults("", false);
 
         testHelper.set_logFileName(logFileName);
+        readCommands.testHelper.set_logFileName(logFileName);
+        writeCommands.testHelper.set_logFileName(logFileName);
         testHelper.set_helpFileName(helpFileName);
 
         boolean status = ConfigureTestEnvironment();
@@ -385,6 +472,8 @@ public class TestCentral {
         for (int fileIndex = 0; fileIndex < testFiles.size(); fileIndex++) {
             testFileName = testFiles.get(fileIndex);
             testHelper.set_testFileName(testFileName);
+            readCommands.set_testFileName(testFileName);
+            writeCommands.set_testFileName(testFileName);
             //Start - reset this for each test file
             //moved this here so that the Unique Identifier is created for each test file.
             uniqueId = testHelper.GetUniqueIdentifier();
@@ -403,7 +492,9 @@ public class TestCentral {
                 SetCSVFileName(logFileName);
             } else if (this.createCSVStatusFiles.equals("none")) {
                 testHelper.set_csvFileName(null);
+                set_csvFileName(null);
             }
+
             //write headers to the CSV file for each test file so that this can act as a separator between tests or just a header for a singular test file
             testHelper.WriteToFile(testHelper.get_csvFileName(),"File And Step Number,Test Performed,Execution Status,Variable Output,Test File Name");
             //End - reset this for each test file
@@ -478,6 +569,7 @@ public class TestCentral {
            csvFileName =  csvFileName.substring(testFileName.lastIndexOf("/") + 1);
        }
         testHelper.set_csvFileName(configurationFolder + csvFileName);  //added for individual CSV files
+        set_csvFileName(configurationFolder + csvFileName);
     }
 
     /*****************************************************************
@@ -934,12 +1026,31 @@ public class TestCentral {
      *                          testing url
      ************************************************************ */
     String CheckPageUrl(int delayMilliSeconds) throws Exception {
+        //proxy.newHar(testPage);
         testHelper.NavigateToPage(this.driver, testPage, delayMilliSeconds);
+        //Har har = proxy.getHar();
+        //SaveHarFile(har, testPage);
 
         if (!isAlertPresent()) {
             return this.driver.getCurrentUrl();
         } else {
             return null;
+        }
+    }
+
+    private void SaveHarFile(Har har, String sFileName) {
+
+        sFileName = sFileName.replace("/","_").replace(":","_");
+        sFileName = harFolder + sFileName + ".txt";
+        sFileName = testHelper.GetUnusedFileName(sFileName);
+
+
+        File harFile = new File(sFileName);
+        try {
+            har.writeTo(harFile);
+        } catch (IOException ex) {
+            System.out.println (ex.toString());
+            System.out.println("Could not find file " + sFileName);
         }
     }
 
@@ -981,6 +1092,28 @@ public class TestCentral {
         testHelper.set_is_Maximized(true); */
     }
 
+    public BrowserMobProxy getProxyServer() {
+        proxy = new BrowserMobProxyServer();
+        proxy.setTrustAllServers(true);
+        // above line is needed for application with invalid certificates
+        proxy.start(9091);
+        return proxy;
+    }
+
+    public Proxy getSeleniumProxy(BrowserMobProxy proxyServer) throws Exception {
+        seleniumProxy = ClientUtil.createSeleniumProxy(proxyServer);
+        try {
+            String hostIp = Inet4Address.getLocalHost().getHostAddress();
+            seleniumProxy.setHttpProxy(hostIp + ":" + proxyServer.getPort());
+            seleniumProxy.setSslProxy(hostIp + ":" + proxyServer.getPort());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            testHelper.UpdateTestResults("Error in getSeleniumProxy: " + e.getMessage(), true);
+            Assert.fail("invalid Host Address");
+        }
+        return seleniumProxy;
+    }
+
     /****************************************************************************
      *  DESCRIPTION:
      *  Sets the WebDriver to the Chrome Driver
@@ -988,26 +1121,48 @@ public class TestCentral {
      *  no longer a need to download the ChromeDriver as the WebDriverManager
      *  will automatically do this.
      **************************************************************************** */
-    private void SetChromeDriver() {
-        testHelper.UpdateTestResults( AppConstants.indent5 + "[" + AppConstants.ANSI_GREEN + "Setting " + AppConstants.ANSI_RESET + "ChromeDriver]" + AppConstants.ANSI_RESET , true);
-        //System.setProperty("webdriver.chrome.driver", chromeDriverPath);
-        WebDriverManager.chromedriver().setup();
+    private void SetChromeDriver(){
 
-        if (runHeadless) {
-            ChromeOptions options = new ChromeOptions();
-            options.addArguments("window-size=1400,800");
-            options.addArguments("headless");
-            options.addArguments("--dns-prefetch-disable");
-            //options.addArguments("acceptInsecureCerts=true");
-            options.setAcceptInsecureCerts(true);
-            options.setPageLoadStrategy(PageLoadStrategy.NONE);
-            driver = new ChromeDriver(options);
-            testHelper.set_is_Maximized(false);
-        } else {
-            driver = new ChromeDriver();
-            driver.manage().window().maximize(); //added 8-14-2019
-            testHelper.set_is_Maximized(true);
+        try {
+            testHelper.UpdateTestResults(AppConstants.indent5 + "[" + AppConstants.ANSI_GREEN + "Setting " + AppConstants.ANSI_RESET + "ChromeDriver]" + AppConstants.ANSI_RESET, true);
+            //System.setProperty("webdriver.chrome.driver", chromeDriverPath);
+            proxy = new BrowserMobProxyServer();
+            //proxy.start(80);
+            DesiredCapabilities capabilities = new DesiredCapabilities();
+            seleniumProxy = getSeleniumProxy(getProxyServer());
+            capabilities.setCapability(CapabilityType.PROXY, seleniumProxy);
+            WebDriverManager.chromedriver().setup();
+
+
+            if (runHeadless) {
+                ChromeOptions options = new ChromeOptions();
+                //options.setCapability(CapabilityType.PROXY, proxy);
+                options.addArguments("window-size=1400,800");
+                options.addArguments("headless");
+                options.addArguments("--dns-prefetch-disable");
+                options.setCapability(CapabilityType.PROXY, seleniumProxy);
+                //options.addArguments("acceptInsecureCerts=true");
+                options.setAcceptInsecureCerts(true);
+                options.setPageLoadStrategy(PageLoadStrategy.NONE);
+                driver = new ChromeDriver(options);
+
+                testHelper.set_is_Maximized(false);
+            } else {
+                ChromeOptions options = new ChromeOptions();
+                options.setCapability(CapabilityType.PROXY, seleniumProxy);
+                options.setAcceptInsecureCerts(true);
+                //options.setCapability(CapabilityType.PROXY, proxy);
+                driver = new ChromeDriver(options);
+
+                //driver = new ChromeDriver();
+                driver.manage().window().maximize(); //added 8-14-2019
+                testHelper.set_is_Maximized(true);
+            }
+            proxy.newHar();
+        } catch(Exception ex) {
+            testHelper.UpdateTestResults("Error Setting ChromeDriver: " + ex.getMessage(), true);
         }
+        //proxy.enableHarCaptureTypes(CaptureType.REQUEST_CONTENT, CaptureType.RESPONSE_CONTENT);
     }
 
     /****************************************************************************
@@ -1264,6 +1419,40 @@ public class TestCentral {
         } else {
             return defaultValue;
         }
+    }
+
+    GtmTag GetGtmArguments(TestStep ts, String defaultValue) {
+        GtmTag item = new GtmTag();
+        String argument;
+        String argumentValue;
+        for(int x=0;x< ts.ArgumentList.size();x++) {
+            if (!testHelper.IsNullOrEmpty(ts.ArgumentList.get(x).get_parameter())) {
+                argument = ts.ArgumentList.get(x).get_parameter().split("=")[0];
+                argumentValue = ts.ArgumentList.get(x).get_parameter().split("=")[1];
+
+                if (argument.equals("dl")) {
+                    item.set_DocumentLocation(argumentValue);
+                } else if (argument.equals("t")) {
+                    item.set_HitType(argumentValue);
+                } else if (argument.equals("ec")) {
+                    item.set_EventCategory(argumentValue);
+                } else if (argument.equals("ea")) {
+                    item.set_EventAction(argumentValue);
+                } else if (argument.equals("el")) {
+                    item.set_EventLabel(argumentValue);
+                } else if (argument.equals("cg1")) {
+                    item.set_ContentGroup1(argumentValue);
+                } else if (argument.equals("cg2")) {
+                    item.set_ContentGroup2(argumentValue);
+                } else if (argument.equals("cg2+")) {
+                    item.set_ContentGroup2("+" + argumentValue);
+                }
+                else if (argument.equals("dt")) {
+                    item.set_DocumentTitle(argumentValue);
+                }
+            }
+        }
+        return item;
     }
 
     /****************************************************************

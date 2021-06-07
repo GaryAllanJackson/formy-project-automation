@@ -716,6 +716,11 @@ public class TestHelper{
      ****************************************************************************  */
     void UpdateTestResults(String testMessage, boolean writeToLog) {
         set_executedFromMain(testCentral.is_executedFromMain());
+        /*System.out.println("====================================================");
+        System.out.println("testMessage = " + testMessage);
+        System.out.println("====================================================");
+        */
+
         try {
             if (writeToLog) {
                 if (testMessage.contains(AppConstants.sectionRightDown) || testMessage.contains(AppConstants.sectionRightUp)
@@ -726,10 +731,12 @@ public class TestHelper{
                     }
                 } else {
                     WriteToFile(get_logFileName(), CleanMessage(testMessage));
-                    //if (testMessage.startsWith("Successful") || testMessage.startsWith("Failed")) {
+                    //System.out.println("#1 in the else");  //debugging
                     if (testMessage.contains("Successful") || testMessage.contains("Failed") || testMessage.contains("Error")) {
-                        WriteToFile(get_logFileName(), "");
+                        WriteToFile(get_logFileName(), ""); //write blank line
+                        //System.out.println("#2 in the else inner if  " + get_csvFileName()); //debugging
                         if (get_csvFileName() != null) {
+                            //System.out.println("#3 in the else inner inner if");  //debugging
                             WriteToCSV(CleanMessage(testMessage));
                         }
                     }
@@ -801,14 +808,14 @@ public class TestHelper{
         if (step.contains(" ")) {
             step = step.substring(0, step.indexOf(" "));
         }
-        String status = testMessage.contains("Successful") ? "Successful" : testMessage.startsWith("Error") ? "Error" : testMessage.startsWith("Fail") ? "Failure" : null;
+        String status = testMessage.contains("Successful") ? "Successful" : testMessage.trim().startsWith("Error") ? "Error" : testMessage.trim().startsWith("Fail") ? "Failure" : null;
         if (status == null) {
             return;
         }
 
         int startPos = testMessage.indexOf(status) + status.length();
         int endPos = testMessage.indexOf(" for step ");
-        //DebugDisplay("testMessage =" + testMessage);
+        DebugDisplay("testMessage =" + testMessage);
         String message = testMessage.substring(startPos, endPos).trim();
         message = message.substring(0,1).toUpperCase() + message.substring(1);
         //region {Debugging - CSV Column data}

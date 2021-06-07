@@ -30,6 +30,13 @@ public class ReadCommands {
     WriteCommands writeCommands;  // = new WriteCommands();
     WebDriver driver;
     private String _testPage;
+    public List<GtmTag> GtmTagList;
+
+    private String _testFileName;
+    void set_testFileName(String _testFileName) {
+        this._testFileName = _testFileName;
+    }
+    String get_testFileName() {return _testFileName; }
 
     /*****************************************************************
      * Description: This is the constructor where testCentral and
@@ -49,6 +56,8 @@ public class ReadCommands {
         if (testHelper == null) {
             testHelper = new TestHelper(testCentral);
             testHelper.set_executedFromMain(testCentral.is_executedFromMain());
+            testHelper.set_csvFileName(testCentral.get_csvFileName());
+            testHelper.set_testFileName(testCentral.get_testFileName());
             //testHelper.DebugDisplay("ReadCommands - testHelper.is_executedFromMain() = " + testHelper.is_executedFromMain() );
         }
     }
@@ -121,8 +130,137 @@ public class ReadCommands {
                 JsonController(ts, fileStepIndex);
             } else if (ts.get_command().toLowerCase().equals(AppCommands.Get_XML) || ts.get_command().toLowerCase().equals(AppCommands.Save_XML) ) {
                 XmlController(ts, fileStepIndex);
+            } else if (ts.get_command().toLowerCase().equals(AppCommands.CheckJavaScriptValue)) {
+                CheckJavaScriptReturnValue(ts, fileStepIndex);
+            } else if (ts.get_command().toLowerCase().equals(AppCommands.CheckGtmTag)) {
+                CheckGtmTagValues(ts, fileStepIndex);
             }
         }
+    }
+
+    private void CheckGtmTagValues(TestStep ts, String fileStepIndex) {
+        if (GtmTagList != null && GtmTagList.size() > 0) {
+            testHelper.set_csvFileName(testCentral.testHelper.get_csvFileName());
+            testHelper.set_testFileName(testCentral.get_testFileName());
+            testHelper.UpdateTestResults(AppConstants.indent5 + "Checking GTM Tag for step " + fileStepIndex, true);
+            GtmTag item = new GtmTag();
+            GtmTag listItem = new GtmTag();
+            boolean doesMatch = false;
+            int index = -1;
+            String beginsWith = "=";
+            //retrieve the values from the test step
+            item = testCentral.GetGtmArguments(ts, null);
+            for (int x=0;x< GtmTagList.size();x++) {
+                listItem = GtmTagList.get(x);
+                if (!testHelper.IsNullOrEmpty(listItem.get_documentLocation()) && !testHelper.IsNullOrEmpty(listItem.get_hitType()) &&
+                        !testHelper.IsNullOrEmpty(listItem.get_eventCategory()) && !testHelper.IsNullOrEmpty(listItem.get_eventAction()) &&
+                                !testHelper.IsNullOrEmpty(listItem.get_eventLabel()) && !testHelper.IsNullOrEmpty(listItem.get_contentGroup1()))
+                {
+                    if (listItem.get_documentLocation().equals(item.get_documentLocation()) && listItem.get_hitType().equals(item.get_hitType()) &&
+                            listItem.get_eventCategory().equals(item.get_eventCategory()) && listItem.get_eventAction().equals(item.get_eventAction()) &&
+                            listItem.get_eventLabel().equals(item.get_eventLabel()) && listItem.get_contentGroup1().equals(item.get_contentGroup1())) {
+                        //testHelper.DebugDisplay("item.get_contentGroup2() = " + item.get_contentGroup2());  //debugging
+                        doesMatch = CheckOptionalGtmValues(item, listItem);
+                        /*
+                        if (!testHelper.IsNullOrEmpty(item.get_contentGroup2()) ) {
+                            if (item.get_contentGroup2().startsWith("+")) {
+                                beginsWith = " begins with ";
+                                if (listItem.get_contentGroup2().startsWith(item.get_contentGroup2().substring(1))) {
+                                    doesMatch = true;
+                                } else {
+                                    doesMatch = false;
+                                }
+                            } else {
+                                beginsWith = "=";
+                                if (listItem.get_contentGroup2().equals(item.get_contentGroup2())) {
+                                    doesMatch = true;
+                                } else {
+                                    doesMatch = false;
+                                }
+                            }
+                        } else {
+                            doesMatch = true;
+                        }*/
+                        index = x;
+                        break;
+                    }
+                }
+            }
+            if (index > -1 && doesMatch) {
+                //testHelper.UpdateTestResults("The Save Har File command must first be used before using this command!", true);
+                testHelper.UpdateTestResults("Successful GTM Tag found matching specified criteria: \r\n" +
+                        AppConstants.indent8 + "Expected: (dl=" + item.get_documentLocation() + ") Actual: (dl=" + listItem.get_documentLocation() + ")\r\n" +
+                        AppConstants.indent8 + "Expected: (t=" + item.get_hitType() + ")  Actual: (t=" + listItem.get_hitType() + ")\r\n" +
+                        AppConstants.indent8 + "Expected: (ec=" + item.get_eventCategory() + ") Actual: (ec=" + listItem.get_eventCategory() + ")\r\n" +
+                        AppConstants.indent8 + "Expected: (ea=" + item.get_eventAction() + ") Actual: (ea=" + listItem.get_eventAction() + ")\r\n" +
+                        AppConstants.indent8 + "Expected: (dl=" + item.get_eventLabel() + ") Actual: (dl=" + listItem.get_eventLabel() + ")\r\n" +
+                        (!testHelper.IsNullOrEmpty(item.get_contentGroup2()) ? AppConstants.indent8 + "Expected: (cg2" + beginsWith + item.get_contentGroup2() + ") Actual: (cg2" + beginsWith + listItem.get_contentGroup2() + ")\r\n" : "") +
+                        (!testHelper.IsNullOrEmpty(item.get_documentTitle()) ? AppConstants.indent8 + "Expected: (dt" + beginsWith + item.get_documentTitle() + ") Actual: (dt" + beginsWith + listItem.get_documentTitle() + ")\r\n" : "") +
+
+                        AppConstants.indent5  + " for step " + fileStepIndex, true);
+            } else if (index > -1 && !doesMatch) {
+                testHelper.UpdateTestResults("Failed No GTM Tag found matching specified criteria: \r\n" +
+                        AppConstants.indent8 + "Expected: (dl=" + item.get_documentLocation() + ") Actual: (dl=" + listItem.get_documentLocation() + ")\r\n" +
+                        AppConstants.indent8 + "Expected: (t=" + item.get_hitType() + ")  Actual: (t=" + listItem.get_hitType() + ")\r\n" +
+                        AppConstants.indent8 + "Expected: (ec=" + item.get_eventCategory() + ") Actual: (ec=" + listItem.get_eventCategory() + ")\r\n" +
+                        AppConstants.indent8 + "Expected: (ea=" + item.get_eventAction() + ") Actual: (ea=" + listItem.get_eventAction() + ")\r\n" +
+                        AppConstants.indent8 + "Expected: (dl=" + listItem.get_eventLabel() + ") Actual: (dl=" + listItem.get_eventLabel() + ")\r\n" +
+                        (!testHelper.IsNullOrEmpty(item.get_contentGroup2()) ? AppConstants.indent8 + "Expected: (cg2" + beginsWith + item.get_contentGroup2() + ") Actual: (cg2" + beginsWith + listItem.get_contentGroup2() + ")\r\n" : "") +
+                        (!testHelper.IsNullOrEmpty(item.get_documentTitle()) ? AppConstants.indent8 + "Expected: (dt" + beginsWith + item.get_documentTitle() + ") Actual: (dt" + beginsWith + listItem.get_documentTitle() + ")\r\n" : "") +
+                        AppConstants.indent5  + " for step " + fileStepIndex, true);
+            } else {
+                testHelper.UpdateTestResults("Failed No GTM Tag found matching specified criteria: \r\n" +
+                        AppConstants.indent8 + "Expected: (dl=" + item.get_documentLocation() + ")\r\n" +
+                        AppConstants.indent8 + "Expected: (t=" + item.get_hitType() + ")\r\n" +
+                        AppConstants.indent8 + "Expected: (ec=" + item.get_eventCategory() + ")\n" +
+                        AppConstants.indent8 + "Expected: (ea=" + item.get_eventAction() + ")\n" +
+                        AppConstants.indent8 + "Expected: (dl=" + item.get_eventLabel() + ")\n" +
+                        (!testHelper.IsNullOrEmpty(item.get_contentGroup2()) ? AppConstants.indent8 + "Expected: (cg2" + beginsWith + item.get_contentGroup2() + ")\r\n" : "") +
+                        (!testHelper.IsNullOrEmpty(item.get_documentTitle()) ? AppConstants.indent8 + "Expected: (dt" + beginsWith + item.get_documentTitle() + ")\r\n" : "") +
+                        AppConstants.indent5 + " for step " + fileStepIndex, true);
+            }
+        } else {
+            testHelper.UpdateTestResults("The Save Har File command must first be used before using this command!", true);
+        }
+    }
+
+    private boolean CheckOptionalGtmValues(GtmTag item, GtmTag listItem) {
+        String beginsWith = "=";
+        boolean doesMatch = true;
+
+        doesMatch = (!testHelper.IsNullOrEmpty(item.get_contentGroup2()) && item.get_contentGroup2().startsWith("+")) ? listItem.get_contentGroup2().startsWith(item.get_contentGroup2().substring(1)) : true;
+        if (!doesMatch) {
+            return doesMatch;
+        }
+        doesMatch = (!testHelper.IsNullOrEmpty(item.get_documentTitle()) && item.get_documentTitle().startsWith("+")) ? listItem.get_documentTitle().startsWith(item.get_documentTitle().substring(1)) : true;
+        if (!doesMatch) {
+            return doesMatch;
+        }
+        /*
+        if (!testHelper.IsNullOrEmpty(item.get_contentGroup2()) ) {
+            if (item.get_contentGroup2().startsWith("+")) {
+                beginsWith = " begins with ";
+                if (listItem.get_contentGroup2().startsWith(item.get_contentGroup2().substring(1))) {
+                    doesMatch = true;
+                } else {
+                    doesMatch = false;
+                }
+            } else {
+                beginsWith = "=";
+                if (listItem.get_contentGroup2().equals(item.get_contentGroup2())) {
+                    doesMatch = true;
+                } else {
+                    doesMatch = false;
+                }
+            }
+        } else {
+            doesMatch = true;
+        }*/
+
+
+        return doesMatch;
+
+
     }
 
 
@@ -1349,6 +1487,40 @@ public class ReadCommands {
             for (String foundElement : foundElements) {
                 testHelper.UpdateTestResults("Successful found (" + ts.get_expectedValue().trim() + ") in element: " + foundElement + " for step " + fileStepIndex, true);
             }
+        }
+    }
+
+
+    void CheckJavaScriptReturnValue(TestStep ts, String fileStepIndex) {
+        String javaScriptText = testCentral.GetArgumentValue(ts, 0, null);
+        String actualValue = null;
+        String comparisonType = CheckComparisonOperator(testCentral.GetArgumentValue(ts, ts.ArgumentList.size()-1, "="));
+        if (javaScriptText != null) {
+            testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start JavaScript Execution Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+            testHelper.UpdateTestResults(AppConstants.indent8 + "Executing Javascript command: " + javaScriptText + " for step " + fileStepIndex, true);
+            actualValue = (String) ((JavascriptExecutor) driver).executeScript(javaScriptText);
+            if (ts.get_crucial()) {
+                if ("=".equals(comparisonType)) {
+                    assertEquals(ts.get_expectedValue(), actualValue);
+                } else {
+                    assertNotEquals(ts.get_expectedValue(), actualValue);
+                }
+            } else {
+                if ("=".equals(comparisonType)) {
+                    if (actualValue.equals(ts.get_expectedValue())) {
+                        testHelper.UpdateTestResults(AppConstants.indent8 + "Successful JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual (" + actualValue + ")" + " for step " + fileStepIndex, true);
+                    } else {
+                        testHelper.UpdateTestResults(AppConstants.indent8 + "Failure JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual (" + actualValue + ")" + " for step " + fileStepIndex, true);
+                    }
+                } else {
+                    if (!actualValue.equals(ts.get_expectedValue())) {
+                        testHelper.UpdateTestResults(AppConstants.indent8 + "Successful JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual (" + actualValue + ")" + " for step " + fileStepIndex, true);
+                    } else {
+                        testHelper.UpdateTestResults(AppConstants.indent8 + "Failure JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual (" + actualValue + ")" + " for step " + fileStepIndex, true);
+                    }
+                }
+            }
+            testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End JavaScript Execution Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
         }
     }
 

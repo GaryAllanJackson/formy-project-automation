@@ -1,3 +1,5 @@
+import net.lightbody.bmp.core.har.Har;
+import net.lightbody.bmp.core.har.HarEntry;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
@@ -8,6 +10,9 @@ import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.lang.Integer.parseInt;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,7 +28,13 @@ public class WriteCommands {
     public void setDriver(WebDriver driver) {
         this.driver = driver;
     }
+    public List<GtmTag> GtmTagList;
 
+    private String _testFileName;
+    void set_testFileName(String _testFileName) {
+        this._testFileName = _testFileName;
+    }
+    String get_testFileName() {return _testFileName; }
 
     public WriteCommands(TestCentral testCentral) {
         this.testCentral = testCentral;
@@ -34,6 +45,8 @@ public class WriteCommands {
         if (testHelper == null) {
             testHelper = new TestHelper(testCentral);
             testHelper.set_executedFromMain(testCentral.is_executedFromMain());
+            testHelper.set_csvFileName(testCentral.get_csvFileName());
+            testHelper.set_testFileName(testCentral.get_testFileName());
         }
         testCreatorUtility = new TestCreatorUtility(testCentral, testHelper);
     }
@@ -136,6 +149,8 @@ public class WriteCommands {
                 testCentral.CloseOpenChildTab(ts, fileStepIndex);
             }  else if (ts.get_command().toLowerCase().equals(AppCommands.Compare_Images)) {
                 CompareImagesController(ts, fileStepIndex);
+            }   else if (ts.get_command().toLowerCase().equals(AppCommands.SaveHarFile)) {
+                WriteHarContent(ts, fileStepIndex);
             }
         }
     }
@@ -636,4 +651,101 @@ public class WriteCommands {
             testHelper.CreateSectionHeader("[ End Image Comparison Test ]", "", AppConstants.ANSI_CYAN, false, false, true);
         }
     }
+
+
+    /**************************************************************
+     *  Description: This method writes the HAR content to a file.
+     *               Currently, this has been called from the TearDown
+     *               but may be moved at a later time
+     ***************************************************************/
+    private void WriteHarContent(TestStep ts, String fileStepIndex) {
+
+        try {
+            GtmTagList = new ArrayList<>();
+            GtmTag item = new GtmTag();
+            Har har = testCentral.proxy.getHar();
+            String fileName = testCentral.GetArgumentValue(ts, 0, testCentral.testPage);
+            testHelper.CreateSectionHeader("[ Start Save Har File and Populate GTM Tags Object Event ]", "", AppConstants.ANSI_BLUE_BRIGHT, true, false, true);
+            //testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start Save Har File and Populate GTM Tags Object Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+            testHelper.UpdateTestResults(AppConstants.indent5 + "Writing HAR file, based on supplied file name (" + fileName + "), for step " + fileStepIndex, true);
+            String sFileName = SaveHarFile(har, fileName);
+            testHelper.UpdateTestResults(AppConstants.indent5 + "HAR file saved as (" + sFileName + ") based on supplied and existing file names for step " + fileStepIndex, true);
+            List<HarEntry> entries = testCentral.proxy.getHar().getLog().getEntries();
+            testHelper.UpdateTestResults(AppConstants.indent5 + "Populating GTM Tags Object from HAR for step " + fileStepIndex, true);
+            for (HarEntry entry : entries) {
+                //testHelper.UpdateTestResults(entry.getRequest().getUrl(), false);
+                //testHelper.UpdateTestResults("getStatusText() = " + entry.getResponse().getStatusText(), false);
+                int size = entry.getRequest().getQueryString().size();
+                //testHelper.UpdateTestResults("===================================================================", false);
+                item = new GtmTag();
+                for (int x=0;x<size;x++) {
+                    item.set_PageRef(entry.getPageref());
+                    item.set_RequestUrl(entry.getRequest().getQueryString().get(x).getName().equals("url") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_requestUrl());
+                    item.set_ContentGroup1(entry.getRequest().getQueryString().get(x).getName().equals("cg1") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_contentGroup1());
+                    item.set_ContentGroup2(entry.getRequest().getQueryString().get(x).getName().equals("cg2")  ? entry.getRequest().getQueryString().get(x).getValue() : item.get_contentGroup2());
+                    /*if (entry.getRequest().getQueryString().get(x).getName().equals("cg2")) {
+                        item.set_ContentGroup2(entry.getRequest().getQueryString().get(x).getName().equals("cg2") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_contentGroup2());
+                    } else if (entry.getRequest().getQueryString().get(x).getName().equals("cg2+")){
+                        item.set_ContentGroup2(entry.getRequest().getQueryString().get(x).getName().equals("cg2+") ? "+" + entry.getRequest().getQueryString().get(x).getValue() : item.get_contentGroup2());
+                    }*/
+                    item.set_CustomDimension9(entry.getRequest().getQueryString().get(x).getName().equals("cd9") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_customDimension9());
+                    item.set_EventLabel(entry.getRequest().getQueryString().get(x).getName().equals("el") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_eventLabel());
+                    item.set_EventAction(entry.getRequest().getQueryString().get(x).getName().equals("ea") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_eventAction());
+                    item.set_EventCategory(entry.getRequest().getQueryString().get(x).getName().equals("ec") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_eventCategory());
+                    item.set_DocumentLocation(entry.getRequest().getQueryString().get(x).getName().equals("dl") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_documentLocation());
+                    item.set_DocumentTitle(entry.getRequest().getQueryString().get(x).getName().equals("dt") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_documentTitle());
+                    item.set_HitType(entry.getRequest().getQueryString().get(x).getName().equals("t") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_hitType());
+                    item.set_TrackingId(entry.getRequest().getQueryString().get(x).getName().equals("tid") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_trackingId());
+                }
+                //testHelper.UpdateTestResults("===================================================================", false);
+                if (!testHelper.IsNullOrEmpty(item.get_hitType()) && !testHelper.IsNullOrEmpty(item.get_documentLocation()))
+                {
+                    GtmTagList.add(item);
+                }
+            }
+            testCentral.GtmTagList = GtmTagList;
+            readCommands.GtmTagList = GtmTagList;
+            testHelper.set_csvFileName(testCentral.testHelper.get_csvFileName());
+            //testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End of Save Har File and Populate GTM Tags Object Event  ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+
+            //debugging
+            /*for (int x=0;x<GtmTagList.size();x++) {
+                testHelper.UpdateTestResults("pageRef=" + GtmTagList.get(x).get_pageRef() + "\r\n" +
+                        "\r\nec=" + GtmTagList.get(x).get_eventCategory() +
+                        "\r\nea=" + GtmTagList.get(x).get_eventAction() +
+                        "\r\nel=" + GtmTagList.get(x).get_eventLabel() +
+                        "\r\ndl=" + GtmTagList.get(x).get_documentLocation() +
+                        "\r\nt(hit type)=" + GtmTagList.get(x).get_hitType(), false);
+            }*/
+
+            //testHelper.UpdateTestResults(AppConstants.indent5 + "End Writing HAR file!\r\n", true);
+
+        } catch(Exception ex) {
+            testHelper.UpdateTestResults("Error writing HAR file: " + ex.getMessage(), true);
+        }
+        testHelper.CreateSectionHeader("[ End Save Har File and Populate GTM Tags Object Event ]", "", AppConstants.ANSI_BLUE_BRIGHT, false, false, true);
+    }
+
+    private String SaveHarFile(Har har, String sFileName) {
+
+        if (testHelper.IsNullOrEmpty(sFileName) || sFileName.indexOf("/") > -1 || !sFileName.endsWith(".txt")) {
+            sFileName = sFileName.replace("/", "_").replace(":", "_");
+            sFileName = testCentral.harFolder + sFileName + ".txt";
+        }
+        if (!sFileName.contains("\\")) {
+            sFileName = testCentral.harFolder + sFileName;
+        }
+        sFileName = testHelper.GetUnusedFileName(sFileName);
+
+
+        File harFile = new File(sFileName);
+        try {
+            har.writeTo(harFile);
+        } catch (IOException ex) {
+            System.out.println (ex.toString());
+            System.out.println("Could not find file " + sFileName);
+        }
+        return sFileName;
+    }
+
 }

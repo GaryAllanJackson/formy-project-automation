@@ -102,6 +102,7 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "\t\tUNIQUE IDENTIFIER");
             WriteToFile(get_helpFileName(), "\t\tPERSISTING RETRIEVED TEXT IN A VARIABLE FOR LATER USE");
             WriteToFile(get_helpFileName(), "\t\tFILLING IN TEXT FIELDS");
+            WriteToFile(get_helpFileName(), "\t\tCLICK AN ELEMENT");
             WriteToFile(get_helpFileName(), "\t\tCLICK AN ELEMENT IN AN IFRAME");
             WriteToFile(get_helpFileName(), "\t\tSELECT AN OPTION FROM AN HTML SELECT ELEMENT");
             WriteToFile(get_helpFileName(), "\t\tTAKING SCREENSHOTS");
@@ -122,7 +123,11 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "\t\tCHECK COLOR CONTRAST ");
             WriteToFile(get_helpFileName(), "\t\tCOMPARE IMAGES AND CREATE DIFFERENCE IMAGE ");
             WriteToFile(get_helpFileName(), "\t\tPARSE AND CALCULATE DOUBLE");
-            WriteToFile(get_helpFileName(), "\t\tPARSE AND CALCULATE LONG \r\n");
+            WriteToFile(get_helpFileName(), "\t\tPARSE AND CALCULATE LONG ");
+            WriteToFile(get_helpFileName(), "\t\tCHECK JAVASCRIPT VALUE \r\n");
+            WriteToFile(get_helpFileName(), "\t\tSAVE HAR FILE \r\n");
+            WriteToFile(get_helpFileName(), "\t\tCHECK GTM TAG \r\n");
+
             WriteToFile(get_helpFileName(), AppConstants.indent5 + testHelper.PrePostPad("[ INCLUDED TEST FILES ]", "═", 9, 100));
             WriteToFile(get_helpFileName(), "\t\tTEST FILES DESCRIBED \r\n");
             WriteToFile(get_helpFileName(), AppConstants.indent5 + testHelper.PrePostPad("[ Troubleshooting ]", "═", 9, 100));
@@ -183,8 +188,8 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "Creating a Configurable Automated test consists of creating one Configuration file and one or more Test files.");
             WriteToFile(get_helpFileName(), "This application can run any number of Test Files, which need to be configured in the Configuration file either");
             WriteToFile(get_helpFileName(), "individually or within a specified folder which can be filtered to select just targeted files.\r\n");
-            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ IMPORTANT NOTES ]", "*", 10, 100));
-            WriteToFile(get_helpFileName(), "NOTE: Test Steps are numbered by File underscore then Test Step.");
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ IMPORTANT NOTES ]", "* ", 10, 60));
+            WriteToFile(get_helpFileName(), "\r\nNOTE: Test Steps are numbered by File underscore then Test Step.");
             WriteToFile(get_helpFileName(), "\tThe F describes the Test File being run while the S describes the Test Step being run.");
             WriteToFile(get_helpFileName(), "\tTest Files and Test Steps begin at 0, so F0_S0 is the first Test File and the first Test Step in that file.\r\n");
             WriteToFile(get_helpFileName(), "NOTE: The != operator is currently only supported for the following commands: Assert, Sql Server Query, Check Count.");
@@ -522,12 +527,11 @@ public class HelpWriter {
                     "\t<actionType>write</actionType>\r\n" +
                     "\t<crucial>TRUE</crucial>\r\n" +
                     "\t<arguments>\r\n" +
-                    "\t\t<!-- first argument expected by the command - The URL is required --> \r\n" +
+                    "\t\t<!-- first argument expected by the command - The URL is required -->\r\n" +
                     "\t\t<arg1>https://formy-project.herokuapp.com/form</arg1>\r\n" +
-                    "\t\t<!-- second argument optional - Time Delay - default is 4000 if not included \r\n" +
-                    "\t\t     but should be included if entering the third parameter --> \r\n" +
+                    "\t\t<!-- second argument optional - Time Delay - default is 4000 if not included but should be included if entering the third parameter -->\r\n" +
                     "\t\t<arg2>4000</arg2>\r\n" +
-                    "\t\t<!-- third argument, optional - Window Dimensions width then height separated by space --> \r\n" +
+                    "\t\t<!-- third argument, optional - Window Dimensions width then height separated by space -->\r\n" +
                     "\t\t<arg3>w=800 h=800</arg3>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
@@ -545,7 +549,7 @@ public class HelpWriter {
                     "\t\t<arg1>https://formy-project.herokuapp.com/form</arg1>\r\n" +
                     "\t\t<arg2>4000</arg2>\r\n" +
                     "\t\t<arg3></arg3>\r\n" +
-                    "\t\t<!-- fourth argument, optional - Back End (BE) and Front End (FE) Page Max Load time in seconds --> \r\n" +
+                    "\t\t<!-- fourth argument, optional - Back End (BE) and Front End (FE) Page Max Load time in seconds -->\r\n" +
                     "\t\t<arg4>FE=3.75 BE=.5</arg4>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
@@ -1173,6 +1177,23 @@ public class HelpWriter {
                     "\t<arguments>\r\n" +
                     "\t\t<arg1>PersistedString</arg1>\r\n" +
                     "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("═", "═", 1, 151));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CLICK AN ELEMENT ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "The Click command clicks on the specified element, as long as it is not in an iFrame.");
+            WriteToFile(get_helpFileName(), "This is one of the most common events to test and can be used for links, buttons, checkboxes,");
+            WriteToFile(get_helpFileName(), " radio buttons, select options etc..");
+            WriteToFile(get_helpFileName(), "To click an element by ID, use the following:");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>click</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>false</crucial>\r\n" +
+                    "\t<accessor>radio-button-2</accessor>\r\n" +
+                    "\t<accessorType>ID</accessorType>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("═", "═", 1, 151));
@@ -2140,8 +2161,8 @@ public class HelpWriter {
                     "\t\t<!-- index of operator in equation -->\n" +
                     "\t\t<arg3>1</arg3>\n" +
                     "\t\t<!-- form field to write answer or persist to persist this -->\n" +
-                    "\t\t<arg4>mathuserans2</arg4>\t\t\n" +
-                    "\t</arguments>\n" +
+                    "\t\t<arg4>mathuserans2</arg4>\r\n" +
+                    "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
@@ -2177,6 +2198,7 @@ public class HelpWriter {
                     "\t<accessor>mathq2</accessor>\n" +
                     "\t<accessorType>id</accessorType>\n" +
                     "\t<crucial>FALSE</crucial>\n" +
+                    "\t<expectedValue>5.0</expectedValue>\n" +
                     "\t<arguments>\n" +
                     "\t\t<!-- Type of delimiter -->\n" +
                     "\t\t<arg1> </arg1>\n" +
@@ -2187,13 +2209,94 @@ public class HelpWriter {
                     "\t\t<!-- index of operator in equation -->\n" +
                     "\t\t<arg4>1</arg4>\n" +
                     "\t\t<!-- form field to write answer or persist to persist this -->\n" +
-                    "\t\t<arg5>persist</arg5>\t\t\n" +
-                    "\t</arguments>\n" +
+                    "\t\t<arg5>persist</arg5>\r\n" +
+                    "\t</arguments>\r\n" +
                     "</step>");
 
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("═", "═", 1, 151));
+
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CHECK JAVASCRIPT VALUE ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "The Check JavaScript Value command executes a JavaScript command and captures the ");
+            WriteToFile(get_helpFileName(), "returned value and compares that to the expected value. ");
+            WriteToFile(get_helpFileName(), "This can be used for a variety of reasons, but one specific reason is to retrieve and check ");
+            WriteToFile(get_helpFileName(), "DataLayer Values.   ");
+            WriteToFile(get_helpFileName(), "This command can only be executed on the current page, so navigate before executing this command.");
+            WriteToFile(get_helpFileName(), "Since this was not written to simply test DataLayer values, each check is for an individual value. ");
+            WriteToFile(get_helpFileName(), "\tThe only argument for this command is as follows:");
+            WriteToFile(get_helpFileName(), "\t<arg1>This argument specifies the JavaScript command to execute. Make sure it begins with return to return the value from the Execution.");
+            WriteToFile(get_helpFileName(), "<step>\n" +
+                    "\t<command>check javascript value</command>\n" +
+                    "\t<actionType>read</actionType>\n" +
+                    "\t<expectedValue>plp</expectedValue>\n" +
+                    "\t<crucial>FALSE</crucial>\n" +
+                    "\t<arguments>\n" +
+                    "\t\t<!-- JavaScript to execute and value to return -->\n" +
+                    "\t\t<arg1>return dataLayer[0].page.category.pageTemplate; </arg1>\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>\n");
+
+            WriteToFile(get_helpFileName(), "");
+
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ SAVE HAR FILE ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "The Save HAR File command saves the HAR file to the location specified and this command also ");
+            WriteToFile(get_helpFileName(), "populates the GTM Tag List object which can then be used to check GTM tags.");
+            WriteToFile(get_helpFileName(), "This step MUST be executed before attempting to Check GTM tags.");
+            WriteToFile(get_helpFileName(), "The HAR File is automatically saved when the application is ending but that is simply to allow for manually reviewing which tags fired.");
+            WriteToFile(get_helpFileName(), "It is recommended that you make this step crucial if subsequent steps Check GTM tags");
+            WriteToFile(get_helpFileName(), "\tThe only argument for this command is as follows:");
+            WriteToFile(get_helpFileName(), "\t<arg1>This argument specifies the File name for the har file.  If no path is included, it will be saved in the /config/har_files folder.");
+            WriteToFile(get_helpFileName(), "<step>\n" +
+                    "\t<command>save har file</command>\n" +
+                    "\t<crucial>TRUE</crucial>\n" +
+                    "\t<arguments>\n" +
+                    "\t\t<!-- File Name to save HAR file -->\n" +
+                    "\t\t<arg1>Gary-har-test.txt</arg1>\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>\n");
+
+            WriteToFile(get_helpFileName(), "");
+
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CHECK GTM TAG ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "The Check GTM Tag command checks the configured values against a list of GTM tags to determine if the tag fired.");
+            WriteToFile(get_helpFileName(), "The Save Har file step MUST be executed before attempting to Check GTM tags!!!");
+            WriteToFile(get_helpFileName(), "Most of the arguments are required as many of the values could be duplicated across tags and these values must be ");
+            WriteToFile(get_helpFileName(), "supplied to discern between tags fired and the tag being checked. ");
+            WriteToFile(get_helpFileName(), "The order of the arguments does not matter as long as all required fields are present as shown below.");
+            WriteToFile(get_helpFileName(), "\t\tdl - Document Location - page where tag fired - required\n");
+            WriteToFile(get_helpFileName(), "\t\tt - Hit Type - Type of Hit (Event/Pageview - required\n");
+            WriteToFile(get_helpFileName(), "\t\tec - Event Category - Event Category Configured in the Tag - required\n");
+            WriteToFile(get_helpFileName(), "\t\tea - Event Action - Event Action Configured in the Tag - required\n");
+            WriteToFile(get_helpFileName(), "\t\tel - Event Label - Event Label Configured in the Tag - required\n");
+            WriteToFile(get_helpFileName(), "\t\tcg1 - Content Group 1 (PageTemplate) - Content Group 1 which is the PageTemplate - required\n");
+            WriteToFile(get_helpFileName(), "\t\tcg2 - Content Group 2 - Content Group 2 - which if set to += will check that the field starts with the value specified - not required\n");
+            WriteToFile(get_helpFileName(), "\t\tdt - Document Title - page title where tag fired - not required - not currently wired up\n");
+            WriteToFile(get_helpFileName(), "\t\ttid - Tracking ID - GA Tracking ID - not required - not currently wired up\n");
+
+
+            WriteToFile(get_helpFileName(), "<step>\n" +
+                    "\t<command>check gtm tag</command>\n" +
+                    "\t<actionType>read</actionType>\n" +
+                    "\t<crucial>FALSE</crucial>\n" +
+                    "\t<arguments>\n" +
+                    "\t\t<arg1>dl=https://www.mycompanysite.com/products</arg1>\n" +
+                    "\t\t<arg2>t=event</arg2>\n" +
+                    "\t\t<arg3>ec=slider newsletter</arg3>\n" +
+                    "\t\t<arg4>ea=form</arg4>\n" +
+                    "\t\t<arg5>el=view</arg5>\n" +
+                    "\t\t<arg6>cg1=plp</arg6>\n" +
+                    "\t\t<arg7>cg2+=GTM-A9AAA0</arg7>\n" +
+                    "\t\t<arg8>tid=UA-1234567-8</arg8>\n" +
+                    "\t\t<arg9>dt=Products | My Company Site</arg9>\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>\n");
 
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
@@ -2432,6 +2535,10 @@ public class HelpWriter {
         String helpFileContents = CreateHtlHelpFile();
         if (!testHelper.IsNullOrEmpty(htmlHelpFile)) {
             htmlHelpFile = htmlHelpFile.replace(".txt", ".html");
+            File helpFile = new File(htmlHelpFile);
+            if (helpFile.exists()) {
+                boolean result = helpFile.delete();
+            }
             WriteToFile(htmlHelpFile, helpFileContents);
         }
     }
@@ -2536,6 +2643,7 @@ public class HelpWriter {
                 "				border: solid 1px #000000;\r\n" +
                 "				border-radius: 10px;\r\n" +
                 "				margin-bottom:8px;\r\n" +
+                "               margin-top:20px;\r\n" +
                 "			}\r\n" +
                 "			.sectionTitle {\r\n" +
                 "				font: 18pt arial, sans-serif;\r\n" +
@@ -2607,6 +2715,11 @@ public class HelpWriter {
                 "               margin-left:10px;\r\n" +
                 "               margin - right:10px;\r\n" +
                 "           }\r\n" +
+                "           .verticalspacing {\r\n" +
+                "               margin-top:20px;\r\n" +
+                "               margin-bottom:20px;\r\n" +
+                "               line-height: 200%\r\n" +
+                "           }\r\n" +
                 "		</style>\r\n" +
                 "	</head>";
 
@@ -2661,14 +2774,14 @@ public class HelpWriter {
                         }
                     } else if (line.startsWith("&lt;step") || line.startsWith("&lt;?"))
                     {
-                        sb.append("<pre>\r\n");
+                        sb.append("<pre>\r\n</br>");
                         if (line.startsWith("&lt;?")) {
                             testStepsStarted = true;
                         }
                     }
-                    else if (line.startsWith("&lt;/step") || line.startsWith("&lt;/automatedTestConfiguration") || line.startsWith("&lt;/testSteps"))
+                    else if (line.startsWith("&lt;/step") || line.startsWith("&lt;/automatedTestConfiguration") || line.startsWith("&lt;/testSteps") || line.startsWith("&lt;/arguments"))
                     {
-                        sb.append(line + "\r\n");
+                        sb.append(line + "\r\n</br>");
                         if (testStepsStarted  && line.startsWith("&lt;/testSteps"))
                         {
                             sb.append("</pre>\r\n");
@@ -2682,6 +2795,7 @@ public class HelpWriter {
                     {
                         if (firstSectionCreated)
                         {
+                            sb.append("<span class=" + qt + "topOfPage" + qt + "><a href=" + qt + "#top" + qt + " class=" + qt + "topOfPageLink" + qt + ">Top of Page</a></span>\r\n");
                             sb.append("\t\t</div>\r\n");
                         }
                         sb.append("\t\t<div class=" + qt + "heading" + qt + "><a class=" + qt + "headingLink" + qt + " id=" + qt);
@@ -2693,7 +2807,7 @@ public class HelpWriter {
                     else if (line.startsWith("╚"))
                     {
                         sb.append("</a></div>\r\n");
-                        sb.append("\t\t<div id=" + qt + accordionDivName + qt + " class=" + qt + "container" + qt + " > \r\n");
+                        sb.append("\t\t<div id=" + qt + accordionDivName + qt + " class=" + qt + "container" + qt + " >\r\n");
                         headerStart = false;
                         contentSection = tocSectionStart == false ? true : false;
                     }
@@ -2710,14 +2824,14 @@ public class HelpWriter {
                     {
                         //tocEnd = true;
                         tocSectionStart = false;
-                        sb.append("</div>\r\n");
+                        sb.append("<span class=\"verticalspacing\">&nbsp;</span>");
+                        //sb.append("</div>\r\n");
                     }
                     else if (line.startsWith(subSectionStart))
                     {
                         line = line.replace("═", "").replace("[", "").replace("]", "").trim();
                         if (pTagOpen)
                         {
-
                             sb.append("\t\t</p>\r\n");
                             pTagOpen = false;
                         }
@@ -2795,11 +2909,14 @@ public class HelpWriter {
                         pTagOpen = false;
                     }
                 }
-                if (line.contains("***") || (line.contains("---") && tableRow==0) || line.endsWith("\\"))
+                if (line.contains("***") || (line.contains("---") && tableRow==0) || line.endsWith("\\") || line.endsWith("&gt;") || line.endsWith(">"))
                 {
-                    sb.append("</br>\r\n");
+                    //sb.append("</br>\r\n");
+                    sb.append("\r\n");
+                    /*if (line.endsWith("--&gt;")) {
+                        sb.append("</br>\r\n");
+                    }*/
                 }
-
             }
             sb.append(GetAccordionScript() + "\r\n");
             sb.append("</body>\r\n");
