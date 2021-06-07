@@ -41,6 +41,7 @@
 		UNIQUE IDENTIFIER
 		PERSISTING RETRIEVED TEXT IN A VARIABLE FOR LATER USE
 		FILLING IN TEXT FIELDS
+		CLICK AN ELEMENT
 		CLICK AN ELEMENT IN AN IFRAME
 		SELECT AN OPTION FROM AN HTML SELECT ELEMENT
 		TAKING SCREENSHOTS
@@ -62,6 +63,11 @@
 		COMPARE IMAGES AND CREATE DIFFERENCE IMAGE 
 		PARSE AND CALCULATE DOUBLE
 		PARSE AND CALCULATE LONG 
+		CHECK JAVASCRIPT VALUE 
+
+		SAVE HAR FILE 
+
+		CHECK GTM TAG 
 
      ═════════[ INCLUDED TEST FILES ]════════════════════════════════════════════════════════════════════
 		TEST FILES DESCRIBED 
@@ -125,7 +131,8 @@ Creating a Configurable Automated test consists of creating one Configuration fi
 This application can run any number of Test Files, which need to be configured in the Configuration file either
 individually or within a specified folder which can be filtered to select just targeted files.
 
-**********[ IMPORTANT NOTES ]***********************************************************************
+* * * * * * * * * * [ IMPORTANT NOTES ]* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+
 NOTE: Test Steps are numbered by File underscore then Test Step.
 	The F describes the Test File being run while the S describes the Test Step being run.
 	Test Files and Test Steps begin at 0, so F0_S0 is the first Test File and the first Test Step in that file.
@@ -506,12 +513,11 @@ Please note that making this crucial is irrelevant as no assertions will be made
 	<actionType>write</actionType>
 	<crucial>TRUE</crucial>
 	<arguments>
-		<!-- first argument expected by the command - The URL is required --> 
+		<!-- first argument expected by the command - The URL is required -->
 		<arg1>https://formy-project.herokuapp.com/form</arg1>
-		<!-- second argument optional - Time Delay - default is 4000 if not included 
-		     but should be included if entering the third parameter --> 
+		<!-- second argument optional - Time Delay - default is 4000 if not included but should be included if entering the third parameter -->
 		<arg2>4000</arg2>
-		<!-- third argument, optional - Window Dimensions width then height separated by space --> 
+		<!-- third argument, optional - Window Dimensions width then height separated by space -->
 		<arg3>w=800 h=800</arg3>
 	</arguments>
 </step>
@@ -531,7 +537,7 @@ leave the URL untouched.
 		<arg1>https://formy-project.herokuapp.com/form</arg1>
 		<arg2>4000</arg2>
 		<arg3></arg3>
-		<!-- fourth argument, optional - Back End (BE) and Front End (FE) Page Max Load time in seconds --> 
+		<!-- fourth argument, optional - Back End (BE) and Front End (FE) Page Max Load time in seconds -->
 		<arg4>FE=3.75 BE=.5</arg4>
 	</arguments>
 </step>
@@ -1186,6 +1192,22 @@ To send the persisted value to a textbox or textarea form control, use the follo
 	<arguments>
 		<arg1>PersistedString</arg1>
 	</arguments>
+</step>
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+
+═════════[ CLICK AN ELEMENT ]══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Click command clicks on the specified element, as long as it is not in an iFrame.
+This is one of the most common events to test and can be used for links, buttons, checkboxes,
+ radio buttons, select options etc..
+To click an element by ID, use the following:
+<step>
+	<command>click</command>
+	<actionType>write</actionType>
+	<crucial>false</crucial>
+	<accessor>radio-button-2</accessor>
+	<accessorType>ID</accessorType>
 </step>
 
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -2168,7 +2190,7 @@ in decimal format, prior to performing the calculation.
 		<!-- index of operator in equation -->
 		<arg3>1</arg3>
 		<!-- form field to write answer or persist to persist this -->
-		<arg4>mathuserans2</arg4>		
+		<arg4>mathuserans2</arg4>
 	</arguments>
 </step>
 
@@ -2205,6 +2227,7 @@ This truncation is purposely done in code to prevent the Java conversion error t
 	<accessor>mathq2</accessor>
 	<accessorType>id</accessorType>
 	<crucial>FALSE</crucial>
+	<expectedValue>5.0</expectedValue>
 	<arguments>
 		<!-- Type of delimiter -->
 		<arg1> </arg1>
@@ -2215,12 +2238,98 @@ This truncation is purposely done in code to prevent the Java conversion error t
 		<!-- index of operator in equation -->
 		<arg4>1</arg4>
 		<!-- form field to write answer or persist to persist this -->
-		<arg5>persist</arg5>		
+		<arg5>persist</arg5>
 	</arguments>
 </step>
 
 
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+
+═════════[ CHECK JAVASCRIPT VALUE ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Check JavaScript Value command executes a JavaScript command and captures the 
+returned value and compares that to the expected value. 
+This can be used for a variety of reasons, but one specific reason is to retrieve and check 
+DataLayer Values.   
+This command can only be executed on the current page, so navigate before executing this command.
+Since this was not written to simply test DataLayer values, each check is for an individual value. 
+	The only argument for this command is as follows:
+	<arg1>This argument specifies the JavaScript command to execute. Make sure it begins with return to return the value from the Execution.
+<step>
+	<command>check javascript value</command>
+	<actionType>read</actionType>
+	<expectedValue>plp</expectedValue>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<!-- JavaScript to execute and value to return -->
+		<arg1>return dataLayer[0].page.category.pageTemplate; </arg1>
+	</arguments>
+</step>
+
+
+
+
+═════════[ SAVE HAR FILE ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Save HAR File command saves the HAR file to the location specified and this command also 
+populates the GTM Tag List object which can then be used to check GTM tags.
+This step MUST be executed before attempting to Check GTM tags.
+The HAR File is automatically saved when the application is ending but that is simply to allow for manually reviewing which tags fired.
+It is recommended that you make this step crucial if subsequent steps Check GTM tags
+	The only argument for this command is as follows:
+	<arg1>This argument specifies the File name for the har file.  If no path is included, it will be saved in the /config/har_files folder.
+<step>
+	<command>save har file</command>
+	<crucial>TRUE</crucial>
+	<arguments>
+		<!-- File Name to save HAR file -->
+		<arg1>Gary-har-test.txt</arg1>
+	</arguments>
+</step>
+
+
+
+
+═════════[ CHECK GTM TAG ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Check GTM Tag command checks the configured values against a list of GTM tags to determine if the tag fired.
+The Save Har file step MUST be executed before attempting to Check GTM tags!!!
+Most of the arguments are required as many of the values could be duplicated across tags and these values must be 
+supplied to discern between tags fired and the tag being checked. 
+The order of the arguments does not matter as long as all required fields are present as shown below.
+		dl - Document Location - page where tag fired - required
+
+		t - Hit Type - Type of Hit (Event/Pageview - required
+
+		ec - Event Category - Event Category Configured in the Tag - required
+
+		ea - Event Action - Event Action Configured in the Tag - required
+
+		el - Event Label - Event Label Configured in the Tag - required
+
+		cg1 - Content Group 1 (PageTemplate) - Content Group 1 which is the PageTemplate - required
+
+		cg2 - Content Group 2 - Content Group 2 - which if set to += will check that the field starts with the value specified - not required
+
+		dt - Document Title - page title where tag fired - not required - not currently wired up
+
+		tid - Tracking ID - GA Tracking ID - not required - not currently wired up
+
+<step>
+	<command>check gtm tag</command>
+	<actionType>read</actionType>
+	<crucial>FALSE</crucial>
+	<arguments>
+		<arg1>dl=https://www.mycompanysite.com/products</arg1>
+		<arg2>t=event</arg2>
+		<arg3>ec=slider newsletter</arg3>
+		<arg4>ea=form</arg4>
+		<arg5>el=view</arg5>
+		<arg6>cg1=plp</arg6>
+		<arg7>cg2+=GTM-A9AAA0</arg7>
+		<arg8>tid=UA-1234567-8</arg8>
+		<arg9>dt=Products | My Company Site</arg9>
+	</arguments>
+</step>
+
 
 
 

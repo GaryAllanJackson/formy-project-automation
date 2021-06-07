@@ -57,6 +57,7 @@
 				border: solid 1px #000000;
 				border-radius: 10px;
 				margin-bottom:8px;
+               margin-top:20px;
 			}
 			.sectionTitle {
 				font: 18pt arial, sans-serif;
@@ -128,12 +129,17 @@
                margin-left:10px;
                margin - right:10px;
            }
+           .verticalspacing {
+               margin-top:20px;
+               margin-bottom:20px;
+               line-height: 200%
+           }
 		</style>
 	</head>
 	<body>
 		<a name="top"/>
 		<div class="heading"><a class="headingLink" id="tableofcontents">TABLE OF CONTENTS</a></div>
-		<div id="div_tableofcontents" class="container" > 
+		<div id="div_tableofcontents" class="container" >
 		<span class="tableOfContentsSectionHeader">HELP FILE OVERVIEW</span>
 		<a href="#helpfileoverview" class="tableOfContentsLink">HELP FILE OVERVIEW</a>
 		<a href="#helpfilesections" class="tableOfContentsLink">HELP FILE SECTIONS</a>
@@ -171,6 +177,7 @@
 		<a href="#uniqueidentifier" class="tableOfContentsLink">UNIQUE IDENTIFIER</a>
 		<a href="#persistingretrievedtextinavariableforlateruse" class="tableOfContentsLink">PERSISTING RETRIEVED TEXT IN A VARIABLE FOR LATER USE</a>
 		<a href="#fillingintextfields" class="tableOfContentsLink">FILLING IN TEXT FIELDS</a>
+		<a href="#clickanelement" class="tableOfContentsLink">CLICK AN ELEMENT</a>
 		<a href="#clickanelementinaniframe" class="tableOfContentsLink">CLICK AN ELEMENT IN AN IFRAME</a>
 		<a href="#selectanoptionfromanhtmlselectelement" class="tableOfContentsLink">SELECT AN OPTION FROM AN HTML SELECT ELEMENT</a>
 		<a href="#takingscreenshots" class="tableOfContentsLink">TAKING SCREENSHOTS</a>
@@ -192,6 +199,9 @@
 		<a href="#compareimagesandcreatedifferenceimage" class="tableOfContentsLink">COMPARE IMAGES AND CREATE DIFFERENCE IMAGE</a>
 		<a href="#parseandcalculatedouble" class="tableOfContentsLink">PARSE AND CALCULATE DOUBLE</a>
 		<a href="#parseandcalculatelong" class="tableOfContentsLink">PARSE AND CALCULATE LONG</a>
+		<a href="#checkjavascriptvalue" class="tableOfContentsLink">CHECK JAVASCRIPT VALUE</a>
+		<a href="#saveharfile" class="tableOfContentsLink">SAVE HAR FILE</a>
+		<a href="#checkgtmtag" class="tableOfContentsLink">CHECK GTM TAG</a>
 		<span class="tableOfContentsSectionHeader">INCLUDED TEST FILES</span>
 		<a href="#testfilesdescribed" class="tableOfContentsLink">TEST FILES DESCRIBED</a>
 		<span class="tableOfContentsSectionHeader">Troubleshooting</span>
@@ -202,10 +212,10 @@
 		<a href="#overalltestresultshowsfailurealthoughteststepspass(lastteststeppassed)" class="tableOfContentsLink">OVERALL TEST RESULT SHOWS FAILURE ALTHOUGH TEST STEPS PASS (LAST TEST STEP PASSED)</a>
 		<a href="#xmldocumentmuststartwithandendwiththesameelement" class="tableOfContentsLink">XML DOCUMENT MUST START WITH AND END WITH THE SAME ELEMENT</a>
 		<a href="#contextmenutabswitchingisfailing" class="tableOfContentsLink">CONTEXT MENU TAB SWITCHING IS FAILING</a>
-</div>
+<span class="verticalspacing">&nbsp;</span><span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 		</div>
 		<div class="heading"><a class="headingLink" id="helpfileoverview">HELP FILE OVERVIEW</a></div>
-		<div id="div_helpfileoverview" class="container" > 
+		<div id="div_helpfileoverview" class="container" >
 		<p>
 WELCOME TO THE CONFIGURABLE AUTOMATED TEST APPLICATION!!!This application was designed to perform automated testing using configuration and test step files.It was intended to remove the need for per project automated test coding, but grew out of the curiosity to learn more about headless testing with Java and Selenium.		</p>
 		<p>
@@ -216,9 +226,8 @@ The application covers most testing, including: Navigation, Form Population, Val
 Additionally, it includes waiting a specific length of time, for document state complete, for a specific element, taking screenshots and comparing images using ImageMagick and getting a pixel difference percentage along with a.difference image with the differences highlighted.In addition to Conditional Blocks, each step can be marked as Crucial or non-Crucial.Crucial test steps must pass or the application terminates on failure, while non-Crucial stepscan fail and the application will continue running tests.This behavior ensures that necessary steps for subsequent testing are successful such as navigation, connecting to SQL Serverretrieving JSON from an endpoint etc...  If these steps fail, the subsequent tests reliant upon them will also fail but to avoidwasting time waiting for those steps to fail, marking these steps as crucial stops execution when they fail and the testercan see where the application terminated and perform further investigation.An added test step configuration can be used to create a test step file for a specific page and while this is not a test,it can make creating test files much faster.		</p>
 		<p>
 Creating a Configurable Automated test consists of creating one Configuration file and one or more Test files.This application can run any number of Test Files, which need to be configured in the Configuration file eitherindividually or within a specified folder which can be filtered to select just targeted files.		</p>
-</br>
-<hr>
-<span class="topOfPage"><strong> IMPOR</strong></span>
+		<p>
+* * * * * * * * * * [ IMPORTANT NOTES ]* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 		</p>
 		<p>
 NOTE: Test Steps are numbered by File underscore then Test Step.	The F describes the Test File being run while the S describes the Test Step being run.	Test Files and Test Steps begin at 0, so F0_S0 is the first Test File and the first Test Step in that file.		</p>
 		<p>
@@ -250,9 +259,10 @@ Future functionality to be added to this application:	Greater Than and Less Than
 	MongoDb Connectivity and Querying will be implemented.		-	This was partially implemented but abandoned for a later time when there is access to a MongoDB instance.		</p>
 		<p>
 	Continuous Total Command		-	This would allow for adding to a total throughout a singular test.		-	This functionality would be ideal for spreadsheet interactions where values from different cells are retrieved and totaled.		</p>
+<span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 		</div>
 		<div class="heading"><a class="headingLink" id="configurationfileformat">CONFIGURATION FILE FORMAT</a></div>
-		<div id="div_configurationfileformat" class="container" > 
+		<div id="div_configurationfileformat" class="container" >
 <a name="configurationoverview" class="sectionTitle">CONFIGURATION OVERVIEW</a>
 		<p>
 NOTES: The file format is XML, so to make comments use &lt;!-- to begin the comment and --&gt; to end the comment.Comments can span lines but comments cannot include other comment blocks.Comments are lightly sprinkled in some of the help XML examples below.		</p>
@@ -264,8 +274,37 @@ Some of the comments are descriptive and some show alternative options, but it i
 <a name="configurationfilefieldsanddescriptions" class="sectionTitle">CONFIGURATION FILE FIELDS AND DESCRIPTIONS</a>
 		<p>
 The following is an example of a configuration file which will be explained below.<pre>
-&lt;?xml version="1.0" encoding="UTF-8" ?&gt;&lt;automatedTestConfiguration&gt;	&lt;!-- folder where screenshots should be saved --&gt;	&lt;screenShotSaveFolder&gt;C:\ScreenShots\Mashup&lt;/screenShotSaveFolder&gt;	&lt;maxScreenShotsToTake&gt;5&lt;/maxScreenShotsToTake&gt;	&lt;browserType&gt;Chrome&lt;/browserType&gt;	&lt;!--&lt;browserType&gt;Firefox&lt;/browserType&gt;--&gt;	&lt;runHeadless&gt;false&lt;/runHeadless&gt;	&lt;!-- if &lt;testAllBrowsers&gt; is true, tests all configured browsers(Chrome, Firefox and PhantomJS), 		if false, tests using only the selected browser --&gt;	&lt;testAllBrowsers&gt;false&lt;/testAllBrowsers&gt;	&lt;specifyTestFiles&gt;true&lt;/specifyTestFiles&gt;	&lt;sortSpecifiedTestFiles&gt;false&lt;/sortSpecifiedTestFiles&gt;	&lt;!-- createCsvStatusFiles settings are "none", "one" or "many" without the quotes, of course.  --&gt;	&lt;createCsvStatusFiles&gt;none&lt;/createCsvStatusFiles&gt;	&lt;!-- Individual File Settings --&gt;	&lt;testFiles&gt;		&lt;!--&lt;testFileName1&gt;C:\ConfigurableAutomatedTester\Tests\SqlServerAccess-Test.xml&lt;/testFileName1&gt;		&lt;testFileName2&gt;C:\ConfigurableAutomatedTester\Tests\RunSqlQueries_Alternate-Test.xml&lt;/testFileName2&gt;--&gt;		&lt;testFileName1&gt;C:\ConfigurableAutomatedTester\Tests\Fill_out_FormMy_Form_and_submit-Test.xml&lt;/testFileName1&gt;		&lt;testFileName2&gt;C:\ConfigurableAutomatedTester\Tests\CheckImageSource-Test.xml&lt;/testFileName2&gt;	&lt;/testFiles&gt;	&lt;!-- Folder Testing Settings --&gt;	&lt;!-- Folder where test files are located --&gt;	&lt;testFolderName&gt;&lt;/testFolderName&gt;	&lt;!-- Folder filter type valid values are [Starts With], [Contains] and [Ends With] without the brackets --&gt;	&lt;folderFileFilterType&gt;&lt;/folderFileFilterType&gt;	&lt;!-- Folder filter is the text used to select a subset of files --&gt;	&lt;folderFileFilter&gt;&lt;/folderFileFilter&gt;&lt;/automatedTestConfiguration&gt;
-</pre>
+</br>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;automatedTestConfiguration&gt;
+	&lt;!-- folder where screenshots should be saved --&gt;
+	&lt;screenShotSaveFolder&gt;C:\ScreenShots\Mashup&lt;/screenShotSaveFolder&gt;
+	&lt;maxScreenShotsToTake&gt;5&lt;/maxScreenShotsToTake&gt;
+	&lt;browserType&gt;Chrome&lt;/browserType&gt;
+	&lt;!--&lt;browserType&gt;Firefox&lt;/browserType&gt;--&gt;
+	&lt;runHeadless&gt;false&lt;/runHeadless&gt;
+	&lt;!-- if &lt;testAllBrowsers&gt; is true, tests all configured browsers(Chrome, Firefox and PhantomJS), 		if false, tests using only the selected browser --&gt;
+	&lt;testAllBrowsers&gt;false&lt;/testAllBrowsers&gt;
+	&lt;specifyTestFiles&gt;true&lt;/specifyTestFiles&gt;
+	&lt;sortSpecifiedTestFiles&gt;false&lt;/sortSpecifiedTestFiles&gt;
+	&lt;!-- createCsvStatusFiles settings are "none", "one" or "many" without the quotes, of course.  --&gt;
+	&lt;createCsvStatusFiles&gt;none&lt;/createCsvStatusFiles&gt;
+	&lt;!-- Individual File Settings --&gt;
+	&lt;testFiles&gt;
+		&lt;!--&lt;testFileName1&gt;C:\ConfigurableAutomatedTester\Tests\SqlServerAccess-Test.xml&lt;/testFileName1&gt;
+		&lt;testFileName2&gt;C:\ConfigurableAutomatedTester\Tests\RunSqlQueries_Alternate-Test.xml&lt;/testFileName2&gt;--&gt;
+		&lt;testFileName1&gt;C:\ConfigurableAutomatedTester\Tests\Fill_out_FormMy_Form_and_submit-Test.xml&lt;/testFileName1&gt;
+		&lt;testFileName2&gt;C:\ConfigurableAutomatedTester\Tests\CheckImageSource-Test.xml&lt;/testFileName2&gt;
+	&lt;/testFiles&gt;
+	&lt;!-- Folder Testing Settings --&gt;
+	&lt;!-- Folder where test files are located --&gt;
+	&lt;testFolderName&gt;&lt;/testFolderName&gt;
+	&lt;!-- Folder filter type valid values are [Starts With], [Contains] and [Ends With] without the brackets --&gt;
+	&lt;folderFileFilterType&gt;&lt;/folderFileFilterType&gt;
+	&lt;!-- Folder filter is the text used to select a subset of files --&gt;
+	&lt;folderFileFilter&gt;&lt;/folderFileFilter&gt;
+&lt;/automatedTestConfiguration&gt;
+</br></pre>
+
 		</p>
 		<p>
 The first line is an XML file declaration and must be present as is.All elements are required but not all elements have to have a value.  Read on.The &lt;automatedTestConfiguration&gt; is the root element in which all configuration elements are contained.	It contains no text itself.		</p>
@@ -289,16 +328,20 @@ The &lt;sortSpecifiedTestFiles&gt;&lt;/sortSpecifiedTestFiles&gt; element specif
 The &lt;createCsvStatusFiles&gt;&lt;/createCsvStatusFiles&gt; element specifies whether to create none, one, or many CSV files.	The CSV file logs only Success, Failure and Error steps, unlike the Test Execution log file, which logs all test steps.	This setting has 3 acceptable values "none", "one" and "many".		-	If "none", which is the default, no CSV files will be produced.		-	If "one", one CSV file containing all tests run results, will be produced and it will be named similar to the corresponding			-	log file name but have a .csv extension.		-	If "many", one CSV file for each test will be produced and each will be named similar to the corresponding test file name 			-	but have a datetime stamp like the log file and with a .csv extension.		-	If any value other than those specified above, no CSV files will be produced.	The CSV file consists of the following 5 columns:		</p>
 <table><tr>
 <td> File And Step Number </td><td> Test Performed </td><td> Execution Status </td><td> Variable Output </td><td> Test File Name    </td>
+
 </tr><tr>
 <td> F0_S0                </td><td> Navigation ... </td><td> Successful       </td><td> (2.0)           </td><td> C:\....\...       </td>
+
 </tr></table>
-</br>
+
 		<p>
 		File and Step Number - This column displays the file number and step number, each starting at 0 and in the format F0_S0 where 		-	F0 corresponds to File 0, which is the first file, and S0 corresponds to Step 0, which is the first step.		-	Since all steps taken are not checks, there may be line number gaps.		Test Performed - This column displays a description of the test performed such as Navigation and URL Check, 		-	Equal comparison results etc..		Execution Status - This column displays the word Successful for successful test step checks and the word Failure for failed test step checks.		Variable Output - This column holds the difference percentage for image comparisons in percentage format like 28%, 		-	the http response code in square brackets like [200], element counts in numeric format like 128 		-	and calculations in parentheses like (2.0) or (2) to allow for filtering these separate check types easily.		Test File Name - This column holds the name of the test file this entry corresponds with.		-	When creating one CSV file for multiple tests, this allows for another method of sorting the data.		</p>
 		<p>
 The &lt;testFiles&gt;&lt;/testFiles&gt; element is a container element for the testFileName elements and has no textual content of its own.		</p>
 		<p>
-The &lt;testFileName1&gt;&lt;/testFileName1&gt; element specifies the test file to use for the test and each element should end with an incremental numeric value.	Example:		&lt;testFileName1&gt;&lt;/testFileName1&gt;		&lt;testFileName2&gt;&lt;/testFileName2&gt;		</p>
+The &lt;testFileName1&gt;&lt;/testFileName1&gt; element specifies the test file to use for the test and each element should end with an incremental numeric value.	Example:		&lt;testFileName1&gt;&lt;/testFileName1&gt;
+		&lt;testFileName2&gt;&lt;/testFileName2&gt;
+		</p>
 		<p>
 	It should be noted that while this ending numeric value should be incremental, the application will read all 	testFileName nodes in the order they are entered regardless of the numbering.	To avoid any possible issues related to this, it is suggested that you follow the best practice and number appropriately, as described.	The commented test file lines were included to show a means in which different files can be setup but can be commented so that only 	the intended test files run.		</p>
 </br>
@@ -322,12 +365,38 @@ The &lt;folderFileFilter&gt;&lt;/folderFileFilter&gt; element specifies the phra
 In the example configuration file provided above the explanations, two specific test files are being tested, the screen shot folder is specified, a maximum of 5 screenshots will be taken, only the test Chrome browser will be used and it will be visible, the files will be run in theorder entered, the TestFolderName, FolderFileFilterType and FolderFileFilter have not been specified but would have been disregardedif specified because &lt;specifyTestFiles&gt;&lt;/specifyTestFiles&gt; is true, meaning only files specifically specified will be used.The commented test file lines were included to show a means in which different files can be setup but can be commented so that only		</p>
 		<p>
 In the example configuration file provided below, a folder of test files are being tested, but only the files that contain the phrase "sql"will be used, the screen shot folder is specified, but no screenshots will be taken, only the Chrome browser will be used and it will be visible,and although test files are specified, they will be ignored because &lt;specifyTestFiles&gt;&lt;/specifyTestFiles&gt; is false meaning the foldersettings will be used to determine the test files to be used.Additionally, no CSV files will be created because the &lt;createCsvStatusFiles&gt;&lt;/createCsvStatusFiles&gt; is set to "none".<pre>
-&lt;?xml version="1.0" encoding="UTF-8" ?&gt;&lt;automatedTestConfiguration&gt;	&lt;!-- folder where screenshots should be saved --&gt;	&lt;screenShotSaveFolder&gt;C:\ScreenShots\Mashup&lt;/screenShotSaveFolder&gt;	&lt;!-- maxScreenShotsToTake: -1 means no screenshots, 0 means unlimited screenshots, any other number is the screenshot maximum limit --&gt;	&lt;maxScreenShotsToTake&gt;5&lt;/maxScreenShotsToTake&gt;	&lt;browserType&gt;Chrome&lt;/browserType&gt;	&lt;!--&lt;browserType&gt;Firefox&lt;/browserType&gt;--&gt;	&lt;runHeadless&gt;false&lt;/runHeadless&gt;	&lt;testAllBrowsers&gt;false&lt;/testAllBrowsers&gt;	&lt;specifyTestFiles&gt;false&lt;/specifyTestFiles&gt;	&lt;sortSpecifiedTestFiles&gt;true&lt;/sortSpecifiedTestFiles&gt;	&lt;createCsvStatusFiles&gt;none&lt;/createCsvStatusFiles&gt;	&lt;!-- Individual File Settings --&gt;	&lt;testFiles&gt;		&lt;!--&lt;testFileName1&gt;C:\ConfigurableAutomatedTester\Tests\SqlServerAccess-Test.xml&lt;/testFileName1&gt;		&lt;testFileName2&gt;C:\ConfigurableAutomatedTester\Tests\RunSqlQueries_Alternate-Test.xml&lt;/testFileName2&gt;--&gt;		&lt;testFileName1&gt;C:\ConfigurableAutomatedTester\Tests\Fill_out_FormMy_Form_and_submit-Test.xml&lt;/testFileName1&gt;		&lt;testFileName2&gt;C:\ConfigurableAutomatedTester\Tests\CheckImageSource-Test.xml&lt;/testFileName2&gt;	&lt;/testFiles&gt;	&lt;!-- Folder Testing Settings --&gt;	&lt;testFolderName&gt;C:\ConfigurableAutomatedTester\Tests\&lt;/testFolderName&gt;	&lt;folderFileFilterType&gt;contains&lt;/folderFileFilterType&gt;	&lt;folderFileFilter&gt;sql&lt;/folderFileFilter&gt;&lt;/automatedTestConfiguration&gt;
-</pre>
+</br>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;automatedTestConfiguration&gt;
+	&lt;!-- folder where screenshots should be saved --&gt;
+	&lt;screenShotSaveFolder&gt;C:\ScreenShots\Mashup&lt;/screenShotSaveFolder&gt;
+	&lt;!-- maxScreenShotsToTake: -1 means no screenshots, 0 means unlimited screenshots, any other number is the screenshot maximum limit --&gt;
+	&lt;maxScreenShotsToTake&gt;5&lt;/maxScreenShotsToTake&gt;
+	&lt;browserType&gt;Chrome&lt;/browserType&gt;
+	&lt;!--&lt;browserType&gt;Firefox&lt;/browserType&gt;--&gt;
+	&lt;runHeadless&gt;false&lt;/runHeadless&gt;
+	&lt;testAllBrowsers&gt;false&lt;/testAllBrowsers&gt;
+	&lt;specifyTestFiles&gt;false&lt;/specifyTestFiles&gt;
+	&lt;sortSpecifiedTestFiles&gt;true&lt;/sortSpecifiedTestFiles&gt;
+	&lt;createCsvStatusFiles&gt;none&lt;/createCsvStatusFiles&gt;
+	&lt;!-- Individual File Settings --&gt;
+	&lt;testFiles&gt;
+		&lt;!--&lt;testFileName1&gt;C:\ConfigurableAutomatedTester\Tests\SqlServerAccess-Test.xml&lt;/testFileName1&gt;
+		&lt;testFileName2&gt;C:\ConfigurableAutomatedTester\Tests\RunSqlQueries_Alternate-Test.xml&lt;/testFileName2&gt;--&gt;
+		&lt;testFileName1&gt;C:\ConfigurableAutomatedTester\Tests\Fill_out_FormMy_Form_and_submit-Test.xml&lt;/testFileName1&gt;
+		&lt;testFileName2&gt;C:\ConfigurableAutomatedTester\Tests\CheckImageSource-Test.xml&lt;/testFileName2&gt;
+	&lt;/testFiles&gt;
+	&lt;!-- Folder Testing Settings --&gt;
+	&lt;testFolderName&gt;C:\ConfigurableAutomatedTester\Tests\&lt;/testFolderName&gt;
+	&lt;folderFileFilterType&gt;contains&lt;/folderFileFilterType&gt;
+	&lt;folderFileFilter&gt;sql&lt;/folderFileFilter&gt;
+&lt;/automatedTestConfiguration&gt;
+</br></pre>
+
 		</p>
+<span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 		</div>
 		<div class="heading"><a class="headingLink" id="testfileformat">TEST FILE FORMAT</a></div>
-		<div id="div_testfileformat" class="container" > 
+		<div id="div_testfileformat" class="container" >
 <a name="testfileoverview" class="sectionTitle">TEST FILE OVERVIEW</a>
 		<p>
 The Test file is an xml file, that can include comments just like any xml file.A test file can consist of one or more test steps and there are currently no known limitations as some tests have containedtens of thousands of steps.The drawback to having large test files is that at some point the display will cut off older messages, and the log file will be the only way to track the status of all test steps.Below, there are compound commands that allow for completing a step without creating a separate Navigation step.While this functionality was added for convenience, we strongly suggest using the separate Navigation step and making it crucial as will be explained later.The test file allows for:1.	Certain steps to be a point of failure for the entire test if it fails to prevent dependant steps from   	attempting to execute if the prerequisite step fails, such as Navigation, Establishing a Database connection or Getting JSON from an endpoint.2.	Certain steps to be decisional so that steps based on the success of the prerequesite step only execute if   	the prerequisite step is successful, otherwise dependent steps are skipped and steps subsequent to this block are executed.3. Comments to be plentiful.  Comments can be used to document, or to comment out steps or step values for quickly switching  	between different values when running tests over and over to try to track down a specific behavior.4.	Test files are run one after another and most objects are scoped to just the test that required them so  	Persisted Values, JSON object and SQL Connection object will all be reset and the Unique Identifiers will be reinitialized to a new value.		</p>
@@ -350,13 +419,28 @@ It begins with the XML declaration followed by the &lt;testSteps&gt; root elemen
 		<p>
 &lt;conditional&gt;true&lt;/conditional&gt; - The conditional node is used to start a conditional block of steps.	All steps within the block depend upon the success of this step being successful.	The Condition node should only ever be used when starting a conditional block of steps.	A separate command is used to end the conditional block, so setting this to false is useless	This can only be used on read actionTypes as performing an action is not verifiable.	When applied if successful, all subsequent steps within the block will execute along with all steps after the block.	When applied and unsuccessful for any reason, all subsequent steps within the block will be skipped	 and all steps after the block will execute.		</p>
 		<p>
-&lt;arguments&gt;&lt;/arguments&gt; - The arguments node is a container of numbered argument nodes.	Argument order is crucial and out of order arguments can have unpredictable results.	See the help sections below to learn the order of arguments for each command type.&lt;arg1&gt;First argument&lt;/arg1&gt; The numbered arguments vary greatly depending upon the type of command.	&lt;arg2&gt;Second argument&lt;/arg2&gt;	&lt;arg3&gt;Third argument&lt;/arg3&gt;	Generally speaking, these numbered arguments are arranged so that the most relevant pieces of information 	are the first items and the less relevant pieces of information are last.	The order of the arguments is crucial, while properly numbering is important but improperly numbering is forgivable as long as the xml is valid.		</p>
+&lt;arguments&gt;&lt;/arguments&gt; - The arguments node is a container of numbered argument nodes.	Argument order is crucial and out of order arguments can have unpredictable results.	See the help sections below to learn the order of arguments for each command type.&lt;arg1&gt;First argument&lt;/arg1&gt; The numbered arguments vary greatly depending upon the type of command.	&lt;arg2&gt;Second argument&lt;/arg2&gt;
+	&lt;arg3&gt;Third argument&lt;/arg3&gt;
+	Generally speaking, these numbered arguments are arranged so that the most relevant pieces of information 	are the first items and the less relevant pieces of information are last.	The order of the arguments is crucial, while properly numbering is important but improperly numbering is forgivable as long as the xml is valid.		</p>
 		<p>
 There are few, if any, examples that use all nodes, so in the Navigation example below note that this does not use Accessor and AccessorType nodes because it accesses the URL instead of a page element when making an assertion. Also, keep in mind that while this represents the structure of a test file, it consists of only one of many possible test steps.		</p>
 		<p>
 Usually, the test file will consist of multiple steps like (navigation, check element values(multiple steps) click element...etc...<pre>
-&lt;?xml version="1.0" encoding="UTF-8" ?&gt;&lt;testSteps&gt;	&lt;step&gt;		&lt;command&gt;navigate&lt;/command&gt;		&lt;actionType&gt;write&lt;/actionType&gt;		&lt;expectedValue&gt;https://www.marvel.com/&lt;/expectedValue&gt;		&lt;crucial&gt;TRUE&lt;/crucial&gt;		&lt;arguments&gt;			&lt;arg1&gt;https://www.marvel.com&lt;/arg1&gt;			&lt;arg2&gt;1000&lt;/arg2&gt;		&lt;/arguments&gt;	&lt;/step&gt;&lt;/testSteps&gt;
-</pre>
+</br>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;testSteps&gt;
+	&lt;step&gt;
+		&lt;command&gt;navigate&lt;/command&gt;
+		&lt;actionType&gt;write&lt;/actionType&gt;
+		&lt;expectedValue&gt;https://www.marvel.com/&lt;/expectedValue&gt;
+		&lt;crucial&gt;TRUE&lt;/crucial&gt;
+		&lt;arguments&gt;
+			&lt;arg1&gt;https://www.marvel.com&lt;/arg1&gt;
+			&lt;arg2&gt;1000&lt;/arg2&gt;
+		&lt;/arguments&gt;
+	&lt;/step&gt;
+&lt;/testSteps&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="navigation" class="sectionTitle">NAVIGATION</a>
@@ -364,108 +448,279 @@ Usually, the test file will consist of multiple steps like (navigation, check el
 The Navigation command navigates the browser to the provided URL.All Navigation steps should be marked as crucial, as all subsequent checks require that navigation complete successfully!!!An assertion does not have to be part of navigation, but it probably should be!!!As some testers may like to separate test steps, this is not enforced by the application and since a tester could choose tonavigate to separate pages in one test script and make a subsequent "URL without Navigation checks" conditional, there are sound alternatives to the suggested approach.If Backend and Frontend timings are being tested, the URL must be tested, so the expected value must contain the URL if testing page timings.To navigate without checking the URL, remove the expectedValue node completely as displayed in the example below.For the Navigation command only, although the arguments should be in the order shown, if they are out of order the application will attempt to discern the order and rearrange them.The Navigation command has 4 possible arguments but only the first argument is required.The required first argument, &lt;arg1&gt;&lt;/arg1&gt;, contains the URL to be loaded.The optional second argument, &lt;arg2&gt;&lt;/arg2&gt;, contains the time in milliseconds to wait to allow the page to load.  -  The default is 10 seconds.The optional third argument, &lt;arg3&gt;&lt;/arg3&gt;, contains the dimensions for setting the browser window height and width.The optional fourth argument, &lt;arg4&gt;&lt;/arg4&gt;, contains the maximum time in seconds for the  Back-End and Front-End  to load. - This last optional argument actually performs a test based on the values entered and reports if the Back-End and Front-End load  - times were within the maximum allotted time provided. - Individual times are displayed in Green, when within the allotted time, and in Red, when outside the allotted time. - This check is not part of the Crucial or Conditional functionality and will only display results but never determine - subsequent functionality.		</p>
 		<p>
 To Navigate, without checking the URL to ensure that navigation occurred properly, to wait 4000 milli-seconds and to set the window dimensions to (800 x 800).Please note that making this crucial is irrelevant as no assertions will be made.<pre>
-&lt;step&gt;	&lt;!-- Command - ALWAYS REQUIRED!!! --&gt;	&lt;command&gt;navigate&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;!-- first argument expected by the command - The URL is required --&gt; 		&lt;arg1&gt;https://formy-project.herokuapp.com/form&lt;/arg1&gt;		&lt;!-- second argument optional - Time Delay - default is 4000 if not included 		     but should be included if entering the third parameter --&gt; 		&lt;arg2&gt;4000&lt;/arg2&gt;		&lt;!-- third argument, optional - Window Dimensions width then height separated by space --&gt; 		&lt;arg3&gt;w=800 h=800&lt;/arg3&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;!-- Command - ALWAYS REQUIRED!!! --&gt;
+	&lt;command&gt;navigate&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;!-- first argument expected by the command - The URL is required --&gt;
+		&lt;arg1&gt;https://formy-project.herokuapp.com/form&lt;/arg1&gt;
+		&lt;!-- second argument optional - Time Delay - default is 4000 if not included but should be included if entering the third parameter --&gt;
+		&lt;arg2&gt;4000&lt;/arg2&gt;
+		&lt;!-- third argument, optional - Window Dimensions width then height separated by space --&gt;
+		&lt;arg3&gt;w=800 h=800&lt;/arg3&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="navigationwithsuccessfulnavigationconfirmation" class="sectionTitle">NAVIGATION WITH SUCCESSFUL NAVIGATION CONFIRMATION</a>
 		<p>
 To Navigate, assert that the URL is what is in the expectedValue node and to wait 4 thousand milli-seconds before making the assertion toallow the page to load,and to check that the Back end loads under .5 seconds and that the Front end loads under 3.75 seconds.PLEASE NOTE: Asserting that the URL is correct does not mean that a server transfer didn't redirect the URL to a different page butleave the URL untouched. <pre>
-&lt;step&gt;	&lt;command&gt;navigate&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;expectedValue&gt;https://formy-project.herokuapp.com/form&lt;/expectedValue&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;https://formy-project.herokuapp.com/form&lt;/arg1&gt;		&lt;arg2&gt;4000&lt;/arg2&gt;		&lt;arg3&gt;&lt;/arg3&gt;		&lt;!-- fourth argument, optional - Back End (BE) and Front End (FE) Page Max Load time in seconds --&gt; 		&lt;arg4&gt;FE=3.75 BE=.5&lt;/arg4&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;navigate&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;expectedValue&gt;https://formy-project.herokuapp.com/form&lt;/expectedValue&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;https://formy-project.herokuapp.com/form&lt;/arg1&gt;
+		&lt;arg2&gt;4000&lt;/arg2&gt;
+		&lt;arg3&gt;&lt;/arg3&gt;
+		&lt;!-- fourth argument, optional - Back End (BE) and Front End (FE) Page Max Load time in seconds --&gt;
+		&lt;arg4&gt;FE=3.75 BE=.5&lt;/arg4&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 To Navigate, assert that the URL is as expected, add a time delay and set the browser dimensions to 800 width by 800 height:<pre>
-&lt;step&gt;	&lt;command&gt;navigate&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;expectedValue&gt;https://formy-project.herokuapp.com/form&lt;/expectedValue&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;https://formy-project.herokuapp.com/form&lt;/arg1&gt;		&lt;arg2&gt;4000&lt;/arg2&gt;		&lt;arg3&gt;w=800 h=800&lt;/arg3&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;navigate&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;expectedValue&gt;https://formy-project.herokuapp.com/form&lt;/expectedValue&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;https://formy-project.herokuapp.com/form&lt;/arg1&gt;
+		&lt;arg2&gt;4000&lt;/arg2&gt;
+		&lt;arg3&gt;w=800 h=800&lt;/arg3&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 To Navigate, assert that the URL is as expected, add a time delay, set the browser dimensions to 800 width by 800 height andset the expected Frontend page load time to 3.75 seconds and Backend page load time to .5 seconds:<pre>
-&lt;step&gt;	&lt;command&gt;navigate&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;expectedValue&gt;https://formy-project.herokuapp.com/form&lt;/expectedValue&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;https://formy-project.herokuapp.com/form&lt;/arg1&gt;		&lt;arg2&gt;4000&lt;/arg2&gt;		&lt;arg3&gt;w=800 h=800&lt;/arg3&gt;		&lt;arg4&gt;FE=3.75 BE=.5&lt;/arg4&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;navigate&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;expectedValue&gt;https://formy-project.herokuapp.com/form&lt;/expectedValue&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;https://formy-project.herokuapp.com/form&lt;/arg1&gt;
+		&lt;arg2&gt;4000&lt;/arg2&gt;
+		&lt;arg3&gt;w=800 h=800&lt;/arg3&gt;
+		&lt;arg4&gt;FE=3.75 BE=.5&lt;/arg4&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="navigationwithauthenticationwithandwithoutnavigationconfirmation" class="sectionTitle">NAVIGATION WITH AUTHENTICATION WITH AND WITHOUT NAVIGATION CONFIRMATION</a>
 		<p>
 The Navigate command can be used to authenticate while navigating.This is done by passing the username and password as part of the url delimited by a : and ending with the @ symbol.It should be mentioned that this does not work for all authentication which is why there are different authentication methods.Additionally, it should be mentioned that the Authentication and Login commands are not for form based authentication but rather for alert style login popups.For logging into a page that has two input text type form fields, use the send keys command coupled with the click command.To Navigate and Authenticate with username and password and assert that the URL is in the expectedValue node and to wait4 thousand milli-seconds before making the assertion to allow the page to load:<pre>
-&lt;step&gt;	&lt;command&gt;navigate&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;expectedValue&gt;https://formy-project.herokuapp.com/form&lt;/expectedValue&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;https://username:password@formy-project.herokuapp.com/form&lt;/arg1&gt;		&lt;arg2&gt;4000&lt;/arg2&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;navigate&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;expectedValue&gt;https://formy-project.herokuapp.com/form&lt;/expectedValue&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;https://username:password@formy-project.herokuapp.com/form&lt;/arg1&gt;
+		&lt;arg2&gt;4000&lt;/arg2&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 To Navigate and Authenticate with username and password:<pre>
-&lt;step&gt;	&lt;command&gt;navigate&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;https://username:password@formy-project.herokuapp.com/form&lt;/arg1&gt;		&lt;arg2&gt;4000&lt;/arg2&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;navigate&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;https://username:password@formy-project.herokuapp.com/form&lt;/arg1&gt;
+		&lt;arg2&gt;4000&lt;/arg2&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="loginwithnavigation" class="sectionTitle">LOGIN WITH NAVIGATION</a>
 		<p>
 The Login command logs into a site.This command is intended for sites that have alert style popup login forms.There may be instances in which one or more Login/Authentication commands do not workon a particular operating system, like iOs.A mixed approach may work, but there is no guarantee.Although the login command is a compound command there are instances in which having it work in this manner actually makes a difference over separate steps.To login and navigate in one step.Please note this is for normal passwords which cannot contain spaces or characters that require escaping.<pre>
-&lt;step&gt;	&lt;command&gt;login&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;username&lt;/arg1&gt;		&lt;arg2&gt;password&lt;/arg2&gt;		&lt;arg3&gt;http://www.myCoolPage.com&lt;/arg3&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;login&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;username&lt;/arg1&gt;
+		&lt;arg2&gt;password&lt;/arg2&gt;
+		&lt;arg3&gt;http://www.myCoolPage.com&lt;/arg3&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="alertpopuplogin" class="sectionTitle">ALERT POPUP LOGIN</a>
 		<p>
 The following Login command does not include the navigation step.As mentioned earlier, there may be isseus with logging in related to the operating system or alert type.Try different methods if failures happen as one approach may work best for a specific scenario.To login when presented with an alert style popup, which could happen upon landing on the site or after the site redirects you, and to make this crucial.Please note this is for normal passwords which cannot contain spaces or characters that require escaping.<pre>
-&lt;step&gt;	&lt;command&gt;login&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;username&lt;/arg1&gt;		&lt;arg2&gt;password&lt;/arg2&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;login&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;username&lt;/arg1&gt;
+		&lt;arg2&gt;password&lt;/arg2&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="checkurlwithoutnavigation" class="sectionTitle">CHECK URL WITHOUT NAVIGATION</a>
 		<p>
 The Check URL command allows for checking the current page's URL without the need to navigate.When an command, like a button or link click occurs that navigates to a new page, there is no need toperform a navigation command but there is a need to check that the page is where expected before further testing.NOTE: The &lt;actionType&gt;&lt;/actionType&gt; for this command is write, not a read.This command is designed to work with event navigation to ensure that the navigation has occurred prior to subsequent testing.To check a URL without navigating and to make it crucial.To make it non-crucial change the crucial element to false. &lt;crucial&gt;false&lt;/crucial&gt;.<pre>
-&lt;step&gt;	&lt;command&gt;check url&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;expectedValue&gt;https://formy-project.herokuapp.com/form&lt;/expectedValue&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;check url&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;expectedValue&gt;https://formy-project.herokuapp.com/form&lt;/expectedValue&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="checkgetrequeststatuswithoutnavigation" class="sectionTitle">CHECK GET REQUEST STATUS WITHOUT NAVIGATION</a>
 		<p>
 The CheckGet command checks the response status of a get.To check the Get Requests status of a URL without navigating and to make it crucial.To make it non-crucial change the crucial element to false. &lt;crucial&gt;false&lt;/crucial&gt;.The Space between check and get is optional as shown below.<pre>
-&lt;step&gt;	&lt;command&gt;checkget&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;expectedValue&gt;200&lt;/expectedValue&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;https://www.swtestacademy.com/about-software-test-academy/ &lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;checkget&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;expectedValue&gt;200&lt;/expectedValue&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;https://www.swtestacademy.com/about-software-test-academy/ &lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 Alternative way splitting the words apart.<pre>
-&lt;step&gt;	&lt;command&gt;check get&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;expectedValue&gt;200&lt;/expectedValue&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;https://www.swtestacademy.com/about-software-test-academy/ &lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;check get&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;expectedValue&gt;200&lt;/expectedValue&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;https://www.swtestacademy.com/about-software-test-academy/ &lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="checkpostrequeststatuswithoutnavigation" class="sectionTitle">CHECK POST REQUEST STATUS WITHOUT NAVIGATION</a>
 		<p>
-The CheckPost command checks the response status of a post.&lt;!-- Test results unconfirmed!!! Need to find suitable URL that allows posting. --&gt;To check the Post Requests status of a URL without navigating and to make it crucial.To make it non-crucial change the crucial element to false. &lt;crucial&gt;false&lt;/crucial&gt;.The Space between check and post is optional as shown below.<pre>
-&lt;step&gt;	&lt;command&gt;checkpost&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;expectedValue&gt;200&lt;/expectedValue&gt;	&lt;crucial&gt;true&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;https://www.swtestacademy.com/about-software-test-academy/ &lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+The CheckPost command checks the response status of a post.&lt;!-- Test results unconfirmed!!! Need to find suitable URL that allows posting. --&gt;
+To check the Post Requests status of a URL without navigating and to make it crucial.To make it non-crucial change the crucial element to false. &lt;crucial&gt;false&lt;/crucial&gt;.The Space between check and post is optional as shown below.<pre>
+</br>&lt;step&gt;
+	&lt;command&gt;checkpost&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;expectedValue&gt;200&lt;/expectedValue&gt;
+	&lt;crucial&gt;true&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;https://www.swtestacademy.com/about-software-test-academy/ &lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 Alternative way splitting the words apart.<pre>
-&lt;step&gt;	&lt;command&gt;check post&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;expectedValue&gt;200&lt;/expectedValue&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;https://www.swtestacademy.com/about-software-test-academy/ &lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;check post&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;expectedValue&gt;200&lt;/expectedValue&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;https://www.swtestacademy.com/about-software-test-academy/ &lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="checkdocumentreadystatecompletewithoutnavigationasapostnavigationstep" class="sectionTitle">CHECK DOCUMENT READY STATE COMPLETE WITHOUT NAVIGATION AS A POST NAVIGATION STEP</a>
 		<p>
 The Wait for page command waits until document ready state is complete.To check that the document ready state is complete after previously navigating to a new page and to make it crucial. NOTE: The first argument must be n/a as shown below.- Omitting this argument or leaving it empty will result in an invalid format exception.To make it non-crucial change the crucial element to false. &lt;crucial&gt;false&lt;/crucial&gt;.This will be most useful for triggered navigation.<pre>
-&lt;step&gt;	&lt;command&gt;wait for page&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;n/a&lt;/arg1&gt;		&lt;arg2&gt;30&lt;/arg2&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;wait for page&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;n/a&lt;/arg1&gt;
+		&lt;arg2&gt;30&lt;/arg2&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="checkdocumentreadystatecompletewithnavigationinasinglestep" class="sectionTitle">CHECK DOCUMENT READY STATE COMPLETE WITH NAVIGATION IN A SINGLE STEP</a>
 		<p>
 To check that the document ready state is complete after navigating to a new page and to make it crucial. To make it non-crucial change the crucial element to false. &lt;crucial&gt;false&lt;/crucial&gt;.<pre>
-&lt;step&gt;	&lt;command&gt;wait for page&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;https://formy-project.herokuapp.com/form&lt;/arg1&gt;		&lt;arg2&gt;30&lt;/arg2&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;wait for page&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;https://formy-project.herokuapp.com/form&lt;/arg1&gt;
+		&lt;arg2&gt;30&lt;/arg2&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="switchtoiframe" class="sectionTitle">SWITCH TO IFRAME</a>
 		<p>
 IMPORTANT: EACH TIME A SWITCH TO IFRAME COMMAND IS ISSUED, THE CONTEXT IS REVERTED TO THE MAIN WINDOWONCE THAT COMMAND COMPLETES EXECUTION, SO IF SUBSEQUENT TESTS NEED TO ACCESS THE IFRAME, THEY MUST BEENCAPSULATED WITHIN SWITCH TO IFRAME COMMANDS.The Switch to iFrame command temporarily switches the current context to the iFrame mentioned in the firs argument.Since only the command and first argument are needed to switch to the iFrame, the remaining test step elementscan be used to perform the desired action within the iFrame.The default action when switching to an iFrame is the Assert, which checks the text of an element against the expectedvalue provided, so the assert command need not be used but any other commands should be placed into &lt;arg2&gt;&lt;/arg2&gt;.Commands that can be used in the iFrame are assert, sendkeys, click, right click, double click, persist values and  check against persisted values.A navigation event cannot be directed to take place in an iFrame.If the arguments are not in the proper order, depending upon the command being performed in the iFrame, an attempt to reorderthe arguments will be made.  Unfortunately, some commands can be quite complex and interpreting arguments for reordering can beeven more complex, therefore, a message will be displayed indicating that the arguments are out of order so that they can be correctedby the tester in the test steps file.Failing to do so for complex commands may yield unexpected results.The following example is an example of switching to an iFrame, specified in &lt;arg1&gt;&lt;/arg1&gt; and performing an assertto check the element text pointed to by the &lt;accessor&gt;&lt;/accessor&gt; and &lt;accessorType&gt;&lt;/accessorType&gt; against theexpected value provided in the &lt;expectedValue&gt;&lt;/expectedValue&gt; element and since &lt;crucial&gt;&lt;/crucial&gt; is falsethe status will be reported and subsequent tests will run regardless.Specifically, the test is switching to the iframeResult iFrame, and checking the element specified for the text Tutorial.<pre>
-&lt;step&gt;	&lt;command&gt;Switch to iFrame&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;expectedValue&gt;Tutorials&lt;/expectedValue&gt;	&lt;crucial&gt;false&lt;/crucial&gt;	&lt;accessor&gt;//button[contains(@id,'menu1')]&lt;/accessor&gt;	&lt;accessorType&gt;xPath&lt;/accessorType&gt;	&lt;arguments&gt;		&lt;arg1&gt;iframeResult&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;Switch to iFrame&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;expectedValue&gt;Tutorials&lt;/expectedValue&gt;
+	&lt;crucial&gt;false&lt;/crucial&gt;
+	&lt;accessor&gt;//button[contains(@id,'menu1')]&lt;/accessor&gt;
+	&lt;accessorType&gt;xPath&lt;/accessorType&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;iframeResult&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 To switch to an iFrame and perform a click, refer to the following example.Note that you have to specify the command in &lt;arg2&gt;&lt;/arg2&gt; as click is not the default action.<pre>
-&lt;step&gt;	&lt;command&gt;Switch to iFrame&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;false&lt;/crucial&gt;	&lt;accessor&gt;//button[contains(@id,'menu1')]&lt;/accessor&gt;	&lt;accessorType&gt;xPath&lt;/accessorType&gt;	&lt;arguments&gt;		&lt;arg1&gt;iframeResult&lt;/arg1&gt;		&lt;arg2&gt;click&lt;/arg2&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;Switch to iFrame&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;false&lt;/crucial&gt;
+	&lt;accessor&gt;//button[contains(@id,'menu1')]&lt;/accessor&gt;
+	&lt;accessorType&gt;xPath&lt;/accessorType&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;iframeResult&lt;/arg1&gt;
+		&lt;arg2&gt;click&lt;/arg2&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="conditionalblocks" class="sectionTitle">CONDITIONAL BLOCKS</a>
@@ -473,95 +728,201 @@ To switch to an iFrame and perform a click, refer to the following example.Note 
 IMPORTANT: CONDITIONAL BLOCKS CAN NOT BE NESTED!!!!		</p>
 		<p>
 Creating a conditional block is a two step process.1.	First, the conditional block must be started by adding the &lt;conditional&gt;true&lt;/conditional&gt; node to a 		test step that has the actionType set to read (&lt;actionType&gt;read&lt;/actionType&gt;).		Only read actionTypes are allowed to begin a conditional block because read steps 		are checked against an expected value and are validatable.		Any test steps based on the success of this condition can be placed after the condition.		An example of a conditional block start is shown below.		This command will be discussed in detail later, but note the presence of the conditional field, 		which signifies the start of a conditional block.		Simply stated, the following command checks the element using the xPath accessor and validates that the text of that 		element is the expectedValue, and if so, it is marked as successful and block statements will execute, else block		statements will be skipped.<pre>
-&lt;step&gt;	&lt;command&gt;assert&lt;/command&gt;	&lt;conditional&gt;true&lt;/conditional&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;expectedValue&gt;FORMY&lt;/expectedValue&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;accessor&gt;/html[1]/body[1]/div[1]/nav[1]/a[1]&lt;/accessor&gt;	&lt;accessorType&gt;xPath&lt;/accessorType&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;assert&lt;/command&gt;
+	&lt;conditional&gt;true&lt;/conditional&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;expectedValue&gt;FORMY&lt;/expectedValue&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;accessor&gt;/html[1]/body[1]/div[1]/nav[1]/a[1]&lt;/accessor&gt;
+	&lt;accessorType&gt;xPath&lt;/accessorType&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 1.	Second, the conditional block must be ended by adding an end condition command.		The end conditional command node itself is the most important and only required		 node of this test step, as shown below.		This command neither reads nor writes and asserts nothing and therefore, cannot be marked as crucial.		Once this command is executed, all remaining test steps will not longer dependent upon the condition		and each will be executed as expected.		If this command is not issued all steps after the start of the Conditional Block start will be considered		part of the Conditional Block and will be executed or skipped accordingly.The following is the End Conditional command used to end the Conditional Block.<pre>
-&lt;step&gt;	&lt;command&gt;end conditional&lt;/command&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;end conditional&lt;/command&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="checkananchorhref" class="sectionTitle">CHECK AN ANCHOR HREF</a>
 		<p>
 The Check_A_Href command checks the href attribute of a HyperLink.To check an anchor's href url and to make it non-crucial.To make it crucial change the last parameter to true.This will check the value of the href and compare it to the expected value provided.<pre>
-&lt;step&gt;	&lt;command&gt;check_a_href&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;expectedValue&gt;https://www.swtestacademy.com/about-software-test-academy/ &lt;/expectedValue&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;accessor&gt;//*[@id="menu-item-21"]/a&lt;/accessor&gt;	&lt;accessorType&gt;xPath&lt;/accessorType&gt;	&lt;arguments&gt;		&lt;arg1&gt;alt&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;check_a_href&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;expectedValue&gt;https://www.swtestacademy.com/about-software-test-academy/ &lt;/expectedValue&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;accessor&gt;//*[@id="menu-item-21"]/a&lt;/accessor&gt;
+	&lt;accessorType&gt;xPath&lt;/accessorType&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;alt&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 Alternative way splitting the words.<pre>
-&lt;step&gt;	&lt;command&gt;check a href&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;expectedValue&gt;https://www.swtestacademy.com/about-software-test-academy/&lt;/expectedValue&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;accessor&gt;//*[@id="menu-item-21"]/a&lt;/accessor&gt;	&lt;accessorType&gt;xPath&lt;/accessorType&gt;	&lt;arguments&gt;		&lt;arg1&gt;alt&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;check a href&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;expectedValue&gt;https://www.swtestacademy.com/about-software-test-academy/&lt;/expectedValue&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;accessor&gt;//*[@id="menu-item-21"]/a&lt;/accessor&gt;
+	&lt;accessorType&gt;xPath&lt;/accessorType&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;alt&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="checkallpagelinksusingurl" class="sectionTitle">CHECK ALL PAGE LINKS USING URL</a>
 		<p>
 The Check Links command checks all Hyperlinks on the page.To check all page links and to make it non-crucial. To make it crucial change the last parameter to true.This will check for a status code of 200 for all links on the page, based on the URL in the arg1 node, but will report the status code for all links.<pre>
-&lt;step&gt;	&lt;command&gt;check links&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;https://nutrish.com/&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;check links&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;https://nutrish.com/&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="checkallpagelinkswithoutusingurl" class="sectionTitle">CHECK ALL PAGE LINKS WITHOUT USING URL</a>
 		<p>
 This will check for a status code of 200 for all links on the current page, but will report the status code for all links.<pre>
-&lt;step&gt;	&lt;command&gt;check links&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;check links&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="checkthecountofaspecificelementonapage" class="sectionTitle">CHECK THE COUNT OF A SPECIFIC ELEMENT ON A PAGE</a>
 		<p>
 The Check Count command checks the number of occurrences of a particular element.To check the count of a specific element on a page and to make it non-crucial.To make it crucial change the last parameter to true.This will count the number of times an element is found on a page and compare that to the expected value.In the example below, the test compares the number of "a" tags on the page with the expected number of 18.If the page has 18 "a" tags, the test passes, otherwise it fails.An optional last argument can be included to use the != operator.<pre>
-&lt;step&gt;	&lt;command&gt;check count&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;expectedValue&gt;18&lt;/expectedValue&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;a&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;check count&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;expectedValue&gt;18&lt;/expectedValue&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;a&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="checkallpageimagesrctagswithseparatenavigationstep" class="sectionTitle">CHECK ALL PAGE IMAGE SRC TAGS WITH SEPARATE NAVIGATION STEP</a>
 		<p>
 The Check Img Src command checks the src of all image tags.To check all page image src tags, on the current page, to ensure a source exists and to make it non-crucial.To make it crucial change the last parameter to true.The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sourcesbut will report the status of all image sources.<pre>
-&lt;step&gt;	&lt;command&gt;check images src&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;check images src&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="checkallpageimagesrctagswithnoseparatenavigationstep" class="sectionTitle">CHECK ALL PAGE IMAGE SRC TAGS WITH NO SEPARATE NAVIGATION STEP</a>
 		<p>
 To check all page image src tags, on the page specified in the arg1 node, to ensure a source exists and to make it non-crucial.To make it crucial change the last parameter to true.The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sources but will report the status of all image sources.<pre>
-&lt;step&gt;	&lt;command&gt;check images src&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;https://semantic-ui.com/modules/dropdown.html&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;check images src&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;https://semantic-ui.com/modules/dropdown.html&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="checkallpageimagealttagswithseparatenavigationstep" class="sectionTitle">CHECK ALL PAGE IMAGE ALT TAGS WITH SEPARATE NAVIGATION STEP</a>
 		<p>
 The Check Image Alt command checks all page image alt tags for text.To check all page image alt tags, for ADA compliance and to make it crucial.To make it non-crucial change the crucial element to false. &lt;crucial&gt;false&lt;/crucial&gt;.The alt tag will checked to see if it exists and is not empty.  Empty tags will be flagged as failed.This is a small part of 508 compliance.<pre>
-&lt;step&gt;	&lt;command&gt;check images alt&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;check images alt&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="checkallpageimagealttagswithnoseparatenavigationstep" class="sectionTitle">CHECK ALL PAGE IMAGE ALT TAGS WITH NO SEPARATE NAVIGATION STEP</a>
 		<p>
 To check all page image alt tags, for ADA compliance and to make it crucial.To make it non-crucial change the crucial element to false. &lt;crucial&gt;false&lt;/crucial&gt;.The alt tag will checked to see if it exists and is not empty.  Empty tags will be flagged as failed.This is a small part of 508 compliance.<pre>
-&lt;step&gt;	&lt;command&gt;check images alt&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;https://semantic-ui.com/modules/dropdown.html&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;check images alt&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;https://semantic-ui.com/modules/dropdown.html&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="waitingaspecificamountoftimeforitemstobeavailable" class="sectionTitle">WAITING A SPECIFIC AMOUNT OF TIME FOR ITEMS TO BE AVAILABLE</a>
 		<p>
 The Wait command pauses execution for a specified amount of time to allow for page load completion.In the event that arguments are not in the correct order, this application attempts to re-order the arguments.If the results are not as expected, refer to the examples in this help file for proper argument order.To wait for a specific amount of time before continuing to allow for page loading or script completion.To wait for 5 thousand milli-seconds before continuing onto the next step.<pre>
-&lt;step&gt;	&lt;command&gt;wait&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;10000&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;wait&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;10000&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="waitingforthepresenceofanelement" class="sectionTitle">WAITING FOR THE PRESENCE OF AN ELEMENT</a>
 		<p>
 The Wait for Element command waits a maximum amount of time for an element to be available.To wait for an element to be present, requires checking for the element using an accessor unlike waiting a specific amount of time.To wait for for a maximum of 15 seconds for an element to be present and making this check crucial, use the following.To make it non-crucial change the crucial element to false. &lt;crucial&gt;false&lt;/crucial&gt;.<pre>
-&lt;step&gt;	&lt;command&gt;wait for element&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;accessor&gt;//*[@id="slider-3"]/div/div[1]/div/h3&lt;/accessor&gt;	&lt;accessorType&gt;xPath&lt;/accessorType&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;wait for element&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;accessor&gt;//*[@id="slider-3"]/div/div[1]/div/h3&lt;/accessor&gt;
+	&lt;accessorType&gt;xPath&lt;/accessorType&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="waitingfordocumentreadystatecomplete" class="sectionTitle">WAITING FOR DOCUMENT READY STATE COMPLETE</a>
 		<p>
 The Wait for Page command waits for Document Ready State to be Complete.To wait for the page to fully load and document state to be complete, use the following command.Please note that the accessor is set to page and that an accessor type is present.  Any Accessor Type must be present, although it is not used,to distinguish this document ready state complete wait from a time interval wait.To wait for for a maximum of 15 seconds for document state complete and to make this check crucial, use the following.To make it non-crucial change the crucial element to false. &lt;crucial&gt;false&lt;/crucial&gt;.<pre>
-&lt;step&gt;	&lt;command&gt;wait for page&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;https://www.marvel.com/&lt;/arg1&gt;		&lt;arg2&gt;30&lt;/arg2&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;wait for page&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;https://www.marvel.com/&lt;/arg1&gt;
+		&lt;arg2&gt;30&lt;/arg2&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="uniqueidentifier" class="sectionTitle">UNIQUE IDENTIFIER</a>
@@ -571,230 +932,629 @@ Before explaining how to fill in text fields, we need to cover the Unique Identi
 <a name="persistingretrievedtextinavariableforlateruse" class="sectionTitle">PERSISTING RETRIEVED TEXT IN A VARIABLE FOR LATER USE</a>
 		<p>
 The PersistString command stores the element's text in memory for use later.There may be a need to compare the value retrieved from one element with the value of another.Unfortunately, this cannot be done directly, but a Persist action can be enacted allowing the storage of an element's value that can then be compared to the value of another element.This accomplishes comparing one element value with another.To persist the value of an element, use the following:<pre>
-&lt;step&gt;	&lt;command&gt;PersistString&lt;/command&gt;	&lt;accessor&gt;/html/body/div/h1&lt;/accessor&gt;	&lt;accessorType&gt;xPath&lt;/accessorType&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;PersistString&lt;/command&gt;
+	&lt;accessor&gt;/html/body/div/h1&lt;/accessor&gt;
+	&lt;accessorType&gt;xPath&lt;/accessorType&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="fillingintextfields" class="sectionTitle">FILLING IN TEXT FIELDS</a>
 		<p>
 The SendKeys command sends keystrokes and phrases to form elements and Hyperlink context menus.To fill in a field by ID and to make it non-crucial.To make it crucial change the last parameter to true.<pre>
-&lt;step&gt;	&lt;command&gt;sendkeys&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;accessor&gt;first-name&lt;/accessor&gt;	&lt;accessorType&gt;ID&lt;/accessorType&gt;	&lt;arguments&gt;		&lt;arg1&gt;John&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;sendkeys&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;accessor&gt;first-name&lt;/accessor&gt;
+	&lt;accessorType&gt;ID&lt;/accessorType&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;John&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 To fill in a field by ID, appending the Unique Identifier to the name John, and to make it non-crucial.To make it crucial change the last parameter to true.<pre>
-&lt;step&gt;	&lt;command&gt;sendkeys&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;accessor&gt;first-name&lt;/accessor&gt;	&lt;accessorType&gt;ID&lt;/accessorType&gt;	&lt;arguments&gt;		&lt;arg1&gt;John**_uid_**&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;sendkeys&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;accessor&gt;first-name&lt;/accessor&gt;
+	&lt;accessorType&gt;ID&lt;/accessorType&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;John**_uid_**&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 To fill in a field by ID and to make it non-crucial when it contains a reserved command like click.To make it crucial change the last parameter to true.<pre>
-&lt;step&gt;	&lt;command&gt;sendkeys&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;accessor&gt;first-name&lt;/accessor&gt;	&lt;accessorType&gt;ID&lt;/accessorType&gt;	&lt;arguments&gt;		&lt;arg1&gt;click&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;sendkeys&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;accessor&gt;first-name&lt;/accessor&gt;
+	&lt;accessorType&gt;ID&lt;/accessorType&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;click&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 To fill in a field using the value you persisted in an earlier step use the following.<pre>
-&lt;step&gt;	&lt;command&gt;sendkeys&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;accessor&gt;first-name&lt;/accessor&gt;	&lt;accessorType&gt;ID&lt;/accessorType&gt;	&lt;arguments&gt;		&lt;arg1&gt;PersistedString&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;sendkeys&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;accessor&gt;first-name&lt;/accessor&gt;
+	&lt;accessorType&gt;ID&lt;/accessorType&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;PersistedString&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 To fill in a field by ID, add the Unique Id, and to make it non-crucial when it contains a reserved command like click.To make it crucial change the last parameter to true.<pre>
-&lt;step&gt;	&lt;command&gt;sendkeys&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;accessor&gt;first-name&lt;/accessor&gt;	&lt;accessorType&gt;ID&lt;/accessorType&gt;	&lt;arguments&gt;		&lt;arg1&gt;click**_uid_**&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;sendkeys&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;accessor&gt;first-name&lt;/accessor&gt;
+	&lt;accessorType&gt;ID&lt;/accessorType&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;click**_uid_**&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 To fill in a field by ID with the persisted value, add the Unique Id, and to make it non-crucial.To make it crucial change the last parameter to true.<pre>
-&lt;step&gt;	&lt;command&gt;sendkeys&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;accessor&gt;first-name&lt;/accessor&gt;	&lt;accessorType&gt;ID&lt;/accessorType&gt;	&lt;arguments&gt;		&lt;arg1&gt;PersistedString**_uid_**&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;sendkeys&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;accessor&gt;first-name&lt;/accessor&gt;
+	&lt;accessorType&gt;ID&lt;/accessorType&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;PersistedString**_uid_**&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 To compare the persisted value to an element, use the following:The Assert command compares an element's ACTUAL value with the EXPECTED value supplied.<pre>
-&lt;step&gt;	&lt;command&gt;assert&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;accessor&gt;/html[1]/body[1]/div[1]/form[1]/div[1]/div[4]/div[1]&lt;/accessor&gt;	&lt;accessorType&gt;xPath&lt;/accessorType&gt;	&lt;expectedValue&gt;PersistedString&lt;/expectedValue&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;assert&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;accessor&gt;/html[1]/body[1]/div[1]/form[1]/div[1]/div[4]/div[1]&lt;/accessor&gt;
+	&lt;accessorType&gt;xPath&lt;/accessorType&gt;
+	&lt;expectedValue&gt;PersistedString&lt;/expectedValue&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 To retrieve the text of an element by xPath and compare it to the persisted value and assert that it is not equal.<pre>
-&lt;step&gt;	&lt;command&gt;assert&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;accessor&gt;/html[1]/body[1]/div[1]/form[1]/div[1]/div[4]/div[1]&lt;/accessor&gt;	&lt;accessorType&gt;xPath&lt;/accessorType&gt;	&lt;expectedValue&gt;PersistedString&lt;/expectedValue&gt;	&lt;arguments&gt;		&lt;arg1&gt;!=&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;assert&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;accessor&gt;/html[1]/body[1]/div[1]/form[1]/div[1]/div[4]/div[1]&lt;/accessor&gt;
+	&lt;accessorType&gt;xPath&lt;/accessorType&gt;
+	&lt;expectedValue&gt;PersistedString&lt;/expectedValue&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;!=&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 Although the following can be found in the sendkeys section, in an effort to group all persistence in one location it is duplicated here.There may be a need to send a persisted value to a control and that can be done as follows.To send the persisted value to a textbox or textarea form control, use the following:<pre>
-&lt;step&gt;	&lt;command&gt;sendkeys&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;accessor&gt;first-name&lt;/accessor&gt;	&lt;accessorType&gt;ID&lt;/accessorType&gt;	&lt;arguments&gt;		&lt;arg1&gt;PersistedString&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;sendkeys&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;accessor&gt;first-name&lt;/accessor&gt;
+	&lt;accessorType&gt;ID&lt;/accessorType&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;PersistedString&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
+		</p>
+<span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
+<a name="clickanelement" class="sectionTitle">CLICK AN ELEMENT</a>
+		<p>
+The Click command clicks on the specified element, as long as it is not in an iFrame.This is one of the most common events to test and can be used for links, buttons, checkboxes, radio buttons, select options etc..To click an element by ID, use the following:<pre>
+</br>&lt;step&gt;
+	&lt;command&gt;click&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;false&lt;/crucial&gt;
+	&lt;accessor&gt;radio-button-2&lt;/accessor&gt;
+	&lt;accessorType&gt;ID&lt;/accessorType&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="clickanelementinaniframe" class="sectionTitle">CLICK AN ELEMENT IN AN IFRAME</a>
 		<p>
 The Switch to iFrame command switches the current scope to the iFrame specified.To click an element by xPath in an iFrame.Note that the name of the iFrame is the first argument and the action to take is the second argument.<pre>
-&lt;step&gt;	&lt;command&gt;Switch to iFrame&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;false&lt;/crucial&gt;	&lt;accessor&gt;//button[contains(@id,'menu1')]&lt;/accessor&gt;	&lt;accessorType&gt;xPath&lt;/accessorType&gt;	&lt;arguments&gt;		&lt;arg1&gt;iframeResult&lt;/arg1&gt;		&lt;arg2&gt;click&lt;/arg2&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;Switch to iFrame&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;false&lt;/crucial&gt;
+	&lt;accessor&gt;//button[contains(@id,'menu1')]&lt;/accessor&gt;
+	&lt;accessorType&gt;xPath&lt;/accessorType&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;iframeResult&lt;/arg1&gt;
+		&lt;arg2&gt;click&lt;/arg2&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="selectanoptionfromanhtmlselectelement" class="sectionTitle">SELECT AN OPTION FROM AN HTML SELECT ELEMENT</a>
 		<p>
 The SendKeys command can also be used to select an Option from an HTML Select control.To select an option from an HTML Select (drop down/list) element there are two methods.Sendkeys can be used to select an item based on its text or Click can be used on the optionactually being selected.<pre>
-&lt;step&gt;	&lt;command&gt;sendkeys&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;accessor&gt;select-menu&lt;/accessor&gt;	&lt;accessorType&gt;ID&lt;/accessorType&gt;	&lt;arguments&gt;		&lt;arg1&gt;0-1&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;sendkeys&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;accessor&gt;select-menu&lt;/accessor&gt;
+	&lt;accessorType&gt;ID&lt;/accessorType&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;0-1&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 Alternate method of selecting an option from an HTML select element.<pre>
-&lt;step&gt;	&lt;command&gt;click&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;accessor&gt;option[value='1']&lt;/accessor&gt;	&lt;accessorType&gt;CssSelector&lt;/accessorType&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;click&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;accessor&gt;option[value='1']&lt;/accessor&gt;
+	&lt;accessorType&gt;CssSelector&lt;/accessorType&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="takingscreenshots" class="sectionTitle">TAKING SCREENSHOTS</a>
 		<p>
 The ScreenShot command takes a screenshot of the current page.To take a screen shot/print screen, the browser will be resized automatically to capture all page content,if browser dimensions are not supplied; however, in the event that browser dimensions are supplied, the browserwill resize to the supplied dimensions.The ability to resize the browser to specific dimensions allows for image pixel comparison as images being comparedmust have the same width and height dimensions.This command allows for overriding the configured screenshot folder and dynamic filename creation and either saving the images with a specified name in the configured screenshot folder or saving the images to a file naame and path specified as &lt;arg1&gt;&lt;/arg1&gt; but if &lt;arg1&gt;&lt;/arg1&gt; is not provided a name is constructed and the file is saved in the configured folder.This command also allows for specifying the browser dimensions so that you get an image the exact size that you need.Specifying the browser dimensions is the same as when navigating, where w= identifies the width value and h= identifiesthe height value as shown here: &lt;arg2&gt;w=1400 h=1000&lt;/arg2&gt;.The ability to name the screenshot allows for executing subsequent Image Comparison steps and speficying the file namesbased on the screenshots being taken.In the following example, a default name will be provided for the  screenshot consisting of the browser used and the test stepwhere the command was called. (This is the default functionality.)<pre>
-&lt;step&gt;	&lt;command&gt;screenshot&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;false&lt;/crucial&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;screenshot&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;false&lt;/crucial&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 Alternatively, including the filename as an argument will allow you to save the Screenshot with the name of your choosing.If a full path is included with the file name, and the folder structure exists, the screenshot will be saved to the locationprovided, otherwise the screenshot will be saved to the configured screenshots folder with the file name provided.In the following example, the screenshot will be saved to the configured screenshots folder with the file name provided.This functionality allows for pointing to the file for subsequent image comparison.<pre>
-&lt;step&gt;	&lt;command&gt;screenshot&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;false&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;MyScreenShot.png&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;screenshot&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;false&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;MyScreenShot.png&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 In the following example, the screenshot will be saved to the folder and file name provided.This functionality allows for pointing to the file for subsequent image comparisons.This is the preferred command structure when subsequently performing image comparisons.This structure allows for separation of images into separate folders for quickly referencing differences.<pre>
-&lt;step&gt;	&lt;command&gt;screenshot&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;false&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;c:\myScreehShots\Actual\MyScreenShot.png&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;screenshot&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;false&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;c:\myScreehShots\Actual\MyScreenShot.png&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="switchingbrowsertabs" class="sectionTitle">SWITCHING BROWSER TABS</a>
 		<p>
 The Right Click command can be used to access a link's context menu to open that link in a new tab and switch to that tab.Some actions are related and to avoid unnecessary steps the enter key will be pressed after right clicking and arrowing to a particular item.When running tests that access the context menu, the mouse and keyboard should not be used as they can change the context and cause the test to fail.To Right click on an element, move down to the first menu item, click it to open in a new tab and switch to the new tab:<pre>
-&lt;step&gt;	&lt;command&gt;right click&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;accessor&gt;//*[@id="block-menu-menu-dc-menu"]/div/div/ul/li[2]/a&lt;/accessor&gt;	&lt;accessorType&gt;xPath&lt;/accessorType&gt;	&lt;arguments&gt;		&lt;arg1&gt;Keys.Arrow_Down&lt;/arg1&gt;		&lt;arg2&gt;Keys.Enter&lt;/arg2&gt;		&lt;!-- the following line switches to the new tab, if this is the first new tab opened, for subsequent tabs used the switch to tab command --&gt;		&lt;arg3&gt;switch to tab&lt;/arg3&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;right click&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;accessor&gt;//*[@id="block-menu-menu-dc-menu"]/div/div/ul/li[2]/a&lt;/accessor&gt;
+	&lt;accessorType&gt;xPath&lt;/accessorType&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;Keys.Arrow_Down&lt;/arg1&gt;
+		&lt;arg2&gt;Keys.Enter&lt;/arg2&gt;
+		&lt;!-- the following line switches to the new tab, if this is the first new tab opened, for subsequent tabs used the switch to tab command --&gt;
+		&lt;arg3&gt;switch to tab&lt;/arg3&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 Alternatively, the steps can be separated into two separate steps where the context menu opens a new tab and then the next step switches to the second tab.<pre>
-&lt;step&gt;	&lt;command&gt;right click&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;accessor&gt;//*[@id="block-menu-menu-dc-menu"]/div/div/ul/li[2]/a&lt;/accessor&gt;	&lt;accessorType&gt;xPath&lt;/accessorType&gt;	&lt;arguments&gt;		&lt;arg1&gt;Keys.Arrow_Down&lt;/arg1&gt;		&lt;arg2&gt;Keys.Enter&lt;/arg2&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;right click&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;accessor&gt;//*[@id="block-menu-menu-dc-menu"]/div/div/ul/li[2]/a&lt;/accessor&gt;
+	&lt;accessorType&gt;xPath&lt;/accessorType&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;Keys.Arrow_Down&lt;/arg1&gt;
+		&lt;arg2&gt;Keys.Enter&lt;/arg2&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 The Switch To Tab command switches to another Tab but if Tab argument is not provided, switches back to the first(parent) tab.When opening a new tab and using a separate Switch to Tab command, remember to use a wait between the commands to allow for the tabto fully load before attempting to switch to it, or the number of tags will not be properly reported to the application and the Switch to Tab command will fail.<pre>
-&lt;step&gt;	&lt;command&gt;Switch to tab&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;Switch to tab&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+&lt;/step&gt;
+</br></pre>
+
 Alternate Switch to tab command with the tab specified as an argument.Recently updated, this method allows switching between all open tabs by passing the tab index as &lt;arg1&gt;.The parent tab, where the test originated is tab 0, the first child is tab 1, etc...If you open a tab from the parent and then open another tab from the parent, the first is tab 1 and the second is tab 2,however, switching to child tabs and opening tabs between the current child and the last child may have unexpected results.As a rule of thumb, open the tabs manually testing the layout of the tabs before attempting to automate this functionality.The following command switches to the first child tab and is an alternate way of doing this separating the functionality from theright click command allowing more granular control of switching between tabs.<pre>
-&lt;step&gt;	&lt;command&gt;Switch to tab&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;1&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;Switch to tab&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;1&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 The following command switches to the second child tab.<pre>
-&lt;step&gt;	&lt;command&gt;Switch to tab&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;2&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;Switch to tab&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;2&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 To Switch back to the first tab after switching to the second tab.<pre>
-&lt;step&gt;	&lt;command&gt;Switch to tab 0&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;0&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;Switch to tab 0&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;0&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 An alternative to the above command allows the tab number argument to be excluded, as the default is tab 0 - the parent tab.Note that this has no argument and is relying upon the default setting to return to the first tab.<pre>
-&lt;step&gt;	&lt;command&gt;Switch to tab 0&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;Switch to tab 0&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="closeoneorallopentabs" class="sectionTitle">CLOSE ONE OR ALL OPEN TABS</a>
 		<p>
 The Close Child Tab command closes one or all child tabs but not the main tabIf the test that is being run opens multiple tabs, at some point before all tests end, there may be a need to close one or all open child tabs.The most important reason to do this would be to avoid confusion as opening multiple tabs and keeping track of multiple tabs can becomequite complex, whereas, closing and opening new tabs may be far less complex.Tabs are numbered 0 for main, 1 for first child(left most tab), 2 for second child etc...The Close Child Tab command takes one optional argument which is the tab number.If this optional argument is missing or set to the 0, which is the main tab, all child tabs are closed.The following command closes the first child tab specified by the supplied argument.<pre>
-&lt;step&gt;	&lt;command&gt;Close Child tab&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;1&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;Close Child tab&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;1&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 The following command closes all tabs because no specific child tab was provided.<pre>
-&lt;step&gt;	&lt;command&gt;Close Child tab&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;Close Child tab&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="findelementsthathavespecifictext" class="sectionTitle">FIND ELEMENTS THAT HAVE SPECIFIC TEXT</a>
 		<p>
 The Find command finds elements that have the supplied text.There are times when you may need to search for text but do not know the accessor necessary to find that text.The Find functionality allows you search all elements regardless of type or just all tags of a specific type for a phrase.Additionally, the Find functionality returns the xPath of all elements where the text is found, but when searching for text without specifying a tag, only the actual tag containing the text is returned, not elements in the upper hierarchy; however, when using a specific tag, if a child tag of that tag contains the text, the searched tag will be returned as successfully containing that text. To Find text searching all elements and make this non-crucial, use the following.<pre>
-&lt;step&gt;	&lt;command&gt;find&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;expectedValue&gt;Highest level of education&lt;/expectedValue&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;find&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;expectedValue&gt;Highest level of education&lt;/expectedValue&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 To Find text searching all div elements and make this non-crucial, use the following.<pre>
-&lt;step&gt;	&lt;command&gt;find&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;expectedValue&gt;Highest level of education&lt;/expectedValue&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;div&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;find&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;expectedValue&gt;Highest level of education&lt;/expectedValue&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;div&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 To Find text searching all label elements and make this non-crucial, use the following.<pre>
-&lt;step&gt;	&lt;command&gt;find&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;expectedValue&gt;Highest level of education&lt;/expectedValue&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;label&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;find&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;expectedValue&gt;Highest level of education&lt;/expectedValue&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;label&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="findelementsthatcontaintext" class="sectionTitle">FIND ELEMENTS THAT CONTAIN TEXT</a>
 		<p>
 There are times when you may need to search for a portion of text but do not know the accessor necessary to find that text.A specific instance might be when searching for text that would be in a paragraph.You wouldn't want to add the entire paragraph when you can add a snippet to verify that part of it is there.Additionally, the Find functionality returns the xPath of all elements where the text is found.To Find element containing text searching all div elements and make this non-crucial, use the following.<pre>
-&lt;step&gt;	&lt;command&gt;find&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;expectedValue&gt;Highest level&lt;/expectedValue&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;div&lt;/arg1&gt;		&lt;arg1&gt;contains&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;find&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;expectedValue&gt;Highest level&lt;/expectedValue&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;div&lt;/arg1&gt;
+		&lt;arg1&gt;contains&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="createtestpagecommandtocreatepagetestsorforprovidingdatatohelpcreatetests" class="sectionTitle">CREATE TEST PAGE COMMAND TO CREATE PAGE TESTS OR FOR PROVIDING DATA TO HELP CREATE TESTS</a>
 		<p>
 IMPORTANT NOTE #1: ANY PARENT ELEMENT WILL CONTAIN THE TEXT OF IT'S CHILD ELEMENT(s) SO TO GET THE ELEMENT THAT ACTUALLY 			CONTAINS THE INFORMATION DESIRED, TRY TO ELIMINATE THE HIERARCHICAL ITEMS ABOVE THAT ARE NOT DESIRED, 			LIKE CONTAINER ELEMENTS.  Examples include (html,head,body,div,table)IMPORTANT NOTE #2: ENSURE THAT YOUR FILE PATH DOES NOT CONTAIN ANY KEYWORD USED FOR ANY OTHER ACTION, OR YOU WILL GET UNEXPECTED RESULTS!!!  A test file needs to be created and you would like to spare yourself the hassle of looking up elements, associated properties and attributes.  This may be especially helpful in the early stages of testing where with development and content updates, test step updates can occur but this  process can quickly get the initial test steps created.  To do this, create a test script, with a Navigate command, to Navigate to the page to be tested and then use the   create_test_page command or the create_test_page_formatted command.  The create_test_page command outputs key value information so that a determination can be made to as to whether an item should be tested and   it provides all of the information to create the test command but it is not formatted as a test command.  The create_test_page_formatted command outputs the element information in a test command format allowing for quick copy and paste to a test file.  Both files indicate if an element is visible, if an a tag is acting as an anchor or a link.  The Formatted File, will create tests for a tags that check text and href, for images that check src, for text fields it create tests that 	 compare text provided with the element text, for text input it creates a sendkeys, for buttons, checkboxes and radio buttons it creates	 a click, and for selects it creates a select command, allowing the user to enter one of the option values that is to be selected.  The create_test_page command and the create_test_page_formatted command take the following test parameters:   - arg1 is the Tag Type.  Use * for all tags, or div for just div tags etc...		 -    Element Type: A single element with * being all elements and the default if left empty.			 -   Elements Include but are not limited to: *, html, head, title, body, a, ol, ul, li, select, input etc...			 -   If omitted, this will be * for all elements.   - arg2 is the File where the Tags will be written.		 -    File Path and File Name: This is where the results will be written.			 -   If omitted, this will be written to the config folder. (/config/newTestFile.txt)   - arg3 is the comma delimited list of Tags to exclude.		 -    A comma delimited list of elements to skip when retrieving all element (*) information.			 -   These would usually be elements that do not have text themselves but contain elements that do have text.			 -   Do not include spaces between elements, just a comma as follows: html,head,title,body,div			 -   Skip elements are ONLY APPLIED WHEN RETRIEVING ALL ELEMENTS and IGNORED WHEN RETRIEVING A SPECIFIC TAG TYPE.  The following examples get all page elements except those container elements listed to skip, save them to a file,   and create test step XML files that can be used immediately.<pre>
-&lt;step&gt;	&lt;command&gt;create_test_page_formatted&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;*&lt;/arg1&gt;		&lt;arg2&gt;C:\Tests\TestPages\Formy-Test.xml&lt;/arg2&gt;		&lt;arg3&gt;html,head,title,meta,script,body,style,nav,br,div,form&lt;/arg3&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;create_test_page_formatted&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;*&lt;/arg1&gt;
+		&lt;arg2&gt;C:\Tests\TestPages\Formy-Test.xml&lt;/arg2&gt;
+		&lt;arg3&gt;html,head,title,meta,script,body,style,nav,br,div,form&lt;/arg3&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 The following example gets all anchor tag elements, saves them to a file, and ignores the skips list because all elements are not being retrieved.<pre>
-&lt;step&gt;	&lt;command&gt;create_test_page_formatted&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;a&lt;/arg1&gt;		&lt;arg2&gt;C:\Tests\TestPages\TestFileOutput_A_Only.txt&lt;/arg2&gt;		&lt;arg3&gt;html,head,title,meta,script,body,style,nav,br,div,form&lt;/arg3&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;create_test_page_formatted&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;a&lt;/arg1&gt;
+		&lt;arg2&gt;C:\Tests\TestPages\TestFileOutput_A_Only.txt&lt;/arg2&gt;
+		&lt;arg3&gt;html,head,title,meta,script,body,style,nav,br,div,form&lt;/arg3&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 The following example is the correct equivalent of the previous command.<pre>
-&lt;step&gt;	&lt;command&gt;create_test_page_formatted&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;a&lt;/arg1&gt;		&lt;arg2&gt;C:\Tests\TestPages\TestFileOutput_A_Only.txt&lt;/arg2&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;create_test_page_formatted&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;a&lt;/arg1&gt;
+		&lt;arg2&gt;C:\Tests\TestPages\TestFileOutput_A_Only.txt&lt;/arg2&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
   Alternatively, for checking content or for manually creating tests, using the unformatted command may prove more useful.  This command works just like the formatted command except it simply lists the element information, but does not make test steps.  Example of some element information: Element Type, xPath, Text, Href, Src, Alt, Visibility.  This file type is a plain text file and should be output accordingly.  The following example creates an unformatted file(arg2) listing the described element attributes for all elements (arg1)  except those in the skipped list (arg3)<pre>
-&lt;step&gt;	&lt;command&gt;create_test_page&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;*&lt;/arg1&gt;		&lt;arg2&gt;C:\TestPages\Formy-Unformatted-Test.txt&lt;/arg2&gt;		&lt;arg3&gt;html,head,title,meta,script,body,style,nav,br,div,form&lt;/arg3&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;create_test_page&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;*&lt;/arg1&gt;
+		&lt;arg2&gt;C:\TestPages\Formy-Unformatted-Test.txt&lt;/arg2&gt;
+		&lt;arg3&gt;html,head,title,meta,script,body,style,nav,br,div,form&lt;/arg3&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="connecttosqlserverdatabaseandclosetheconnection" class="sectionTitle">CONNECT TO SQL SERVER DATABASE AND CLOSE THE CONNECTION</a>
 		<p>
 The Connect To Database command opens and persists a connection object until it is closed.There will be times during the course of QA'ing a site where querying the database can confirm that a value has been added or removed.NOTE: ALTHOUGH MONGODB IS MENTIONED IN THE COMMENTS BELOW, IT IS NOT FULLY IMPLEMENTED.AT THIS TIME ONLY SQL SERVER CONNECTIVITY IS CURRENTLY IMPLEMENTED!!!IMPORTANT: ENSURE THAT YOU ALWAYS CREATE A CLOSE CONNECTION TEST STEP TO CLOSE THE CONNECTION YOU OPEN!!!!An emergency clean up process will attempt to shut down any open connections, but it is recommended that you do this with a test step to ensure that connection limits are not exhausted.To do this, you must first establish a connection to the database and this is how to do that.There are two ways to establish a connection to Sql Server.<pre>
-&lt;step&gt;	&lt;!-- Open Connection to Sql Server --&gt;	&lt;!-- Allows you to connect to a SQL Server database.  Make this step crucial or conditional as subsequent steps depend on it's success. --&gt;	&lt;command&gt;Connect to Database&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;!-- Type of Database (MongoDb, Sql Server)--&gt;		&lt;arg1&gt;SQL Server&lt;/arg1&gt;		&lt;!-- Database to connect to --&gt;		&lt;arg2&gt;PocFisForumV2&lt;/arg2&gt;		&lt;!-- user name --&gt;		&lt;arg3&gt;forum_user&lt;/arg3&gt;		&lt;!-- password --&gt;		&lt;arg4&gt;forum_user&lt;/arg4&gt;		&lt;!-- connection type - not currently used --&gt;		&lt;arg5&gt;local&lt;/arg5&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;!-- Open Connection to Sql Server --&gt;
+	&lt;!-- Allows you to connect to a SQL Server database.  Make this step crucial or conditional as subsequent steps depend on it's success. --&gt;
+	&lt;command&gt;Connect to Database&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;!-- Type of Database (MongoDb, Sql Server)--&gt;
+		&lt;arg1&gt;SQL Server&lt;/arg1&gt;
+		&lt;!-- Database to connect to --&gt;
+		&lt;arg2&gt;PocFisForumV2&lt;/arg2&gt;
+		&lt;!-- user name --&gt;
+		&lt;arg3&gt;forum_user&lt;/arg3&gt;
+		&lt;!-- password --&gt;
+		&lt;arg4&gt;forum_user&lt;/arg4&gt;
+		&lt;!-- connection type - not currently used --&gt;
+		&lt;arg5&gt;local&lt;/arg5&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 The alternative method with more control but with more risk of failure.<pre>
-&lt;step&gt;	&lt;!-- Allows you to connect to a SQL Server database.  Make this step crucial or conditional as subsequent steps depend on it's success. --&gt;	&lt;command&gt;Connect to Database&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;true&lt;/crucial&gt;	&lt;arguments&gt;		&lt;!-- Type of Database (MongoDb, Sql Server)--&gt;		&lt;arg1&gt;SQL Server&lt;/arg1&gt;		&lt;!-- Connection String or Close to close the connection --&gt;		&lt;!-- when using a uri, escape all illegal xml characters (escape: ampersands with &amp;) --&gt;		&lt;arg2&gt;jdbc:sqlserver://localhost:1433;database=PocFisForumV2;user=forum_user;			password=forum_user;encrypt=false;trustServerCertificate=true;loginTimeout=30;		&lt;/arg2&gt;		&lt;!-- arg2&gt;jdbc:sqlserver://local.database.windows.net:1433;database=PocFisForumV2;user=forum_user;			password=forum_user;encrypt=true;trustServerCertificate=false;loginTimeout=30;		&lt;/arg2 --&gt;		&lt;!-- currently not implemented but created to distinguish between local and non-local SQL databases --&gt;		&lt;arg3&gt;local&lt;/arg3&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;!-- Allows you to connect to a SQL Server database.  Make this step crucial or conditional as subsequent steps depend on it's success. --&gt;
+	&lt;command&gt;Connect to Database&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;true&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;!-- Type of Database (MongoDb, Sql Server)--&gt;
+		&lt;arg1&gt;SQL Server&lt;/arg1&gt;
+		&lt;!-- Connection String or Close to close the connection --&gt;
+		&lt;!-- when using a uri, escape all illegal xml characters (escape: ampersands with &amp;) --&gt;
+		&lt;arg2&gt;jdbc:sqlserver://localhost:1433;database=PocFisForumV2;user=forum_user;			password=forum_user;encrypt=false;trustServerCertificate=true;loginTimeout=30;		&lt;/arg2&gt;
+		&lt;!-- arg2&gt;jdbc:sqlserver://local.database.windows.net:1433;database=PocFisForumV2;user=forum_user;			password=forum_user;encrypt=true;trustServerCertificate=false;loginTimeout=30;		&lt;/arg2 --&gt;
+		&lt;!-- currently not implemented but created to distinguish between local and non-local SQL databases --&gt;
+		&lt;arg3&gt;local&lt;/arg3&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="closingthedatabaseconnection" class="sectionTitle">CLOSING THE DATABASE CONNECTION</a>
 		<p>
 The Close Database Connection command closes an open database connection and destroys the connection object releasing the resource.Equally important as opening the database connection object, is closing the database connection object.Open connections consume resources and unclosed connections can use up all available memory or an allotment of connections depending on where the connection lives.To avoid this, always write a close connection command whenever writing an open connection command.While a cleanup method exists to close any open connections it should not be relied upon to close your open connection andby the time it is executed, used resources could bog down the computer system depending upon what is being tested and what otherapplications are open.The close command is simple and as follows:<pre>
-&lt;step&gt;	&lt;command&gt;Close Database Connection&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;TRUE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;SQL Server&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;Close Database Connection&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;SQL Server&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="queryingthesqlserverdatabase" class="sectionTitle">QUERYING THE SQL SERVER DATABASE</a>
 		<p>
 The Sql Server Query command executes a Sql Server Query for a single field value and compares that to the expected value.When testing a site, there sometimes needs to be verification that a value was actually written to, or removed from the database.  This is the purpose of the Sql Server Query Command.There are two ways to query the database.First option: Specify the Table, Field and Where clause separately.The last argument is the comparison type and must be included for != test steps, but is optional for = test steps.<pre>
-&lt;step&gt;	&lt;command&gt;Sql Server Query&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;expectedValue&gt;General&lt;/expectedValue&gt;	&lt;crucial&gt;false&lt;/crucial&gt;	&lt;arguments&gt;		&lt;!-- Table to query or select statement --&gt;		&lt;arg1&gt;[POCFISForumV2].[dbo].[Forums]&lt;/arg1&gt;		&lt;!-- Field to query --&gt;		&lt;arg2&gt;Forum&lt;/arg2&gt;		&lt;!-- where clause - optional --&gt;		&lt;arg3&gt;where ForumId = 1&lt;/arg3&gt;		&lt;!-- Optional 4th argument can be used to signify != comparison --&gt;		&lt;!--&lt;arg4&gt;!=&lt;/arg4&gt;--&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;Sql Server Query&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;expectedValue&gt;General&lt;/expectedValue&gt;
+	&lt;crucial&gt;false&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;!-- Table to query or select statement --&gt;
+		&lt;arg1&gt;[POCFISForumV2].[dbo].[Forums]&lt;/arg1&gt;
+		&lt;!-- Field to query --&gt;
+		&lt;arg2&gt;Forum&lt;/arg2&gt;
+		&lt;!-- where clause - optional --&gt;
+		&lt;arg3&gt;where ForumId = 1&lt;/arg3&gt;
+		&lt;!-- Optional 4th argument can be used to signify != comparison --&gt;
+		&lt;!--&lt;arg4&gt;!=&lt;/arg4&gt;--&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 Second Option: Specify the entire Select statement.<pre>
-&lt;step&gt;	&lt;command&gt;Sql Server Query&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;expectedValue&gt;FAQ&lt;/expectedValue&gt;	&lt;crucial&gt;false&lt;/crucial&gt;	&lt;arguments&gt;		&lt;!-- Table to query or select statement --&gt;		&lt;arg1&gt;Select Forum from [POCFISForumV2].[dbo].[Forums] where ForumId = 2&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;Sql Server Query&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;expectedValue&gt;FAQ&lt;/expectedValue&gt;
+	&lt;crucial&gt;false&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;!-- Table to query or select statement --&gt;
+		&lt;arg1&gt;Select Forum from [POCFISForumV2].[dbo].[Forums] where ForumId = 2&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 Second Option Alternative type of SQL Select Statement: Specify the entire Select statement.<pre>
-&lt;step&gt;	&lt;command&gt;Sql Server Query&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;expectedValue&gt;FAQ&lt;/expectedValue&gt;	&lt;crucial&gt;false&lt;/crucial&gt;	&lt;arguments&gt;		&lt;!-- Table to query or select statement --&gt;		&lt;arg1&gt;Select Top(1) Forum from [POCFISForumV2].[dbo].[Forums]&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;Sql Server Query&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;expectedValue&gt;FAQ&lt;/expectedValue&gt;
+	&lt;crucial&gt;false&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;!-- Table to query or select statement --&gt;
+		&lt;arg1&gt;Select Top(1) Forum from [POCFISForumV2].[dbo].[Forums]&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="retrievingjsonfromanapiendpoint" class="sectionTitle">RETRIEVING JSON FROM AN API ENDPOINT</a>
 		<p>
 The Get JSON command, like the SQL Server Connection, persists an object for use by subsequent commands.Unlike the SQL Server Connection command, which opens a connection object, the Get JSON commanddownloads and stores the JSON into a local variable that can later be used to SEARCH for key value pairs.This local variable will contain the retrieved JSON until overwritten by a subsequent Get JSON request or until the test file executing ends.Also, unlike the SQL Server Connection, which needs to be closed, there is no need to close the JSON object.Each time a test is run, this variable is reset to null until populated by the Get JSON command.The Get JSON command is used to retrieve the JSON from either the current page/url or a different page/url.If the optional argument URL is not included, the current page/url will be used to retrieve the JSON.If the URL is included as the command's optional sole argument, it will trigger a navigation event and thenthat page/url will be used to retrieve the JSON.The preferred way to perform the Get JSON is shown below and requires a previous navigation step.This step should be conditional or crucial depending upon the subsequent steps in the test file.In the example below, JSON is retrieved from the current URL and starts a Conditional Block so thatany query statements can be contained within the Conditional Block preventing their execution if this step fails.<pre>
-&lt;step&gt;	&lt;!-- Allows you to retrieve JSON from the current end point.  		Make this step crucial or conditional as subsequent steps depend on it's success. --&gt;	&lt;command&gt;Get JSON&lt;/command&gt;	&lt;conditional&gt;true&lt;/conditional&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;!-- Allows you to retrieve JSON from the current end point.  		Make this step crucial or conditional as subsequent steps depend on it's success. --&gt;
+	&lt;command&gt;Get JSON&lt;/command&gt;
+	&lt;conditional&gt;true&lt;/conditional&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 Alternatively, navigation can be included in the same step to first trigger a navigation event and then get the JSON.The only difference between the example below and the one above is that the below example first triggers a navigation eventby including the URL as an argument in the test step.<pre>
-&lt;step&gt;	&lt;!-- Allows you to retrieve JSON from a different end point.		 Make this step crucial or conditional as subsequent steps depend on it's success.  --&gt;	&lt;command&gt;Get JSON&lt;/command&gt;	&lt;conditional&gt;true&lt;/conditional&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;http://local.forums.com/?productId=2&amp;id=true&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;!-- Allows you to retrieve JSON from a different end point.		 Make this step crucial or conditional as subsequent steps depend on it's success.  --&gt;
+	&lt;command&gt;Get JSON&lt;/command&gt;
+	&lt;conditional&gt;true&lt;/conditional&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;http://local.forums.com/?productId=2&amp;id=true&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="queryingjsonfromanapiendpoint" class="sectionTitle">QUERYING JSON FROM AN API ENDPOINT</a>
@@ -802,82 +1562,211 @@ Alternatively, navigation can be included in the same step to first trigger a na
 A QUICK NOTE ABOUT JSON BEFORE REVIEWING THIS COMMAND	Returned JSON is a string so numbers are represented without quotation marks while strings	are represented with quotation marks.	This means that 1 and "1" are not the same, as the former is a number and the latter is a string representation of that number.	JSON files are key value pairs where the key is a string and the value is either a number or a string.	The Key is like a variable name that is used to reference the value it contains.The Query JSON command is actually just a CASE SENSITIVE search and not a querying framework like the SQL Query command.For this reason, the != operator is not supported for JSON Queries.This test will find every Key bearing the name provided in the &lt;accessor&gt;&lt;/accessor&gt; element and display the total number of Keys along with the number of Keys that matched or explain that no Keys matched.The key, which is placed into the &lt;accessor&gt;&lt;/accessor&gt; node along with the expected value which is placed into the&lt;expectedValue&gt;&lt;/expectedValue&gt; node are both case sensitive.Additionally, the &lt;expectedValue&gt;&lt;/expectedValue&gt; node must represent the expected value exactly, so include quotes forstrings and exclude quotes for numbers.To best determine how to represent the expected value, just copy the text between the colon and the end of the line excluding the comma, if present.For the following examples, refer to the following JSON excerpt:{"ForumId": 1,"Forum": "General","IsActive": true}		</p>
 		<p>
 For the first example, the Query JSON command is being used to find the ForumId value with a numeric value of 1.Notice that the &lt;expectedValue&gt;&lt;/expectedValue&gt; contains 1 and not "1".<pre>
-&lt;step&gt;	&lt;command&gt;Query JSON&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;accessor&gt;ForumId&lt;/accessor&gt;	&lt;accessorType&gt;JSON&lt;/accessorType&gt;	&lt;expectedValue&gt;1&lt;/expectedValue&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;Query JSON&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;accessor&gt;ForumId&lt;/accessor&gt;
+	&lt;accessorType&gt;JSON&lt;/accessorType&gt;
+	&lt;expectedValue&gt;1&lt;/expectedValue&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 For the second example, the Query JSON command is being used to find the Forum value with a string value of "General".When searching for string values the quotation marks must be used exactly as they are in the JSON returned.Notice that the &lt;expectedValue&gt;&lt;/expectedValue&gt; contains "General" and not General.<pre>
-&lt;step&gt;	&lt;command&gt;Query JSON&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;accessor&gt;Forum&lt;/accessor&gt;	&lt;accessorType&gt;JSON&lt;/accessorType&gt;	&lt;expectedValue&gt;"General"&lt;/expectedValue&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;Query JSON&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;accessor&gt;Forum&lt;/accessor&gt;
+	&lt;accessorType&gt;JSON&lt;/accessorType&gt;
+	&lt;expectedValue&gt;"General"&lt;/expectedValue&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="savejsontofile" class="sectionTitle">SAVE JSON TO FILE</a>
 		<p>
 The Save JSON command saves the JSON retrieved with the Get JSON command to the path provided.Having the downloaded JSON on hand when testing is important for showing proof when providing feedback.The command is a read actionType and not a write actionType as it has to read the JSON before writing it.There are two arguments that can be used with this command.The first argument is the file path and name where the JSON should be saved and is required.The second argument is for overwriting the existing file.If set to True or Overwrite, an existing file with the same name will be overwritten.If set to False, which is the default, and a file exists with the same name, the application will append an incremental integer value to the file name and retest until it finds a file name that does not exist. The updated name will be used to name the downloaded JSON file and will be reported back via the console and log.If the second parameter is missing, the value will be defaulted to false.In the example below, the JSON previously retrieved will be saved to the file outlined in &lt;arg1&gt;&lt;/arg1&gt;,but since &lt;arg2&gt;&lt;/arg2&gt; overwrite is set to false, if that file exists a new name will be created.A message indicating that the file existed along with the original file name and the updated file name will bereported to the tester via the console and will also be included in the log file.<pre>
-&lt;step&gt;	&lt;command&gt;Save JSON&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;!-- first parameter expected by the command - The file name; it is also required --&gt;		&lt;arg1&gt;C:\JSON downloads\forums.json&lt;/arg1&gt;		&lt;arg2&gt;false&lt;/arg2&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;Save JSON&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;!-- first parameter expected by the command - The file name; it is also required --&gt;
+		&lt;arg1&gt;C:\JSON downloads\forums.json&lt;/arg1&gt;
+		&lt;arg2&gt;false&lt;/arg2&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 In the below example, &lt;arg2&gt;&lt;/arg2&gt; has been set to true for overwrite, which will delete an existing file with the same name before saving the file.<pre>
-&lt;step&gt;	&lt;command&gt;Save JSON&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;!-- first parameter expected by the command - The file name; it is also required --&gt;		&lt;arg1&gt;C:\JSON downloads\forums.json&lt;/arg1&gt;		&lt;arg2&gt;true&lt;/arg2&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;Save JSON&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;!-- first parameter expected by the command - The file name; it is also required --&gt;
+		&lt;arg1&gt;C:\JSON downloads\forums.json&lt;/arg1&gt;
+		&lt;arg2&gt;true&lt;/arg2&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 Alternatively, the previous example could have also been written using the word overwrite, as shown below.<pre>
-&lt;step&gt;	&lt;command&gt;Save JSON&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;!-- first parameter expected by the command - The file name; it is also required --&gt;		&lt;arg1&gt;C:\JSON downloads\forums.json&lt;/arg1&gt;		&lt;arg2&gt;overwrite&lt;/arg2&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;Save JSON&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;!-- first parameter expected by the command - The file name; it is also required --&gt;
+		&lt;arg1&gt;C:\JSON downloads\forums.json&lt;/arg1&gt;
+		&lt;arg2&gt;overwrite&lt;/arg2&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="retrievingxmlfromanapiendpoint" class="sectionTitle">RETRIEVING XML FROM AN API ENDPOINT</a>
 		<p>
 The Get XML command works like the Get JSON command persisting an object for use by subsequent commands.The Get XML command downloads and stores the XML into a local variable that can later be used to SEARCH for elements containing text.This local variable will contain the retrieved XML until overwritten by a subsequent Get XML request or until the test file executing ends.Like the JSON object, there is no need to close the XML object.Each time a test is run this variable is reset to null until populated by the Get XML command.The Get XML command is used to retrieve the XML from either the current page/url or a different page/url.If the optional argument URL is not included, the current page/url will be used to retrieve the XML.If the URL is included as the command's optional sole argument, it will trigger a navigation event and thenthat page/url will be used to retrieve the XML.The preferred way to perform the Get XML is shown below and requires a previous navigation step.This step should be conditional or crucial depending upon the subsequent steps in the test file.In the example below, XML is retrieved from the current URL and starts a Conditional Block so thatany query statements can be contained within the Conditional Block preventing their execution if this step fails.<pre>
-&lt;step&gt;	&lt;!-- Allows you to retrieve XML from the current end point.  		Make this step crucial or conditional as subsequent steps depend on it's success. --&gt;	&lt;command&gt;Get XML&lt;/command&gt;	&lt;conditional&gt;true&lt;/conditional&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;!-- Allows you to retrieve XML from the current end point.  		Make this step crucial or conditional as subsequent steps depend on it's success. --&gt;
+	&lt;command&gt;Get XML&lt;/command&gt;
+	&lt;conditional&gt;true&lt;/conditional&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 Alternatively, navigation can be included in the same step to first trigger a navigation event and then get the XML.The only difference between the example below and the one above is that the below example first triggers a navigation eventby including the URL as an argument in the test step.<pre>
-&lt;step&gt;	&lt;!-- Allows you to retrieve XML from a different end point.  		Make this step crucial or conditional as subsequent steps depend on it's success.  --&gt;	&lt;command&gt;Get XML&lt;/command&gt;	&lt;conditional&gt;true&lt;/conditional&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;arg1&gt;http://local.forums.com/?productId=1&amp;id=true&amp;wantJson=false&lt;&lt;/arg1&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;!-- Allows you to retrieve XML from a different end point.  		Make this step crucial or conditional as subsequent steps depend on it's success.  --&gt;
+	&lt;command&gt;Get XML&lt;/command&gt;
+	&lt;conditional&gt;true&lt;/conditional&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;http://local.forums.com/?productId=1&amp;id=true&amp;wantJson=false&lt;&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="queryingxmlfromanapiendpoint" class="sectionTitle">QUERYING XML FROM AN API ENDPOINT</a>
 		<p>
-A QUICK NOTE ABOUT XML BEFORE REVIEWING THIS COMMAND	Returned XML is a string, but unlike JSON, it is unnecessary to differentiate between strings and numbers in your test.	While XML does allow for adding attributes to distinguish between different value types, for the purposes of this tool .	that is unnecessary to identify the type but attributes must be included as part of the &lt;accessor&gt;&lt;/accessor&gt; if they are	part of the Element/Node tag.	The Element/Node is like a variable that references the value it contains.	If the Element being queried contains parameters, they must be included as part of the &lt;accessor&gt;&lt;/accessor&gt;.	This application is going to place angle brackets around the accessor provided and search for that complete element from angle bracket	to angle bracket.	For example the XML Element:		&lt;ForumId type="int"&gt;1&lt;/ForumId&gt;	Should have the following accessor:		&lt;accessor&gt;ForumId type="int"&lt;/accessor&gt;		</p>
+A QUICK NOTE ABOUT XML BEFORE REVIEWING THIS COMMAND	Returned XML is a string, but unlike JSON, it is unnecessary to differentiate between strings and numbers in your test.	While XML does allow for adding attributes to distinguish between different value types, for the purposes of this tool .	that is unnecessary to identify the type but attributes must be included as part of the &lt;accessor&gt;&lt;/accessor&gt; if they are	part of the Element/Node tag.	The Element/Node is like a variable that references the value it contains.	If the Element being queried contains parameters, they must be included as part of the &lt;accessor&gt;&lt;/accessor&gt;.	This application is going to place angle brackets around the accessor provided and search for that complete element from angle bracket	to angle bracket.	For example the XML Element:		&lt;ForumId type="int"&gt;1&lt;/ForumId&gt;
+	Should have the following accessor:		&lt;accessor&gt;ForumId type="int"&lt;/accessor&gt;
+		</p>
 		<p>
-The Query XML command is actually just a CASE SENSITIVE search and not a querying framework like the SQL Query command.For this reason, the != operator is not supported for XML Queries.This test will find every Element/Node bearing the name provided in the &lt;accessor&gt;&lt;/accessor&gt; element and display the total number of Elements/Nodes along with the number of Elements/Nodes that matched or explain that no Elements/Nodes matched.The Element/Node, which is placed into the &lt;accessor&gt;&lt;/accessor&gt; node along with the expected value, which is placed into the&lt;expectedValue&gt;&lt;/expectedValue&gt; node are both case sensitive.To best determine how to represent the expected value, just copy the text between the Element tags which most often will not include quotation marks.For the following examples, refer to the following JSON excerpt:&lt;Forums&gt;	&lt;ForumId&gt;1&lt;/ForumId&gt;	&lt;Forum&gt;General&lt;/Forum&gt;	&lt;Description&gt;General Discussion Forum&lt;/Description&gt;		</p>
+The Query XML command is actually just a CASE SENSITIVE search and not a querying framework like the SQL Query command.For this reason, the != operator is not supported for XML Queries.This test will find every Element/Node bearing the name provided in the &lt;accessor&gt;&lt;/accessor&gt; element and display the total number of Elements/Nodes along with the number of Elements/Nodes that matched or explain that no Elements/Nodes matched.The Element/Node, which is placed into the &lt;accessor&gt;&lt;/accessor&gt; node along with the expected value, which is placed into the&lt;expectedValue&gt;&lt;/expectedValue&gt; node are both case sensitive.To best determine how to represent the expected value, just copy the text between the Element tags which most often will not include quotation marks.For the following examples, refer to the following JSON excerpt:&lt;Forums&gt;
+	&lt;ForumId&gt;1&lt;/ForumId&gt;
+	&lt;Forum&gt;General&lt;/Forum&gt;
+	&lt;Description&gt;General Discussion Forum&lt;/Description&gt;
+
+		</p>
 		<p>
 For the first example, the Query XML command is being used to find the ForumId Element/Node with a value of 1.Notice that unlike with JSON, there is no differentiation between strings and numbers and therefore no need for quotes in the &lt;expectedValue&gt;&lt;/expectedValue&gt;.<pre>
-&lt;step&gt;	&lt;command&gt;Query XML&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;accessor&gt;ForumId&lt;/accessor&gt;	&lt;accessorType&gt;XML&lt;/accessorType&gt;	&lt;expectedValue&gt;1&lt;/expectedValue&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;Query XML&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;accessor&gt;ForumId&lt;/accessor&gt;
+	&lt;accessorType&gt;XML&lt;/accessorType&gt;
+	&lt;expectedValue&gt;1&lt;/expectedValue&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 For the second example, the Query XML command is being used to find the Forum value with a string value of General.Although this is actually querying the same endpoint as the JSON examples but with different URL parameters,notice that the &lt;expectedValue&gt;&lt;/expectedValue&gt; is like any other non-JSON test and contains no quotation marks.<pre>
-&lt;step&gt;	&lt;command&gt;Query XML&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;accessor&gt;Forum&lt;/accessor&gt;	&lt;accessorType&gt;XML&lt;/accessorType&gt;	&lt;expectedValue&gt;General&lt;/expectedValue&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;Query XML&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;accessor&gt;Forum&lt;/accessor&gt;
+	&lt;accessorType&gt;XML&lt;/accessorType&gt;
+	&lt;expectedValue&gt;General&lt;/expectedValue&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
-For the following examples, refer to the following XML excerpt:&lt;Forums&gt;	&lt;ForumId type="int"&gt;1&lt;/ForumId&gt;	&lt;Forum&gt;General&lt;/Forum&gt;	&lt;Description&gt;General Discussion Forum&lt;/Description&gt;		</p>
+For the following examples, refer to the following XML excerpt:&lt;Forums&gt;
+	&lt;ForumId type="int"&gt;1&lt;/ForumId&gt;
+	&lt;Forum&gt;General&lt;/Forum&gt;
+	&lt;Description&gt;General Discussion Forum&lt;/Description&gt;
+
+		</p>
 		<p>
 For this example, the Query XML command is being used to find the ForumId Element/Node with a value of 1 but this Element/Node contains a type attribute.Notice that this attribute MUST be accounted for in the &lt;accessor&gt;&lt;/accessor&gt;, as shown below, for the application to recognize this as the correct Element/Node.Failing to include existing parameters when querying the XML will result in a failure to find the Element/Node and thus a test step failure. <pre>
-&lt;step&gt;	&lt;command&gt;Query XML&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;accessor&gt;ForumId type="int"&lt;/accessor&gt;	&lt;accessorType&gt;XML&lt;/accessorType&gt;	&lt;expectedValue&gt;1&lt;/expectedValue&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;Query XML&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;accessor&gt;ForumId type="int"&lt;/accessor&gt;
+	&lt;accessorType&gt;XML&lt;/accessorType&gt;
+	&lt;expectedValue&gt;1&lt;/expectedValue&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="savexmltofile" class="sectionTitle">SAVE XML TO FILE</a>
 		<p>
 The Save XML command saves the XML retrieved with the Get XML command to the path provided.Having the downloaded XML on hand when testing is important for showing proof when providing feedback.The command is a read actionType and not a write actionType as it has to read the XML before writing it.There are two arguments that can be used with this command.The first argument is the file path and name where the XML should be saved and is required.The second argument is for overwriting the existing file.If set to True or Overwrite, an existing file with the same name will be overwritten.If set to False, which is the default, and a file exists with the same name, the application will append an incremental integer value to the file name and retest until it finds a file name that does not exist. The updated name will be used to name the downloaded XML file and will be reported back via the console and log.If the second parameter is missing, the value will be defaulted to false.In the example below, the XML previously retrieved will be saved to the file outlined in &lt;arg1&gt;&lt;/arg1&gt;,but since &lt;arg2&gt;&lt;/arg2&gt; overwrite is set to false, if that file exists a new name will be created.A message indicating that the file existed along with the original file name and the updated file name will bereported to the tester via the console and will also be included in the log file.<pre>
-&lt;step&gt;	&lt;command&gt;Save XML&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;!-- first parameter expected by the command - The file name; it is also required --&gt;		&lt;arg1&gt;C:\XML downloads\forums.xml&lt;/arg1&gt;		&lt;arg2&gt;false&lt;/arg2&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;Save XML&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;!-- first parameter expected by the command - The file name; it is also required --&gt;
+		&lt;arg1&gt;C:\XML downloads\forums.xml&lt;/arg1&gt;
+		&lt;arg2&gt;false&lt;/arg2&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 In the below example, &lt;arg2&gt;&lt;/arg2&gt; has been set to true for overwrite, which will delete an existing file with the same name before saving the file.<pre>
-&lt;step&gt;	&lt;command&gt;Save XML&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;!-- first parameter expected by the command - The file name; it is also required --&gt;		&lt;arg1&gt;C:\XML downloads\forums.xml&lt;/arg1&gt;		&lt;arg2&gt;true&lt;/arg2&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;Save XML&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;!-- first parameter expected by the command - The file name; it is also required --&gt;
+		&lt;arg1&gt;C:\XML downloads\forums.xml&lt;/arg1&gt;
+		&lt;arg2&gt;true&lt;/arg2&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 		<p>
 Alternatively, the previous example could have also been written using the word overwrite, as shown below.<pre>
-&lt;step&gt;	&lt;command&gt;Save XML&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;!-- first parameter expected by the command - The file name; it is also required --&gt;		&lt;arg1&gt;C:\XML downloads\forums.xml&lt;/arg1&gt;		&lt;arg2&gt;overwrite&lt;/arg2&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;Save XML&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;!-- first parameter expected by the command - The file name; it is also required --&gt;
+		&lt;arg1&gt;C:\XML downloads\forums.xml&lt;/arg1&gt;
+		&lt;arg2&gt;overwrite&lt;/arg2&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="checkcolorcontrast" class="sectionTitle">CHECK COLOR CONTRAST</a>
@@ -887,35 +1776,198 @@ The Check Contrast command compares the forecolor brightness with the backcolor 
 When testing a page, one of the most important things to determine is if the color contrast is within acceptable ranges.Good contrast allows users to easily read information without struggling to discern text from background.A site with bad contrast is less likely to maintain interest and even less likely to receive repeat visits.If the background color cannot be found on the container element acting as the background, this method climbs thecontainer's ancestral hierarchy until it finds the color used for the background.In the results if you see ^1 it means that it had to use the parent's backcolor, ^2 is grandparent, ^3 great grand parent etc...If you don't see the ^ sign, the value was taken directly from the element itself.In the partial output example shown below, notice the ^2 following the backcolor listing, this indicatesthat the grandparent of the container element was used as the source for the element's background color.backcolor(rgba(248, 249, 250, 1))^2 Back-Color Brightness: 248.0		</p>
 		<p>
 The first argument is the element type that you want to check.It is suggested that you create focused tests targeting the lowest element that actually contains text instead of it'sparent element, which will contain that element thus also containing that element's text.It is best to use p for &lt;p&gt; tags, label for &lt;label&gt; tags, span for &lt;span&gt; tagsWith that said, it is possible to use an asterisk(*) to target all elements.	-Note that doing so will take a long long time to complete and the results will likely be too much for the terminal display.	-At the time of writing this, a test using an asterisk ran for over 2 hours for one page and was stopped having tested 	-	only a fraction of the page!!!It is suggested that you never use the overriding arguments but they were included to allow for slightly relaxed requirements.The default brightness contrast which can be overridden in the second argument is 125.The default color contrast which can be overridden in the third argument is 500.In the following Check Contrast Test step, the tags being checked are all &lt;p&gt; tags against their container elements.<pre>
-&lt;step&gt;	&lt;command&gt;check contrast&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;!-- Type of tag(s) to check contrast on --&gt;		&lt;arg1&gt;p&lt;/arg1&gt;		&lt;!--  [Optional and not recommended] Allows Overriding Acceptable Contrast settings b for color brightness default is (125)--&gt;		&lt;arg2&gt;b=86&lt;/arg2&gt;		&lt;!-- [Optional and not recommended] Allows Overriding Acceptable Contrast settings d for color difference default is (500) --&gt;		&lt;arg3&gt;d=450&lt;/arg3&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+</br>&lt;step&gt;
+	&lt;command&gt;check contrast&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;!-- Type of tag(s) to check contrast on --&gt;
+		&lt;arg1&gt;p&lt;/arg1&gt;
+		&lt;!--  [Optional and not recommended] Allows Overriding Acceptable Contrast settings b for color brightness default is (125)--&gt;
+		&lt;arg2&gt;b=86&lt;/arg2&gt;
+		&lt;!-- [Optional and not recommended] Allows Overriding Acceptable Contrast settings d for color difference default is (500) --&gt;
+		&lt;arg3&gt;d=450&lt;/arg3&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="compareimagesandcreatedifferenceimage" class="sectionTitle">COMPARE IMAGES AND CREATE DIFFERENCE IMAGE</a>
 		<p>
 The Compare Images command, uses ImageMagick to compares 2 images on your local system and creates a difference imageoutlining all things that differ between the images whether it is spacing, item dimensions, fonts, colors or anythingelse that is not pixel exact.The difference image can be used to quickly see all differences and use it to provide feedback to other teams.This command also provides a numeric Pixel percentage of difference between the two images.		</p>
 		<p>
-IMPORTANT NOTE: When running the Application from the command line, the DB Level from the ImageMagick compare utilityis automatically output as part of the compare operation, so this output is followed in the display by the following application message to describe what it means:"- ImageMagick DB Level (0 for identical images, non-zero numeric value for non-identical images)"This DB Level is an output from the ImageMagick compare application, not this application and therefore is not written to the log.When running ImageMagick from within the IDE only the last DB Level is reported and it is reported at the end of execution.When writing to the log for both standalone and Junit executions, this value is not accessible and, therefore, not written.If the images are exactly the same, the percentage of difference will be 0.0 and will be displayed in green to indicate that the images are identical.If the images are not exactly the same, the percentage of difference will be more than 0.0 and will be displayed in redto indicate that there are differences between the images.It is suggested that you create the following three folders when comparing images: Baseline, Actual, Difference	The Baseline folder - This is where your comp image should be stored and images within this folder act as the		base line images that the actual images should match.		This image must exist in the file system!	The Actual folder - This is where your captured screenshots can be saved to compare against the Baseline folder images.		Having the images separated avoids confusion and allows for saving over previously saved actual images for continued comparisons.		This image must exist in the file system!	The Difference folder - This is where your difference images can be stored, separated from other images to allow for quickly 		reviewing the differences.		This image will be created in the file system and need not exist prior to running the test.	The arguments for this command are as follows:	&lt;arg1&gt;This argument specifies the baseline or comp image and is required.  The path and file must exist!&lt;/arg1&gt;	&lt;arg2&gt;This argument specifies the actual image being compared to the baseline image and is required. The path and file must exist!&lt;/arg2&gt;	&lt;arg3&gt;This argument specifies the difference file that will be created.  		The path must exist but the file need not exist as it will be created.&lt;/arg3&gt;	&lt;arg4&gt;This argument allows for a global backup of the difference file to be created with a unique name based on the file name provided.&lt;/arg4&gt;		If this filename exists an incremental integer value will be appended to the base filename to create a unique file name, 		which will be displayed to the tester and written to the log file for that test run.		Keeping these files allows for tracking progress and determining differences between test runs.		It also allows for comparing difference files, if desired but please note that storing a large number of files		may adversely affect computer performance and even overrun free drive space, so monitoring the computer is essential when		repeatedly running tests that create images and global backups.	&lt;arg5&gt;This optional argument, is a double and allows for entering an acceptable decimal percentage of difference value.		The default value for this, if missing, is 0 so any difference no matter how small cause this step to be marked as Failed.		If the actual difference exceeds this value, the test step will be marked as Failed, but if the difference does not exceed this value  		 this test step will be marked as Successful.		It should be noted that it is strongly recommended that this value be omitted to ensure that any differences are brought to your attention.IMPORTANT!!! If tests are rerun, difference images will be overwritten!!Take time to backup needed difference images prior to rerunning tests or the previous difference image state will be lost.The following command compares the baseline image in &lt;arg1&gt;&lt;/arg1&gt; with the actual image in &lt;arg2&gt;&lt;/arg2&gt; and creates the difference image &lt;arg3&gt;&lt;/arg3&gt; where specified.Additionally, this command reports the numeric pixel percentage of difference for a quick reference so that the tester can identifywhich images need further examination to detail the differences to the corresponding team members.<pre>
-&lt;step&gt;	&lt;!-- compares two images --&gt;	&lt;command&gt;compare images&lt;/command&gt;	&lt;actionType&gt;write&lt;/actionType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;!-- first argument is the comp image filename. It is Required!!! --&gt;		&lt;arg1&gt;C:\ScreenShots\Mashup\MyScreenShot.png&lt;/arg1&gt;		&lt;!-- second argument, is the actual image filename.   It is Required!!! --&gt;		&lt;arg2&gt;C:\ScreenShots\Mashup\Actual\MyScreenShot.png&lt;/arg2&gt;		&lt;!-- third argument the name of the Difference filename. It is Required!!!   --&gt;		&lt;arg3&gt;C:\ScreenShots\Mashup\Difference\MyScreenShot-DifferenceImage.png&lt;/arg3&gt;		&lt;!-- fourth argument the name of the Global Difference filename for backing up difference images. It is Optional.   --&gt;		&lt;!-- If provided a unique filename based on the filename provided will be created to prevent overwriting previous files.   --&gt;		&lt;arg4&gt;C:\ScreenShots\Mashup\Global_Differences\MyScreenShot-DifferenceImage.png&lt;/arg4&gt;		&lt;arg5&gt;5.0&lt;/arg5&gt;	&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+IMPORTANT NOTE: When running the Application from the command line, the DB Level from the ImageMagick compare utilityis automatically output as part of the compare operation, so this output is followed in the display by the following application message to describe what it means:"- ImageMagick DB Level (0 for identical images, non-zero numeric value for non-identical images)"This DB Level is an output from the ImageMagick compare application, not this application and therefore is not written to the log.When running ImageMagick from within the IDE only the last DB Level is reported and it is reported at the end of execution.When writing to the log for both standalone and Junit executions, this value is not accessible and, therefore, not written.If the images are exactly the same, the percentage of difference will be 0.0 and will be displayed in green to indicate that the images are identical.If the images are not exactly the same, the percentage of difference will be more than 0.0 and will be displayed in redto indicate that there are differences between the images.It is suggested that you create the following three folders when comparing images: Baseline, Actual, Difference	The Baseline folder - This is where your comp image should be stored and images within this folder act as the		base line images that the actual images should match.		This image must exist in the file system!	The Actual folder - This is where your captured screenshots can be saved to compare against the Baseline folder images.		Having the images separated avoids confusion and allows for saving over previously saved actual images for continued comparisons.		This image must exist in the file system!	The Difference folder - This is where your difference images can be stored, separated from other images to allow for quickly 		reviewing the differences.		This image will be created in the file system and need not exist prior to running the test.	The arguments for this command are as follows:	&lt;arg1&gt;This argument specifies the baseline or comp image and is required.  The path and file must exist!&lt;/arg1&gt;
+	&lt;arg2&gt;This argument specifies the actual image being compared to the baseline image and is required. The path and file must exist!&lt;/arg2&gt;
+	&lt;arg3&gt;This argument specifies the difference file that will be created.  		The path must exist but the file need not exist as it will be created.&lt;/arg3&gt;
+	&lt;arg4&gt;This argument allows for a global backup of the difference file to be created with a unique name based on the file name provided.&lt;/arg4&gt;
+		If this filename exists an incremental integer value will be appended to the base filename to create a unique file name, 		which will be displayed to the tester and written to the log file for that test run.		Keeping these files allows for tracking progress and determining differences between test runs.		It also allows for comparing difference files, if desired but please note that storing a large number of files		may adversely affect computer performance and even overrun free drive space, so monitoring the computer is essential when		repeatedly running tests that create images and global backups.	&lt;arg5&gt;This optional argument, is a double and allows for entering an acceptable decimal percentage of difference value.		The default value for this, if missing, is 0 so any difference no matter how small cause this step to be marked as Failed.		If the actual difference exceeds this value, the test step will be marked as Failed, but if the difference does not exceed this value  		 this test step will be marked as Successful.		It should be noted that it is strongly recommended that this value be omitted to ensure that any differences are brought to your attention.IMPORTANT!!! If tests are rerun, difference images will be overwritten!!Take time to backup needed difference images prior to rerunning tests or the previous difference image state will be lost.The following command compares the baseline image in &lt;arg1&gt;&lt;/arg1&gt; with the actual image in &lt;arg2&gt;&lt;/arg2&gt; and creates the difference image &lt;arg3&gt;&lt;/arg3&gt; where specified.Additionally, this command reports the numeric pixel percentage of difference for a quick reference so that the tester can identifywhich images need further examination to detail the differences to the corresponding team members.<pre>
+</br>&lt;step&gt;
+	&lt;!-- compares two images --&gt;
+	&lt;command&gt;compare images&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;!-- first argument is the comp image filename. It is Required!!! --&gt;
+		&lt;arg1&gt;C:\ScreenShots\Mashup\MyScreenShot.png&lt;/arg1&gt;
+		&lt;!-- second argument, is the actual image filename.   It is Required!!! --&gt;
+		&lt;arg2&gt;C:\ScreenShots\Mashup\Actual\MyScreenShot.png&lt;/arg2&gt;
+		&lt;!-- third argument the name of the Difference filename. It is Required!!!   --&gt;
+		&lt;arg3&gt;C:\ScreenShots\Mashup\Difference\MyScreenShot-DifferenceImage.png&lt;/arg3&gt;
+		&lt;!-- fourth argument the name of the Global Difference filename for backing up difference images. It is Optional.   --&gt;
+		&lt;!-- If provided a unique filename based on the filename provided will be created to prevent overwriting previous files.   --&gt;
+		&lt;arg4&gt;C:\ScreenShots\Mashup\Global_Differences\MyScreenShot-DifferenceImage.png&lt;/arg4&gt;
+		&lt;arg5&gt;5.0&lt;/arg5&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="parseandcalculatedouble" class="sectionTitle">PARSE AND CALCULATE DOUBLE</a>
 		<p>
-The Parse and Compare Double command retrieves the text from a single field containing an equation, parses that field based on the delimiter passed in, sets the first number, operator and second number and performs a double calculation, which can be addition, subtraction, multiplication or division.The calculation is simple allowing for 2 number calculations like 1.0 + 1.0 = and it will return 2.0. All arguments are required. TAKE NOTE: that the field holding the equation and the field where the answer will be placed must use the same &lt;accessorType&gt;&lt;/accessorType&gt;. So if accessing by ID, both fields will be accessed by ID and the same goes for xPath, CssSelector, ClassName and TagName accessors.	The arguments for this command are as follows:	&lt;arg1&gt;This argument specifies the delimiter.  A single space, without quotes, can be used to designate a space as the delimiter.&lt;/arg1&gt;	&lt;arg2&gt;This argument specifies the index of the first number in the equation.&lt;/arg2&gt;	&lt;arg3&gt;This argument specifies the index of the second number in the equation.&lt;/arg3&gt;	&lt;arg4&gt;This argument specifies the index of the operator in the equation.&lt;/arg4&gt;	&lt;arg5&gt;This argument specifies the form field where this value should be written or can be set to persist to persist the value		 for later use.&lt;/arg5&gt;The following command retrieves the text pointed to by the ID accessor in the format of  "5 + 1 = "It them splits the string using the space delimiter shown in &lt;arg1&gt;&lt;/arg1&gt; to separate the text as follows:value[0] = "5", value[1] = "+", value[2] = "1", value[3] = "="The first number has the index of 0 as shown in &lt;arg2&gt;&lt;/arg2&gt;, the second number has the index of 2 as shown in &lt;arg3&gt;&lt;/arg3&gt;and the operator has the index of 1 as shown in &lt;arg4&gt;&lt;/arg4&gt;, with all of the fields set for the equation, the answer is set to be sent to the element shown in &lt;arg5&gt;&lt;/arg5&gt;, and it will use the ID accessor, as was used when retrieving the field text initially.First, the string representation of the number is converted to a double, which adds the decimal portion to the number if not already in decimal format, prior to performing the calculation.<pre>
-&lt;step&gt;	&lt;command&gt;parse and calculate double&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;accessor&gt;mathq2&lt;/accessor&gt;	&lt;accessorType&gt;id&lt;/accessorType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;expectedValue&gt;5.0&lt;/expectedValue&gt;	&lt;arguments&gt;		&lt;!-- Type of delimiter --&gt;		&lt;arg1&gt; &lt;/arg1&gt;		&lt;!--  index of first number in equation --&gt;		&lt;arg2&gt;0&lt;/arg2&gt;		&lt;!-- index of second number in equation --&gt;		&lt;arg3&gt;2&lt;/arg3&gt;		&lt;!-- index of operator in equation --&gt;		&lt;arg3&gt;1&lt;/arg3&gt;		&lt;!-- form field to write answer or persist to persist this --&gt;		&lt;arg4&gt;mathuserans2&lt;/arg4&gt;			&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+The Parse and Compare Double command retrieves the text from a single field containing an equation, parses that field based on the delimiter passed in, sets the first number, operator and second number and performs a double calculation, which can be addition, subtraction, multiplication or division.The calculation is simple allowing for 2 number calculations like 1.0 + 1.0 = and it will return 2.0. All arguments are required. TAKE NOTE: that the field holding the equation and the field where the answer will be placed must use the same &lt;accessorType&gt;&lt;/accessorType&gt;. So if accessing by ID, both fields will be accessed by ID and the same goes for xPath, CssSelector, ClassName and TagName accessors.	The arguments for this command are as follows:	&lt;arg1&gt;This argument specifies the delimiter.  A single space, without quotes, can be used to designate a space as the delimiter.&lt;/arg1&gt;
+	&lt;arg2&gt;This argument specifies the index of the first number in the equation.&lt;/arg2&gt;
+	&lt;arg3&gt;This argument specifies the index of the second number in the equation.&lt;/arg3&gt;
+	&lt;arg4&gt;This argument specifies the index of the operator in the equation.&lt;/arg4&gt;
+	&lt;arg5&gt;This argument specifies the form field where this value should be written or can be set to persist to persist the value		 for later use.&lt;/arg5&gt;
+The following command retrieves the text pointed to by the ID accessor in the format of  "5 + 1 = "It them splits the string using the space delimiter shown in &lt;arg1&gt;&lt;/arg1&gt; to separate the text as follows:value[0] = "5", value[1] = "+", value[2] = "1", value[3] = "="The first number has the index of 0 as shown in &lt;arg2&gt;&lt;/arg2&gt;, the second number has the index of 2 as shown in &lt;arg3&gt;&lt;/arg3&gt;
+and the operator has the index of 1 as shown in &lt;arg4&gt;&lt;/arg4&gt;, with all of the fields set for the equation, the answer is set to be sent to the element shown in &lt;arg5&gt;&lt;/arg5&gt;, and it will use the ID accessor, as was used when retrieving the field text initially.First, the string representation of the number is converted to a double, which adds the decimal portion to the number if not already in decimal format, prior to performing the calculation.<pre>
+</br>&lt;step&gt;
+	&lt;command&gt;parse and calculate double&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;accessor&gt;mathq2&lt;/accessor&gt;
+	&lt;accessorType&gt;id&lt;/accessorType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;expectedValue&gt;5.0&lt;/expectedValue&gt;
+	&lt;arguments&gt;
+		&lt;!-- Type of delimiter --&gt;
+		&lt;arg1&gt; &lt;/arg1&gt;
+		&lt;!--  index of first number in equation --&gt;
+		&lt;arg2&gt;0&lt;/arg2&gt;
+		&lt;!-- index of second number in equation --&gt;
+		&lt;arg3&gt;2&lt;/arg3&gt;
+		&lt;!-- index of operator in equation --&gt;
+		&lt;arg3&gt;1&lt;/arg3&gt;
+		&lt;!-- form field to write answer or persist to persist this --&gt;
+		&lt;arg4&gt;mathuserans2&lt;/arg4&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="parseandcalculatelong" class="sectionTitle">PARSE AND CALCULATE LONG</a>
 		<p>
-The Parse and Compare Long command retrieves the text from a single field containing an equation, parses that field based on the delimiter passed in, sets the first number, operator and second number and performs a double calculation, which can be addition, subtraction, multiplication or division.The calculation is simple allowing for 2 number calculations like 1 + 1 = and it will return 2. All arguments are required. TAKE NOTE: that the field holding the equation and the field where the answer will be placed must use the same &lt;accessorType&gt;&lt;/accessorType&gt;. So if accessing by ID, both fields will be accessed by ID and the same goes for xPath, CssSelector, ClassName and TagName accessors.	The arguments for this command are as follows:	&lt;arg1&gt;This argument specifies the delimiter.  A single space, without quotes, can be used to designate a space as the delimiter.&lt;/arg1&gt;	&lt;arg2&gt;This argument specifies the index of the first number in the equation.&lt;/arg2&gt;	&lt;arg3&gt;This argument specifies the index of the second number in the equation.&lt;/arg3&gt;	&lt;arg4&gt;This argument specifies the index of the operator in the equation.&lt;/arg4&gt;	&lt;arg5&gt;This argument specifies the form field where this value should be written or can be set to persist to persist the value		 for later use.&lt;/arg5&gt;The following command retrieves the text pointed to by the ID accessor in the format of  "5 + 1 = "It them splits the string using the space delimiter shown in &lt;arg1&gt;&lt;/arg1&gt; to separate the text as follows:value[0] = "5", value[1] = "+", value[2] = "1", value[3] = "="The first number has the index of 0 as shown in &lt;arg2&gt;&lt;/arg2&gt;, the second number has the index of 2 as shown in &lt;arg3&gt;&lt;/arg3&gt;and the operator has the index of 1 as shown in &lt;arg4&gt;&lt;/arg4&gt;, with all of the fields set for the equation, the answer is set The first number has the index of 0 as shown in &lt;arg2&gt;&lt;/arg2&gt;, the second number has the index of 2 as shown in &lt;arg3&gt;&lt;/arg3&gt;and the operator has the index of 1 as shown in &lt;arg4&gt;&lt;/arg4&gt;, with all of the fields set for the equation, the answer is set to be persisted by using the persist keyword in &lt;arg5&gt;&lt;/arg5&gt;First, the string representation of the number is converted to a long, which is a long integer, before the calculation is performed.It should be noted that attempting to retrieve decimal formatted numbers with this will truncate the decimal portion of the value.This truncation is purposely done in code to prevent the Java conversion error that would occur if this conversion were attempted.<pre>
-&lt;step&gt;	&lt;command&gt;parse and calculate long&lt;/command&gt;	&lt;actionType&gt;read&lt;/actionType&gt;	&lt;accessor&gt;mathq2&lt;/accessor&gt;	&lt;accessorType&gt;id&lt;/accessorType&gt;	&lt;crucial&gt;FALSE&lt;/crucial&gt;	&lt;arguments&gt;		&lt;!-- Type of delimiter --&gt;		&lt;arg1&gt; &lt;/arg1&gt;		&lt;!--  index of first number in equation --&gt;		&lt;arg2&gt;0&lt;/arg2&gt;		&lt;!-- index of second number in equation --&gt;		&lt;arg3&gt;2&lt;/arg3&gt;		&lt;!-- index of operator in equation --&gt;		&lt;arg4&gt;1&lt;/arg4&gt;		&lt;!-- form field to write answer or persist to persist this --&gt;		&lt;arg5&gt;persist&lt;/arg5&gt;			&lt;/arguments&gt;&lt;/step&gt;
-</pre>
+The Parse and Compare Long command retrieves the text from a single field containing an equation, parses that field based on the delimiter passed in, sets the first number, operator and second number and performs a double calculation, which can be addition, subtraction, multiplication or division.The calculation is simple allowing for 2 number calculations like 1 + 1 = and it will return 2. All arguments are required. TAKE NOTE: that the field holding the equation and the field where the answer will be placed must use the same &lt;accessorType&gt;&lt;/accessorType&gt;. So if accessing by ID, both fields will be accessed by ID and the same goes for xPath, CssSelector, ClassName and TagName accessors.	The arguments for this command are as follows:	&lt;arg1&gt;This argument specifies the delimiter.  A single space, without quotes, can be used to designate a space as the delimiter.&lt;/arg1&gt;
+	&lt;arg2&gt;This argument specifies the index of the first number in the equation.&lt;/arg2&gt;
+	&lt;arg3&gt;This argument specifies the index of the second number in the equation.&lt;/arg3&gt;
+	&lt;arg4&gt;This argument specifies the index of the operator in the equation.&lt;/arg4&gt;
+	&lt;arg5&gt;This argument specifies the form field where this value should be written or can be set to persist to persist the value		 for later use.&lt;/arg5&gt;
+The following command retrieves the text pointed to by the ID accessor in the format of  "5 + 1 = "It them splits the string using the space delimiter shown in &lt;arg1&gt;&lt;/arg1&gt; to separate the text as follows:value[0] = "5", value[1] = "+", value[2] = "1", value[3] = "="The first number has the index of 0 as shown in &lt;arg2&gt;&lt;/arg2&gt;, the second number has the index of 2 as shown in &lt;arg3&gt;&lt;/arg3&gt;
+and the operator has the index of 1 as shown in &lt;arg4&gt;&lt;/arg4&gt;, with all of the fields set for the equation, the answer is set The first number has the index of 0 as shown in &lt;arg2&gt;&lt;/arg2&gt;, the second number has the index of 2 as shown in &lt;arg3&gt;&lt;/arg3&gt;
+and the operator has the index of 1 as shown in &lt;arg4&gt;&lt;/arg4&gt;, with all of the fields set for the equation, the answer is set to be persisted by using the persist keyword in &lt;arg5&gt;&lt;/arg5&gt;
+First, the string representation of the number is converted to a long, which is a long integer, before the calculation is performed.It should be noted that attempting to retrieve decimal formatted numbers with this will truncate the decimal portion of the value.This truncation is purposely done in code to prevent the Java conversion error that would occur if this conversion were attempted.<pre>
+</br>&lt;step&gt;
+	&lt;command&gt;parse and calculate long&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;accessor&gt;mathq2&lt;/accessor&gt;
+	&lt;accessorType&gt;id&lt;/accessorType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;expectedValue&gt;5.0&lt;/expectedValue&gt;
+	&lt;arguments&gt;
+		&lt;!-- Type of delimiter --&gt;
+		&lt;arg1&gt; &lt;/arg1&gt;
+		&lt;!--  index of first number in equation --&gt;
+		&lt;arg2&gt;0&lt;/arg2&gt;
+		&lt;!-- index of second number in equation --&gt;
+		&lt;arg3&gt;2&lt;/arg3&gt;
+		&lt;!-- index of operator in equation --&gt;
+		&lt;arg4&gt;1&lt;/arg4&gt;
+		&lt;!-- form field to write answer or persist to persist this --&gt;
+		&lt;arg5&gt;persist&lt;/arg5&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
+<span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
+<a name="checkjavascriptvalue" class="sectionTitle">CHECK JAVASCRIPT VALUE</a>
+		<p>
+The Check JavaScript Value command executes a JavaScript command and captures the returned value and compares that to the expected value. This can be used for a variety of reasons, but one specific reason is to retrieve and check DataLayer Values.   This command can only be executed on the current page, so navigate before executing this command.Since this was not written to simply test DataLayer values, each check is for an individual value. 	The only argument for this command is as follows:	&lt;arg1&gt;This argument specifies the JavaScript command to execute. Make sure it begins with return to return the value from the Execution.<pre>
+</br>&lt;step&gt;
+	&lt;command&gt;check javascript value&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;expectedValue&gt;plp&lt;/expectedValue&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;!-- JavaScript to execute and value to return --&gt;
+		&lt;arg1&gt;return dataLayer[0].page.category.pageTemplate; &lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
+		</p>
+<span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
+<a name="saveharfile" class="sectionTitle">SAVE HAR FILE</a>
+		<p>
+The Save HAR File command saves the HAR file to the location specified and this command also populates the GTM Tag List object which can then be used to check GTM tags.This step MUST be executed before attempting to Check GTM tags.The HAR File is automatically saved when the application is ending but that is simply to allow for manually reviewing which tags fired.It is recommended that you make this step crucial if subsequent steps Check GTM tags	The only argument for this command is as follows:	&lt;arg1&gt;This argument specifies the File name for the har file.  If no path is included, it will be saved in the /config/har_files folder.<pre>
+</br>&lt;step&gt;
+	&lt;command&gt;save har file&lt;/command&gt;
+	&lt;crucial&gt;TRUE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;!-- File Name to save HAR file --&gt;
+		&lt;arg1&gt;Gary-har-test.txt&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
+		</p>
+<span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
+<a name="checkgtmtag" class="sectionTitle">CHECK GTM TAG</a>
+		<p>
+The Check GTM Tag command checks the configured values against a list of GTM tags to determine if the tag fired.The Save Har file step MUST be executed before attempting to Check GTM tags!!!Most of the arguments are required as many of the values could be duplicated across tags and these values must be supplied to discern between tags fired and the tag being checked. The order of the arguments does not matter as long as all required fields are present as shown below.		dl - Document Location - page where tag fired - required		</p>
+		<p>
+		t - Hit Type - Type of Hit (Event/Pageview - required		</p>
+		<p>
+		ec - Event Category - Event Category Configured in the Tag - required		</p>
+		<p>
+		ea - Event Action - Event Action Configured in the Tag - required		</p>
+		<p>
+		el - Event Label - Event Label Configured in the Tag - required		</p>
+		<p>
+		cg1 - Content Group 1 (PageTemplate) - Content Group 1 which is the PageTemplate - required		</p>
+		<p>
+		cg2 - Content Group 2 - Content Group 2 - which if set to += will check that the field starts with the value specified - not required		</p>
+		<p>
+		dt - Document Title - page title where tag fired - not required - not currently wired up		</p>
+		<p>
+		tid - Tracking ID - GA Tracking ID - not required - not currently wired up		</p>
+<pre>
+</br>		<p>
+&lt;step&gt;
+	&lt;command&gt;check gtm tag&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;dl=https://www.mycompanysite.com/products&lt;/arg1&gt;
+		&lt;arg2&gt;t=event&lt;/arg2&gt;
+		&lt;arg3&gt;ec=slider newsletter&lt;/arg3&gt;
+		&lt;arg4&gt;ea=form&lt;/arg4&gt;
+		&lt;arg5&gt;el=view&lt;/arg5&gt;
+		&lt;arg6&gt;cg1=plp&lt;/arg6&gt;
+		&lt;arg7&gt;cg2+=GTM-A9AAA0&lt;/arg7&gt;
+		&lt;arg8&gt;tid=UA-1234567-8&lt;/arg8&gt;
+		&lt;arg9&gt;dt=Products | My Company Site&lt;/arg9&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
+		</p>
+<span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 		</div>
 		<div class="heading"><a class="headingLink" id="includedtestfiles">INCLUDED TEST FILES</a></div>
-		<div id="div_includedtestfiles" class="container" > 
+		<div id="div_includedtestfiles" class="container" >
 		<p>
 The following is a list of test files that are included with the Application.   Each of these files have been tested and are working.They have been included to provide samples of how to create coherent tests to test different functionality.While some tests cover one specific command, many include a variety of different commands but these test files are just to provide you with a starting point and certainly don't define the scope of the application's functionality.All Test files below, except the SQL Server tests begin by navigating to a page so that step will be omitted to avoid unnecessary typing and redundancy.		</p>
 <a name="testfilesdescribed" class="sectionTitle">TEST FILES DESCRIBED</a>
@@ -973,9 +2025,10 @@ RunSqlQueries_Alternate-Test.xml -  Performs the following test steps.	1. Connec
 SqlServerAccess-Test.xml -  Performs the following test steps. 	1. Connects to Sql Server,	2. Performs 2 queries where the value is expected to equal the expected value,	3. Performs 1 query where the value is expected not to equal the expected value,	4. Properly Closed the Open Connection.		</p>
 		<p>
 ParseAndCalculate-Test.xml - Performs the following steps:	1. Navigates to page	2. Performs a Parse and Calculate Double command retrieving the specified field, splitting it based on the delimiter,		- converting numerical values to double based on indexes and the operator index indicates		- the operation to perform and the answer is written to the element specified.	3. performs a wait and repeats steps 1 and 2 for the Parse and Calculate Long command and		- persists that value in the persistance variable for possible later use.		</p>
+<span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 		</div>
 		<div class="heading"><a class="headingLink" id="troubleshooting">TROUBLESHOOTING</a></div>
-		<div id="div_troubleshooting" class="container" > 
+		<div id="div_troubleshooting" class="container" >
 <a name="driverissues" class="sectionTitle">DRIVER ISSUES</a>
 		<p>
 If you run the application and the browser briefly opens and then closes:Check you local browser version and compare that with the corresponding web driver for that browser.If these are not the same, upgrade the web driver for this browser and it should work.		</p>
