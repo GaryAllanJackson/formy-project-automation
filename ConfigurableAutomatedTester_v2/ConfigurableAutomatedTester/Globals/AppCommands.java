@@ -38,7 +38,6 @@ public class AppCommands {
     public static String Send = "send";         //partial command text
     public static String Keys = "keys";         //partial command text
     public static String Check_Contrast = "check contrast";
-    public static String CheckJavaScriptValue = "check javascript value";
     public static String SaveHarFile = "save har file";
 
     //endregion
@@ -72,6 +71,10 @@ public class AppCommands {
     public static String ParseAndCalculateDouble = "parse and calculate double";
     public static String ParseAndCalculateLong = "parse and calculate long";
     public static String CheckGtmTag = "check gtm tag";
+    public static String CheckJavaScriptValue = "check javascript value";
+    public static String CheckGtmGa4Tag = "check ga4 tag";
+
+
     //endregion
 
 
