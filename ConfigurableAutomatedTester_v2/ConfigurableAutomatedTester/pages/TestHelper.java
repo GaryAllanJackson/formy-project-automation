@@ -815,7 +815,7 @@ public class TestHelper{
 
         int startPos = testMessage.indexOf(status) + status.length();
         int endPos = testMessage.indexOf(" for step ");
-        DebugDisplay("testMessage =" + testMessage);
+        //DebugDisplay("testMessage =" + testMessage);
         String message = testMessage.substring(startPos, endPos).trim();
         message = message.substring(0,1).toUpperCase() + message.substring(1);
         //region {Debugging - CSV Column data}
@@ -1235,7 +1235,8 @@ public class TestHelper{
         int counter = 1;
         if (tmpFile.exists()) {
             while (tmpFile.exists()) {
-                checkFileName = fileName.substring(0,fileName.lastIndexOf(".") - 1) + counter + fileName.substring(fileName.lastIndexOf("."));
+                //checkFileName = fileName.substring(0,fileName.lastIndexOf(".") - 1) + counter + fileName.substring(fileName.lastIndexOf("."));
+                checkFileName = fileName.substring(0,fileName.lastIndexOf(".")) + counter + fileName.substring(fileName.lastIndexOf("."));
                 tmpFile = new File(checkFileName);
                 if (!tmpFile.exists()) {
                     break;

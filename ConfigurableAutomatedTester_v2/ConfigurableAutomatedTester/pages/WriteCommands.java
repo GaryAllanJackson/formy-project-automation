@@ -29,6 +29,8 @@ public class WriteCommands {
         this.driver = driver;
     }
     public List<GtmTag> GtmTagList;
+    public List<GA4Tag> GA4TagList;
+    public List<GA4Parameter> GA4ParameterList;
 
     private String _testFileName;
     void set_testFileName(String _testFileName) {
@@ -125,7 +127,9 @@ public class WriteCommands {
                     PerformScreenShotCapture(fileName, fileStepIndex);
                 }
             } else if (ts.get_command().toLowerCase().contains(AppCommands.Check) && ts.get_command().toLowerCase().contains(AppCommands.URL)) {
+                testHelper.UpdateTestResults(AppConstants.indent5 + "Performing Check URL without Navigation for step " + fileStepIndex, true);
                 CheckUrlWithoutNavigation(ts, fileStepIndex);
+
             } else if (ts.get_command().toLowerCase().contains(AppCommands.SwitchToTab)) {
                 testCentral.SwitchToTab(ts, fileStepIndex);
             } else if (ts.get_command().toLowerCase().contains(AppCommands.Login)) {
@@ -147,9 +151,9 @@ public class WriteCommands {
                 testHelper.UpdateTestResults("Create Test Page results written to file: " + createTestFileName, false);
             } else if (ts.get_command().toLowerCase().equals(AppCommands.Close_Child_Tab)) {
                 testCentral.CloseOpenChildTab(ts, fileStepIndex);
-            }  else if (ts.get_command().toLowerCase().equals(AppCommands.Compare_Images)) {
+            } else if (ts.get_command().toLowerCase().equals(AppCommands.Compare_Images)) {
                 CompareImagesController(ts, fileStepIndex);
-            }   else if (ts.get_command().toLowerCase().equals(AppCommands.SaveHarFile)) {
+            } else if (ts.get_command().toLowerCase().equals(AppCommands.SaveHarFile)) {
                 WriteHarContent(ts, fileStepIndex);
             }
         }
@@ -394,8 +398,14 @@ public class WriteCommands {
             testCentral.DelayCheck(delayMilliSeconds, fileStepIndex);
         }
         String actualUrl = testCentral.GetCurrentPageUrl();
+
         if (ts.get_crucial()) {
             assertEquals(expectedUrl, actualUrl);
+            //if (expectedUrl.trim().equals(actualUrl.trim())) {
+                testHelper.UpdateTestResults(AppConstants.ANSI_GREEN + "Successful URL Check.  Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ") for step " + fileStepIndex + AppConstants.ANSI_RESET, true);
+            /*} else {
+                testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed URL Check.   Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ") for step " + fileStepIndex + AppConstants.ANSI_RESET, true);
+            }*/
         } else {
             if (expectedUrl.trim().equals(actualUrl.trim())) {
                 testHelper.UpdateTestResults(AppConstants.ANSI_GREEN + "Successful URL Check.  Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ") for step " + fileStepIndex + AppConstants.ANSI_RESET, true);
@@ -474,6 +484,7 @@ public class WriteCommands {
                 status = true;
             } catch (Exception e) {
                 status = false;
+                testHelper.DebugDisplay("Error clicking element: " + e.getMessage());
             }
         } else if (command.toLowerCase().contains("screenshot")) {
             try {
@@ -656,15 +667,25 @@ public class WriteCommands {
     /**************************************************************
      *  Description: This method writes the HAR content to a file.
      *               Currently, this has been called from the TearDown
-     *               but may be moved at a later time
+     *               but may be moved at a later time.
+     *               This method also populates the GTM GA tags that
+     *               can be tested against once this file has been
+     *               saved.
      ***************************************************************/
     private void WriteHarContent(TestStep ts, String fileStepIndex) {
 
         try {
+            String ga4ParamName = "";
             GtmTagList = new ArrayList<>();
             GtmTag item = new GtmTag();
+            GA4TagList = new ArrayList<>();
+            GA4Tag gA4item = new GA4Tag();
+            List<GA4Parameter> ga4ParameterList = new ArrayList<>();
+            GA4Parameter ga4Parameter;
+            Boolean ga4TagStarted = false;
             Har har = testCentral.proxy.getHar();
-            String fileName = testCentral.GetArgumentValue(ts, 0, testCentral.testPage);
+            String comment = null;
+            String fileName = testHelper.GetUnusedFileName(testCentral.GetArgumentValue(ts, 0, testCentral.testPage));
             testHelper.CreateSectionHeader("[ Start Save Har File and Populate GTM Tags Object Event ]", "", AppConstants.ANSI_BLUE_BRIGHT, true, false, true);
             //testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start Save Har File and Populate GTM Tags Object Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
             testHelper.UpdateTestResults(AppConstants.indent5 + "Writing HAR file, based on supplied file name (" + fileName + "), for step " + fileStepIndex, true);
@@ -673,39 +694,84 @@ public class WriteCommands {
             List<HarEntry> entries = testCentral.proxy.getHar().getLog().getEntries();
             testHelper.UpdateTestResults(AppConstants.indent5 + "Populating GTM Tags Object from HAR for step " + fileStepIndex, true);
             for (HarEntry entry : entries) {
-                //testHelper.UpdateTestResults(entry.getRequest().getUrl(), false);
-                //testHelper.UpdateTestResults("getStatusText() = " + entry.getResponse().getStatusText(), false);
                 int size = entry.getRequest().getQueryString().size();
-                //testHelper.UpdateTestResults("===================================================================", false);
-                item = new GtmTag();
+                testHelper.DebugDisplay("URL = " + entry.getRequest().getUrl());
                 for (int x=0;x<size;x++) {
-                    item.set_PageRef(entry.getPageref());
-                    item.set_RequestUrl(entry.getRequest().getQueryString().get(x).getName().equals("url") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_requestUrl());
-                    item.set_ContentGroup1(entry.getRequest().getQueryString().get(x).getName().equals("cg1") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_contentGroup1());
-                    item.set_ContentGroup2(entry.getRequest().getQueryString().get(x).getName().equals("cg2")  ? entry.getRequest().getQueryString().get(x).getValue() : item.get_contentGroup2());
-                    /*if (entry.getRequest().getQueryString().get(x).getName().equals("cg2")) {
+                    if (entry.getRequest().getQueryString().get(x).getValue().indexOf("collect?v=1") > -1) {
+                        item = new GtmTag();
+                        item.set_PageRef(entry.getPageref());
+                        item.set_RequestUrl(entry.getRequest().getQueryString().get(x).getName().equals("url") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_requestUrl());
+                        item.set_ContentGroup1(entry.getRequest().getQueryString().get(x).getName().equals("cg1") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_contentGroup1());
                         item.set_ContentGroup2(entry.getRequest().getQueryString().get(x).getName().equals("cg2") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_contentGroup2());
-                    } else if (entry.getRequest().getQueryString().get(x).getName().equals("cg2+")){
-                        item.set_ContentGroup2(entry.getRequest().getQueryString().get(x).getName().equals("cg2+") ? "+" + entry.getRequest().getQueryString().get(x).getValue() : item.get_contentGroup2());
-                    }*/
-                    item.set_CustomDimension9(entry.getRequest().getQueryString().get(x).getName().equals("cd9") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_customDimension9());
-                    item.set_EventLabel(entry.getRequest().getQueryString().get(x).getName().equals("el") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_eventLabel());
-                    item.set_EventAction(entry.getRequest().getQueryString().get(x).getName().equals("ea") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_eventAction());
-                    item.set_EventCategory(entry.getRequest().getQueryString().get(x).getName().equals("ec") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_eventCategory());
-                    item.set_DocumentLocation(entry.getRequest().getQueryString().get(x).getName().equals("dl") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_documentLocation());
-                    item.set_DocumentTitle(entry.getRequest().getQueryString().get(x).getName().equals("dt") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_documentTitle());
-                    item.set_HitType(entry.getRequest().getQueryString().get(x).getName().equals("t") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_hitType());
-                    item.set_TrackingId(entry.getRequest().getQueryString().get(x).getName().equals("tid") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_trackingId());
-                }
-                //testHelper.UpdateTestResults("===================================================================", false);
-                if (!testHelper.IsNullOrEmpty(item.get_hitType()) && !testHelper.IsNullOrEmpty(item.get_documentLocation()))
-                {
-                    GtmTagList.add(item);
+                        /*if (entry.getRequest().getQueryString().get(x).getName().equals("cg2")) {
+                            item.set_ContentGroup2(entry.getRequest().getQueryString().get(x).getName().equals("cg2") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_contentGroup2());
+                        } else if (entry.getRequest().getQueryString().get(x).getName().equals("cg2+")){
+                            item.set_ContentGroup2(entry.getRequest().getQueryString().get(x).getName().equals("cg2+") ? "+" + entry.getRequest().getQueryString().get(x).getValue() : item.get_contentGroup2());
+                        }*/
+                        item.set_CustomDimension9(entry.getRequest().getQueryString().get(x).getName().equals("cd9") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_customDimension9());
+                        item.set_EventLabel(entry.getRequest().getQueryString().get(x).getName().equals("el") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_eventLabel());
+                        item.set_EventAction(entry.getRequest().getQueryString().get(x).getName().equals("ea") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_eventAction());
+                        item.set_EventCategory(entry.getRequest().getQueryString().get(x).getName().equals("ec") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_eventCategory());
+                        item.set_DocumentLocation(entry.getRequest().getQueryString().get(x).getName().equals("dl") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_documentLocation());
+                        item.set_DocumentTitle(entry.getRequest().getQueryString().get(x).getName().equals("dt") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_documentTitle());
+                        item.set_HitType(entry.getRequest().getQueryString().get(x).getName().equals("t") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_hitType());
+                        item.set_TrackingId(entry.getRequest().getQueryString().get(x).getName().equals("tid") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_trackingId());
+                        if (!testHelper.IsNullOrEmpty(item.get_hitType()) && !testHelper.IsNullOrEmpty(item.get_documentLocation()))
+                        {
+                            GtmTagList.add(item);
+                        }
+                    } else if (entry.getRequest().getUrl().indexOf("collect?v=2") > -1)  { //if (entry.getRequest().getQueryString().get(x).getName().equals("v")) { //if (entry.getRequest().getQueryString().get(x).getValue().indexOf("collect?v=2") > -1 || (entry.getRequest().getQueryString().get(x).getName().equals("v") && entry.getRequest().getQueryString().get(x).getValue().equals("2")))  {
+                        if (entry.getRequest().getQueryString().get(x).getName().equals("v") && entry.getRequest().getQueryString().get(x).getValue().equals("2")) {
+                            if (!testHelper.IsNullOrEmpty(gA4item.get_eventName()) && !testHelper.IsNullOrEmpty(gA4item.get_gtmTagName()) && gA4item != null) {
+                                gA4item.set_GA4Parameters(ga4ParameterList);
+                                GA4TagList.add(gA4item);
+                                ga4TagStarted = false;
+                            }
+                            gA4item = new GA4Tag();
+                            ga4TagStarted = true;
+                            ga4ParamName = "";
+                            ga4ParameterList = new ArrayList<>();
+                        }
+                        if (ga4TagStarted) {
+                            gA4item.set_PageRef(entry.getPageref());
+                            gA4item.set_RequestUrl(entry.getRequest().getQueryString().get(x).getName().equals("url") ? entry.getRequest().getQueryString().get(x).getValue() : gA4item.get_requestUrl());
+                            gA4item.set_DocumentLocation(entry.getRequest().getQueryString().get(x).getName().equals("dl") ? entry.getRequest().getQueryString().get(x).getValue() : gA4item.get_documentLocation());
+                            gA4item.set_DocumentTitle(entry.getRequest().getQueryString().get(x).getName().equals("dt") ? entry.getRequest().getQueryString().get(x).getValue() : gA4item.get_documentTitle());
+                            gA4item.set_ProductName(entry.getRequest().getQueryString().get(x).getName().equals("ep.product_name") ? entry.getRequest().getQueryString().get(x).getValue() : gA4item.get_productName());
+                            //gA4item.set_HitType(entry.getRequest().getQueryString().get(x).getName().equals("t") ? entry.getRequest().getQueryString().get(x).getValue() : gA4item.get_hitType());
+                            gA4item.set_TrackingId(entry.getRequest().getQueryString().get(x).getName().equals("tid") ? entry.getRequest().getQueryString().get(x).getValue() : gA4item.get_trackingId());
+                            gA4item.set_GtmTagName(entry.getRequest().getQueryString().get(x).getName().equals("ep.gtm_tag_name") ? entry.getRequest().getQueryString().get(x).getValue() : gA4item.get_gtmTagName());
+                            gA4item.set_EventName(entry.getRequest().getQueryString().get(x).getName().equals("en") ? entry.getRequest().getQueryString().get(x).getValue() : gA4item.get_eventName());
+                            gA4item.set_SiteSection(entry.getRequest().getQueryString().get(x).getName().equals("ep.site_section") ? entry.getRequest().getQueryString().get(x).getValue() : gA4item.get_siteSection());
+                            gA4item.set_SiteSection(entry.getRequest().getQueryString().get(x).getName().equals("ep.page_template") ? entry.getRequest().getQueryString().get(x).getValue() : gA4item.get_pageTemplate());
+                            //comment = (comment.equals(null) && (entry.getRequest().getQueryString().get(x).getName().equals("_et") || entry.getRequest().getQueryString().get(x).getName().equals("comment")))  ? entry.getRequest().getQueryString().get(x).getValue() : null;
+                            comment = entry.getRequest().getQueryString().get(x).getName().equals("_et") ? entry.getRequest().getQueryString().get(x).getValue() : null;
+                            //ga4ParameterList = new ArrayList<>();
+                            //for (int ga4Index = 0; ga4Index < 50; ga4Index++) {
+                                ga4Parameter = new GA4Parameter();
+                                if (ga4ParamName.indexOf(entry.getRequest().getQueryString().get(x).getName()) < 0) {
+                                    ga4Parameter = SetGA4Parameter(entry.getRequest().getQueryString().get(x).getName(), entry.getRequest().getQueryString().get(x).getValue());
+                                    ga4ParameterList.add(ga4Parameter);
+                                    ga4ParamName += entry.getRequest().getQueryString().get(x).getName() + ",";
+                                    //testHelper.DebugDisplay("---------[ GA4 Tag Name = " + gA4item.get_gtmTagName() + " ]---------\r\nParameter Added Name = " + entry.getRequest().getQueryString().get(x).getName() + "\r\n Value = " + entry.getRequest().getQueryString().get(x).getValue());
+                                }
+                            //}
+                            //gA4item.set_GA4Parameters(ga4ParameterList);
+                            //below used for debugging parameters placed into the array
+                            /*for (int ga4Index = 0; ga4Index < gA4item.getGA4Parameters().size(); ga4Index++) {
+                                testHelper.DebugDisplay("Parameter in list Name = " + gA4item.getGA4Parameter(ga4Index).get_parameterName() + " - Value = " + gA4item.getGA4Parameter(ga4Index).get_parameterValue());
+                            }*/
+                        }
+                    }
                 }
             }
             testCentral.GtmTagList = GtmTagList;
             readCommands.GtmTagList = GtmTagList;
+            testCentral.GA4TagList = GA4TagList;
+            readCommands.GA4TagList = GA4TagList;
             testHelper.set_csvFileName(testCentral.testHelper.get_csvFileName());
+
+            //testHelper.set_csvFileName(testCentral.testHelper.get_csvFileName());
             //testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End of Save Har File and Populate GTM Tags Object Event  ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
 
             //debugging
@@ -726,11 +792,23 @@ public class WriteCommands {
         testHelper.CreateSectionHeader("[ End Save Har File and Populate GTM Tags Object Event ]", "", AppConstants.ANSI_BLUE_BRIGHT, false, false, true);
     }
 
+    private GA4Parameter SetGA4Parameter(String name, String value) {
+       GA4Parameter ga4Parameter = new GA4Parameter();
+       name = name.replace("%20"," ");
+       value = value.replace("%20"," ");
+       ga4Parameter.set_parameterName(name);
+       ga4Parameter.set_parameterValue(value);
+
+       return ga4Parameter;
+    }
+
+
     private String SaveHarFile(Har har, String sFileName) {
 
         if (testHelper.IsNullOrEmpty(sFileName) || sFileName.indexOf("/") > -1 || !sFileName.endsWith(".txt")) {
             sFileName = sFileName.replace("/", "_").replace(":", "_");
-            sFileName = testCentral.harFolder + sFileName + ".txt";
+            //sFileName = testCentral.harFolder + sFileName + ".txt";
+            sFileName = sFileName + ".txt";
         }
         if (!sFileName.contains("\\")) {
             sFileName = testCentral.harFolder + sFileName;

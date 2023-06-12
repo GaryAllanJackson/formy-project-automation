@@ -103,6 +103,8 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "\t\tPERSISTING RETRIEVED TEXT IN A VARIABLE FOR LATER USE");
             WriteToFile(get_helpFileName(), "\t\tFILLING IN TEXT FIELDS");
             WriteToFile(get_helpFileName(), "\t\tCLICK AN ELEMENT");
+            WriteToFile(get_helpFileName(), "\t\tDOUBLE CLICK AN ELEMENT");
+            WriteToFile(get_helpFileName(), "\t\tRIGHT CLICK AN ELEMENT");
             WriteToFile(get_helpFileName(), "\t\tCLICK AN ELEMENT IN AN IFRAME");
             WriteToFile(get_helpFileName(), "\t\tSELECT AN OPTION FROM AN HTML SELECT ELEMENT");
             WriteToFile(get_helpFileName(), "\t\tTAKING SCREENSHOTS");
@@ -1197,6 +1199,38 @@ public class HelpWriter {
                     "</step>");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("═", "═", 1, 151));
+            //DOUBLE CLICK AN ELEMENT
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ DOUBLE CLICK AN ELEMENT ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "The DoubleClick command double clicks on the specified element, as long as it is not in an iFrame.");
+            WriteToFile(get_helpFileName(), "This is not a common event and is most likely used in text boxes to select all content.");
+            WriteToFile(get_helpFileName(), "To double click an element by ID, use the following:");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>doubleclick</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>false</crucial>\r\n" +
+                    "\t<accessor>last-name</accessor>\r\n" +
+                    "\t<accessorType>ID</accessorType>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("═", "═", 1, 151));
+            //RIGHT CLICK AN ELEMENT
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ RIGHT CLICK AN ELEMENT ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "The RIGHTClick command right clicks on the specified element, as long as it is not in an iFrame.");
+            WriteToFile(get_helpFileName(), "This is not a common event and is most likely used to bring up the context menu.");
+            WriteToFile(get_helpFileName(), "To right click an element by ID, use the following:");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>right click</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>true</crucial>\r\n" +
+                    "\t<accessor>//*[@id=\"block-menu-menu-dc-menu\"]/div/div/ul/li[2]/a</accessor>\r\n" +
+                    "\t<accessorType>xPath</accessorType>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>Keys.Arrow_Down</arg1>\r\n" +
+                    "\t\t<arg2>Keys.Enter</arg2>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CLICK AN ELEMENT IN AN IFRAME ]", "═", 9, 151));
@@ -2269,6 +2303,11 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "The Save Har file step MUST be executed before attempting to Check GTM tags!!!");
             WriteToFile(get_helpFileName(), "Most of the arguments are required as many of the values could be duplicated across tags and these values must be ");
             WriteToFile(get_helpFileName(), "supplied to discern between tags fired and the tag being checked. ");
+            WriteToFile(get_helpFileName(), "The values are evaluated as a whole and if all supplied values match, the check is successful.");
+            WriteToFile(get_helpFileName(), "If the required values match, the non-matching non-required values will be indicated and although ");
+            WriteToFile(get_helpFileName(), "the step will be marked as a failure, the offending items will be indicated so that they can be examined.");
+            WriteToFile(get_helpFileName(), "If the required values do not match, the entire step will show as a failure so a thorough examination ");
+            WriteToFile(get_helpFileName(), "will be required to track down the offending item(s).");
             WriteToFile(get_helpFileName(), "The order of the arguments does not matter as long as all required fields are present as shown below.");
             WriteToFile(get_helpFileName(), "\t\tdl - Document Location - page where tag fired - required\n");
             WriteToFile(get_helpFileName(), "\t\tt - Hit Type - Type of Hit (Event/Pageview - required\n");
@@ -2277,8 +2316,8 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "\t\tel - Event Label - Event Label Configured in the Tag - required\n");
             WriteToFile(get_helpFileName(), "\t\tcg1 - Content Group 1 (PageTemplate) - Content Group 1 which is the PageTemplate - required\n");
             WriteToFile(get_helpFileName(), "\t\tcg2 - Content Group 2 - Content Group 2 - which if set to += will check that the field starts with the value specified - not required\n");
-            WriteToFile(get_helpFileName(), "\t\tdt - Document Title - page title where tag fired - not required - not currently wired up\n");
-            WriteToFile(get_helpFileName(), "\t\ttid - Tracking ID - GA Tracking ID - not required - not currently wired up\n");
+            WriteToFile(get_helpFileName(), "\t\tdt - Document Title - page title where tag fired - not required\n");
+            WriteToFile(get_helpFileName(), "\t\ttid - Tracking ID - GA Tracking ID - not required\n");
 
 
             WriteToFile(get_helpFileName(), "<step>\n" +

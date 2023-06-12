@@ -97,23 +97,24 @@ public class TestCentral {
      *           referencing the path of the driver on the system.
      *      5.  Implemented JavaScript Variable testing so that DataLayer values could be tested.
      *          This test currently allows for testing one dataLayer value but this value cannot be persisted yet.
-     *
+     *      6.  Google Tag Manager tag checking which allows for checking the following:
+     *          Requires Saving the HAR file, as a test step, before testing which tags executed.
+     *          Saving HAR file also populates list of GTM tags executed.
+     *          The Expected values for each field are contained in the arguments elements as name=value pairs.
+     *          The following Arguments are required but in no specific order:
+     *              a.  Document Location  - <arg1>dl=https://www.mypage.com</arg1>
+     *                  - used to help locate the correct HAR entry
+     *              b.  Hit Type - <arg2>t=event</arg2>
+     *              c.  Event Category - <arg3>ec=my event category</arg3>
+     *              d.  Event Action - <arg4>ea=my event action</arg4>
+     *              e.  Event Label - <arg5>el=my event label</arg5>
+     *              f.  Tracking ID - <arg6>tid=UA-1234567-1</arg6>
+     *              g.  Content Group 1 - <arg7>cg1=plp</arg7>
+     *          The following Arguments are not required but if provided will be used:
+     *              h.  Content Group 2 - <arg8>cg2+=GTM-A1BCDE2</arg8>
+     *                  - adding the plus sign before the equal sign allows for the value begins with the value supplied.
+     *              i.  Document Title - <arg9>dt=Products | Your Site</arg9>
      *      Future updates:
-     *      1.  Google Tag Manager tag checking which will allow for checking the following:
-     *          May require generating a new HAR for each test step.
-     *          This may involve enhancing all Click, Navigate, and Wait Commands and implementing Scrolling Commands.
-     *          But instead of enhancing these commands, I think it is best to create new commands such as
-     *          gtm pageview, gtm click, gtm wait and gtm scroll
-     *          Either the Expected value field can contain name value pairs such as:
-     *          <expectedValue>ec="footer", ea="contact us", el="url", gtm="TGL99T2" dl="https://www.mypage.com"</expectedValue>
-     *          or the  arguments can be used
-     *          a.  Document Location  - <arg1></arg1>
-     *              - used to help locate the correct HAR entry
-     *          b.  GTM Container - <arg2></arg2>
-     *          c.  Event Category - <arg3></arg3>
-     *          d.  Event Action - <arg4></arg4>
-     *          e.  Event Label - <arg5></arg5>
-     *          f.  Event Value - <arg6></arg6>
      *      2.  Greater Than and Less Than Operators.
      *          This would be a good addition when used with Conditional Blocks.
      *      2.  SiteMap Generator - while not part of testing, it could help to find all pages that
@@ -173,7 +174,7 @@ public class TestCentral {
             configurationFile.substring(0, configurationFile.lastIndexOf("/")) + "/ConfigTester_Help.txt";
     private List<String> testFiles = new ArrayList<>();
     public List<GtmTag> GtmTagList;
-
+    public List<GA4Tag> GA4TagList;
     public String get_testFileName() {return testFileName;}
 
     //region { WebDriver Browser Driver Configured Locations }
@@ -371,6 +372,7 @@ public class TestCentral {
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 +  "Config File absolute path = " + AppConstants.ANSI_RESET + tmp.getAbsolutePath(), false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 +  "Log File Name = " + AppConstants.ANSI_RESET  + logFileName, false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 +  "Help File Name = " + AppConstants.ANSI_RESET + helpFileName, false);
+        testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 +  "Har File Folder = " + AppConstants.ANSI_RESET + harFolder, false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 +  "HTML Help File Name = " + AppConstants.ANSI_RESET + helpFileName.replace(".txt", ".html"), false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 + "Executed From Main or as JUnit Test = " + AppConstants.ANSI_RESET + (is_executedFromMain() ? "Standalone App" : "JUnit Test"), false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 + "Running on "  + AppConstants.ANSI_RESET + (HelperUtilities.isWindows() ? "Windows" : "Mac"), false);
@@ -1280,10 +1282,20 @@ public class TestCentral {
      * @param xPath - an xPath value for the selected element
      * @return - the type of HTML element
      **************************************************************/
-    String ElementTypeLookup(String xPath) {
+    String ElementTypeLookup(String xPath, String accessorType) {
         //NOTE: When checking string equality in Java you must use the "".Equals("") method.
         // Using the == operator checks the memory address not the value
-        String elementTag = xPath.substring(xPath.lastIndexOf("/") + 1).trim();
+        String elementTag = null;
+        if (accessorType.equals(AppConstants.xpathCheckValue)) {
+            elementTag = xPath.substring(xPath.lastIndexOf("/") + 1).trim();
+        } else if (accessorType.equals(AppConstants.tagNameCheckValue)) {
+            elementTag = xPath;
+        } else if (accessorType.equals(AppConstants.cssSelectorCheckValue)) {
+            int index = xPath.lastIndexOf(" ") > xPath.lastIndexOf(">") ? xPath.lastIndexOf(" ") : xPath.lastIndexOf(">");
+            elementTag = xPath.substring(index + 1).trim();
+        } else {
+            return "Indeterminate";
+        }
 
         if (elementTag.toLowerCase().startsWith("a") || elementTag.toLowerCase().startsWith("a[")) {
             return "Anchor";
@@ -1450,8 +1462,60 @@ public class TestCentral {
                 else if (argument.equals("dt")) {
                     item.set_DocumentTitle(argumentValue);
                 }
+                else if (argument.equals("tid")) {
+                    item.set_TrackingId(argumentValue);
+                }
             }
         }
+        return item;
+    }
+
+    GA4Tag GetGa4Arguments(TestStep ts, String defaultValue) {
+        GA4Tag item = new GA4Tag();
+        String argument;
+        String argumentValue;
+        String idFieldName = "";
+        GA4Parameter parameter;
+        List<GA4Parameter> ga4Parameters = new ArrayList<>();
+        for(int x=0;x< ts.ArgumentList.size();x++) {
+            if (!testHelper.IsNullOrEmpty(ts.ArgumentList.get(x).get_parameter())) {
+                argument = ts.ArgumentList.get(x).get_parameter().split("=")[0];
+                argumentValue = ts.ArgumentList.get(x).get_parameter().split("=")[1];
+                parameter = new GA4Parameter(argument, argumentValue);
+                ga4Parameters.add(parameter);
+                if (argument.equals("idfield")) {
+                    idFieldName = argument;
+                } else if (argument.equals("dl")) {
+                    item.set_DocumentLocation(argumentValue);
+                } else if (argument.equals("t")) {
+                    item.set_HitType(argumentValue);
+                } else if (argument.equals("ep.gtm_tag_name")) {
+                    item.set_GtmTagName(argumentValue);
+                } else if (argument.equals("en")) {
+                    item.set_EventName(argumentValue);
+                } else if (argument.equals("ep.page_template")) {
+                    item.set_PageTemplate(argumentValue);
+                } else if (argument.equals("ep.site_section")) {
+                    item.set_SiteSection(argumentValue);
+                } else if (argument.equals("ep.hit_timestamp")) {
+                    item.set_HitTimeStamp(argumentValue);
+                } else if (argument.equals("up.jmsa_id")) {
+                //else if (argument.equals(idFieldName)) {
+                    item.set_IdField(argumentValue);
+                    //item.set_IdField("+" + argumentValue);
+                }
+                else if (argument.equals("dt")) {
+                    item.set_DocumentTitle(argumentValue);
+                }
+                else if (argument.equals("tid")) {
+                    item.set_TrackingId(argumentValue);
+                }
+                else if (argument.equals("ep.product_name")) {
+                    item.set_ProductName(argumentValue);
+                }
+            }
+        }
+        item.set_GA4Parameters(ga4Parameters);
         return item;
     }
 

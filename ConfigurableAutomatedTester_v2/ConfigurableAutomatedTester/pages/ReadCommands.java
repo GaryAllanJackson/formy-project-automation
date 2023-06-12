@@ -31,7 +31,7 @@ public class ReadCommands {
     WebDriver driver;
     private String _testPage;
     public List<GtmTag> GtmTagList;
-
+    public List<GA4Tag> GA4TagList;
     private String _testFileName;
     void set_testFileName(String _testFileName) {
         this._testFileName = _testFileName;
@@ -134,10 +134,22 @@ public class ReadCommands {
                 CheckJavaScriptReturnValue(ts, fileStepIndex);
             } else if (ts.get_command().toLowerCase().equals(AppCommands.CheckGtmTag)) {
                 CheckGtmTagValues(ts, fileStepIndex);
+            } else if (ts.get_command().toLowerCase().equals(AppCommands.CheckGtmGa4Tag)) {
+                CheckGA4TagValues(ts, fileStepIndex);
             }
         }
     }
 
+
+    /*****************************************************************
+     * Description: This method checks a UA Tag against UA Tag values
+     *              retrieved from the HAR file.
+     *              This method is written with a specific set of
+     *              parameter names that must match.
+     * @param ts - Test Step Object containing all related information
+     *           for the particular test step.
+     * @param fileStepIndex - the file index and the step index.
+     ******************************************************************/
     private void CheckGtmTagValues(TestStep ts, String fileStepIndex) {
         if (GtmTagList != null && GtmTagList.size() > 0) {
             testHelper.set_csvFileName(testCentral.testHelper.get_csvFileName());
@@ -154,35 +166,27 @@ public class ReadCommands {
                 listItem = GtmTagList.get(x);
                 if (!testHelper.IsNullOrEmpty(listItem.get_documentLocation()) && !testHelper.IsNullOrEmpty(listItem.get_hitType()) &&
                         !testHelper.IsNullOrEmpty(listItem.get_eventCategory()) && !testHelper.IsNullOrEmpty(listItem.get_eventAction()) &&
-                                !testHelper.IsNullOrEmpty(listItem.get_eventLabel()) && !testHelper.IsNullOrEmpty(listItem.get_contentGroup1()))
-                {
+                                !testHelper.IsNullOrEmpty(listItem.get_eventLabel()) && !testHelper.IsNullOrEmpty(listItem.get_contentGroup1())) {
                     if (listItem.get_documentLocation().equals(item.get_documentLocation()) && listItem.get_hitType().equals(item.get_hitType()) &&
                             listItem.get_eventCategory().equals(item.get_eventCategory()) && listItem.get_eventAction().equals(item.get_eventAction()) &&
                             listItem.get_eventLabel().equals(item.get_eventLabel()) && listItem.get_contentGroup1().equals(item.get_contentGroup1())) {
                         //testHelper.DebugDisplay("item.get_contentGroup2() = " + item.get_contentGroup2());  //debugging
                         doesMatch = CheckOptionalGtmValues(item, listItem);
-                        /*
-                        if (!testHelper.IsNullOrEmpty(item.get_contentGroup2()) ) {
-                            if (item.get_contentGroup2().startsWith("+")) {
-                                beginsWith = " begins with ";
-                                if (listItem.get_contentGroup2().startsWith(item.get_contentGroup2().substring(1))) {
-                                    doesMatch = true;
-                                } else {
-                                    doesMatch = false;
-                                }
-                            } else {
-                                beginsWith = "=";
-                                if (listItem.get_contentGroup2().equals(item.get_contentGroup2())) {
-                                    doesMatch = true;
-                                } else {
-                                    doesMatch = false;
-                                }
-                            }
-                        } else {
-                            doesMatch = true;
-                        }*/
+
                         index = x;
                         break;
+                    } else if (listItem.get_documentLocation().equals(item.get_documentLocation())) {
+                        //testHelper.DebugDisplay("x = " + x + " index = " + index + " listItem.get_documentLocation() = " + listItem.get_documentLocation() + "\r\n item.get_documentLocation() = " + item.get_documentLocation());
+                        if ((listItem.get_hitType().equals(item.get_hitType()) && listItem.get_eventCategory().equals(item.get_eventCategory()))
+                                && (RemoveInvalidCharacters(listItem.get_eventAction()).equals(RemoveInvalidCharacters(item.get_eventAction())) ||
+                                RemoveInvalidCharacters(listItem.get_eventLabel()).equals(RemoveInvalidCharacters(item.get_eventLabel())))) {
+                            //don't break here, let it keep searching for an exact match and fall out of the loop
+                            if (RemoveInvalidCharacters(listItem.get_eventAction()).equals(RemoveInvalidCharacters(item.get_eventAction()))) {
+                                index = x;
+                            } else {
+                                index = index == -1 ? x : index;
+                            }
+                        }
                     }
                 }
             }
@@ -193,20 +197,24 @@ public class ReadCommands {
                         AppConstants.indent8 + "Expected: (t=" + item.get_hitType() + ")  Actual: (t=" + listItem.get_hitType() + ")\r\n" +
                         AppConstants.indent8 + "Expected: (ec=" + item.get_eventCategory() + ") Actual: (ec=" + listItem.get_eventCategory() + ")\r\n" +
                         AppConstants.indent8 + "Expected: (ea=" + item.get_eventAction() + ") Actual: (ea=" + listItem.get_eventAction() + ")\r\n" +
-                        AppConstants.indent8 + "Expected: (dl=" + item.get_eventLabel() + ") Actual: (dl=" + listItem.get_eventLabel() + ")\r\n" +
+                        AppConstants.indent8 + "Expected: (el=" + item.get_eventLabel() + ") Actual: (el=" + listItem.get_eventLabel() + ")\r\n" +
                         (!testHelper.IsNullOrEmpty(item.get_contentGroup2()) ? AppConstants.indent8 + "Expected: (cg2" + beginsWith + item.get_contentGroup2() + ") Actual: (cg2" + beginsWith + listItem.get_contentGroup2() + ")\r\n" : "") +
                         (!testHelper.IsNullOrEmpty(item.get_documentTitle()) ? AppConstants.indent8 + "Expected: (dt" + beginsWith + item.get_documentTitle() + ") Actual: (dt" + beginsWith + listItem.get_documentTitle() + ")\r\n" : "") +
-
+                        (!testHelper.IsNullOrEmpty(item.get_trackingId()) ? AppConstants.indent8 + "Expected: (tid=" + item.get_trackingId() + ") Actual: (tid=" + listItem.get_trackingId() + ")\r\n" : "") +
                         AppConstants.indent5  + " for step " + fileStepIndex, true);
             } else if (index > -1 && !doesMatch) {
+                listItem = GtmTagList.get(index);
                 testHelper.UpdateTestResults("Failed No GTM Tag found matching specified criteria: \r\n" +
-                        AppConstants.indent8 + "Expected: (dl=" + item.get_documentLocation() + ") Actual: (dl=" + listItem.get_documentLocation() + ")\r\n" +
-                        AppConstants.indent8 + "Expected: (t=" + item.get_hitType() + ")  Actual: (t=" + listItem.get_hitType() + ")\r\n" +
-                        AppConstants.indent8 + "Expected: (ec=" + item.get_eventCategory() + ") Actual: (ec=" + listItem.get_eventCategory() + ")\r\n" +
-                        AppConstants.indent8 + "Expected: (ea=" + item.get_eventAction() + ") Actual: (ea=" + listItem.get_eventAction() + ")\r\n" +
-                        AppConstants.indent8 + "Expected: (dl=" + listItem.get_eventLabel() + ") Actual: (dl=" + listItem.get_eventLabel() + ")\r\n" +
-                        (!testHelper.IsNullOrEmpty(item.get_contentGroup2()) ? AppConstants.indent8 + "Expected: (cg2" + beginsWith + item.get_contentGroup2() + ") Actual: (cg2" + beginsWith + listItem.get_contentGroup2() + ")\r\n" : "") +
-                        (!testHelper.IsNullOrEmpty(item.get_documentTitle()) ? AppConstants.indent8 + "Expected: (dt" + beginsWith + item.get_documentTitle() + ") Actual: (dt" + beginsWith + listItem.get_documentTitle() + ")\r\n" : "") +
+                        AppConstants.indent8 + (item.get_documentLocation().equals(listItem.get_documentLocation()) ? AppConstants.ANSI_GREEN : AppConstants.ANSI_RED) + "Expected: (dl=" + item.get_documentLocation() + ") Actual: (dl=" + listItem.get_documentLocation() + ")\r\n" +
+                        AppConstants.indent8 + (item.get_hitType().equals(listItem.get_hitType()) ? AppConstants.ANSI_GREEN : AppConstants.ANSI_RED) + "Expected: (t=" + item.get_hitType() + ")  Actual: (t=" + listItem.get_hitType() + ")\r\n" +
+                        AppConstants.indent8 + (item.get_eventCategory().equals(listItem.get_eventCategory()) ? AppConstants.ANSI_GREEN : AppConstants.ANSI_RED) + "Expected: (ec=" + item.get_eventCategory() + ") Actual: (ec=" + listItem.get_eventCategory() + ")\r\n" +
+                        AppConstants.indent8 + (item.get_eventAction().equals(listItem.get_eventAction()) ? AppConstants.ANSI_GREEN : AppConstants.ANSI_RED) + "Expected: (ea=" + item.get_eventAction() + ") Actual: (ea=" + listItem.get_eventAction() + ")\r\n" +
+                        AppConstants.indent8 + (item.get_eventLabel().equals(listItem.get_eventLabel()) ? AppConstants.ANSI_GREEN : AppConstants.ANSI_RED) + "Expected: (el=" + listItem.get_eventLabel() + ") Actual: (el=" + listItem.get_eventLabel() + ")\r\n" +
+                        //(!testHelper.IsNullOrEmpty(item.get_contentGroup2()) ? AppConstants.indent8 + (item.get_contentGroup2().equals(listItem.get_contentGroup2()) ? AppConstants.ANSI_GREEN : AppConstants.ANSI_RED) + "Expected: (cg2" + beginsWith + item.get_contentGroup2() + ") Actual: (cg2" + beginsWith + listItem.get_contentGroup2() + ")\r\n" : "") +
+                        (!testHelper.IsNullOrEmpty(item.get_contentGroup2()) ? AppConstants.indent8 + (item.get_contentGroup2().equals(listItem.get_contentGroup2()) || listItem.get_contentGroup2().indexOf(item.get_contentGroup2().replace("+","")) > -1 ? AppConstants.ANSI_GREEN : AppConstants.ANSI_RED) + "Expected: (cg2" + beginsWith + item.get_contentGroup2() + ") Actual: (cg2" + beginsWith + listItem.get_contentGroup2() + ")\r\n" : "") +
+                        (!testHelper.IsNullOrEmpty(item.get_documentTitle()) ? AppConstants.indent8 + (item.get_documentTitle().equals(listItem.get_documentTitle()) ? AppConstants.ANSI_GREEN : AppConstants.ANSI_RED) + "Expected: (dt" + beginsWith + item.get_documentTitle() + ") Actual: (dt" + beginsWith + listItem.get_documentTitle() + ")\r\n" : "") +
+                        //(!testHelper.IsNullOrEmpty(item.get_documentTitle()) ? AppConstants.indent8 + (listItem.get_documentTitle().indexOf(item.get_documentTitle().replace("+","")) > -1 ? AppConstants.ANSI_GREEN : AppConstants.ANSI_RED) + "Expected: (dt" + beginsWith + item.get_documentTitle() + ") Actual: (dt" + beginsWith + listItem.get_documentTitle() + ")\r\n" : "") +
+                        (!testHelper.IsNullOrEmpty(item.get_trackingId()) ? AppConstants.indent8 + (item.get_trackingId().equals(listItem.get_trackingId()) ? AppConstants.ANSI_GREEN : AppConstants.ANSI_RED) + "Expected: (tid=" + item.get_trackingId() + ") Actual: (tid=" + listItem.get_trackingId() + ")\r\n" : "") +
                         AppConstants.indent5  + " for step " + fileStepIndex, true);
             } else {
                 testHelper.UpdateTestResults("Failed No GTM Tag found matching specified criteria: \r\n" +
@@ -214,15 +222,184 @@ public class ReadCommands {
                         AppConstants.indent8 + "Expected: (t=" + item.get_hitType() + ")\r\n" +
                         AppConstants.indent8 + "Expected: (ec=" + item.get_eventCategory() + ")\n" +
                         AppConstants.indent8 + "Expected: (ea=" + item.get_eventAction() + ")\n" +
-                        AppConstants.indent8 + "Expected: (dl=" + item.get_eventLabel() + ")\n" +
+                        AppConstants.indent8 + "Expected: (el=" + item.get_eventLabel() + ")\n" +
                         (!testHelper.IsNullOrEmpty(item.get_contentGroup2()) ? AppConstants.indent8 + "Expected: (cg2" + beginsWith + item.get_contentGroup2() + ")\r\n" : "") +
                         (!testHelper.IsNullOrEmpty(item.get_documentTitle()) ? AppConstants.indent8 + "Expected: (dt" + beginsWith + item.get_documentTitle() + ")\r\n" : "") +
+                        (!testHelper.IsNullOrEmpty(item.get_trackingId()) ? AppConstants.indent8 + "Expected: (tid=" + item.get_trackingId() + ")\r\n" : "") +
                         AppConstants.indent5 + " for step " + fileStepIndex, true);
             }
         } else {
             testHelper.UpdateTestResults("The Save Har File command must first be used before using this command!", true);
         }
     }
+
+
+    /*****************************************************************
+     * Description: This method checks a GA4 Tag against GA4 Tag values
+     *              retrieved from the HAR file.
+     *              This method is written so that parameter name does
+     *              not have to be limited to just a few parameters
+     *              but rather can be any parameter that can be retrieved
+     *              from the tag.
+     * @param ts - Test Step Object containing all related information
+     *           for the particular test step.
+     * @param fileStepIndex - the file index and the step index.
+     ******************************************************************/
+    private void CheckGA4TagValues(TestStep ts, String fileStepIndex) {
+        if (GA4TagList != null && GA4TagList.size() > 0) {
+            testHelper.set_csvFileName(testCentral.testHelper.get_csvFileName());
+            testHelper.set_testFileName(testCentral.get_testFileName());
+            testHelper.UpdateTestResults(AppConstants.indent5 + "Checking GA4 Tag for step " + fileStepIndex, true);
+            GA4Tag tsItem = new GA4Tag();
+            String tsName;
+            String tsValue;
+
+            String testMessage = "";
+            String testParams = "";
+
+            //retrieve the values from the test step
+            tsItem = testCentral.GetGa4Arguments(ts, null);
+
+            for (int tsIndex = 0; tsIndex < tsItem.getGA4Parameters().size(); tsIndex++) {
+                tsName = tsItem.getGA4Parameter(tsIndex).get_parameterName();
+                tsValue = tsItem.getGA4Parameter(tsIndex).get_parameterValue();
+                testParams += AppConstants.indent8 + "(" + tsName + "=" + tsValue + ")\r\n";
+            }
+            GA4Tag ga4Tag = GetMatchingGA4Tag(tsItem);
+            if (ga4Tag != null) {
+                testMessage = AppConstants.indent5 + "Successful GA4 GTM Tag found matching specified criteria: \r\n";
+                for (int tsIndex = 0; tsIndex < tsItem.getGA4Parameters().size(); tsIndex++) {
+                    tsName = tsItem.getGA4Parameter(tsIndex).get_parameterName();
+                    tsValue = tsItem.getGA4Parameter(tsIndex).get_parameterValue();
+                    for (int tagIndex=0;tagIndex<ga4Tag.getGA4Parameters().size();tagIndex++) {
+                        if (tsName.equals(ga4Tag.getGA4Parameter(tagIndex).get_parameterName())) {
+                            testMessage += AppConstants.indent8 + "Expected:(" + tsName + "=" + tsValue + ") Actual: (" + ga4Tag.getGA4Parameter(tagIndex).get_parameterName() +
+                                    "=" + ga4Tag.getGA4Parameter(tagIndex).get_parameterValue() + ")\r\n";
+                        }
+                    }
+                }
+                testMessage +=  AppConstants.indent5 + " for step " + fileStepIndex;
+                testHelper.UpdateTestResults(testMessage, true);
+            } else {
+                testHelper.UpdateTestResults(AppConstants.indent5 + "Failed No GTM Tag found matching specified criteria: \r\n" + testParams + AppConstants.indent5 + " for step " + fileStepIndex, true);
+            }
+        }
+    }
+
+    /*****************************************************************
+     * Description: This method searches all GA4 Tags, retrieved from
+     *              the HAR file, for a GA4 Tag that matches the
+     *              names and values of the test step configuration
+     *              for that tag or returns null if nothing is found.
+     *
+     * @param tsItem - GA4 Tag Object containing all configured information
+     *           for the GA4 Tag being checked.
+     ******************************************************************/
+    private GA4Tag GetMatchingGA4Tag(GA4Tag tsItem) {
+        GA4Tag listItem = new GA4Tag();
+        int tagParamCount=0, tsParamCount = tsItem.getGA4Parameters().size();
+        String tsName, tsValue;
+
+        for (int x = 0; x < GA4TagList.size(); x++) {
+            listItem = GA4TagList.get(x);
+            tagParamCount = 0;
+            for (int tsIndex=0;tsIndex<tsItem.getGA4Parameters().size();tsIndex++) {
+                tsName = tsItem.getGA4Parameter(tsIndex).get_parameterName();
+                tsValue = tsItem.getGA4Parameter(tsIndex).get_parameterValue();
+                for (int ga4Index = 0; ga4Index < listItem.getGA4Parameters().size(); ga4Index++) {
+                    if (listItem.getGA4Parameters().get(ga4Index).get_parameterName().equals(tsName) &&
+                            listItem.getGA4Parameters().get(ga4Index).get_parameterValue().equals(tsValue)) {
+                        tagParamCount++;
+                        if (tsParamCount == tagParamCount) {
+                            return listItem;
+                        }
+                        break;
+                    } else if (listItem.getGA4Parameters().get(ga4Index).get_parameterName().equals(tsName) &&
+                            !listItem.getGA4Parameters().get(ga4Index).get_parameterValue().equals(tsValue)) {
+                        break;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+
+
+    // This was the original GA4 Tag Check Routine which relied upon just a few fields being checked
+    private void CheckGA4TagValues_old(TestStep ts, String fileStepIndex) {
+        if (GA4TagList != null && GA4TagList.size() > 0) {
+            testHelper.set_csvFileName(testCentral.testHelper.get_csvFileName());
+            testHelper.set_testFileName(testCentral.get_testFileName());
+            testHelper.UpdateTestResults(AppConstants.indent5 + "Checking GA4 Tag for step " + fileStepIndex, true);
+            GA4Tag item = new GA4Tag();
+            GA4Tag listItem = new GA4Tag();
+            boolean doesMatch = false;
+            int index = -1;
+            String beginsWith = "=";
+            //retrieve the values from the test step
+            item = testCentral.GetGa4Arguments(ts, null);
+            for (int x = 0; x < GA4TagList.size(); x++) {
+                listItem = GA4TagList.get(x);
+                if (!testHelper.IsNullOrEmpty(listItem.get_documentLocation()) && !testHelper.IsNullOrEmpty(listItem.get_documentLocation())) {
+                    if (listItem.get_gtmTagName().equals(item.get_gtmTagName()) && listItem.get_eventName().equals(item.get_eventName()) && ((!testHelper.IsNullOrEmpty(listItem.get_productName()) && listItem.get_productName().equals(item.get_productName())) || testHelper.IsNullOrEmpty(listItem.get_productName()))) {
+                          // && listItem.get_productName().equals(item.get_productName())) {
+                        testHelper.UpdateTestResults("Successful GA4 GTM Tag found matching specified criteria: \r\n" +
+                                AppConstants.indent8 + "Expected: (gtm_tag_name=" + item.get_gtmTagName() + ") Actual: (gtm_tag_name=" + listItem.get_gtmTagName() + ")\r\n" +
+                                AppConstants.indent8 + "Expected: (event_name=" + item.get_eventName() + ") Actual: (event_name=" + listItem.get_eventName() + ")\r\n" +
+                                //AppConstants.indent8 + "Expected: (sitesection=" + item.get_siteSection() + ") Actual: (sitesection=" + listItem.get_siteSection() + ")\r\n" +
+                                //AppConstants.indent8 + "Expected: (pagetemplate=" + item.get_pageTemplate() + ") Actual: (pagetemplate=" + listItem.get_pageTemplate() + ")\r\n" +
+                                //AppConstants.indent8 + "Expected: (id_field=" + item.get_idField() + ") Actual: (id_field=" + listItem.get_idField() + ")\r\n" +
+                                AppConstants.indent8 + "Expected: (dl=" + item.get_documentLocation() + ") Actual: (dl=" + listItem.get_documentLocation() + ")\r\n" +
+                                //AppConstants.indent8 + "Expected: (t=" + item.get_hitType() + ")  Actual: (t=" + listItem.get_hitType() + ")\r\n" +
+                                AppConstants.indent8 + "Expected: (product_name=" + item.get_productName() + ")  Actual: (product_name=" + listItem.get_productName() + ")\r\n" +
+                                AppConstants.indent5 + " for step " + fileStepIndex, true);
+
+                                for (int ga4Index = 0; ga4Index < listItem.getGA4Parameters().size(); ga4Index++) {
+                                    testHelper.UpdateTestResults(AppConstants.indent8 + "Parameter Name = " + listItem.getGA4Parameter(ga4Index).get_parameterName() + "\r\n" +
+                                            AppConstants.indent8 + "Parameter Value = " + listItem.getGA4Parameter(ga4Index).get_parameterValue() + "\r\n" +
+                                            AppConstants.indent5 + " for step " + fileStepIndex, true);
+                                }
+                                doesMatch = true;
+                                break;
+                        //need to iterate through the parameters here and list them.
+                    }
+                }
+            }
+            //on if it has iterated through the entire list and not found the item do we list the fail message
+            if (!doesMatch) {
+                testHelper.UpdateTestResults("Failed No GTM Tag found matching specified criteria: \r\n" +
+                        AppConstants.indent8 + "Expected: (gtm_tag_name=" + item.get_gtmTagName() + ") Actual: (gtm_tag_name=" + listItem.get_gtmTagName() + ")\r\n" +
+                        AppConstants.indent8 + "Expected: (event_name=" + item.get_eventName() + ") Actual: (event_name=" + listItem.get_eventName() + ")\r\n" +
+                        //AppConstants.indent8 + "Expected: (sitesection=" + item.get_siteSection() + ") Actual: (sitesection=" + listItem.get_siteSection() + ")\r\n" +
+                        //AppConstants.indent8 + "Expected: (pagetemplate=" + item.get_pageTemplate() + ") Actual: (pagetemplate=" + listItem.get_pageTemplate() + ")\r\n" +
+                        //AppConstants.indent8 + "Expected: (id_field=" + item.get_idField() + ") Actual: (id_field=" + listItem.get_idField() + ")\r\n" +
+                        AppConstants.indent8 + "Expected: (dl=" + item.get_documentLocation() + ") Actual: (dl=" + listItem.get_documentLocation() + ")\r\n" +
+                        AppConstants.indent8 + "Expected: (t=" + item.get_hitType() + ")  Actual: (t=" + listItem.get_hitType() + ")\r\n" +
+                        AppConstants.indent8 + "Expected: (product_name=" + item.get_productName() + ")  Actual: (product_name=" + listItem.get_productName() + ")\r\n" +
+                        AppConstants.indent5 + " for step " + fileStepIndex, true);
+            }
+        }
+    }
+
+    private String RemoveInvalidCharacters(String inputString) {
+        //String validCharacters = "[^abcdefghijklmnopqrstuvwxyz -']";
+        if (inputString.indexOf("cinnamania") > 0) {
+            testHelper.DebugDisplay("Before Removal inputString = " + inputString);
+        }
+        inputString = inputString.replace("\t"," ");
+        inputString = inputString.replace("&nbsp;"," ");
+        //inputString = inputString.replaceAll("[^abcdefghijklmnopqrstuvwxyz -']","");
+        inputString = inputString.replaceAll("[^a-z -\'~|]","");
+
+        if (inputString.indexOf("cinnamania") > 0) {
+            testHelper.DebugDisplay("After Removal inputString = " + inputString);
+        }
+
+        return inputString;
+    }
+
+
 
     private boolean CheckOptionalGtmValues(GtmTag item, GtmTag listItem) {
         String beginsWith = "=";
@@ -236,31 +413,11 @@ public class ReadCommands {
         if (!doesMatch) {
             return doesMatch;
         }
-        /*
-        if (!testHelper.IsNullOrEmpty(item.get_contentGroup2()) ) {
-            if (item.get_contentGroup2().startsWith("+")) {
-                beginsWith = " begins with ";
-                if (listItem.get_contentGroup2().startsWith(item.get_contentGroup2().substring(1))) {
-                    doesMatch = true;
-                } else {
-                    doesMatch = false;
-                }
-            } else {
-                beginsWith = "=";
-                if (listItem.get_contentGroup2().equals(item.get_contentGroup2())) {
-                    doesMatch = true;
-                } else {
-                    doesMatch = false;
-                }
-            }
-        } else {
-            doesMatch = true;
-        }*/
-
-
+        doesMatch = (!testHelper.IsNullOrEmpty(item.get_trackingId()) && item.get_trackingId().equals(listItem.get_trackingId())) ? true : false;
+        if (!doesMatch) {
+            return doesMatch;
+        }
         return doesMatch;
-
-
     }
 
 
@@ -577,7 +734,7 @@ public class ReadCommands {
         final String elementTypeCheckedAtStep = "Element type being checked at step ";
         String expected = ts.get_expectedValue();
 
-        testHelper.UpdateTestResults(AppConstants.indent5 + elementTypeCheckedAtStep + fileStepIndex + " by xPath: " + ts.get_accessor(), true);
+        testHelper.UpdateTestResults(AppConstants.indent5 + elementTypeCheckedAtStep + fileStepIndex + " by " + ts.get_accessorType() + " " + ts.get_accessor(), true);
         actual = CheckElementWithAccessor(ts, fileStepIndex);
         //testHelper.DebugDisplay("testHelper.is_executedFromMain() = " + testHelper.is_executedFromMain());
 
@@ -902,7 +1059,7 @@ public class ReadCommands {
                 testHelper.CreateSectionHeader("[ End Sql Server Query Event ]", "", AppConstants.ANSI_CYAN, false, false, true);
             }
         } catch(SQLException e) {
-            testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failure in DatabaseQueryController for step " + fileStepIndex  + "\r\n" + e.getMessage() + AppConstants.ANSI_RESET, true);
+            testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed in DatabaseQueryController for step " + fileStepIndex  + "\r\n" + e.getMessage() + AppConstants.ANSI_RESET, true);
         }
     }
 
@@ -1107,7 +1264,7 @@ public class ReadCommands {
             } else {
                 errorMessage = "Aborting!!!  No File Name was specified as the destination for the downloaded JSON content.";
             }
-            testHelper.UpdateTestResults(AppConstants.indent8 + "Failure JSON not saved to file because: " + errorMessage + " for step " + fileStepIndex, true);
+            testHelper.UpdateTestResults(AppConstants.indent8 + "Failed JSON not saved to file because: " + errorMessage + " for step " + fileStepIndex, true);
         }
     }
 
@@ -1213,7 +1370,7 @@ public class ReadCommands {
             } else {
                 errorMessage = "Aborting!!!  No File Name was specified as the destination for the downloaded XML content.";
             }
-            testHelper.UpdateTestResults(AppConstants.indent8 + "Failure XML not saved to file because: " + errorMessage + " for step " + fileStepIndex, true);
+            testHelper.UpdateTestResults(AppConstants.indent8 + "Failed XML not saved to file because: " + errorMessage + " for step " + fileStepIndex, true);
         }
     }
     //endregion
@@ -1247,6 +1404,7 @@ public class ReadCommands {
         String actualValue;
         String accessor = ts.get_accessor();
         String command = ts.get_command().toLowerCase().equals(AppCommands.Switch_To_IFrame) ? testCentral.GetArgumentValue(ts, 1, null) : null;
+        String accessorType = ts.get_accessorType();
 
         try {
             String typeOfElement = GetWebElementByAccessor(ts).getAttribute("type");
@@ -1274,9 +1432,9 @@ public class ReadCommands {
 
             //TODO: REWRITE THE CALL TO ELEMENTTYPELOOKUP SO THAT IT ONLY LOOKS UP ELEMENTS THAT ARE SEARCHED FOR BY TAGNAME, XPATH OR CSSSELECTOR AND SKIPS CLASSNAME AND ID
             if (!ts.get_command().toLowerCase().contains(AppConstants.persistStringCheckValue) && (command == null || !command.toLowerCase().contains(AppConstants.persistStringCheckValue))) {
-                testHelper.UpdateTestResults(AppConstants.indent5 + "Checking element by " + ts.get_accessorType() + ":"  + testCentral.ElementTypeLookup(accessor) + " for script " + fileStepIndex + " Actual Value: \"" + actualValue + "\"", true);
+                testHelper.UpdateTestResults(AppConstants.indent5 + "Checking element by " + ts.get_accessorType() + ":"  + testCentral.ElementTypeLookup(accessor, accessorType) + " for script " + fileStepIndex + " Actual Value: \"" + actualValue + "\"", true);
             } else {
-                testHelper.UpdateTestResults(AppConstants.indent8 + "Retrieving element text by " + ts.get_accessorType() + ":"  + testCentral.ElementTypeLookup(accessor) + " for script " + fileStepIndex + " Actual Value: \"" + actualValue + "\"", true);
+                testHelper.UpdateTestResults(AppConstants.indent8 + "Retrieving element text by " + ts.get_accessorType() + ":"  + testCentral.ElementTypeLookup(accessor, accessorType) + " for script " + fileStepIndex + " Actual Value: \"" + actualValue + "\"", true);
             }
         } catch (Exception e) {
             if (testCentral.screenShotSaveFolder == null || testCentral.screenShotSaveFolder.isEmpty()) {
@@ -1510,13 +1668,13 @@ public class ReadCommands {
                     if (actualValue.equals(ts.get_expectedValue())) {
                         testHelper.UpdateTestResults(AppConstants.indent8 + "Successful JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual (" + actualValue + ")" + " for step " + fileStepIndex, true);
                     } else {
-                        testHelper.UpdateTestResults(AppConstants.indent8 + "Failure JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual (" + actualValue + ")" + " for step " + fileStepIndex, true);
+                        testHelper.UpdateTestResults(AppConstants.indent8 + "Failed JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual (" + actualValue + ")" + " for step " + fileStepIndex, true);
                     }
                 } else {
                     if (!actualValue.equals(ts.get_expectedValue())) {
                         testHelper.UpdateTestResults(AppConstants.indent8 + "Successful JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual (" + actualValue + ")" + " for step " + fileStepIndex, true);
                     } else {
-                        testHelper.UpdateTestResults(AppConstants.indent8 + "Failure JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual (" + actualValue + ")" + " for step " + fileStepIndex, true);
+                        testHelper.UpdateTestResults(AppConstants.indent8 + "Failed JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual (" + actualValue + ")" + " for step " + fileStepIndex, true);
                     }
                 }
             }
