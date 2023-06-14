@@ -178,6 +178,8 @@
 		<a href="#persistingretrievedtextinavariableforlateruse" class="tableOfContentsLink">PERSISTING RETRIEVED TEXT IN A VARIABLE FOR LATER USE</a>
 		<a href="#fillingintextfields" class="tableOfContentsLink">FILLING IN TEXT FIELDS</a>
 		<a href="#clickanelement" class="tableOfContentsLink">CLICK AN ELEMENT</a>
+		<a href="#doubleclickanelement" class="tableOfContentsLink">DOUBLE CLICK AN ELEMENT</a>
+		<a href="#rightclickanelement" class="tableOfContentsLink">RIGHT CLICK AN ELEMENT</a>
 		<a href="#clickanelementinaniframe" class="tableOfContentsLink">CLICK AN ELEMENT IN AN IFRAME</a>
 		<a href="#selectanoptionfromanhtmlselectelement" class="tableOfContentsLink">SELECT AN OPTION FROM AN HTML SELECT ELEMENT</a>
 		<a href="#takingscreenshots" class="tableOfContentsLink">TAKING SCREENSHOTS</a>
@@ -201,7 +203,8 @@
 		<a href="#parseandcalculatelong" class="tableOfContentsLink">PARSE AND CALCULATE LONG</a>
 		<a href="#checkjavascriptvalue" class="tableOfContentsLink">CHECK JAVASCRIPT VALUE</a>
 		<a href="#saveharfile" class="tableOfContentsLink">SAVE HAR FILE</a>
-		<a href="#checkgtmtag" class="tableOfContentsLink">CHECK GTM TAG</a>
+		<a href="#checkgoogleanalyticsuatag-checkgtmtag" class="tableOfContentsLink">CHECK Google Analytics UA TAG - check gtm tag</a>
+		<a href="#checkgoogleanalyticsga4tag-checkga4tag" class="tableOfContentsLink">CHECK Google Analytics GA4 TAG - check ga4 tag</a>
 		<span class="tableOfContentsSectionHeader">INCLUDED TEST FILES</span>
 		<a href="#testfilesdescribed" class="tableOfContentsLink">TEST FILES DESCRIBED</a>
 		<span class="tableOfContentsSectionHeader">Troubleshooting</span>
@@ -659,7 +662,13 @@ Alternative way splitting the words apart.<pre>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="checkdocumentreadystatecompletewithoutnavigationasapostnavigationstep" class="sectionTitle">CHECK DOCUMENT READY STATE COMPLETE WITHOUT NAVIGATION AS A POST NAVIGATION STEP</a>
 		<p>
-The Wait for page command waits until document ready state is complete.To check that the document ready state is complete after previously navigating to a new page and to make it crucial. NOTE: The first argument must be n/a as shown below.- Omitting this argument or leaving it empty will result in an invalid format exception.To make it non-crucial change the crucial element to false. &lt;crucial&gt;false&lt;/crucial&gt;.This will be most useful for triggered navigation.<pre>
+The Wait for page command waits until document ready state is complete.To check that the document ready state is complete after previously navigating to a new page and to make it crucial. 		</p>
+		<p>
+NOTE: The first argument must be n/a as shown below.- Omitting this argument or leaving it empty will result in an invalid format exception.		</p>
+		<p>
+The second argument is the maximum time in seconds to wait for this to complete and must be included.- In the example below, we are waiting a maximum of 30 seconds.		</p>
+		<p>
+To make it non-crucial change the crucial element to false. &lt;crucial&gt;false&lt;/crucial&gt;.This will be most useful for triggered navigation.<pre>
 </br>&lt;step&gt;
 	&lt;command&gt;wait for page&lt;/command&gt;
 	&lt;actionType&gt;write&lt;/actionType&gt;
@@ -675,7 +684,13 @@ The Wait for page command waits until document ready state is complete.To check 
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="checkdocumentreadystatecompletewithnavigationinasinglestep" class="sectionTitle">CHECK DOCUMENT READY STATE COMPLETE WITH NAVIGATION IN A SINGLE STEP</a>
 		<p>
-To check that the document ready state is complete after navigating to a new page and to make it crucial. To make it non-crucial change the crucial element to false. &lt;crucial&gt;false&lt;/crucial&gt;.<pre>
+To check that the document ready state is complete after navigating to a new page and to make it crucial. 		</p>
+		<p>
+The first argument contains the URL for Navigation.		</p>
+		<p>
+The second argument is the maximum time in seconds to wait for this to complete and must be included.- In the example below, we are waiting a maximum of 30 seconds.		</p>
+		<p>
+To make it non-crucial change the crucial element to false. &lt;crucial&gt;false&lt;/crucial&gt;.<pre>
 </br>&lt;step&gt;
 	&lt;command&gt;wait for page&lt;/command&gt;
 	&lt;actionType&gt;write&lt;/actionType&gt;
@@ -691,7 +706,23 @@ To check that the document ready state is complete after navigating to a new pag
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="switchtoiframe" class="sectionTitle">SWITCH TO IFRAME</a>
 		<p>
-IMPORTANT: EACH TIME A SWITCH TO IFRAME COMMAND IS ISSUED, THE CONTEXT IS REVERTED TO THE MAIN WINDOWONCE THAT COMMAND COMPLETES EXECUTION, SO IF SUBSEQUENT TESTS NEED TO ACCESS THE IFRAME, THEY MUST BEENCAPSULATED WITHIN SWITCH TO IFRAME COMMANDS.The Switch to iFrame command temporarily switches the current context to the iFrame mentioned in the firs argument.Since only the command and first argument are needed to switch to the iFrame, the remaining test step elementscan be used to perform the desired action within the iFrame.The default action when switching to an iFrame is the Assert, which checks the text of an element against the expectedvalue provided, so the assert command need not be used but any other commands should be placed into &lt;arg2&gt;&lt;/arg2&gt;.Commands that can be used in the iFrame are assert, sendkeys, click, right click, double click, persist values and  check against persisted values.A navigation event cannot be directed to take place in an iFrame.If the arguments are not in the proper order, depending upon the command being performed in the iFrame, an attempt to reorderthe arguments will be made.  Unfortunately, some commands can be quite complex and interpreting arguments for reordering can beeven more complex, therefore, a message will be displayed indicating that the arguments are out of order so that they can be correctedby the tester in the test steps file.Failing to do so for complex commands may yield unexpected results.The following example is an example of switching to an iFrame, specified in &lt;arg1&gt;&lt;/arg1&gt; and performing an assertto check the element text pointed to by the &lt;accessor&gt;&lt;/accessor&gt; and &lt;accessorType&gt;&lt;/accessorType&gt; against theexpected value provided in the &lt;expectedValue&gt;&lt;/expectedValue&gt; element and since &lt;crucial&gt;&lt;/crucial&gt; is falsethe status will be reported and subsequent tests will run regardless.Specifically, the test is switching to the iframeResult iFrame, and checking the element specified for the text Tutorial.<pre>
+IMPORTANT: EACH TIME A SWITCH TO IFRAME COMMAND IS ISSUED, THE CONTEXT IS REVERTED TO THE MAIN WINDOWONCE THAT COMMAND COMPLETES EXECUTION, SO IF SUBSEQUENT TESTS NEED TO ACCESS THE IFRAME, THEY MUST BEENCAPSULATED WITHIN SWITCH TO IFRAME COMMANDS.		</p>
+		<p>
+The Switch to iFrame command temporarily switches the current context to the iFrame mentioned in the firs argument.		</p>
+		<p>
+Since only the command and first argument are needed to switch to the iFrame, the remaining test step elements can be used to perform the desired action within the iFrame. 		</p>
+		<p>
+The default action when switching to an iFrame is the Assert, which checks the text of an element against the expected value provided, so the assert command need not be used, but any other commands should be placed into &lt;arg2&gt;&lt;/arg2&gt;.Commands that can be used in the iFrame are assert, sendkeys, click, right click, double click, persist values and check against persisted values.		</p>
+		<p>
+A navigation event cannot be directed to take place in an iFrame.		</p>
+		<p>
+If the arguments are not in the proper order, depending upon the command being performed in the iFrame, an attempt to reorder the arguments will be made.  Unfortunately, some commands can be quite complex and interpreting arguments for reordering can be even more complex, therefore, a message will be displayed indicating that the arguments are out of order so that they can be corrected by the tester in the test steps file.		</p>
+		<p>
+Failing to do so for complex commands may yield unexpected results.		</p>
+		<p>
+The following example is an example of switching to an iFrame, specified in &lt;arg1&gt;&lt;/arg1&gt; and performing an assert to check the element text pointed to by the &lt;accessor&gt;&lt;/accessor&gt; and &lt;accessorType&gt;&lt;/accessorType&gt; against the expected value provided in the &lt;expectedValue&gt;&lt;/expectedValue&gt; element and since &lt;crucial&gt;&lt;/crucial&gt; is false the status will be reported and subsequent tests will run regardless.		</p>
+		<p>
+Specifically, the test is switching to the iframeResult iFrame, and checking the element specified for the text Tutorial.<pre>
 </br>&lt;step&gt;
 	&lt;command&gt;Switch to iFrame&lt;/command&gt;
 	&lt;actionType&gt;read&lt;/actionType&gt;
@@ -707,7 +738,9 @@ IMPORTANT: EACH TIME A SWITCH TO IFRAME COMMAND IS ISSUED, THE CONTEXT IS REVERT
 
 		</p>
 		<p>
-To switch to an iFrame and perform a click, refer to the following example.Note that you have to specify the command in &lt;arg2&gt;&lt;/arg2&gt; as click is not the default action.<pre>
+To switch to an iFrame and perform a click, refer to the following example.		</p>
+		<p>
+Note that you have to specify the command in &lt;arg2&gt;&lt;/arg2&gt; as click is not the default action.<pre>
 </br>&lt;step&gt;
 	&lt;command&gt;Switch to iFrame&lt;/command&gt;
 	&lt;actionType&gt;write&lt;/actionType&gt;
@@ -727,7 +760,17 @@ To switch to an iFrame and perform a click, refer to the following example.Note 
 		<p>
 IMPORTANT: CONDITIONAL BLOCKS CAN NOT BE NESTED!!!!		</p>
 		<p>
-Creating a conditional block is a two step process.1.	First, the conditional block must be started by adding the &lt;conditional&gt;true&lt;/conditional&gt; node to a 		test step that has the actionType set to read (&lt;actionType&gt;read&lt;/actionType&gt;).		Only read actionTypes are allowed to begin a conditional block because read steps 		are checked against an expected value and are validatable.		Any test steps based on the success of this condition can be placed after the condition.		An example of a conditional block start is shown below.		This command will be discussed in detail later, but note the presence of the conditional field, 		which signifies the start of a conditional block.		Simply stated, the following command checks the element using the xPath accessor and validates that the text of that 		element is the expectedValue, and if so, it is marked as successful and block statements will execute, else block		statements will be skipped.<pre>
+Creating a conditional block is a two step process.		</p>
+		<p>
+1.	First, the conditional block must be started by adding the &lt;conditional&gt;true&lt;/conditional&gt; node to a 		test step that has the actionType set to read (&lt;actionType&gt;read&lt;/actionType&gt;).		</p>
+		<p>
+		Only read actionTypes are allowed to begin a conditional block because read steps 		are checked against an expected value and can be validated.		</p>
+		<p>
+		Any test steps based on the success of this condition can be placed after the condition.		</p>
+		<p>
+		An example of a conditional block start is shown below.		</p>
+		<p>
+		This command will be discussed in detail later, but note the presence of the conditional field, 		which signifies the start of a conditional block.		Simply stated, the following command checks the element using the xPath accessor and validates that the text of that 		element is the expectedValue, and if so, it is marked as successful and block statements will execute, else block 		statements will be skipped.<pre>
 </br>&lt;step&gt;
 	&lt;command&gt;assert&lt;/command&gt;
 	&lt;conditional&gt;true&lt;/conditional&gt;
@@ -741,7 +784,17 @@ Creating a conditional block is a two step process.1.	First, the conditional blo
 
 		</p>
 		<p>
-1.	Second, the conditional block must be ended by adding an end condition command.		The end conditional command node itself is the most important and only required		 node of this test step, as shown below.		This command neither reads nor writes and asserts nothing and therefore, cannot be marked as crucial.		Once this command is executed, all remaining test steps will not longer dependent upon the condition		and each will be executed as expected.		If this command is not issued all steps after the start of the Conditional Block start will be considered		part of the Conditional Block and will be executed or skipped accordingly.The following is the End Conditional command used to end the Conditional Block.<pre>
+1.	Second, the conditional block must be ended by adding an end condition command.		</p>
+		<p>
+		The end conditional command node itself is the most important and only required 		 node of this test step, as shown below.		</p>
+		<p>
+		This command neither reads nor writes and asserts nothing and therefore, cannot be marked as crucial.		</p>
+		<p>
+		Once this command is executed, all remaining test steps will no longer be dependent upon the condition 		and each will be executed as expected.		</p>
+		<p>
+		If this command is not issued all steps after the start of the Conditional Block start will be considered 		part of the Conditional Block and will be executed or skipped accordingly.		</p>
+		<p>
+The following is the End Conditional command used to end the Conditional Block.<pre>
 </br>&lt;step&gt;
 	&lt;command&gt;end conditional&lt;/command&gt;
 &lt;/step&gt;
@@ -751,7 +804,11 @@ Creating a conditional block is a two step process.1.	First, the conditional blo
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="checkananchorhref" class="sectionTitle">CHECK AN ANCHOR HREF</a>
 		<p>
-The Check_A_Href command checks the href attribute of a HyperLink.To check an anchor's href url and to make it non-crucial.To make it crucial change the last parameter to true.This will check the value of the href and compare it to the expected value provided.<pre>
+The Check_A_Href command checks the href attribute of a HyperLink.		</p>
+		<p>
+To check an anchor's href url and to make it non-crucial, see the example below.		</p>
+		<p>
+To make it crucial change the last parameter to true.This will check the value of the href and compare it to the expected value provided.<pre>
 </br>&lt;step&gt;
 	&lt;command&gt;check_a_href&lt;/command&gt;
 	&lt;actionType&gt;read&lt;/actionType&gt;
@@ -759,15 +816,12 @@ The Check_A_Href command checks the href attribute of a HyperLink.To check an an
 	&lt;crucial&gt;FALSE&lt;/crucial&gt;
 	&lt;accessor&gt;//*[@id="menu-item-21"]/a&lt;/accessor&gt;
 	&lt;accessorType&gt;xPath&lt;/accessorType&gt;
-	&lt;arguments&gt;
-		&lt;arg1&gt;alt&lt;/arg1&gt;
-	&lt;/arguments&gt;
 &lt;/step&gt;
 </br></pre>
 
 		</p>
 		<p>
-Alternative way splitting the words.<pre>
+Alternative way splitting the command words.<pre>
 </br>&lt;step&gt;
 	&lt;command&gt;check a href&lt;/command&gt;
 	&lt;actionType&gt;read&lt;/actionType&gt;
@@ -775,9 +829,6 @@ Alternative way splitting the words.<pre>
 	&lt;crucial&gt;FALSE&lt;/crucial&gt;
 	&lt;accessor&gt;//*[@id="menu-item-21"]/a&lt;/accessor&gt;
 	&lt;accessorType&gt;xPath&lt;/accessorType&gt;
-	&lt;arguments&gt;
-		&lt;arg1&gt;alt&lt;/arg1&gt;
-	&lt;/arguments&gt;
 &lt;/step&gt;
 </br></pre>
 
@@ -828,7 +879,11 @@ The Check Count command checks the number of occurrences of a particular element
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="checkallpageimagesrctagswithseparatenavigationstep" class="sectionTitle">CHECK ALL PAGE IMAGE SRC TAGS WITH SEPARATE NAVIGATION STEP</a>
 		<p>
-The Check Img Src command checks the src of all image tags.To check all page image src tags, on the current page, to ensure a source exists and to make it non-crucial.To make it crucial change the last parameter to true.The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sourcesbut will report the status of all image sources.<pre>
+The Check Img Src command checks the src of all image tags.		</p>
+		<p>
+To check all page image src tags, on the current page, to ensure a source exists and to make it non-crucial, use the example below.To make it crucial change the last parameter to true.		</p>
+		<p>
+The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sources but will report the status of all image sources.<pre>
 </br>&lt;step&gt;
 	&lt;command&gt;check images src&lt;/command&gt;
 	&lt;actionType&gt;read&lt;/actionType&gt;
@@ -840,7 +895,11 @@ The Check Img Src command checks the src of all image tags.To check all page ima
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="checkallpageimagesrctagswithnoseparatenavigationstep" class="sectionTitle">CHECK ALL PAGE IMAGE SRC TAGS WITH NO SEPARATE NAVIGATION STEP</a>
 		<p>
-To check all page image src tags, on the page specified in the arg1 node, to ensure a source exists and to make it non-crucial.To make it crucial change the last parameter to true.The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sources but will report the status of all image sources.<pre>
+To check all page image src tags, on the page specified in the arg1 node, to ensure a source exists and to make it non-crucial.		</p>
+		<p>
+To make it crucial change the last parameter to true.		</p>
+		<p>
+The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sources but will report the status of all image sources.<pre>
 </br>&lt;step&gt;
 	&lt;command&gt;check images src&lt;/command&gt;
 	&lt;actionType&gt;read&lt;/actionType&gt;
@@ -853,9 +912,9 @@ To check all page image src tags, on the page specified in the arg1 node, to ens
 
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
-<a name="checkallpageimagealttagswithseparatenavigationstep" class="sectionTitle">CHECK ALL PAGE IMAGE ALT TAGS WITH SEPARATE NAVIGATION STEP</a>
+<a name="checkallpageimagealttagswithnoseparatenavigationstep" class="sectionTitle">CHECK ALL PAGE IMAGE ALT TAGS WITH NO SEPARATE NAVIGATION STEP</a>
 		<p>
-The Check Image Alt command checks all page image alt tags for text.To check all page image alt tags, for ADA compliance and to make it crucial.To make it non-crucial change the crucial element to false. &lt;crucial&gt;false&lt;/crucial&gt;.The alt tag will checked to see if it exists and is not empty.  Empty tags will be flagged as failed.This is a small part of 508 compliance.<pre>
+The Check Image Alt command checks all page image alt tags for text.To check all page image alt tags, for ADA compliance and to make it crucial.To make it non-crucial change the crucial element to false. &lt;crucial&gt;false&lt;/crucial&gt;.The alt tag will be checked to see if it exists and is not empty.  Empty tags will be flagged as failed.This is a small part of 508 compliance.<pre>
 </br>&lt;step&gt;
 	&lt;command&gt;check images alt&lt;/command&gt;
 	&lt;actionType&gt;read&lt;/actionType&gt;
@@ -865,9 +924,11 @@ The Check Image Alt command checks all page image alt tags for text.To check all
 
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
-<a name="checkallpageimagealttagswithnoseparatenavigationstep" class="sectionTitle">CHECK ALL PAGE IMAGE ALT TAGS WITH NO SEPARATE NAVIGATION STEP</a>
+<a name="checkallpageimagealttagswithseparatenavigationstep" class="sectionTitle">CHECK ALL PAGE IMAGE ALT TAGS WITH SEPARATE NAVIGATION STEP</a>
 		<p>
-To check all page image alt tags, for ADA compliance and to make it crucial.To make it non-crucial change the crucial element to false. &lt;crucial&gt;false&lt;/crucial&gt;.The alt tag will checked to see if it exists and is not empty.  Empty tags will be flagged as failed.This is a small part of 508 compliance.<pre>
+To check all page image alt tags, for ADA compliance and to make it crucial.To make it non-crucial change the crucial element to false. &lt;crucial&gt;false&lt;/crucial&gt;.Supply the URL to Navigate to in the Arguments section, as shown below.		</p>
+		<p>
+The alt tag will checked to see if it exists and is not empty.  Empty tags will be flagged as failed.This is a small part of 508 compliance.<pre>
 </br>&lt;step&gt;
 	&lt;command&gt;check images alt&lt;/command&gt;
 	&lt;actionType&gt;read&lt;/actionType&gt;
@@ -882,7 +943,15 @@ To check all page image alt tags, for ADA compliance and to make it crucial.To m
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="waitingaspecificamountoftimeforitemstobeavailable" class="sectionTitle">WAITING A SPECIFIC AMOUNT OF TIME FOR ITEMS TO BE AVAILABLE</a>
 		<p>
-The Wait command pauses execution for a specified amount of time to allow for page load completion.In the event that arguments are not in the correct order, this application attempts to re-order the arguments.If the results are not as expected, refer to the examples in this help file for proper argument order.To wait for a specific amount of time before continuing to allow for page loading or script completion.To wait for 5 thousand milli-seconds before continuing onto the next step.<pre>
+The Wait command pauses execution for a specified amount of time to allow for page load completion.		</p>
+		<p>
+In the event that arguments are not in the correct order, this application attempts to re-order the arguments.		</p>
+		<p>
+If the results are not as expected, refer to the examples in this help file for proper argument order.		</p>
+		<p>
+To wait for a specific amount of time before continuing to allow for page loading or script completion.		</p>
+		<p>
+To wait for 5 thousand milli-seconds before continuing onto the next step.<pre>
 </br>&lt;step&gt;
 	&lt;command&gt;wait&lt;/command&gt;
 	&lt;actionType&gt;write&lt;/actionType&gt;
@@ -1088,6 +1157,38 @@ The Click command clicks on the specified element, as long as it is not in an iF
 	&lt;crucial&gt;false&lt;/crucial&gt;
 	&lt;accessor&gt;radio-button-2&lt;/accessor&gt;
 	&lt;accessorType&gt;ID&lt;/accessorType&gt;
+&lt;/step&gt;
+</br></pre>
+
+		</p>
+<span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
+<a name="doubleclickanelement" class="sectionTitle">DOUBLE CLICK AN ELEMENT</a>
+		<p>
+The DoubleClick command double clicks on the specified element, as long as it is not in an iFrame.This is not a common event and is most likely used in text boxes to select all content.To double click an element by ID, use the following:<pre>
+</br>&lt;step&gt;
+	&lt;command&gt;doubleclick&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;false&lt;/crucial&gt;
+	&lt;accessor&gt;last-name&lt;/accessor&gt;
+	&lt;accessorType&gt;ID&lt;/accessorType&gt;
+&lt;/step&gt;
+</br></pre>
+
+		</p>
+<span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
+<a name="rightclickanelement" class="sectionTitle">RIGHT CLICK AN ELEMENT</a>
+		<p>
+The RIGHTClick command right clicks on the specified element, as long as it is not in an iFrame.This is not a common event and is most likely used to bring up the context menu.To right click an element by ID, use the following:<pre>
+</br>&lt;step&gt;
+	&lt;command&gt;right click&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;true&lt;/crucial&gt;
+	&lt;accessor&gt;//*[@id="block-menu-menu-dc-menu"]/div/div/ul/li[2]/a&lt;/accessor&gt;
+	&lt;accessorType&gt;xPath&lt;/accessorType&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;Keys.Arrow_Down&lt;/arg1&gt;
+		&lt;arg2&gt;Keys.Enter&lt;/arg2&gt;
+	&lt;/arguments&gt;
 &lt;/step&gt;
 </br></pre>
 
@@ -1911,7 +2012,7 @@ The Check JavaScript Value command executes a JavaScript command and captures th
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="saveharfile" class="sectionTitle">SAVE HAR FILE</a>
 		<p>
-The Save HAR File command saves the HAR file to the location specified and this command also populates the GTM Tag List object which can then be used to check GTM tags.This step MUST be executed before attempting to Check GTM tags.The HAR File is automatically saved when the application is ending but that is simply to allow for manually reviewing which tags fired.It is recommended that you make this step crucial if subsequent steps Check GTM tags	The only argument for this command is as follows:	&lt;arg1&gt;This argument specifies the File name for the har file.  If no path is included, it will be saved in the /config/har_files folder.<pre>
+The Save HAR File command saves the HAR file to the location specified and this command also populates the GTM UA and GA4 Tag List objects which can then be used to check GTM UA and GA4 tags.This step MUST be executed before attempting to Check GTM UA or GA4 tags.The HAR File is automatically saved when the application is ending, but that is simply to allow for manually reviewing which tags fired.It is recommended that you make this step crucial if subsequent steps Check GTM UA or GA4 tags	The only argument for this command is as follows:	&lt;arg1&gt;This argument specifies the File name for the har file.  If no path is included, it will be saved in the /config/har_files folder.<pre>
 </br>&lt;step&gt;
 	&lt;command&gt;save har file&lt;/command&gt;
 	&lt;crucial&gt;TRUE&lt;/crucial&gt;
@@ -1924,9 +2025,33 @@ The Save HAR File command saves the HAR file to the location specified and this 
 
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
-<a name="checkgtmtag" class="sectionTitle">CHECK GTM TAG</a>
+<a name="checkgoogleanalyticsuatag-checkgtmtag" class="sectionTitle">CHECK Google Analytics UA TAG - check gtm tag</a>
 		<p>
-The Check GTM Tag command checks the configured values against a list of GTM tags to determine if the tag fired.The Save Har file step MUST be executed before attempting to Check GTM tags!!!Most of the arguments are required as many of the values could be duplicated across tags and these values must be supplied to discern between tags fired and the tag being checked. The order of the arguments does not matter as long as all required fields are present as shown below.		dl - Document Location - page where tag fired - required		</p>
+The Check GTM Tag command checks the configured values against a list of GTM tags to determine if the tag fired.&lt;br&gt;
+		</p>
+		<p>
+The Save Har file step MUST be executed before attempting to Check GTM tags!!!&lt;br&gt;
+		</p>
+		<p>
+Most of the arguments are required as many of the values could be duplicated across tags and these values must be &lt;br&gt;
+		</p>
+		<p>
+supplied to discern between tags fired and the tag being checked. &lt;br&gt;
+		</p>
+		<p>
+The values are evaluated as a whole and if all supplied values match, the check is successful.		</p>
+		<p>
+If the required values match, the non-matching non-required values will be indicated and although 		</p>
+		<p>
+the step will be marked as a failure, the offending items will be indicated so that they can be examined.		</p>
+		<p>
+If the required values do not match, the entire step will show as a failure so a thorough examination 		</p>
+		<p>
+will be required to track down the offending item(s).		</p>
+		<p>
+The order of the arguments does not matter as long as all required fields are present as shown below.		</p>
+		<p>
+		dl - Document Location - page where tag fired - required		</p>
 		<p>
 		t - Hit Type - Type of Hit (Event/Pageview - required		</p>
 		<p>
@@ -1940,9 +2065,9 @@ The Check GTM Tag command checks the configured values against a list of GTM tag
 		<p>
 		cg2 - Content Group 2 - Content Group 2 - which if set to += will check that the field starts with the value specified - not required		</p>
 		<p>
-		dt - Document Title - page title where tag fired - not required - not currently wired up		</p>
+		dt - Document Title - page title where tag fired - not required		</p>
 		<p>
-		tid - Tracking ID - GA Tracking ID - not required - not currently wired up		</p>
+		tid - Tracking ID - GA Tracking ID - not required		</p>
 <pre>
 </br>		<p>
 &lt;step&gt;
@@ -1959,6 +2084,37 @@ The Check GTM Tag command checks the configured values against a list of GTM tag
 		&lt;arg7&gt;cg2+=GTM-A9AAA0&lt;/arg7&gt;
 		&lt;arg8&gt;tid=UA-1234567-8&lt;/arg8&gt;
 		&lt;arg9&gt;dt=Products | My Company Site&lt;/arg9&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
+		</p>
+<span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
+<a name="checkgoogleanalyticsga4tag-checkga4tag" class="sectionTitle">CHECK Google Analytics GA4 TAG - check ga4 tag</a>
+		<p>
+The Check GA4 Tag command checks the configured values against a list of GTM GA4 tags to determine if the tag fired.Because the name and number of parameters per tag will differ, this functionality checks all parameters supplied against all parameters retrieved.The Save Har file step MUST be executed before attempting to Check GTM tags!!!While a specific number of arguments may not be required for this tag, a unique tag value should be supplied to discern between tags fired and the tag being checked. The values are evaluated as a whole and if all supplied values match, the check is successful.If the supplied values do not match, the entire step will show as a failure so a thorough examination will be required to track down the offending item(s) as only the test values will be displayed in the test results and the tester will have to review the log file to see what values did not match.The order of the arguments does not matter as long as all required fields are present as shown below.		</p>
+		<p>
+		dl - Document Location - page where tag fired - required		</p>
+		<p>
+		ep.gtm_tag_name - Tag Name in GTM that you pass with the tag.(if configured)		</p>
+		<p>
+		en - Event Name - The Name of the Event that will appear in GA4 Events.		</p>
+		<p>
+		ep.product_name - Name of product (Unique Custom Parameter example)		</p>
+		<p>
+		tid - Tracking ID - GA Tracking ID - not required		</p>
+<pre>
+</br>		<p>
+&lt;step&gt;
+	&lt;command&gt;check ga4 tag&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;FALSE&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;dl=https://www.mycompanysite.com/products&lt;/arg1&gt;
+		&lt;arg2&gt;ep.gtm_tag_name=GA4 - Select Item - Product CTA Click&lt;/arg2&gt;
+		&lt;arg3&gt;en=select_item&lt;/arg3&gt;
+		&lt;arg4&gt;tid=G-1ABCDEFG2H&lt;/arg4&gt;
+		&lt;arg5&gt;ep.product_name=the cool product name&lt;/arg5&gt;
 	&lt;/arguments&gt;
 &lt;/step&gt;
 </br></pre>
