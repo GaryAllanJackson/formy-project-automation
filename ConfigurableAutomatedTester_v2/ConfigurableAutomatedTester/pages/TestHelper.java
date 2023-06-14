@@ -809,11 +809,12 @@ public class TestHelper{
             step = step.substring(0, step.indexOf(" "));
         }
         String status = testMessage.contains("Successful") ? "Successful" : testMessage.trim().startsWith("Error") ? "Error" : testMessage.trim().startsWith("Fail") ? "Failure" : null;
+
         if (status == null) {
             return;
         }
 
-        int startPos = testMessage.indexOf(status) + status.length();
+        int startPos = testMessage.trim().startsWith("Failed") ? testMessage.indexOf("Failed") + "Failed".length() : testMessage.indexOf(status) + status.length();
         int endPos = testMessage.indexOf(" for step ");
         //DebugDisplay("testMessage =" + testMessage);
         String message = testMessage.substring(startPos, endPos).trim();

@@ -281,7 +281,7 @@ public class ReadCommands {
                 testMessage +=  AppConstants.indent5 + " for step " + fileStepIndex;
                 testHelper.UpdateTestResults(testMessage, true);
             } else {
-                testHelper.UpdateTestResults(AppConstants.indent5 + "Failed No GTM Tag found matching specified criteria: \r\n" + testParams + AppConstants.indent5 + " for step " + fileStepIndex, true);
+                testHelper.UpdateTestResults(AppConstants.indent5 + "Failed GA4 GTM Tag NOT found matching specified criteria: \r\n" + testParams + AppConstants.indent5 + " for step " + fileStepIndex, true);
             }
         }
     }
@@ -940,7 +940,7 @@ public class ReadCommands {
             if (checkType.toLowerCase().trim().equals("alt")) {
                 if (altTag != null && !altTag.trim().isEmpty()) {
                     altTagCount++;
-                    testHelper.UpdateTestResults("Successful image alt tag found: " + altTag + " for img src: " + imgSrc + " for step " + fileStepIndex, true);
+                    testHelper.UpdateTestResults("Successful image alt tag found: (" + altTag + ") for img src: " + imgSrc + " for step " + fileStepIndex, true);
                     testCentral.conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) || testCentral.conditionalSuccessful;
                 } else {
                     testHelper.UpdateTestResults("Failed image alt tag missing for img src: " + imgSrc + " for step " + fileStepIndex, true);

@@ -695,7 +695,7 @@ public class WriteCommands {
             testHelper.UpdateTestResults(AppConstants.indent5 + "Populating GTM Tags Object from HAR for step " + fileStepIndex, true);
             for (HarEntry entry : entries) {
                 int size = entry.getRequest().getQueryString().size();
-                testHelper.DebugDisplay("URL = " + entry.getRequest().getUrl());
+               // testHelper.DebugDisplay("URL = " + entry.getRequest().getUrl());
                 for (int x=0;x<size;x++) {
                     if (entry.getRequest().getQueryString().get(x).getValue().indexOf("collect?v=1") > -1) {
                         item = new GtmTag();
@@ -744,23 +744,14 @@ public class WriteCommands {
                             gA4item.set_EventName(entry.getRequest().getQueryString().get(x).getName().equals("en") ? entry.getRequest().getQueryString().get(x).getValue() : gA4item.get_eventName());
                             gA4item.set_SiteSection(entry.getRequest().getQueryString().get(x).getName().equals("ep.site_section") ? entry.getRequest().getQueryString().get(x).getValue() : gA4item.get_siteSection());
                             gA4item.set_SiteSection(entry.getRequest().getQueryString().get(x).getName().equals("ep.page_template") ? entry.getRequest().getQueryString().get(x).getValue() : gA4item.get_pageTemplate());
-                            //comment = (comment.equals(null) && (entry.getRequest().getQueryString().get(x).getName().equals("_et") || entry.getRequest().getQueryString().get(x).getName().equals("comment")))  ? entry.getRequest().getQueryString().get(x).getValue() : null;
                             comment = entry.getRequest().getQueryString().get(x).getName().equals("_et") ? entry.getRequest().getQueryString().get(x).getValue() : null;
-                            //ga4ParameterList = new ArrayList<>();
-                            //for (int ga4Index = 0; ga4Index < 50; ga4Index++) {
-                                ga4Parameter = new GA4Parameter();
-                                if (ga4ParamName.indexOf(entry.getRequest().getQueryString().get(x).getName()) < 0) {
-                                    ga4Parameter = SetGA4Parameter(entry.getRequest().getQueryString().get(x).getName(), entry.getRequest().getQueryString().get(x).getValue());
-                                    ga4ParameterList.add(ga4Parameter);
-                                    ga4ParamName += entry.getRequest().getQueryString().get(x).getName() + ",";
-                                    //testHelper.DebugDisplay("---------[ GA4 Tag Name = " + gA4item.get_gtmTagName() + " ]---------\r\nParameter Added Name = " + entry.getRequest().getQueryString().get(x).getName() + "\r\n Value = " + entry.getRequest().getQueryString().get(x).getValue());
-                                }
-                            //}
-                            //gA4item.set_GA4Parameters(ga4ParameterList);
-                            //below used for debugging parameters placed into the array
-                            /*for (int ga4Index = 0; ga4Index < gA4item.getGA4Parameters().size(); ga4Index++) {
-                                testHelper.DebugDisplay("Parameter in list Name = " + gA4item.getGA4Parameter(ga4Index).get_parameterName() + " - Value = " + gA4item.getGA4Parameter(ga4Index).get_parameterValue());
-                            }*/
+
+                            ga4Parameter = new GA4Parameter();
+                            if (ga4ParamName.indexOf(entry.getRequest().getQueryString().get(x).getName()) < 0) {
+                                ga4Parameter = SetGA4Parameter(entry.getRequest().getQueryString().get(x).getName(), entry.getRequest().getQueryString().get(x).getValue());
+                                ga4ParameterList.add(ga4Parameter);
+                                ga4ParamName += entry.getRequest().getQueryString().get(x).getName() + ",";
+                            }
                         }
                     }
                 }

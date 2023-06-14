@@ -128,7 +128,8 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "\t\tPARSE AND CALCULATE LONG ");
             WriteToFile(get_helpFileName(), "\t\tCHECK JAVASCRIPT VALUE \r\n");
             WriteToFile(get_helpFileName(), "\t\tSAVE HAR FILE \r\n");
-            WriteToFile(get_helpFileName(), "\t\tCHECK GTM TAG \r\n");
+            WriteToFile(get_helpFileName(), "\t\tCHECK Google Analytics UA TAG - check gtm tag\r\n");
+            WriteToFile(get_helpFileName(), "\t\tCHECK Google Analytics GA4 TAG - check ga4 tag \r\n");
 
             WriteToFile(get_helpFileName(), AppConstants.indent5 + testHelper.PrePostPad("[ INCLUDED TEST FILES ]", "═", 9, 100));
             WriteToFile(get_helpFileName(), "\t\tTEST FILES DESCRIBED \r\n");
@@ -710,9 +711,11 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CHECK DOCUMENT READY STATE COMPLETE WITHOUT NAVIGATION AS A POST NAVIGATION STEP]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Wait for page command waits until document ready state is complete.");
-            WriteToFile(get_helpFileName(), "To check that the document ready state is complete after previously navigating to a new page and to make it crucial. ");
+            WriteToFile(get_helpFileName(), "To check that the document ready state is complete after previously navigating to a new page and to make it crucial. \n");
             WriteToFile(get_helpFileName(), "NOTE: The first argument must be n/a as shown below.");
-            WriteToFile(get_helpFileName(), "- Omitting this argument or leaving it empty will result in an invalid format exception.");
+            WriteToFile(get_helpFileName(), "- Omitting this argument or leaving it empty will result in an invalid format exception.\n");
+            WriteToFile(get_helpFileName(), "The second argument is the maximum time in seconds to wait for this to complete and must be included.");
+            WriteToFile(get_helpFileName(), "- In the example below, we are waiting a maximum of 30 seconds.\n");
             WriteToFile(get_helpFileName(), "To make it non-crucial change the crucial element to false. <crucial>false</crucial>.");
             WriteToFile(get_helpFileName(), "This will be most useful for triggered navigation.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
@@ -726,7 +729,10 @@ public class HelpWriter {
                     "</step>");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CHECK DOCUMENT READY STATE COMPLETE WITH NAVIGATION IN A SINGLE STEP]", "═", 9, 151));
-            WriteToFile(get_helpFileName(), "To check that the document ready state is complete after navigating to a new page and to make it crucial. ");
+            WriteToFile(get_helpFileName(), "To check that the document ready state is complete after navigating to a new page and to make it crucial. \n");
+            WriteToFile(get_helpFileName(), "The first argument contains the URL for Navigation.\n");
+            WriteToFile(get_helpFileName(), "The second argument is the maximum time in seconds to wait for this to complete and must be included.");
+            WriteToFile(get_helpFileName(), "- In the example below, we are waiting a maximum of 30 seconds.\n");
             WriteToFile(get_helpFileName(), "To make it non-crucial change the crucial element to false. <crucial>false</crucial>.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>wait for page</command>\r\n" +
@@ -745,23 +751,23 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ SWITCH TO IFRAME ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "IMPORTANT: EACH TIME A SWITCH TO IFRAME COMMAND IS ISSUED, THE CONTEXT IS REVERTED TO THE MAIN WINDOW");
             WriteToFile(get_helpFileName(), "ONCE THAT COMMAND COMPLETES EXECUTION, SO IF SUBSEQUENT TESTS NEED TO ACCESS THE IFRAME, THEY MUST BE");
-            WriteToFile(get_helpFileName(), "ENCAPSULATED WITHIN SWITCH TO IFRAME COMMANDS.");
-            WriteToFile(get_helpFileName(), "The Switch to iFrame command temporarily switches the current context to the iFrame mentioned in the firs argument.");
-            WriteToFile(get_helpFileName(), "Since only the command and first argument are needed to switch to the iFrame, the remaining test step elements");
-            WriteToFile(get_helpFileName(), "can be used to perform the desired action within the iFrame.");
-            WriteToFile(get_helpFileName(), "The default action when switching to an iFrame is the Assert, which checks the text of an element against the expected");
-            WriteToFile(get_helpFileName(), "value provided, so the assert command need not be used but any other commands should be placed into <arg2></arg2>.");
-            WriteToFile(get_helpFileName(), "Commands that can be used in the iFrame are assert, sendkeys, click, right click, double click, persist values and  check against persisted values.");
-            WriteToFile(get_helpFileName(), "A navigation event cannot be directed to take place in an iFrame.");
-            WriteToFile(get_helpFileName(), "If the arguments are not in the proper order, depending upon the command being performed in the iFrame, an attempt to reorder");
-            WriteToFile(get_helpFileName(), "the arguments will be made.  Unfortunately, some commands can be quite complex and interpreting arguments for reordering can be");
-            WriteToFile(get_helpFileName(), "even more complex, therefore, a message will be displayed indicating that the arguments are out of order so that they can be corrected");
-            WriteToFile(get_helpFileName(), "by the tester in the test steps file.");
-            WriteToFile(get_helpFileName(), "Failing to do so for complex commands may yield unexpected results.");
-            WriteToFile(get_helpFileName(), "The following example is an example of switching to an iFrame, specified in <arg1></arg1> and performing an assert");
-            WriteToFile(get_helpFileName(), "to check the element text pointed to by the <accessor></accessor> and <accessorType></accessorType> against the");
-            WriteToFile(get_helpFileName(), "expected value provided in the <expectedValue></expectedValue> element and since <crucial></crucial> is false");
-            WriteToFile(get_helpFileName(), "the status will be reported and subsequent tests will run regardless.");
+            WriteToFile(get_helpFileName(), "ENCAPSULATED WITHIN SWITCH TO IFRAME COMMANDS.\n");
+            WriteToFile(get_helpFileName(), "The Switch to iFrame command temporarily switches the current context to the iFrame mentioned in the firs argument.\n");
+            WriteToFile(get_helpFileName(), "Since only the command and first argument are needed to switch to the iFrame, the remaining test step elements ");
+            WriteToFile(get_helpFileName(), "can be used to perform the desired action within the iFrame. \n");
+            WriteToFile(get_helpFileName(), "The default action when switching to an iFrame is the Assert, which checks the text of an element against the expected ");
+            WriteToFile(get_helpFileName(), "value provided, so the assert command need not be used, but any other commands should be placed into <arg2></arg2>.");
+            WriteToFile(get_helpFileName(), "Commands that can be used in the iFrame are assert, sendkeys, click, right click, double click, persist values and check against persisted values.\n");
+            WriteToFile(get_helpFileName(), "A navigation event cannot be directed to take place in an iFrame.\n");
+            WriteToFile(get_helpFileName(), "If the arguments are not in the proper order, depending upon the command being performed in the iFrame, an attempt to reorder ");
+            WriteToFile(get_helpFileName(), "the arguments will be made.  Unfortunately, some commands can be quite complex and interpreting arguments for reordering can be ");
+            WriteToFile(get_helpFileName(), "even more complex, therefore, a message will be displayed indicating that the arguments are out of order so that they can be corrected ");
+            WriteToFile(get_helpFileName(), "by the tester in the test steps file.\n");
+            WriteToFile(get_helpFileName(), "Failing to do so for complex commands may yield unexpected results.\n");
+            WriteToFile(get_helpFileName(), "The following example is an example of switching to an iFrame, specified in <arg1></arg1> and performing an assert ");
+            WriteToFile(get_helpFileName(), "to check the element text pointed to by the <accessor></accessor> and <accessorType></accessorType> against the ");
+            WriteToFile(get_helpFileName(), "expected value provided in the <expectedValue></expectedValue> element and since <crucial></crucial> is false ");
+            WriteToFile(get_helpFileName(), "the status will be reported and subsequent tests will run regardless.\n");
             WriteToFile(get_helpFileName(), "Specifically, the test is switching to the iframeResult iFrame, and checking the element specified for the text Tutorial.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>Switch to iFrame</command>\r\n" +
@@ -775,7 +781,7 @@ public class HelpWriter {
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "To switch to an iFrame and perform a click, refer to the following example.");
+            WriteToFile(get_helpFileName(), "To switch to an iFrame and perform a click, refer to the following example.\n");
             WriteToFile(get_helpFileName(), "Note that you have to specify the command in <arg2></arg2> as click is not the default action.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>Switch to iFrame</command>\r\n" +
@@ -795,17 +801,17 @@ public class HelpWriter {
 
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CONDITIONAL BLOCKS ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "IMPORTANT: CONDITIONAL BLOCKS CAN NOT BE NESTED!!!!\r\n");
-            WriteToFile(get_helpFileName(), "Creating a conditional block is a two step process.");
+            WriteToFile(get_helpFileName(), "Creating a conditional block is a two step process.\n");
             WriteToFile(get_helpFileName(), "1.\tFirst, the conditional block must be started by adding the <conditional>true</conditional> node to a ");
-            WriteToFile(get_helpFileName(), "\t\ttest step that has the actionType set to read (<actionType>read</actionType>).");
+            WriteToFile(get_helpFileName(), "\t\ttest step that has the actionType set to read (<actionType>read</actionType>).\n");
             WriteToFile(get_helpFileName(), "\t\tOnly read actionTypes are allowed to begin a conditional block because read steps ");
-            WriteToFile(get_helpFileName(), "\t\tare checked against an expected value and are validatable.");
-            WriteToFile(get_helpFileName(), "\t\tAny test steps based on the success of this condition can be placed after the condition.");
-            WriteToFile(get_helpFileName(), "\t\tAn example of a conditional block start is shown below.");
+            WriteToFile(get_helpFileName(), "\t\tare checked against an expected value and can be validated.\n");
+            WriteToFile(get_helpFileName(), "\t\tAny test steps based on the success of this condition can be placed after the condition.\n");
+            WriteToFile(get_helpFileName(), "\t\tAn example of a conditional block start is shown below.\n");
             WriteToFile(get_helpFileName(), "\t\tThis command will be discussed in detail later, but note the presence of the conditional field, ");
             WriteToFile(get_helpFileName(), "\t\twhich signifies the start of a conditional block.");
             WriteToFile(get_helpFileName(), "\t\tSimply stated, the following command checks the element using the xPath accessor and validates that the text of that ");
-            WriteToFile(get_helpFileName(), "\t\telement is the expectedValue, and if so, it is marked as successful and block statements will execute, else block");
+            WriteToFile(get_helpFileName(), "\t\telement is the expectedValue, and if so, it is marked as successful and block statements will execute, else block ");
             WriteToFile(get_helpFileName(), "\t\tstatements will be skipped.");
             WriteToFile(get_helpFileName(), "<step>\n" +
                     "\t<command>assert</command>\r\n" +
@@ -816,14 +822,14 @@ public class HelpWriter {
                     "\t<accessor>/html[1]/body[1]/div[1]/nav[1]/a[1]</accessor>\r\n" +
                     "\t<accessorType>xPath</accessorType>\r\n" +
                     "</step>\r\n");
-            WriteToFile(get_helpFileName(), "1.\tSecond, the conditional block must be ended by adding an end condition command.");
-            WriteToFile(get_helpFileName(), "\t\tThe end conditional command node itself is the most important and only required");
-            WriteToFile(get_helpFileName(), "\t\t node of this test step, as shown below.");
-            WriteToFile(get_helpFileName(), "\t\tThis command neither reads nor writes and asserts nothing and therefore, cannot be marked as crucial.");
-            WriteToFile(get_helpFileName(), "\t\tOnce this command is executed, all remaining test steps will not longer dependent upon the condition");
-            WriteToFile(get_helpFileName(), "\t\tand each will be executed as expected.");
-            WriteToFile(get_helpFileName(), "\t\tIf this command is not issued all steps after the start of the Conditional Block start will be considered");
-            WriteToFile(get_helpFileName(), "\t\tpart of the Conditional Block and will be executed or skipped accordingly.");
+            WriteToFile(get_helpFileName(), "1.\tSecond, the conditional block must be ended by adding an end condition command.\n");
+            WriteToFile(get_helpFileName(), "\t\tThe end conditional command node itself is the most important and only required ");
+            WriteToFile(get_helpFileName(), "\t\t node of this test step, as shown below.\n");
+            WriteToFile(get_helpFileName(), "\t\tThis command neither reads nor writes and asserts nothing and therefore, cannot be marked as crucial.\n");
+            WriteToFile(get_helpFileName(), "\t\tOnce this command is executed, all remaining test steps will no longer be dependent upon the condition ");
+            WriteToFile(get_helpFileName(), "\t\tand each will be executed as expected.\n");
+            WriteToFile(get_helpFileName(), "\t\tIf this command is not issued all steps after the start of the Conditional Block start will be considered ");
+            WriteToFile(get_helpFileName(), "\t\tpart of the Conditional Block and will be executed or skipped accordingly.\n");
             WriteToFile(get_helpFileName(), "The following is the End Conditional command used to end the Conditional Block.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>end conditional</command>\r\n" +
@@ -834,8 +840,8 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "");
 
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CHECK AN ANCHOR HREF ]", "═", 9, 151));
-            WriteToFile(get_helpFileName(), "The Check_A_Href command checks the href attribute of a HyperLink.");
-            WriteToFile(get_helpFileName(), "To check an anchor's href url and to make it non-crucial.");
+            WriteToFile(get_helpFileName(), "The Check_A_Href command checks the href attribute of a HyperLink.\n");
+            WriteToFile(get_helpFileName(), "To check an anchor's href url and to make it non-crucial, see the example below.\n");
             WriteToFile(get_helpFileName(), "To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "This will check the value of the href and compare it to the expected value provided.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
@@ -845,12 +851,9 @@ public class HelpWriter {
                     "\t<crucial>FALSE</crucial>\r\n" +
                     "\t<accessor>//*[@id=\"menu-item-21\"]/a</accessor>\r\n" +
                     "\t<accessorType>xPath</accessorType>\r\n" +
-                    "\t<arguments>\r\n" +
-                    "\t\t<arg1>alt</arg1>\r\n" +
-                    "\t</arguments>\r\n" +
                     "</step>\r\n");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "Alternative way splitting the words.");
+            WriteToFile(get_helpFileName(), "Alternative way splitting the command words.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>check a href</command>\r\n" +
                     "\t<actionType>read</actionType>\r\n" +
@@ -858,9 +861,6 @@ public class HelpWriter {
                     "\t<crucial>FALSE</crucial>\r\n" +
                     "\t<accessor>//*[@id=\"menu-item-21\"]/a</accessor>\r\n" +
                     "\t<accessorType>xPath</accessorType>\r\n" +
-                    "\t<arguments>\r\n" +
-                    "\t\t<arg1>alt</arg1>\r\n" +
-                    "\t</arguments>\r\n" +
                     "</step>\r\n");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("═", "═", 1, 151));
@@ -914,10 +914,10 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CHECK ALL PAGE IMAGE SRC TAGS WITH SEPARATE NAVIGATION STEP ]", "═", 9, 151));
-            WriteToFile(get_helpFileName(), "The Check Img Src command checks the src of all image tags.");
-            WriteToFile(get_helpFileName(), "To check all page image src tags, on the current page, to ensure a source exists and to make it non-crucial.");
-            WriteToFile(get_helpFileName(), "To make it crucial change the last parameter to true.");
-            WriteToFile(get_helpFileName(), "The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sources");
+            WriteToFile(get_helpFileName(), "The Check Img Src command checks the src of all image tags.\r\n");
+            WriteToFile(get_helpFileName(), "To check all page image src tags, on the current page, to ensure a source exists and to make it non-crucial, use the example below.");
+            WriteToFile(get_helpFileName(), "To make it crucial change the last parameter to true.\n");
+            WriteToFile(get_helpFileName(), "The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sources ");
             WriteToFile(get_helpFileName(), "but will report the status of all image sources.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>check images src</command>\r\n" +
@@ -930,8 +930,8 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "");
 
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CHECK ALL PAGE IMAGE SRC TAGS WITH NO SEPARATE NAVIGATION STEP ]", "═", 9, 151));
-            WriteToFile(get_helpFileName(), "To check all page image src tags, on the page specified in the arg1 node, to ensure a source exists and to make it non-crucial.");
-            WriteToFile(get_helpFileName(), "To make it crucial change the last parameter to true.");
+            WriteToFile(get_helpFileName(), "To check all page image src tags, on the page specified in the arg1 node, to ensure a source exists and to make it non-crucial.\n");
+            WriteToFile(get_helpFileName(), "To make it crucial change the last parameter to true.\n");
             WriteToFile(get_helpFileName(), "The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sources but will report \r\nthe status of all image sources.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>check images src</command>\r\n" +
@@ -946,10 +946,10 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CHECK ALL PAGE IMAGE ALT TAGS WITH SEPARATE NAVIGATION STEP ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CHECK ALL PAGE IMAGE ALT TAGS WITH NO SEPARATE NAVIGATION STEP ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Check Image Alt command checks all page image alt tags for text.");
             WriteToFile(get_helpFileName(), "To check all page image alt tags, for ADA compliance and to make it crucial.\r\nTo make it non-crucial change the crucial element to false. <crucial>false</crucial>.");
-            WriteToFile(get_helpFileName(), "The alt tag will checked to see if it exists and is not empty.  Empty tags will be flagged as failed.");
+            WriteToFile(get_helpFileName(), "The alt tag will be checked to see if it exists and is not empty.  Empty tags will be flagged as failed.");
             WriteToFile(get_helpFileName(), "This is a small part of 508 compliance.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>check images alt</command>\r\n" +
@@ -960,8 +960,9 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CHECK ALL PAGE IMAGE ALT TAGS WITH NO SEPARATE NAVIGATION STEP ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CHECK ALL PAGE IMAGE ALT TAGS WITH SEPARATE NAVIGATION STEP ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "To check all page image alt tags, for ADA compliance and to make it crucial.\r\nTo make it non-crucial change the crucial element to false. <crucial>false</crucial>.");
+            WriteToFile(get_helpFileName(), "Supply the URL to Navigate to in the Arguments section, as shown below.\n");
             WriteToFile(get_helpFileName(), "The alt tag will checked to see if it exists and is not empty.  Empty tags will be flagged as failed.");
             WriteToFile(get_helpFileName(), "This is a small part of 508 compliance.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
@@ -977,10 +978,10 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ WAITING A SPECIFIC AMOUNT OF TIME FOR ITEMS TO BE AVAILABLE ]", "═", 9, 151));
-            WriteToFile(get_helpFileName(), "The Wait command pauses execution for a specified amount of time to allow for page load completion.");
-            WriteToFile(get_helpFileName(), "In the event that arguments are not in the correct order, this application attempts to re-order the arguments.");
-            WriteToFile(get_helpFileName(), "If the results are not as expected, refer to the examples in this help file for proper argument order.");
-            WriteToFile(get_helpFileName(), "To wait for a specific amount of time before continuing to allow for page loading or script completion.");
+            WriteToFile(get_helpFileName(), "The Wait command pauses execution for a specified amount of time to allow for page load completion.\n");
+            WriteToFile(get_helpFileName(), "In the event that arguments are not in the correct order, this application attempts to re-order the arguments.\n");
+            WriteToFile(get_helpFileName(), "If the results are not as expected, refer to the examples in this help file for proper argument order.\n");
+            WriteToFile(get_helpFileName(), "To wait for a specific amount of time before continuing to allow for page loading or script completion.\n");
             WriteToFile(get_helpFileName(), "To wait for 5 thousand milli-seconds before continuing onto the next step.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>wait</command>\r\n" +
@@ -2279,10 +2280,10 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ SAVE HAR FILE ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Save HAR File command saves the HAR file to the location specified and this command also ");
-            WriteToFile(get_helpFileName(), "populates the GTM Tag List object which can then be used to check GTM tags.");
-            WriteToFile(get_helpFileName(), "This step MUST be executed before attempting to Check GTM tags.");
-            WriteToFile(get_helpFileName(), "The HAR File is automatically saved when the application is ending but that is simply to allow for manually reviewing which tags fired.");
-            WriteToFile(get_helpFileName(), "It is recommended that you make this step crucial if subsequent steps Check GTM tags");
+            WriteToFile(get_helpFileName(), "populates the GTM UA and GA4 Tag List objects which can then be used to check GTM UA and GA4 tags.");
+            WriteToFile(get_helpFileName(), "This step MUST be executed before attempting to Check GTM UA or GA4 tags.");
+            WriteToFile(get_helpFileName(), "The HAR File is automatically saved when the application is ending, but that is simply to allow for manually reviewing which tags fired.");
+            WriteToFile(get_helpFileName(), "It is recommended that you make this step crucial if subsequent steps Check GTM UA or GA4 tags");
             WriteToFile(get_helpFileName(), "\tThe only argument for this command is as follows:");
             WriteToFile(get_helpFileName(), "\t<arg1>This argument specifies the File name for the har file.  If no path is included, it will be saved in the /config/har_files folder.");
             WriteToFile(get_helpFileName(), "<step>\n" +
@@ -2295,22 +2296,20 @@ public class HelpWriter {
                     "</step>\n");
 
             WriteToFile(get_helpFileName(), "");
-
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CHECK GTM TAG ]", "═", 9, 151));
-            WriteToFile(get_helpFileName(), "The Check GTM Tag command checks the configured values against a list of GTM tags to determine if the tag fired.");
-            WriteToFile(get_helpFileName(), "The Save Har file step MUST be executed before attempting to Check GTM tags!!!");
-            WriteToFile(get_helpFileName(), "Most of the arguments are required as many of the values could be duplicated across tags and these values must be ");
-            WriteToFile(get_helpFileName(), "supplied to discern between tags fired and the tag being checked. ");
-            WriteToFile(get_helpFileName(), "The values are evaluated as a whole and if all supplied values match, the check is successful.");
-            WriteToFile(get_helpFileName(), "If the required values match, the non-matching non-required values will be indicated and although ");
-            WriteToFile(get_helpFileName(), "the step will be marked as a failure, the offending items will be indicated so that they can be examined.");
-            WriteToFile(get_helpFileName(), "If the required values do not match, the entire step will show as a failure so a thorough examination ");
-            WriteToFile(get_helpFileName(), "will be required to track down the offending item(s).");
-            WriteToFile(get_helpFileName(), "The order of the arguments does not matter as long as all required fields are present as shown below.");
-            WriteToFile(get_helpFileName(), "\t\tdl - Document Location - page where tag fired - required\n");
-            WriteToFile(get_helpFileName(), "\t\tt - Hit Type - Type of Hit (Event/Pageview - required\n");
+            WriteToFile(get_helpFileName(), ""); //CHECK Google Analytics UA TAG
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CHECK Google Analytics UA TAG - check gtm tag ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "The Check GTM Tag command checks the configured values against a list of GTM tags to determine if the tag fired.<br>\n");
+            WriteToFile(get_helpFileName(),     "The Save Har file step MUST be executed before attempting to Check GTM tags!!!<br>\n");
+            WriteToFile(get_helpFileName(), "Most of the arguments are required as many of the values could be duplicated across tags and these values must be <br>\n");
+            WriteToFile(get_helpFileName(), "supplied to discern between tags fired and the tag being checked. <br>\n");
+            WriteToFile(get_helpFileName(), "The values are evaluated as a whole and if all supplied values match, the check is successful.\n");WriteToFile(get_helpFileName(), "If the required values match, the non-matching non-required values will be indicated and although \n");
+            WriteToFile(get_helpFileName(),    "the step will be marked as a failure, the offending items will be indicated so that they can be examined.\n");
+            WriteToFile(get_helpFileName(),    "If the required values do not match, the entire step will show as a failure so a thorough examination \n");
+            WriteToFile(get_helpFileName(),    "will be required to track down the offending item(s).\n");
+            WriteToFile(get_helpFileName(),    "The order of the arguments does not matter as long as all required fields are present as shown below.");
+            WriteToFile(get_helpFileName(), "\n\t\tdl - Document Location - page where tag fired - required\n");
+            WriteToFile(get_helpFileName(),         "\t\tt - Hit Type - Type of Hit (Event/Pageview - required\n");
             WriteToFile(get_helpFileName(), "\t\tec - Event Category - Event Category Configured in the Tag - required\n");
             WriteToFile(get_helpFileName(), "\t\tea - Event Action - Event Action Configured in the Tag - required\n");
             WriteToFile(get_helpFileName(), "\t\tel - Event Label - Event Label Configured in the Tag - required\n");
@@ -2318,8 +2317,6 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "\t\tcg2 - Content Group 2 - Content Group 2 - which if set to += will check that the field starts with the value specified - not required\n");
             WriteToFile(get_helpFileName(), "\t\tdt - Document Title - page title where tag fired - not required\n");
             WriteToFile(get_helpFileName(), "\t\ttid - Tracking ID - GA Tracking ID - not required\n");
-
-
             WriteToFile(get_helpFileName(), "<step>\n" +
                     "\t<command>check gtm tag</command>\n" +
                     "\t<actionType>read</actionType>\n" +
@@ -2334,6 +2331,44 @@ public class HelpWriter {
                     "\t\t<arg7>cg2+=GTM-A9AAA0</arg7>\n" +
                     "\t\t<arg8>tid=UA-1234567-8</arg8>\n" +
                     "\t\t<arg9>dt=Products | My Company Site</arg9>\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>\n");
+
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), ""); //CHECK Google Analytics UA TAG
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CHECK Google Analytics GA4 TAG - check ga4 tag ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "The Check GA4 Tag command checks the configured values against a list of GTM GA4 tags to determine if the tag fired.");
+            WriteToFile(get_helpFileName(), "Because the name and number of parameters per tag will differ, this functionality checks all parameters supplied against ");
+            WriteToFile(get_helpFileName(), "all parameters retrieved.");
+            WriteToFile(get_helpFileName(), "The Save Har file step MUST be executed before attempting to Check GTM tags!!!");
+            WriteToFile(get_helpFileName(), "While a specific number of arguments may not be required for this tag, a unique tag value should be ");
+            WriteToFile(get_helpFileName(), "supplied to discern between tags fired and the tag being checked. ");
+            WriteToFile(get_helpFileName(), "The values are evaluated as a whole and if all supplied values match, the check is successful.");
+            WriteToFile(get_helpFileName(), "If the supplied values do not match, the entire step will show as a failure so a thorough examination ");
+            WriteToFile(get_helpFileName(), "will be required to track down the offending item(s) as only the test values will be displayed in the test results and the ");
+            WriteToFile(get_helpFileName(), "tester will have to review the log file to see what values did not match.");
+            WriteToFile(get_helpFileName(), "The order of the arguments does not matter as long as all required fields are present as shown below.");
+            WriteToFile(get_helpFileName(), "\n\t\tdl - Document Location - page where tag fired - required\n");
+            WriteToFile(get_helpFileName(), "\t\tep.gtm_tag_name - Tag Name in GTM that you pass with the tag.(if configured)\n");
+            WriteToFile(get_helpFileName(), "\t\ten - Event Name - The Name of the Event that will appear in GA4 Events.\n");
+            WriteToFile(get_helpFileName(), "\t\tep.product_name - Name of product (Unique Custom Parameter example)\n");
+            WriteToFile(get_helpFileName(), "\t\ttid - Tracking ID - GA Tracking ID - not required\n");
+
+            WriteToFile(get_helpFileName(), "<step>\n" +
+                    "\t<command>check ga4 tag</command>\n" +
+                    "\t<actionType>read</actionType>\n" +
+                    "\t<crucial>FALSE</crucial>\n" +
+                    "\t<arguments>\n" +
+                    "\t\t<arg1>dl=https://www.mycompanysite.com/products</arg1>\n" +
+                    "\t\t<arg2>ep.gtm_tag_name=GA4 - Select Item - Product CTA Click</arg2>\n" +
+                    "\t\t<arg3>en=select_item</arg3>\n" +
+                    "\t\t<arg4>tid=G-1ABCDEFG2H</arg4>\n" +
+                    "\t\t<arg5>ep.product_name=the cool product name</arg5>\n" +
                     "\t</arguments>\r\n" +
                     "</step>\n");
 
@@ -2609,10 +2644,6 @@ public class HelpWriter {
             //lines = Files.readAllLines(Paths.get(uri),
             lines = Files.readAllLines(Paths.get(fileName),
                     Charset.defaultCharset());
-
-//            for (String line : lines) {
-//                System.out.println(line);
-//            }
         } catch (Exception e) {
             e.printStackTrace();
         }
