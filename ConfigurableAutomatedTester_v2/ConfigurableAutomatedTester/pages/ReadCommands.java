@@ -133,6 +133,7 @@ public class ReadCommands {
             } else if (ts.get_command().toLowerCase().equals(AppCommands.CheckJavaScriptValue)) {
                 CheckJavaScriptReturnValue(ts, fileStepIndex);
             } else if (ts.get_command().toLowerCase().equals(AppCommands.CheckGtmTag)) {
+                //testHelper.DebugDisplay("Call to CheckGtmTagValues()");
                 CheckGtmTagValues(ts, fileStepIndex);
             } else if (ts.get_command().toLowerCase().equals(AppCommands.CheckGtmGa4Tag)) {
                 CheckGA4TagValues(ts, fileStepIndex);
@@ -151,7 +152,9 @@ public class ReadCommands {
      * @param fileStepIndex - the file index and the step index.
      ******************************************************************/
     private void CheckGtmTagValues(TestStep ts, String fileStepIndex) {
+        //testHelper.DebugDisplay("in CheckGtmTagValues()");
         if (GtmTagList != null && GtmTagList.size() > 0) {
+            //testHelper.DebugDisplay("in CheckGtmTagValues() if statement");
             testHelper.set_csvFileName(testCentral.testHelper.get_csvFileName());
             testHelper.set_testFileName(testCentral.get_testFileName());
             testHelper.UpdateTestResults(AppConstants.indent5 + "Checking GTM Tag for step " + fileStepIndex, true);
@@ -164,6 +167,10 @@ public class ReadCommands {
             item = testCentral.GetGtmArguments(ts, null);
             for (int x=0;x< GtmTagList.size();x++) {
                 listItem = GtmTagList.get(x);
+                /*testHelper.DebugDisplay("dl=" + listItem.get_documentLocation() + " t=" + listItem.get_hitType() +
+                        " ec=" + listItem.get_eventCategory() + " ea=" + listItem.get_eventAction() +
+                        " el=" + listItem.get_eventLabel() + " cg1=" + listItem.get_contentGroup1());*/
+
                 if (!testHelper.IsNullOrEmpty(listItem.get_documentLocation()) && !testHelper.IsNullOrEmpty(listItem.get_hitType()) &&
                         !testHelper.IsNullOrEmpty(listItem.get_eventCategory()) && !testHelper.IsNullOrEmpty(listItem.get_eventAction()) &&
                                 !testHelper.IsNullOrEmpty(listItem.get_eventLabel()) && !testHelper.IsNullOrEmpty(listItem.get_contentGroup1())) {
@@ -253,6 +260,7 @@ public class ReadCommands {
             GA4Tag tsItem = new GA4Tag();
             String tsName;
             String tsValue;
+            String additionalMessage = "";
 
             String testMessage = "";
             String testParams = "";
@@ -275,10 +283,13 @@ public class ReadCommands {
                         if (tsName.equals(ga4Tag.getGA4Parameter(tagIndex).get_parameterName())) {
                             testMessage += AppConstants.indent8 + "Expected:(" + tsName + "=" + tsValue + ") Actual: (" + ga4Tag.getGA4Parameter(tagIndex).get_parameterName() +
                                     "=" + ga4Tag.getGA4Parameter(tagIndex).get_parameterValue() + ")\r\n";
+                        } else {
+                            additionalMessage = additionalMessage.length() <= 0 ? AppConstants.indent8 + "Additional: " : additionalMessage;
+                            additionalMessage += AppConstants.indent8 + " - " + ga4Tag.getGA4Parameter(tagIndex).get_parameterName() + "=" + ga4Tag.getGA4Parameter(tagIndex).get_parameterValue() + ")\r\n";
                         }
                     }
                 }
-                testMessage +=  AppConstants.indent5 + " for step " + fileStepIndex;
+                testMessage += additionalMessage + AppConstants.indent5 + " for step " + fileStepIndex;
                 testHelper.UpdateTestResults(testMessage, true);
             } else {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Failed GA4 GTM Tag NOT found matching specified criteria: \r\n" + testParams + AppConstants.indent5 + " for step " + fileStepIndex, true);
@@ -299,6 +310,7 @@ public class ReadCommands {
         GA4Tag listItem = new GA4Tag();
         int tagParamCount=0, tsParamCount = tsItem.getGA4Parameters().size();
         String tsName, tsValue;
+        String additionalFields;
 
         for (int x = 0; x < GA4TagList.size(); x++) {
             listItem = GA4TagList.get(x);

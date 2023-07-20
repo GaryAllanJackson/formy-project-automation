@@ -685,6 +685,8 @@ public class WriteCommands {
             Boolean ga4TagStarted = false;
             Har har = testCentral.proxy.getHar();
             String comment = null;
+            Boolean uaTagStarted = false;
+
             String fileName = testHelper.GetUnusedFileName(testCentral.GetArgumentValue(ts, 0, testCentral.testPage));
             testHelper.CreateSectionHeader("[ Start Save Har File and Populate GTM Tags Object Event ]", "", AppConstants.ANSI_BLUE_BRIGHT, true, false, true);
             //testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start Save Har File and Populate GTM Tags Object Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
@@ -695,10 +697,22 @@ public class WriteCommands {
             testHelper.UpdateTestResults(AppConstants.indent5 + "Populating GTM Tags Object from HAR for step " + fileStepIndex, true);
             for (HarEntry entry : entries) {
                 int size = entry.getRequest().getQueryString().size();
-               // testHelper.DebugDisplay("URL = " + entry.getRequest().getUrl());
+                //testHelper.DebugDisplay("URL = " + entry.getRequest().getUrl());
                 for (int x=0;x<size;x++) {
-                    if (entry.getRequest().getQueryString().get(x).getValue().indexOf("collect?v=1") > -1) {
-                        item = new GtmTag();
+                    //if (entry.getRequest().getQueryString().get(x).getValue().indexOf("collect?v=1") > -1) {
+                    if (entry.getRequest().getUrl() .indexOf("collect?v=1") > -1) {
+                        if (item != null && !testHelper.IsNullOrEmpty(item.get_hitType()) && !testHelper.IsNullOrEmpty(item.get_documentLocation()) && !testHelper.IsNullOrEmpty(item.get_contentGroup2())) {
+                            GtmTagList.add(item);
+                            //testHelper.DebugDisplay("EC = " + item.get_eventCategory() + " EA = " + item.get_eventAction() + " EL = " + item.get_eventLabel());
+                            uaTagStarted = false;
+                            item = null;
+                        }
+                        if (!uaTagStarted) {
+                            item = new GtmTag();
+                            uaTagStarted = true;
+                        }
+
+                        //testHelper.DebugDisplay("GTM Tag v=1 found! = " + entry.getRequest().getQueryString().get(x).getName() + " = " +  entry.getRequest().getQueryString().get(x).getValue());
                         item.set_PageRef(entry.getPageref());
                         item.set_RequestUrl(entry.getRequest().getQueryString().get(x).getName().equals("url") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_requestUrl());
                         item.set_ContentGroup1(entry.getRequest().getQueryString().get(x).getName().equals("cg1") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_contentGroup1());
@@ -716,16 +730,20 @@ public class WriteCommands {
                         item.set_DocumentTitle(entry.getRequest().getQueryString().get(x).getName().equals("dt") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_documentTitle());
                         item.set_HitType(entry.getRequest().getQueryString().get(x).getName().equals("t") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_hitType());
                         item.set_TrackingId(entry.getRequest().getQueryString().get(x).getName().equals("tid") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_trackingId());
-                        if (!testHelper.IsNullOrEmpty(item.get_hitType()) && !testHelper.IsNullOrEmpty(item.get_documentLocation()))
+                        /*if (!testHelper.IsNullOrEmpty(item.get_hitType()) && !testHelper.IsNullOrEmpty(item.get_documentLocation()))
                         {
                             GtmTagList.add(item);
-                        }
+                            testHelper.DebugDisplay("EC = " + item.get_eventCategory() + " EA = " + item.get_eventAction() + " EL = " + item.get_eventLabel());
+                            uaTagStarted = false;
+                        }*/
                     } else if (entry.getRequest().getUrl().indexOf("collect?v=2") > -1)  { //if (entry.getRequest().getQueryString().get(x).getName().equals("v")) { //if (entry.getRequest().getQueryString().get(x).getValue().indexOf("collect?v=2") > -1 || (entry.getRequest().getQueryString().get(x).getName().equals("v") && entry.getRequest().getQueryString().get(x).getValue().equals("2")))  {
                         if (entry.getRequest().getQueryString().get(x).getName().equals("v") && entry.getRequest().getQueryString().get(x).getValue().equals("2")) {
                             if (!testHelper.IsNullOrEmpty(gA4item.get_eventName()) && !testHelper.IsNullOrEmpty(gA4item.get_gtmTagName()) && gA4item != null) {
+                                testHelper.DebugDisplay(gA4item.get_eventName() + " - " + gA4item.get_productName());
                                 gA4item.set_GA4Parameters(ga4ParameterList);
                                 GA4TagList.add(gA4item);
                                 ga4TagStarted = false;
+                                gA4item = null;
                             }
                             gA4item = new GA4Tag();
                             ga4TagStarted = true;
@@ -754,6 +772,14 @@ public class WriteCommands {
                             }
                         }
                     }
+                }
+                //catch any open GA4 or UA tag and add it to the list
+                if (ga4TagStarted && gA4item != null) {
+                    gA4item.set_GA4Parameters(ga4ParameterList);
+                    GA4TagList.add(gA4item);
+                    testHelper.DebugDisplay("#2 " + gA4item.get_eventName() + " - " + gA4item.get_productName());
+                } else if (uaTagStarted && item != null) {
+                    GtmTagList.add(item);
                 }
             }
             testCentral.GtmTagList = GtmTagList;

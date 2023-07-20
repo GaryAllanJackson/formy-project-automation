@@ -2280,10 +2280,10 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ SAVE HAR FILE ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Save HAR File command saves the HAR file to the location specified and this command also ");
-            WriteToFile(get_helpFileName(), "populates the GTM UA and GA4 Tag List objects which can then be used to check GTM UA and GA4 tags.");
+            WriteToFile(get_helpFileName(), "populates the GTM UA and GA4 Tag List objects, which can then be used to check GTM UA and GA4 tags.");
             WriteToFile(get_helpFileName(), "This step MUST be executed before attempting to Check GTM UA or GA4 tags.");
             WriteToFile(get_helpFileName(), "The HAR File is automatically saved when the application is ending, but that is simply to allow for manually reviewing which tags fired.");
-            WriteToFile(get_helpFileName(), "It is recommended that you make this step crucial if subsequent steps Check GTM UA or GA4 tags");
+            WriteToFile(get_helpFileName(), "It is recommended that you make this step crucial if subsequent steps Check GTM UA or GA4 tags.");
             WriteToFile(get_helpFileName(), "\tThe only argument for this command is as follows:");
             WriteToFile(get_helpFileName(), "\t<arg1>This argument specifies the File name for the har file.  If no path is included, it will be saved in the /config/har_files folder.");
             WriteToFile(get_helpFileName(), "<step>\n" +
@@ -2291,7 +2291,7 @@ public class HelpWriter {
                     "\t<crucial>TRUE</crucial>\n" +
                     "\t<arguments>\n" +
                     "\t\t<!-- File Name to save HAR file -->\n" +
-                    "\t\t<arg1>Gary-har-test.txt</arg1>\n" +
+                    "\t\t<arg1>Gary-A-Jackson-har-test.txt</arg1>\n" +
                     "\t</arguments>\r\n" +
                     "</step>\n");
 
