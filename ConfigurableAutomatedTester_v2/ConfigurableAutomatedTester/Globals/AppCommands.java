@@ -74,6 +74,8 @@ public class AppCommands {
     public static String CheckJavaScriptValue = "check javascript value";
     public static String CheckGtmGa4Tag = "check ga4 tag";
 
+    public static String EntireSiteCommandsStart = "entire site commands start";
+    public static String EntireSiteCommandsEnd = "entire site commands end";
 
     //endregion
 
