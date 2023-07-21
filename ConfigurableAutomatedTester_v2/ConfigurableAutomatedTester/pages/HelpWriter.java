@@ -76,6 +76,7 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), AppConstants.indent5 + testHelper.PrePostPad( "[ Test Steps ]", "═", 9, 100));
             WriteToFile(get_helpFileName(), "\t\tTEST FILE OVERVIEW");
             WriteToFile(get_helpFileName(), "\t\tTEST FILE FIELDS AND DESCRIPTIONS");
+            WriteToFile(get_helpFileName(), "\t\tCHECK ENTIRE SITE");
             WriteToFile(get_helpFileName(), "\t\tNAVIGATION");
             WriteToFile(get_helpFileName(), "\t\tNAVIGATION WITH SUCCESSFUL NAVIGATION CONFIRMATION");
             WriteToFile(get_helpFileName(), "\t\tNAVIGATION WITH AUTHENTICATION WITH AND WITHOUT NAVIGATION CONFIRMATION");
@@ -496,6 +497,31 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "\t\t</arguments>");
             WriteToFile(get_helpFileName(), "\t</step>");
             WriteToFile(get_helpFileName(), "</testSteps>\r\n");
+            WriteToFile(get_helpFileName(), "");
+            //CHECK ENTIRE SITE
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CHECK ENTIRE SITE ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "The Check Entire Site command is a two part command and requires the Navigation step to begin.");
+            WriteToFile(get_helpFileName(), "This command begins by retrieving all links from the page navigated to prior to calling this command.");
+            WriteToFile(get_helpFileName(), "All Actions that fall between the Entire Site Commands Start and the Entire Site Commands End commands ");
+            WriteToFile(get_helpFileName(), "will be repeated for every URL retrieved from the Navigation step prior to this command block.");
+            WriteToFile(get_helpFileName(), "This powerful functionality allows for reducing the test file length considerably while yielding the desired results.");
+            WriteToFile(get_helpFileName(), "The Entire Site Commands Start command has 1 argument, which is to allow for limiting the scope of the tests to the domain.");
+            WriteToFile(get_helpFileName(), "The required first argument, <arg1></arg1>, contains the URL part to limit execution of commands to just those ");
+            WriteToFile(get_helpFileName(), "URLs that contain the value.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<!-- Command - ALWAYS REQUIRED!!! -->\r\n" +
+                    "\t<command>entire site commands start</command>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<!-- only argument expected by the command is the URL portion to limit execution -->\r\n" +
+                    "\t\t<arg1>https://www.smuckers.com/</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>\r\n");
+
+            WriteToFile(get_helpFileName(), "The Entire Site Commands End command has no arguments.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<!-- Command - ALWAYS REQUIRED!!! -->\r\n" +
+                    "\t<command>entire site commands end</command>\r\n" +
+                    "</step>\r\n");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ NAVIGATION ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Navigation command navigates the browser to the provided URL.");

@@ -1663,11 +1663,16 @@ public class ReadCommands {
 
     void CheckJavaScriptReturnValue(TestStep ts, String fileStepIndex) {
         String javaScriptText = testCentral.GetArgumentValue(ts, 0, null);
+        boolean showJavascriptCommand = Boolean.parseBoolean(testCentral.GetArgumentValue(ts, 1, "true"));
         String actualValue = null;
         String comparisonType = CheckComparisonOperator(testCentral.GetArgumentValue(ts, ts.ArgumentList.size()-1, "="));
         if (javaScriptText != null) {
             testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start JavaScript Execution Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
-            testHelper.UpdateTestResults(AppConstants.indent8 + "Executing Javascript command: " + javaScriptText + " for step " + fileStepIndex, true);
+            if (showJavascriptCommand == true) {
+                testHelper.UpdateTestResults(AppConstants.indent8 + "Executing Javascript command: " + javaScriptText + " for step " + fileStepIndex, true);
+            } else {
+                testHelper.UpdateTestResults(AppConstants.indent8 + "Executing Javascript command: {{JavaScript Command}} for step " + fileStepIndex, true);
+            }
             actualValue = (String) ((JavascriptExecutor) driver).executeScript(javaScriptText);
             if (ts.get_crucial()) {
                 if ("=".equals(comparisonType)) {

@@ -512,6 +512,18 @@ public class TestCentral {
                 }
                 TestStep ts = testSteps.get(x);
                 String fileStepIndex = "F" + fileIndex + "_S" + x;
+                int entireSiteEndCommand = 0;
+                if (ts.get_command() != null && ts.get_command().equals(AppCommands.EntireSiteCommandsStart)) {
+                    //if the start command has happened, find the end command
+                    for (int index=x;index< testSteps.size();index++) {
+                        if (testSteps.get(index).get_command().equals(AppCommands.EntireSiteCommandsEnd)) {
+                            entireSiteEndCommand = index;
+                        }
+                    }
+                    //this will loop from the start to the end of the all page commands
+                    ExecuteEntireSiteCommands(ts, fileIndex, x, entireSiteEndCommand);
+                    x = entireSiteEndCommand + 1;
+                }
                 if (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) {
                     isConditionalBlock = ts.get_isConditionalBlock();
                     testHelper.UpdateTestResults(AppConstants.ANSI_YELLOW_BRIGHT + AppConstants.iFrameSectionTopLeft + testHelper.PrePostPad("[ Start of Conditional Block ]", "═", 9, 157) + AppConstants.iFrameSectionTopRight + AppConstants.ANSI_RESET, false);
@@ -557,6 +569,99 @@ public class TestCentral {
 //            PerformCleanup();
         }
     }
+
+    private void ExecuteEntireSiteCommands(TestStep tsInput, int fileIndex, int xStart, int xEnd) throws Exception {
+        testFileName = testFiles.get(fileIndex);
+        testHelper.set_testFileName(testFileName);
+        readCommands.set_testFileName(testFileName);
+        writeCommands.set_testFileName(testFileName);
+        boolean revertToParent = false;
+        String domainRestriction = null;
+        String href = null;
+        boolean isConditionalBlock = false;
+        //start with the first command in the list
+
+        List<WebElement> links = driver.findElements(By.cssSelector("a"));
+        domainRestriction = GetArgumentValue(tsInput, 0, null);
+        for (int pageIndex=0;pageIndex<links.size();pageIndex++) {
+            href = links.get(pageIndex).getAttribute("href");
+            if (href.indexOf(domainRestriction) > -1) {
+
+                testHelper.UpdateTestResults(AppConstants.ANSI_PURPLE + AppConstants.iFrameSectionBottomLeft + testHelper.PrePostPad("[ Entire Site Check checking URL:" + href + "]", "═", 9, 157) + AppConstants.iFrameSectionBottomRight + AppConstants.ANSI_RESET, false);
+                for (int x = xStart + 1; x < xEnd; x++) {
+                    if (revertToParent) {
+                        driver.switchTo().defaultContent();
+                        testHelper.UpdateTestResults(AppConstants.ANSI_CYAN + AppConstants.iFrameSectionBottomLeft + testHelper.PrePostPad("[ End Switch to IFrame - Reverting to defaultContent ]", "═", 9, 157) + AppConstants.iFrameSectionBottomRight + AppConstants.ANSI_RESET, false);
+                        revertToParent = false;
+                    }
+                    TestStep ts = testSteps.get(x);
+                    String fileStepIndex = "F" + fileIndex + "_S" + x + "_Iteration:" + pageIndex;
+                    if (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) {
+                        isConditionalBlock = ts.get_isConditionalBlock();
+                        testHelper.UpdateTestResults(AppConstants.ANSI_YELLOW_BRIGHT + AppConstants.iFrameSectionTopLeft + testHelper.PrePostPad("[ Start of Conditional Block ]", "═", 9, 157) + AppConstants.iFrameSectionTopRight + AppConstants.ANSI_RESET, false);
+                    } else if (ts.get_command().toLowerCase().equals(AppCommands.End_Conditional)) {
+                        isConditionalBlock = false;
+                        conditionalSuccessful = false;
+                        testHelper.UpdateTestResults(AppConstants.ANSI_YELLOW_BRIGHT + AppConstants.iFrameSectionBottomLeft + testHelper.PrePostPad("[ End of Conditional Block ]", "═", 9, 157) + AppConstants.iFrameSectionBottomRight + AppConstants.ANSI_RESET, false);
+                    }
+
+                    if ((isConditionalBlock && (conditionalSuccessful || (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()))) || (!isConditionalBlock && !conditionalSuccessful))
+                    {
+                        if (ts.get_command().toLowerCase().contains(AppCommands.Switch_To_IFrame)) {
+                            CheckiFrameArgumentOrder(ts);
+                            String frameName = GetArgumentValue(ts, 0, null);
+                            testHelper.UpdateTestResults(AppConstants.ANSI_CYAN + AppConstants.iFrameSectionTopLeft + testHelper.PrePostPad("[ Switching to iFrame: " + frameName + " for step " + fileStepIndex + " ]", "═", 9, 157) + AppConstants.iFrameSectionTopRight + AppConstants.ANSI_RESET, false);
+                            if (frameName != null && !frameName.isEmpty()) {
+                                driver.switchTo().frame(frameName);
+                            }
+                            revertToParent = true;
+                        }
+
+                        //testHelper.DebugDisplay("Command:" + ts.get_command() + " Action Type:" + ts.get_actionType().toLowerCase());
+                        if (ts.get_actionType() != null && ts.get_actionType().toLowerCase().equals("write")) {
+                            writeCommands.PerformWriteActions(ts, fileStepIndex);
+                        } else {
+                            readCommands.PerformReadActions(ts, fileStepIndex);
+                        }
+                        if (revertToParent) {
+                            driver.switchTo().defaultContent();
+                            testHelper.UpdateTestResults(AppConstants.ANSI_CYAN + AppConstants.iFrameSectionBottomLeft + testHelper.PrePostPad("[ End Switch to IFrame - Reverting to defaultContent ]", "═", 9, 157) + AppConstants.iFrameSectionBottomRight + AppConstants.ANSI_RESET, false);
+                            revertToParent = false;
+                        }
+                    } else {
+                        testHelper.UpdateTestResults("Conditional Failed!!!  Skipping Command: " + ts.get_command() + " for Step: " + fileStepIndex, true);
+                    }
+                }
+            }
+            testHelper.UpdateTestResults(AppConstants.ANSI_PURPLE + AppConstants.iFrameSectionBottomLeft + testHelper.PrePostPad("[ End Entire Site Check checking URL:" + href + "]", "═", 9, 157) + AppConstants.iFrameSectionBottomRight + AppConstants.ANSI_RESET, false);
+        }
+    }
+
+    public void CreateNavigateTestStepAndNavigate(String href, int fileIndex, int stepNum, int pageIndex) {
+        TestStep navStep;
+        List<Argument> argumentList;
+        Argument argument;
+        String fileStepIndex = "F" + fileIndex + "_S" + stepNum + "_Iteration:" + pageIndex;
+        try {
+            navStep = new TestStep();
+            argumentList = navStep.ArgumentList;
+            navStep.set_command("navigate");
+            navStep.set_actionType("write");
+            navStep.set_crucial(true);
+            navStep.set_expectedValue(href);
+            argument = new Argument();
+            argument.set_parameter(href);
+            argumentList.add(argument);
+            argument.set_parameter("1000");
+            argumentList.add(argument);
+            navStep.setArgumentList(argumentList);
+            PerformExplicitNavigation(navStep, fileStepIndex);
+        } catch(Exception e) {
+            testHelper.UpdateTestResults("Failed Entire Site Navigation for href = " + href + " for step " + fileStepIndex,true);
+        }
+
+    }
+
 
     /************************************************************************************
      *  Description: This method sets the CSV File Name.
