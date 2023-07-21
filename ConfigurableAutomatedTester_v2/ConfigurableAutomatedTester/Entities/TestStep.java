@@ -73,4 +73,6 @@ public class TestStep {
         this._isConditionalBlock = _isConditionalBlock;
     }
 
+    public void setArgumentList(List<Argument> _argumentList) {this.ArgumentList = _argumentList;}
+
 }
