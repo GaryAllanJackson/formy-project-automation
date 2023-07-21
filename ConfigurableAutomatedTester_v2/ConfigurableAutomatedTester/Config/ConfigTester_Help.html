@@ -151,6 +151,7 @@
 		<span class="tableOfContentsSectionHeader">Test Steps</span>
 		<a href="#testfileoverview" class="tableOfContentsLink">TEST FILE OVERVIEW</a>
 		<a href="#testfilefieldsanddescriptions" class="tableOfContentsLink">TEST FILE FIELDS AND DESCRIPTIONS</a>
+		<a href="#checkentiresite" class="tableOfContentsLink">CHECK ENTIRE SITE</a>
 		<a href="#navigation" class="tableOfContentsLink">NAVIGATION</a>
 		<a href="#navigationwithsuccessfulnavigationconfirmation" class="tableOfContentsLink">NAVIGATION WITH SUCCESSFUL NAVIGATION CONFIRMATION</a>
 		<a href="#navigationwithauthenticationwithandwithoutnavigationconfirmation" class="tableOfContentsLink">NAVIGATION WITH AUTHENTICATION WITH AND WITHOUT NAVIGATION CONFIRMATION</a>
@@ -442,6 +443,30 @@ Usually, the test file will consist of multiple steps like (navigation, check el
 		&lt;/arguments&gt;
 	&lt;/step&gt;
 &lt;/testSteps&gt;
+</br></pre>
+
+		</p>
+<span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
+<a name="checkentiresite" class="sectionTitle">CHECK ENTIRE SITE</a>
+		<p>
+The Check Entire Site command is a two part command and requires the Navigation step to begin.This command begins by retrieving all links from the page navigated to prior to calling this command.All Actions that fall between the Entire Site Commands Start and the Entire Site Commands End commands will be repeated for every URL retrieved from the Navigation step prior to this command block.This powerful functionality allows for reducing the test file length considerably while yielding the desired results.The Entire Site Commands Start command has 1 argument, which is to allow for limiting the scope of the tests to the domain.The required first argument, &lt;arg1&gt;&lt;/arg1&gt;, contains the URL part to limit execution of commands to just those URLs that contain the value.<pre>
+</br>&lt;step&gt;
+	&lt;!-- Command - ALWAYS REQUIRED!!! --&gt;
+	&lt;command&gt;entire site commands start&lt;/command&gt;
+	&lt;arguments&gt;
+		&lt;!-- only argument expected by the command is the URL portion to limit execution --&gt;
+		&lt;arg1&gt;https://www.smuckers.com/&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
+		</p>
+		<p>
+The Entire Site Commands End command has no arguments.<pre>
+</br>&lt;step&gt;
+	&lt;!-- Command - ALWAYS REQUIRED!!! --&gt;
+	&lt;command&gt;entire site commands end&lt;/command&gt;
+&lt;/step&gt;
 </br></pre>
 
 		</p>
@@ -2012,13 +2037,13 @@ The Check JavaScript Value command executes a JavaScript command and captures th
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="saveharfile" class="sectionTitle">SAVE HAR FILE</a>
 		<p>
-The Save HAR File command saves the HAR file to the location specified and this command also populates the GTM UA and GA4 Tag List objects which can then be used to check GTM UA and GA4 tags.This step MUST be executed before attempting to Check GTM UA or GA4 tags.The HAR File is automatically saved when the application is ending, but that is simply to allow for manually reviewing which tags fired.It is recommended that you make this step crucial if subsequent steps Check GTM UA or GA4 tags	The only argument for this command is as follows:	&lt;arg1&gt;This argument specifies the File name for the har file.  If no path is included, it will be saved in the /config/har_files folder.<pre>
+The Save HAR File command saves the HAR file to the location specified and this command also populates the GTM UA and GA4 Tag List objects, which can then be used to check GTM UA and GA4 tags.This step MUST be executed before attempting to Check GTM UA or GA4 tags.The HAR File is automatically saved when the application is ending, but that is simply to allow for manually reviewing which tags fired.It is recommended that you make this step crucial if subsequent steps Check GTM UA or GA4 tags.	The only argument for this command is as follows:	&lt;arg1&gt;This argument specifies the File name for the har file.  If no path is included, it will be saved in the /config/har_files folder.<pre>
 </br>&lt;step&gt;
 	&lt;command&gt;save har file&lt;/command&gt;
 	&lt;crucial&gt;TRUE&lt;/crucial&gt;
 	&lt;arguments&gt;
 		&lt;!-- File Name to save HAR file --&gt;
-		&lt;arg1&gt;Gary-har-test.txt&lt;/arg1&gt;
+		&lt;arg1&gt;Gary-A-Jackson-har-test.txt&lt;/arg1&gt;
 	&lt;/arguments&gt;
 &lt;/step&gt;
 </br></pre>

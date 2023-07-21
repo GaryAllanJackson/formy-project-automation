@@ -15,6 +15,7 @@
      ═════════[ Test Steps ]═════════════════════════════════════════════════════════════════════════════
 		TEST FILE OVERVIEW
 		TEST FILE FIELDS AND DESCRIPTIONS
+		CHECK ENTIRE SITE
 		NAVIGATION
 		NAVIGATION WITH SUCCESSFUL NAVIGATION CONFIRMATION
 		NAVIGATION WITH AUTHENTICATION WITH AND WITHOUT NAVIGATION CONFIRMATION
@@ -482,6 +483,31 @@ Usually, the test file will consist of multiple steps like (navigation, check el
 		</arguments>
 	</step>
 </testSteps>
+
+
+═════════[ CHECK ENTIRE SITE ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+The Check Entire Site command is a two part command and requires the Navigation step to begin.
+This command begins by retrieving all links from the page navigated to prior to calling this command.
+All Actions that fall between the Entire Site Commands Start and the Entire Site Commands End commands 
+will be repeated for every URL retrieved from the Navigation step prior to this command block.
+This powerful functionality allows for reducing the test file length considerably while yielding the desired results.
+The Entire Site Commands Start command has 1 argument, which is to allow for limiting the scope of the tests to the domain.
+The required first argument, <arg1></arg1>, contains the URL part to limit execution of commands to just those 
+URLs that contain the value.
+<step>
+	<!-- Command - ALWAYS REQUIRED!!! -->
+	<command>entire site commands start</command>
+	<arguments>
+		<!-- only argument expected by the command is the URL portion to limit execution -->
+		<arg1>https://www.smuckers.com/</arg1>
+	</arguments>
+</step>
+
+The Entire Site Commands End command has no arguments.
+<step>
+	<!-- Command - ALWAYS REQUIRED!!! -->
+	<command>entire site commands end</command>
+</step>
 
 
 ═════════[ NAVIGATION ]════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -2341,10 +2367,10 @@ Since this was not written to simply test DataLayer values, each check is for an
 
 ═════════[ SAVE HAR FILE ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 The Save HAR File command saves the HAR file to the location specified and this command also 
-populates the GTM UA and GA4 Tag List objects which can then be used to check GTM UA and GA4 tags.
+populates the GTM UA and GA4 Tag List objects, which can then be used to check GTM UA and GA4 tags.
 This step MUST be executed before attempting to Check GTM UA or GA4 tags.
 The HAR File is automatically saved when the application is ending, but that is simply to allow for manually reviewing which tags fired.
-It is recommended that you make this step crucial if subsequent steps Check GTM UA or GA4 tags
+It is recommended that you make this step crucial if subsequent steps Check GTM UA or GA4 tags.
 	The only argument for this command is as follows:
 	<arg1>This argument specifies the File name for the har file.  If no path is included, it will be saved in the /config/har_files folder.
 <step>
@@ -2352,7 +2378,7 @@ It is recommended that you make this step crucial if subsequent steps Check GTM 
 	<crucial>TRUE</crucial>
 	<arguments>
 		<!-- File Name to save HAR file -->
-		<arg1>Gary-har-test.txt</arg1>
+		<arg1>Gary-A-Jackson-har-test.txt</arg1>
 	</arguments>
 </step>
 
