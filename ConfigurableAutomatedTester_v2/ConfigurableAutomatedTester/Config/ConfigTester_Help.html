@@ -292,6 +292,8 @@ The following is an example of a configuration file which will be explained belo
 	&lt;sortSpecifiedTestFiles&gt;false&lt;/sortSpecifiedTestFiles&gt;
 	&lt;!-- createCsvStatusFiles settings are "none", "one" or "many" without the quotes, of course.  --&gt;
 	&lt;createCsvStatusFiles&gt;none&lt;/createCsvStatusFiles&gt;
+	&lt;!-- showAdditionalGa4Parameters settings are "true" to see additional GA4 Parameters beyond those configured for 		the test or "false" to see only configured parameters. --&gt;
+	&lt;showAdditionalGa4Parameters&gt;false&lt;/showAdditionalGa4Parameters&gt;
 	&lt;!-- Individual File Settings --&gt;
 	&lt;testFiles&gt;
 		&lt;!--&lt;testFileName1&gt;C:\ConfigurableAutomatedTester\Tests\SqlServerAccess-Test.xml&lt;/testFileName1&gt;
@@ -341,6 +343,14 @@ The &lt;createCsvStatusFiles&gt;&lt;/createCsvStatusFiles&gt; element specifies 
 		<p>
 		File and Step Number - This column displays the file number and step number, each starting at 0 and in the format F0_S0 where 		-	F0 corresponds to File 0, which is the first file, and S0 corresponds to Step 0, which is the first step.		-	Since all steps taken are not checks, there may be line number gaps.		Test Performed - This column displays a description of the test performed such as Navigation and URL Check, 		-	Equal comparison results etc..		Execution Status - This column displays the word Successful for successful test step checks and the word Failure for failed test step checks.		Variable Output - This column holds the difference percentage for image comparisons in percentage format like 28%, 		-	the http response code in square brackets like [200], element counts in numeric format like 128 		-	and calculations in parentheses like (2.0) or (2) to allow for filtering these separate check types easily.		Test File Name - This column holds the name of the test file this entry corresponds with.		-	When creating one CSV file for multiple tests, this allows for another method of sorting the data.		</p>
 		<p>
+The &lt;showAdditionalGa4Parameters&gt;&lt;/showAdditionalGa4Parameters&gt; element when set to "true" allows the display of 		all GA4 Parameters when the supplied parameters have been found to match a GA4 tag. 		</p>
+		<p>
+	This will have no effect if the matching tag is not found. 		</p>
+		<p>
+		When set to "false", only the supplied parameters are displayed for the matching tag. 		</p>
+		<p>
+		This setting was added here to apply to all GA4 Tags instead of on a tag by tag basis, if added to the test step. 		</p>
+		<p>
 The &lt;testFiles&gt;&lt;/testFiles&gt; element is a container element for the testFileName elements and has no textual content of its own.		</p>
 		<p>
 The &lt;testFileName1&gt;&lt;/testFileName1&gt; element specifies the test file to use for the test and each element should end with an incremental numeric value.	Example:		&lt;testFileName1&gt;&lt;/testFileName1&gt;
@@ -382,6 +392,7 @@ In the example configuration file provided below, a folder of test files are bei
 	&lt;specifyTestFiles&gt;false&lt;/specifyTestFiles&gt;
 	&lt;sortSpecifiedTestFiles&gt;true&lt;/sortSpecifiedTestFiles&gt;
 	&lt;createCsvStatusFiles&gt;none&lt;/createCsvStatusFiles&gt;
+	&lt;showAdditionalGa4Parameters&gt;false&lt;/showAdditionalGa4Parameters&gt;
 	&lt;!-- Individual File Settings --&gt;
 	&lt;testFiles&gt;
 		&lt;!--&lt;testFileName1&gt;C:\ConfigurableAutomatedTester\Tests\SqlServerAccess-Test.xml&lt;/testFileName1&gt;
@@ -449,13 +460,46 @@ Usually, the test file will consist of multiple steps like (navigation, check el
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="checkentiresite" class="sectionTitle">CHECK ENTIRE SITE</a>
 		<p>
-The Check Entire Site command is a two part command and requires the Navigation step to begin.This command begins by retrieving all links from the page navigated to prior to calling this command.All Actions that fall between the Entire Site Commands Start and the Entire Site Commands End commands will be repeated for every URL retrieved from the Navigation step prior to this command block.This powerful functionality allows for reducing the test file length considerably while yielding the desired results.The Entire Site Commands Start command has 1 argument, which is to allow for limiting the scope of the tests to the domain.The required first argument, &lt;arg1&gt;&lt;/arg1&gt;, contains the URL part to limit execution of commands to just those URLs that contain the value.<pre>
-</br>&lt;step&gt;
+The Check Entire Site command is a two part command and requires that a page is loaded prior to using this command.  		</p>
+		<p>
+A Navigation step prior to the "Entire Site Commands Start" suits this purpose well.  		</p>
+		<p>
+It is suggested to navigate to the sitemap page or another page where all site links are contained.  		</p>
+		<p>
+All Actions that fall between the "Entire Site Commands Start", and the "Entire Site Commands End" commands  will be repeated for every URL retrieved from the current page, as well as URLs retrieved from the pages to scan,  which are arguments &lt;arg2&gt;&lt;/arg2&gt; - &lt;arg20&gt;&lt;/arg20&gt;,  when the start command executes.		</p>
+		<p>
+This powerful functionality allows for reducing the test file length considerably, while performing the same tests on multiple pages.This command begins by retrieving all links from the current page and the pages to scan, then loops through pages starting with  current page executing all commands between the "Entire Site Commands Start" and "Entire Site Commands End" commands.  		</p>
+		<p>
+The Check Entire Site Start command CANNOT BE the first command of a test!!!  		</p>
+		<p>
+The Entire Site Commands Start command's first argument &lt;arg1&gt;&lt;/arg1&gt;, which is required, is to limit the scope  of the tests to the domain or URL path to be tested.  		</p>
+		<p>
+This functionality looks for an included URL portion so the domain can be used or a partial or full page path. 		</p>
+		<p>
+This argument prevents the application from testing off site pages like social links added for sharing to social platforms.		</p>
+		<p>
+The subsequent optional arguments, &lt;arg2&gt;&lt;/arg2&gt; - &lt;arg20&gt;&lt;/arg20&gt;, allow for retrieving URLs from those pages to  increase the number of pages tested, as the initial page may not have a complete list of links necessary to test.		</p>
+		<p>
+Some examples: 		</p>
+		<p>
+		 /products/ to limit tests to links containing /products/ in the URL.		</p>
+		<p>
+		https://www.mycoolcite.com/ to limit checks to a site's domain.		</p>
+		<p>
+		https://www.mycoolcite.com/products/ to limit checks to a site domain's URL with a page path starting with /products/.&lt;!-- The entire site command will skip URLs that have # to avoid in page links 		arg1 - domain restriction		&lt;arg2&gt;&lt;/arg2&gt; through &lt;arg20&gt;&lt;/arg20&gt; - Alternate pages to scan for links to traverse the site	--&gt;
+		</p>
+<pre>
+</br>		<p>
+&lt;step&gt;
 	&lt;!-- Command - ALWAYS REQUIRED!!! --&gt;
 	&lt;command&gt;entire site commands start&lt;/command&gt;
 	&lt;arguments&gt;
-		&lt;!-- only argument expected by the command is the URL portion to limit execution --&gt;
-		&lt;arg1&gt;https://www.smuckers.com/&lt;/arg1&gt;
+		&lt;!-- first argument expected by the command is the URL portion to limit execution --&gt;
+		&lt;arg1&gt;https://www.mycoolcite.com/&lt;/arg1&gt;
+		&lt;!-- remaining optional arguments for this command are additional pages beyond the current page to scan for URLs from Anchor tags(a) --&gt;
+		&lt;arg2&gt;https://www.mycoolsite.com/products&lt;/arg2&gt;
+		&lt;arg3&gt;https://www.mycoolsite.com/recipes&lt;/arg3&gt;
+		&lt;arg4&gt;https://www.mycoolsite.com/articles&lt;/arg4&gt;
 	&lt;/arguments&gt;
 &lt;/step&gt;
 </br></pre>
@@ -2020,7 +2064,11 @@ First, the string representation of the number is converted to a long, which is 
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="checkjavascriptvalue" class="sectionTitle">CHECK JAVASCRIPT VALUE</a>
 		<p>
-The Check JavaScript Value command executes a JavaScript command and captures the returned value and compares that to the expected value. This can be used for a variety of reasons, but one specific reason is to retrieve and check DataLayer Values.   This command can only be executed on the current page, so navigate before executing this command.Since this was not written to simply test DataLayer values, each check is for an individual value. 	The only argument for this command is as follows:	&lt;arg1&gt;This argument specifies the JavaScript command to execute. Make sure it begins with return to return the value from the Execution.<pre>
+The Check JavaScript Value command executes a JavaScript command and captures the returned value and compares that to the expected value. This can be used for a variety of reasons, but one specific reason is to retrieve and check DataLayer Values.   NOTE: The JavaScript test step may contain characters that are invalid in XML.	Replace these characters with the html encoded alternatives ie...		</p>
+		<p>
+		Examples: Replace "&gt;" with "&gt;", "&" with "&amp;" 		</p>
+		<p>
+This command can only be executed on the current page, so navigate before executing this command.Since this was not written to simply test DataLayer values, each check is for an individual value. Depending upon the complexity of the JavaScript, it can get long so to suppress this in the output, a second argument has been added to just list this as a JavaScript test step.	The arguments for this command are as follows:	&lt;arg1&gt;This argument specifies the JavaScript command to execute. 	Make sure it returns a value from the Execution that can be tested.	&lt;arg1&gt;This optional argument specifies whether to display the JavaScript or not.		Set to "false" to replace the actual JavaScript displayed in the output with "{{JavaScript Command}}"		If this argument is not supplied, it will default to true and display the JavaScript test step as entered.<pre>
 </br>&lt;step&gt;
 	&lt;command&gt;check javascript value&lt;/command&gt;
 	&lt;actionType&gt;read&lt;/actionType&gt;
@@ -2029,6 +2077,7 @@ The Check JavaScript Value command executes a JavaScript command and captures th
 	&lt;arguments&gt;
 		&lt;!-- JavaScript to execute and value to return --&gt;
 		&lt;arg1&gt;return dataLayer[0].page.category.pageTemplate; &lt;/arg1&gt;
+		&lt;arg2&gt;false&lt;/arg2&gt;
 	&lt;/arguments&gt;
 &lt;/step&gt;
 </br></pre>
