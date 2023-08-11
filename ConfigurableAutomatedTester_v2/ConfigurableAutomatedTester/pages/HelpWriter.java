@@ -268,6 +268,9 @@ public class HelpWriter {
                     "\t<sortSpecifiedTestFiles>false</sortSpecifiedTestFiles>\r\n" +
                     "\t<!-- createCsvStatusFiles settings are \"none\", \"one\" or \"many\" without the quotes, of course.  -->\r\n" +
                     "\t<createCsvStatusFiles>none</createCsvStatusFiles>\r\n" +
+                    "\t<!-- showAdditionalGa4Parameters settings are \"true\" to see additional GA4 Parameters beyond those configured for \r\n" +
+                    "\t\tthe test or \"false\" to see only configured parameters. -->\r\n" +
+                    "\t<showAdditionalGa4Parameters>false</showAdditionalGa4Parameters>\r\n" +
                     "\t<!-- Individual File Settings -->\r\n" +
                     "\t<testFiles>\r\n" +
                     "\t\t<!--<testFileName1>C:\\ConfigurableAutomatedTester\\Tests\\SqlServerAccess-Test.xml</testFileName1>\r\n" +
@@ -350,7 +353,11 @@ public class HelpWriter {
             //WriteToFile(get_helpFileName(), "\t\t-\tSQL Server queries as well as JSON and XML endpoint queries.");
             WriteToFile(get_helpFileName(), "\t\tTest File Name - This column holds the name of the test file this entry corresponds with.");
             WriteToFile(get_helpFileName(), "\t\t-\tWhen creating one CSV file for multiple tests, this allows for another method of sorting the data.\r\n");
-
+            WriteToFile(get_helpFileName(), "The <showAdditionalGa4Parameters></showAdditionalGa4Parameters> element when set to \"true\" allows the display of ");
+            WriteToFile(get_helpFileName(),"\t\tall GA4 Parameters when the supplied parameters have been found to match a GA4 tag. \r\n");
+            WriteToFile(get_helpFileName(),"\tThis will have no effect if the matching tag is not found. \r\n");
+            WriteToFile(get_helpFileName(),"\t\tWhen set to \"false\", only the supplied parameters are displayed for the matching tag. \r\n");
+            WriteToFile(get_helpFileName(),"\t\tThis setting was added here to apply to all GA4 Tags instead of on a tag by tag basis, if added to the test step. \r\n");
             WriteToFile(get_helpFileName(), "The <testFiles></testFiles> element is a container element for the testFileName elements and has no textual content of its own.\r\n");
             WriteToFile(get_helpFileName(), "The <testFileName1></testFileName1> element specifies the test file to use for the test and each element should end with an incremental numeric value.");
             WriteToFile(get_helpFileName(), "\tExample:\r\n\t\t<testFileName1></testFileName1>\r\n\t\t<testFileName2></testFileName2>\r\n");
@@ -408,6 +415,7 @@ public class HelpWriter {
                     "\t<specifyTestFiles>false</specifyTestFiles>\r\n" +
                     "\t<sortSpecifiedTestFiles>true</sortSpecifiedTestFiles>\r\n" +
                     "\t<createCsvStatusFiles>none</createCsvStatusFiles>\r\n" +
+                    "\t<showAdditionalGa4Parameters>false</showAdditionalGa4Parameters>\r\n" +
                     "\t<!-- Individual File Settings -->\r\n" +
                     "\t<testFiles>\r\n" +
                     "\t\t<!--<testFileName1>C:\\ConfigurableAutomatedTester\\Tests\\SqlServerAccess-Test.xml</testFileName1>\r\n" +
@@ -500,20 +508,40 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "");
             //CHECK ENTIRE SITE
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CHECK ENTIRE SITE ]", "═", 9, 151));
-            WriteToFile(get_helpFileName(), "The Check Entire Site command is a two part command and requires the Navigation step to begin.");
-            WriteToFile(get_helpFileName(), "This command begins by retrieving all links from the page navigated to prior to calling this command.");
-            WriteToFile(get_helpFileName(), "All Actions that fall between the Entire Site Commands Start and the Entire Site Commands End commands ");
-            WriteToFile(get_helpFileName(), "will be repeated for every URL retrieved from the Navigation step prior to this command block.");
-            WriteToFile(get_helpFileName(), "This powerful functionality allows for reducing the test file length considerably while yielding the desired results.");
-            WriteToFile(get_helpFileName(), "The Entire Site Commands Start command has 1 argument, which is to allow for limiting the scope of the tests to the domain.");
-            WriteToFile(get_helpFileName(), "The required first argument, <arg1></arg1>, contains the URL part to limit execution of commands to just those ");
-            WriteToFile(get_helpFileName(), "URLs that contain the value.");
+            WriteToFile(get_helpFileName(), "The Check Entire Site command is a two part command and requires that a page is loaded prior to using this command.  \n");
+            WriteToFile(get_helpFileName(), "A Navigation step prior to the \"Entire Site Commands Start\" suits this purpose well.  \n");
+            WriteToFile(get_helpFileName(), "It is suggested to navigate to the sitemap page or another page where all site links are contained.  \n");
+            WriteToFile(get_helpFileName(), "All Actions that fall between the \"Entire Site Commands Start\", and the \"Entire Site Commands End\" commands ");
+            WriteToFile(get_helpFileName(), " will be repeated for every URL retrieved from the current page, as well as URLs retrieved from the pages to scan, ");
+            WriteToFile(get_helpFileName(), " which are arguments <arg2></arg2> - <arg20></arg20>,  when the start command executes.\n");
+            WriteToFile(get_helpFileName(), "This powerful functionality allows for reducing the test file length considerably, while performing the same tests on multiple pages.");
+            WriteToFile(get_helpFileName(), "This command begins by retrieving all links from the current page and the pages to scan, then loops through pages starting with ");
+            WriteToFile(get_helpFileName(), " current page executing all commands between the \"Entire Site Commands Start\" and \"Entire Site Commands End\" commands.  \n");
+            WriteToFile(get_helpFileName(), "The Check Entire Site Start command CANNOT BE the first command of a test!!!  \n");
+            WriteToFile(get_helpFileName(), "The Entire Site Commands Start command's first argument <arg1></arg1>, which is required, is to limit the scope ");
+            WriteToFile(get_helpFileName(), " of the tests to the domain or URL path to be tested.  \n");
+            WriteToFile(get_helpFileName(), "This functionality looks for an included URL portion so the domain can be used or a partial or full page path. \n");
+            WriteToFile(get_helpFileName(), "This argument prevents the application from testing off site pages like social links added for sharing to social platforms.\n");
+            WriteToFile(get_helpFileName(), "The subsequent optional arguments, <arg2></arg2> - <arg20></arg20>, allow for retrieving URLs from those pages to ");
+            WriteToFile(get_helpFileName(), " increase the number of pages tested, as the initial page may not have a complete list of links necessary to test.\n");
+            WriteToFile(get_helpFileName(), "Some examples: ");
+            WriteToFile(get_helpFileName(), "\n\n\t\t /products/ to limit tests to links containing /products/ in the URL.");
+            WriteToFile(get_helpFileName(), "\n\n\t\thttps://www.mycoolcite.com/ to limit checks to a site's domain.");
+            WriteToFile(get_helpFileName(), "\n\n\t\thttps://www.mycoolcite.com/products/ to limit checks to a site domain's URL with a page path starting with /products/.");
+            WriteToFile(get_helpFileName(),"<!-- The entire site command will skip URLs that have # to avoid in page links \n" +
+                            "\t\targ1 - domain restriction\n" +
+                            "\t\t<arg2></arg2> through <arg20></arg20> - Alternate pages to scan for links to traverse the site\n" +
+                            "\t-->\n");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<!-- Command - ALWAYS REQUIRED!!! -->\r\n" +
                     "\t<command>entire site commands start</command>\r\n" +
                     "\t<arguments>\r\n" +
-                    "\t\t<!-- only argument expected by the command is the URL portion to limit execution -->\r\n" +
-                    "\t\t<arg1>https://www.smuckers.com/</arg1>\r\n" +
+                    "\t\t<!-- first argument expected by the command is the URL portion to limit execution -->\r\n" +
+                    "\t\t<arg1>https://www.mycoolcite.com/</arg1>\r\n" +
+                    "\t\t<!-- remaining optional arguments for this command are additional pages beyond the current page to scan for URLs from Anchor tags(a) -->\r\n" +
+                    "\t\t<arg2>https://www.mycoolsite.com/products</arg2>\r\n" +
+                    "\t\t<arg3>https://www.mycoolsite.com/recipes</arg3>\r\n" +
+                    "\t\t<arg4>https://www.mycoolsite.com/articles</arg4>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>\r\n");
 
@@ -2285,10 +2313,18 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "returned value and compares that to the expected value. ");
             WriteToFile(get_helpFileName(), "This can be used for a variety of reasons, but one specific reason is to retrieve and check ");
             WriteToFile(get_helpFileName(), "DataLayer Values.   ");
+            WriteToFile(get_helpFileName(), "NOTE: The JavaScript test step may contain characters that are invalid in XML.");
+            WriteToFile(get_helpFileName(), "\tReplace these characters with the html encoded alternatives ie...\r\n");
+            WriteToFile(get_helpFileName(), "\t\tExamples: Replace \">\" with \"&gt;\", \"&\" with \"&amp;\" \n\n");
             WriteToFile(get_helpFileName(), "This command can only be executed on the current page, so navigate before executing this command.");
             WriteToFile(get_helpFileName(), "Since this was not written to simply test DataLayer values, each check is for an individual value. ");
-            WriteToFile(get_helpFileName(), "\tThe only argument for this command is as follows:");
-            WriteToFile(get_helpFileName(), "\t<arg1>This argument specifies the JavaScript command to execute. Make sure it begins with return to return the value from the Execution.");
+            WriteToFile(get_helpFileName(), "Depending upon the complexity of the JavaScript, it can get long so to suppress this in the output, a ");
+            WriteToFile(get_helpFileName(), "second argument has been added to just list this as a JavaScript test step.");
+            WriteToFile(get_helpFileName(), "\tThe arguments for this command are as follows:");
+            WriteToFile(get_helpFileName(), "\t<arg1>This argument specifies the JavaScript command to execute. \n\tMake sure it returns a value from the Execution that can be tested.");
+            WriteToFile(get_helpFileName(), "\t<arg1>This optional argument specifies whether to display the JavaScript or not.");
+            WriteToFile(get_helpFileName(), "\t\tSet to \"false\" to replace the actual JavaScript displayed in the output with \"{{JavaScript Command}}\"");
+            WriteToFile(get_helpFileName(), "\t\tIf this argument is not supplied, it will default to true and display the JavaScript test step as entered.");
             WriteToFile(get_helpFileName(), "<step>\n" +
                     "\t<command>check javascript value</command>\n" +
                     "\t<actionType>read</actionType>\n" +
@@ -2297,6 +2333,7 @@ public class HelpWriter {
                     "\t<arguments>\n" +
                     "\t\t<!-- JavaScript to execute and value to return -->\n" +
                     "\t\t<arg1>return dataLayer[0].page.category.pageTemplate; </arg1>\n" +
+                    "\t\t<arg2>false</arg2>\n" +
                     "\t</arguments>\r\n" +
                     "</step>\n");
 

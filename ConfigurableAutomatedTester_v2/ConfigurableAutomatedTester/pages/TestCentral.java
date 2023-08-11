@@ -213,6 +213,12 @@ public class TestCentral {
         return _selectedBrowserType;
     }
 
+    private Boolean _showAdditionalGA4Parameters;
+    void set_showAdditionalGA4Parameters(Boolean _showAdditionalGA4Parameters) {this._showAdditionalGA4Parameters = _showAdditionalGA4Parameters;}
+    Boolean get_showAdditionalGA4Parameters() {
+        return this._showAdditionalGA4Parameters;
+    }
+
     void set_selectedBrowserType(BrowserTypes newValue) {
         if (newValue == BrowserTypes.Chrome) {
             this._selectedBrowserType = BrowserTypes.Chrome;
@@ -371,6 +377,7 @@ public class TestCentral {
         testHelper.CreateSectionHeader("[ Starting Test Application Initialization ]", AppConstants.FRAMED + AppConstants.ANSI_WHITE_BACKGROUND + AppConstants.ANSI_BOLD, AppConstants.ANSI_BLUE, true, false, false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 +  "Config File absolute path = " + AppConstants.ANSI_RESET + tmp.getAbsolutePath(), false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 +  "Log File Name = " + AppConstants.ANSI_RESET  + logFileName, false);
+        testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 +  "CSV File Name = " + AppConstants.ANSI_RESET  + logFileName, false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 +  "Help File Name = " + AppConstants.ANSI_RESET + helpFileName, false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 +  "Har File Folder = " + AppConstants.ANSI_RESET + harFolder, false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 +  "HTML Help File Name = " + AppConstants.ANSI_RESET + helpFileName.replace(".txt", ".html"), false);
@@ -439,7 +446,10 @@ public class TestCentral {
             this.screenShotSaveFolder = configSettings.get_screenShotSaveFolder();
             this.testAllBrowsers = configSettings.get_testAllBrowsers();
             this.createCSVStatusFiles = configSettings.get_createCsvStatusFiles();
+            this._showAdditionalGA4Parameters = configSettings.get_showAdditionalGa4Parameters();
+            set_showAdditionalGA4Parameters(configSettings.get_showAdditionalGa4Parameters());
             readCommands.set_testPage(testPage);
+            readCommands.set_showAdditionalGa4Parameters(get_showAdditionalGA4Parameters());
 
 
             if (testFiles.size() > 1) {
@@ -570,6 +580,12 @@ public class TestCentral {
         }
     }
 
+    /****************************************************************************
+     *  DESCRIPTION:
+     *    Runs all tests read in from all test settings files between the
+     *    Entire Site Command Start and and the Entire Site Command End commands.
+     *
+     **************************************************************************** */
     private void ExecuteEntireSiteCommands(TestStep tsInput, int fileIndex, int xStart, int xEnd) throws Exception {
         testFileName = testFiles.get(fileIndex);
         testHelper.set_testFileName(testFileName);
@@ -579,15 +595,32 @@ public class TestCentral {
         String domainRestriction = null;
         String href = null;
         boolean isConditionalBlock = false;
-        //start with the first command in the list
 
-        List<WebElement> links = driver.findElements(By.cssSelector("a"));
+        //start by getting a list of pages from anchor tag hrefs
+        //ArrayList<String> links = GetPageLinks();
+        //get the domain or page path to restrict the testing
         domainRestriction = GetArgumentValue(tsInput, 0, null);
-        for (int pageIndex=0;pageIndex<links.size();pageIndex++) {
-            href = links.get(pageIndex).getAttribute("href");
-            if (href.indexOf(domainRestriction) > -1) {
+        //get the pages that should also be scanned for additional hrefs
+        ArrayList<String> scanPages = GetScanPages(tsInput);
+        if (!testHelper.IsNullOrEmpty(domainRestriction) && domainRestriction.indexOf("http") > 0) {
+            scanPages.add(domainRestriction);
+        } else {
 
-                testHelper.UpdateTestResults(AppConstants.ANSI_PURPLE + AppConstants.iFrameSectionBottomLeft + testHelper.PrePostPad("[ Entire Site Check checking URL:" + href + "]", "═", 9, 157) + AppConstants.iFrameSectionBottomRight + AppConstants.ANSI_RESET, false);
+        }
+        //testHelper.UpdateTestResults (AppConstants.indent8 +  AppConstants.subsectionArrowLeft + "[ Start Adding Links from Pages configured for scan ]" + AppConstants.subsectionArrowRight,true);
+        testHelper.UpdateTestResults( AppConstants.indent8 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start Adding Links from Pages configured for scan ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+        ArrayList<String> links = GetPageLinks(scanPages, fileIndex,0,0,tsInput.get_crucial());
+        testHelper.UpdateTestResults( AppConstants.indent8 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End Adding Links from Pages configured for scan ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+        //testHelper.UpdateTestResults (AppConstants.indent8 +  AppConstants.subsectionArrowLeft + "[ End Adding Links from Pages configured for scan ]" + AppConstants.subsectionArrowRight,true);
+        //start with the first command in the list
+        for (int pageIndex=0;pageIndex<links.size();pageIndex++) {
+            href = links.get(pageIndex); //.getAttribute("href");
+            //skip non-domain and in page links
+            if (href.indexOf(domainRestriction) > -1 && (href.indexOf("#") <= -1)) {
+                testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.iFrameSectionTopLeft + testHelper.PrePostPad("[ Entire Site Check checking URL: " + href + "]", "═", 9, 157) + AppConstants.iFrameSectionBottomRight + AppConstants.ANSI_RESET, false);
+                CreateNavigateTestStepAndNavigate(href, fileIndex, pageIndex, pageIndex, tsInput.get_crucial());
+
+                //links = GetPageLinks(links, scanPages);  //can you increase the size of the array while traversing it?
                 for (int x = xStart + 1; x < xEnd; x++) {
                     if (revertToParent) {
                         driver.switchTo().defaultContent();
@@ -632,29 +665,186 @@ public class TestCentral {
                         testHelper.UpdateTestResults("Conditional Failed!!!  Skipping Command: " + ts.get_command() + " for Step: " + fileStepIndex, true);
                     }
                 }
+                testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.iFrameSectionBottomLeft + testHelper.PrePostPad("[ End Entire Site Check checking URL:" + href + "]", "═", 9, 157) + AppConstants.iFrameSectionBottomRight + AppConstants.ANSI_RESET, false);
+            } else {
+                testHelper.UpdateTestResults( AppConstants.indent8 + AppConstants.ANSI_BLUE_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Domain ((" + domainRestriction + ") restriction exception: " + href + "]", "═", 9, 157) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, false);
             }
-            testHelper.UpdateTestResults(AppConstants.ANSI_PURPLE + AppConstants.iFrameSectionBottomLeft + testHelper.PrePostPad("[ End Entire Site Check checking URL:" + href + "]", "═", 9, 157) + AppConstants.iFrameSectionBottomRight + AppConstants.ANSI_RESET, false);
         }
     }
 
-    public void CreateNavigateTestStepAndNavigate(String href, int fileIndex, int stepNum, int pageIndex) {
+    /****************************************************************************
+     *  DESCRIPTION:
+     *    Gets a list of the pages to scan for additional links and returns the
+     *    list of pages to the calling method.
+     *
+     **************************************************************************** */
+    private ArrayList<String> GetScanPages(TestStep tsInput) {
+        ArrayList<String> scanPages = new ArrayList<>();
+        String pageUrl = "";
+        //testHelper.DebugDisplay("Retrieving Scan Pages");
+        testHelper.UpdateTestResults( AppConstants.indent8 + AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start Retrieving Scan Pages ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+
+        //scanPages.add(driver.getCurrentUrl());
+        for (int x=1;x<50;x++) {
+            pageUrl = GetArgumentValue(tsInput, x, null);
+            //testHelper.DebugDisplay("#1 Scan Page Url: " + pageUrl);
+            if (!testHelper.IsNullOrEmpty(pageUrl)) {
+                scanPages.add(pageUrl);
+                //testHelper.DebugDisplay("#2 Scan Page Url: " + pageUrl);
+            } else {
+                break;
+            }
+        }
+        testHelper.UpdateTestResults( AppConstants.indent8 + AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End Retrieving Scan Pages ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+        return scanPages;
+    }
+
+    /****************************************************************************
+     *  DESCRIPTION:
+     *    Gets page links from all anchor tags and returns it to the calling
+     *    method.
+     *
+     **************************************************************************** */
+    private ArrayList GetPageLinks(ArrayList<String> scanPages, int fileIndex, int pageIndex, int altIndex, Boolean isCrucial) {
+        List<WebElement> anchorTags; // = driver.findElements(By.cssSelector("a"));
+        ArrayList<String> links = new ArrayList<>();
+        Boolean isFound = false;
+        String currentUrl = driver.getCurrentUrl();
+        scanPages.add(0,currentUrl);
+        for (int z=0;z<scanPages.size();z++) {
+            testHelper.DebugDisplay("Getting Page links from: " + scanPages.get(z));
+            if (!scanPages.get(z).equals(driver.getCurrentUrl())) {
+                CreateNavigateTestStepAndNavigate(scanPages.get(z), fileIndex, pageIndex, altIndex, isCrucial);
+            }
+            anchorTags = driver.findElements(By.cssSelector("a"));
+            for (int x = 0; x < anchorTags.size(); x++) {
+                isFound = false;
+                if (anchorTags.get(x).getAttribute("href").indexOf("#") < 0) {
+                    for (int y = 0; y < links.size(); y++) {
+                        if (links.get(y).equals(anchorTags.get(x).getAttribute("href"))) {
+                            isFound = true;
+                            break;
+                        }
+                    }
+                } else {
+                    isFound = true;
+                }
+                if (!isFound) {
+                    links.add(anchorTags.get(x).getAttribute("href"));
+                    //testHelper.UpdateTestResults ("Adding Link: " + anchorTags.get(x).getAttribute("href"),true);
+                }
+            }
+        }
+        return links;
+    }
+
+    /****************************************************************************
+     *  DESCRIPTION:
+     *    Gets all unique page links and returns them in a String Array.
+     *
+     **************************************************************************** */
+    private ArrayList<String> GetPageLinks() {
+        List<WebElement> anchorTags = driver.findElements(By.cssSelector("a"));
+        ArrayList<String> links = new ArrayList<>();
+        Boolean isFound = false;
+        for (int x=0;x<anchorTags.size();x++){
+            isFound = false;
+            for (int y=0;y<links.size();y++){
+                if (links.get(y).equals(anchorTags.get(x).getAttribute("href"))) {
+                    isFound = true;
+                    break;
+                }
+            }
+            if (!isFound) {
+                links.add(anchorTags.get(x).getAttribute("href"));
+               // testHelper.DebugDisplay("Adding Link: " + anchorTags.get(x).getAttribute("href"));
+            }
+        }
+        return links;
+    }
+
+    /****************************************************************************
+     *  DESCRIPTION:
+     *    Gets all unique page links that have not been previously captured
+     *    and returns them in a String Array.
+     *
+     **************************************************************************** */
+    private ArrayList<String> GetPageLinks(ArrayList<String> pages, ArrayList<String> scanPages) {
+        List<WebElement> anchorTags = driver.findElements(By.cssSelector("a"));
+        String javaScriptText = "return dataLayer[0].page.category.pageTemplate";
+        String pageTemplate = (String) ((JavascriptExecutor) driver).executeScript(javaScriptText);
+        ArrayList<String> links = new ArrayList<>();
+        Boolean isFound = false;
+        //String LinkPages = "plp,pcp,pcnp,rlp,rlcp,rcp,rcnp,alp";
+        Boolean isScanPage = false;
+
+        //check if this is configured as a page to scan for additional URLs
+        for (int i=0;i<scanPages.size();i++) {
+            if (driver.getCurrentUrl().equals(scanPages.get(i))) {
+                isScanPage = true;
+            }
+        }
+        //if this is not a scan page, return the list of links that were sent here
+        if (!isScanPage) {
+            return pages;
+        }
+        testHelper.UpdateTestResults("Checking for additional URLs to test on: " + driver.getCurrentUrl(), true);
+        //only retrieve additional links from pages with the specified pageTemplate values
+        for (int x = 0; x < anchorTags.size(); x++) {
+            isFound = false;
+            //first get a unique list of URLs
+            for (int y = 0; y < links.size(); y++) {
+                if (links.get(y).equals(anchorTags.get(x).getAttribute("href"))) {
+                    isFound = true;
+                    break;
+                }
+            }
+            if (!isFound) {
+                links.add(anchorTags.get(x).getAttribute("href"));
+                //testHelper.DebugDisplay("#2 Adding Link: " + anchorTags.get(x).getAttribute("href"));
+            }
+        }
+        //compare against list already retrieved
+        for (int x = 0; x < links.size(); x++) {
+            isFound = false;
+            for (int y = 0; y < pages.size(); y++) {
+                if (links.get(x).equals(pages.get(y))) {
+                    isFound = true;
+                    break;
+                }
+            }
+            if (!isFound) {
+                pages.add(links.get(x));
+                //testHelper.DebugDisplay("Adding Additional Links: " + anchorTags.get(x).getAttribute("href"));
+            }
+        }
+        return links;
+    }
+
+    public void CreateNavigateTestStepAndNavigate(String href, int fileIndex, int stepNum, int pageIndex, Boolean isCrucial) {
         TestStep navStep;
         List<Argument> argumentList;
-        Argument argument;
+        Argument argument, argument2;
         String fileStepIndex = "F" + fileIndex + "_S" + stepNum + "_Iteration:" + pageIndex;
         try {
             navStep = new TestStep();
             argumentList = navStep.ArgumentList;
             navStep.set_command("navigate");
             navStep.set_actionType("write");
-            navStep.set_crucial(true);
+            navStep.set_crucial(isCrucial);
+            //navStep.set_crucial(true);
             navStep.set_expectedValue(href);
             argument = new Argument();
             argument.set_parameter(href);
             argumentList.add(argument);
-            argument.set_parameter("1000");
-            argumentList.add(argument);
+            argument2 = new Argument();
+            argument2.set_parameter("1000");
+            argumentList.add(argument2);
             navStep.setArgumentList(argumentList);
+            /*for (int x=0;x<argumentList.size();x++) {
+                testHelper.DebugDisplay("argumentList.get(" + x + ").get_parameter() = " + argumentList.get(x).get_parameter());
+            }*/
+            testHelper.UpdateTestResults("Performing Entire Site Navigation to " + href + " for step " + fileStepIndex,true);
             PerformExplicitNavigation(navStep, fileStepIndex);
         } catch(Exception e) {
             testHelper.UpdateTestResults("Failed Entire Site Navigation for href = " + href + " for step " + fileStepIndex,true);

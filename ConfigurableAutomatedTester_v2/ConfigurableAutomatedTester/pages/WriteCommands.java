@@ -484,7 +484,7 @@ public class WriteCommands {
                 status = true;
             } catch (Exception e) {
                 status = false;
-                testHelper.DebugDisplay("Error clicking element: " + e.getMessage());
+                testHelper.UpdateTestResults("Error clicking element: " + e.getMessage() + " for step " + fileStepIndex, true);
             }
         } else if (command.toLowerCase().contains("screenshot")) {
             try {
@@ -730,16 +730,11 @@ public class WriteCommands {
                         item.set_DocumentTitle(entry.getRequest().getQueryString().get(x).getName().equals("dt") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_documentTitle());
                         item.set_HitType(entry.getRequest().getQueryString().get(x).getName().equals("t") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_hitType());
                         item.set_TrackingId(entry.getRequest().getQueryString().get(x).getName().equals("tid") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_trackingId());
-                        /*if (!testHelper.IsNullOrEmpty(item.get_hitType()) && !testHelper.IsNullOrEmpty(item.get_documentLocation()))
-                        {
-                            GtmTagList.add(item);
-                            testHelper.DebugDisplay("EC = " + item.get_eventCategory() + " EA = " + item.get_eventAction() + " EL = " + item.get_eventLabel());
-                            uaTagStarted = false;
-                        }*/
+
                     } else if (entry.getRequest().getUrl().indexOf("collect?v=2") > -1)  { //if (entry.getRequest().getQueryString().get(x).getName().equals("v")) { //if (entry.getRequest().getQueryString().get(x).getValue().indexOf("collect?v=2") > -1 || (entry.getRequest().getQueryString().get(x).getName().equals("v") && entry.getRequest().getQueryString().get(x).getValue().equals("2")))  {
                         if (entry.getRequest().getQueryString().get(x).getName().equals("v") && entry.getRequest().getQueryString().get(x).getValue().equals("2")) {
                             if (!testHelper.IsNullOrEmpty(gA4item.get_eventName()) && !testHelper.IsNullOrEmpty(gA4item.get_gtmTagName()) && gA4item != null) {
-                                testHelper.DebugDisplay(gA4item.get_eventName() + " - " + gA4item.get_productName());
+                                //testHelper.DebugDisplay(gA4item.get_eventName() + " - " + gA4item.get_productName());
                                 gA4item.set_GA4Parameters(ga4ParameterList);
                                 GA4TagList.add(gA4item);
                                 ga4TagStarted = false;
@@ -777,7 +772,7 @@ public class WriteCommands {
                 if (ga4TagStarted && gA4item != null) {
                     gA4item.set_GA4Parameters(ga4ParameterList);
                     GA4TagList.add(gA4item);
-                    testHelper.DebugDisplay("#2 " + gA4item.get_eventName() + " - " + gA4item.get_productName());
+                    //testHelper.DebugDisplay("#2 " + gA4item.get_eventName() + " - " + gA4item.get_productName());
                 } else if (uaTagStarted && item != null) {
                     GtmTagList.add(item);
                 }

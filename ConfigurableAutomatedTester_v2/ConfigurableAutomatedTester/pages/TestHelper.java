@@ -72,6 +72,12 @@ public class TestHelper{
 //        return navigationMessageIndent;
 //    }
 
+    private Boolean _showAdditionalGA4Parameters;
+    void set_showAdditionalGA4Parameters(Boolean _showAdditionalGA4Parameters) {this._showAdditionalGA4Parameters = _showAdditionalGA4Parameters;}
+    Boolean get_showAdditionalGA4Parameters() {
+        return this._showAdditionalGA4Parameters;
+    }
+
     void setNavigationMessageIndent(String navigationMessageIndent) {
         this.navigationMessageIndent = navigationMessageIndent;
     }
@@ -208,6 +214,12 @@ public class TestHelper{
                         eElement.getElementsByTagName(AppConstants.CreateCSVStatusFiles).item(0).getTextContent() : "none";
                 configSettings.set_createCsvStatusFiles(configValue.toLowerCase());
                 UpdateTestResults(AppConstants.ANSI_YELLOW + AppConstants.indent5 + "CreateCSVStatusFiles = "  + AppConstants.ANSI_RESET + configSettings.get_createCsvStatusFiles(), false);
+
+                //Show Additional GA4 Parameters
+                configValue = (eElement.getElementsByTagName(AppConstants.ShowAdditionalGA4Parameters).item(0) != null) ?
+                        eElement.getElementsByTagName(AppConstants.ShowAdditionalGA4Parameters).item(0).getTextContent() : "false";
+                configSettings.set_showAdditionalGa4Parameters(Boolean.parseBoolean(configValue));
+                UpdateTestResults(AppConstants.ANSI_YELLOW + AppConstants.indent5 + "ShowAdditionalGA4Parameters = "  + AppConstants.ANSI_RESET + configSettings.get_showAdditionalGa4Parameters().toString(), false);
 
 
                 //TestFolderName - default set to null
@@ -735,14 +747,18 @@ public class TestHelper{
                     if (testMessage.contains("Successful") || testMessage.contains("Failed") || testMessage.contains("Error")) {
                         WriteToFile(get_logFileName(), ""); //write blank line
                         //System.out.println("#2 in the else inner if  " + get_csvFileName()); //debugging
-                        if (get_csvFileName() != null) {
+                        if (!IsNullOrEmpty(get_csvFileName())) {
                             //System.out.println("#3 in the else inner inner if");  //debugging
+                            WriteToCSV(CleanMessage(testMessage));
+                        } else {
+                            set_csvFileName(testCentral.get_csvFileName());
                             WriteToCSV(CleanMessage(testMessage));
                         }
                     }
                 }
             }
         } catch (Exception e) {
+            DebugDisplay(e.getMessage());
             e.printStackTrace();
         }
 
@@ -804,6 +820,9 @@ public class TestHelper{
      ******************************************************************************/
     private void WriteToCSV(String testMessage) {
         String fileName = this.get_csvFileName();
+        if (IsNullOrEmpty(get_testFileName())) {
+            set_testFileName(testCentral.get_testFileName());
+        }
         String step = testMessage.substring(testMessage.indexOf("for step ") + "for step ".length());
         if (step.contains(" ")) {
             step = step.substring(0, step.indexOf(" "));
@@ -848,6 +867,11 @@ public class TestHelper{
             startPos = message.indexOf("Actual: (") + "Actual: (".length();
             endPos = message.lastIndexOf(")");
             variableOutput = "=\"(" + message.substring(startPos, endPos).trim() + ")\"";
+        } else if (message.contains("JavaScript")) {
+            message = message.replace(","," - ");
+            /*startPos = message.indexOf("Actual: (") + "Actual: (".length();
+            endPos = message.lastIndexOf(")");
+            variableOutput = "=\"(" + message.substring(startPos, endPos).trim() + ")\"";*/
         }
 
         String csv = step.replace("\n","") + "," + message.replace("\n","") + "," + status + "," + variableOutput + "," + get_testFileName();

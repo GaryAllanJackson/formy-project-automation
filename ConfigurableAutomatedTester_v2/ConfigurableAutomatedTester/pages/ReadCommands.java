@@ -37,6 +37,9 @@ public class ReadCommands {
         this._testFileName = _testFileName;
     }
     String get_testFileName() {return _testFileName; }
+    private Boolean _showAdditionalGa4Parameters;
+    void set_showAdditionalGa4Parameters(Boolean _showAdditionalGa4Parameters) {this._showAdditionalGa4Parameters = _showAdditionalGa4Parameters;}
+    Boolean get_showAdditionalGa4Parameters() {return _showAdditionalGa4Parameters;}
 
     /*****************************************************************
      * Description: This is the constructor where testCentral and
@@ -50,6 +53,7 @@ public class ReadCommands {
         this.testCentral = testCentral;
         writeCommands =  testCentral.writeCommands;  //new WriteCommands(testCentral);
         testHelper = testCentral.testHelper;
+        set_showAdditionalGa4Parameters(testCentral.get_showAdditionalGA4Parameters());
         if (writeCommands == null) {
             writeCommands =  testCentral.writeCommands != null ? testCentral.writeCommands : new WriteCommands(testCentral);;
         }
@@ -58,6 +62,7 @@ public class ReadCommands {
             testHelper.set_executedFromMain(testCentral.is_executedFromMain());
             testHelper.set_csvFileName(testCentral.get_csvFileName());
             testHelper.set_testFileName(testCentral.get_testFileName());
+            testHelper.set_showAdditionalGA4Parameters(testCentral.get_showAdditionalGA4Parameters());
             //testHelper.DebugDisplay("ReadCommands - testHelper.is_executedFromMain() = " + testHelper.is_executedFromMain() );
         }
     }
@@ -211,7 +216,7 @@ public class ReadCommands {
                         AppConstants.indent5  + " for step " + fileStepIndex, true);
             } else if (index > -1 && !doesMatch) {
                 listItem = GtmTagList.get(index);
-                testHelper.UpdateTestResults("Failed No GTM Tag found matching specified criteria: \r\n" +
+                testHelper.UpdateTestResults("Failed No GTM Tag found matching specified (optional) criteria: \r\n" +
                         AppConstants.indent8 + (item.get_documentLocation().equals(listItem.get_documentLocation()) ? AppConstants.ANSI_GREEN : AppConstants.ANSI_RED) + "Expected: (dl=" + item.get_documentLocation() + ") Actual: (dl=" + listItem.get_documentLocation() + ")\r\n" +
                         AppConstants.indent8 + (item.get_hitType().equals(listItem.get_hitType()) ? AppConstants.ANSI_GREEN : AppConstants.ANSI_RED) + "Expected: (t=" + item.get_hitType() + ")  Actual: (t=" + listItem.get_hitType() + ")\r\n" +
                         AppConstants.indent8 + (item.get_eventCategory().equals(listItem.get_eventCategory()) ? AppConstants.ANSI_GREEN : AppConstants.ANSI_RED) + "Expected: (ec=" + item.get_eventCategory() + ") Actual: (ec=" + listItem.get_eventCategory() + ")\r\n" +
@@ -261,6 +266,9 @@ public class ReadCommands {
             String tsName;
             String tsValue;
             String additionalMessage = "";
+            int maxAdditionalItemsPerLine = 4;
+            int additionalItemsPerLine = 0;
+            int selectedIndex = 0;
 
             String testMessage = "";
             String testParams = "";
@@ -283,13 +291,33 @@ public class ReadCommands {
                         if (tsName.equals(ga4Tag.getGA4Parameter(tagIndex).get_parameterName())) {
                             testMessage += AppConstants.indent8 + "Expected:(" + tsName + "=" + tsValue + ") Actual: (" + ga4Tag.getGA4Parameter(tagIndex).get_parameterName() +
                                     "=" + ga4Tag.getGA4Parameter(tagIndex).get_parameterValue() + ")\r\n";
+                            selectedIndex = tagIndex;
+                            //additionalMessage.replace("(" + tsName + "=" + tsValue + ")","");
                         } else {
-                            additionalMessage = additionalMessage.length() <= 0 ? AppConstants.indent8 + "Additional: " : additionalMessage;
-                            additionalMessage += AppConstants.indent8 + " - " + ga4Tag.getGA4Parameter(tagIndex).get_parameterName() + "=" + ga4Tag.getGA4Parameter(tagIndex).get_parameterValue() + ")\r\n";
+                            additionalMessage = additionalMessage.length() <= 0 ? AppConstants.indent8 + "Additional: " + additionalMessage : additionalMessage;
+                            if (additionalItemsPerLine == maxAdditionalItemsPerLine) {
+                                additionalMessage += "\r\n";
+                                additionalItemsPerLine = 0;
+                            }
+                            if (additionalMessage.indexOf(" - (" + ga4Tag.getGA4Parameter(tagIndex).get_parameterName() + "=" + ga4Tag.getGA4Parameter(tagIndex).get_parameterValue() + ")") < 0) {
+                                additionalMessage += AppConstants.indent8 + " - (" + ga4Tag.getGA4Parameter(tagIndex).get_parameterName() + "=" + ga4Tag.getGA4Parameter(tagIndex).get_parameterValue() + ")\t";
+                                additionalItemsPerLine++;
+                            }
+                            //additionalMessage.replace("(" + tsName + "=" + tsValue + ")","");
                         }
                     }
                 }
-                testMessage += additionalMessage + AppConstants.indent5 + " for step " + fileStepIndex;
+                for (int tsIndex = 0; tsIndex < tsItem.getGA4Parameters().size(); tsIndex++) {
+                    tsName = tsItem.getGA4Parameter(tsIndex).get_parameterName();
+                    tsValue = tsItem.getGA4Parameter(tsIndex).get_parameterValue();
+                    additionalMessage.replace(" - (" + tsName + "=" + tsValue + ")\t","");
+                    additionalMessage.replace("\r\n\t","\r\n");
+                }
+                if (this._showAdditionalGa4Parameters) {
+                    testMessage += additionalMessage + AppConstants.indent5 + " for step " + fileStepIndex;
+                } else {
+                    testMessage += AppConstants.indent5 + " for step " + fileStepIndex;
+                }
                 testHelper.UpdateTestResults(testMessage, true);
             } else {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Failed GA4 GTM Tag NOT found matching specified criteria: \r\n" + testParams + AppConstants.indent5 + " for step " + fileStepIndex, true);
@@ -378,7 +406,7 @@ public class ReadCommands {
                     }
                 }
             }
-            //on if it has iterated through the entire list and not found the item do we list the fail message
+            //only if it has iterated through the entire list and not found the item do we list the fail message
             if (!doesMatch) {
                 testHelper.UpdateTestResults("Failed No GTM Tag found matching specified criteria: \r\n" +
                         AppConstants.indent8 + "Expected: (gtm_tag_name=" + item.get_gtmTagName() + ") Actual: (gtm_tag_name=" + listItem.get_gtmTagName() + ")\r\n" +
@@ -396,17 +424,17 @@ public class ReadCommands {
 
     private String RemoveInvalidCharacters(String inputString) {
         //String validCharacters = "[^abcdefghijklmnopqrstuvwxyz -']";
-        if (inputString.indexOf("cinnamania") > 0) {
+        /*if (inputString.indexOf("cinnamania") > 0) {
             testHelper.DebugDisplay("Before Removal inputString = " + inputString);
-        }
+        }*/
         inputString = inputString.replace("\t"," ");
         inputString = inputString.replace("&nbsp;"," ");
         //inputString = inputString.replaceAll("[^abcdefghijklmnopqrstuvwxyz -']","");
         inputString = inputString.replaceAll("[^a-z -\'~|]","");
 
-        if (inputString.indexOf("cinnamania") > 0) {
+        /*if (inputString.indexOf("cinnamania") > 0) {
             testHelper.DebugDisplay("After Removal inputString = " + inputString);
-        }
+        }*/
 
         return inputString;
     }
@@ -1683,15 +1711,15 @@ public class ReadCommands {
             } else {
                 if ("=".equals(comparisonType)) {
                     if (actualValue.equals(ts.get_expectedValue())) {
-                        testHelper.UpdateTestResults(AppConstants.indent8 + "Successful JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual (" + actualValue + ")" + " for step " + fileStepIndex, true);
+                        testHelper.UpdateTestResults(AppConstants.indent8 + "Successful JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual: (" + actualValue + ")" + " for step " + fileStepIndex, true);
                     } else {
-                        testHelper.UpdateTestResults(AppConstants.indent8 + "Failed JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual (" + actualValue + ")" + " for step " + fileStepIndex, true);
+                        testHelper.UpdateTestResults(AppConstants.indent8 + "Failed JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual: (" + actualValue + ")" + " for step " + fileStepIndex, true);
                     }
                 } else {
                     if (!actualValue.equals(ts.get_expectedValue())) {
-                        testHelper.UpdateTestResults(AppConstants.indent8 + "Successful JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual (" + actualValue + ")" + " for step " + fileStepIndex, true);
+                        testHelper.UpdateTestResults(AppConstants.indent8 + "Successful JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual: (" + actualValue + ")" + " for step " + fileStepIndex, true);
                     } else {
-                        testHelper.UpdateTestResults(AppConstants.indent8 + "Failed JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual (" + actualValue + ")" + " for step " + fileStepIndex, true);
+                        testHelper.UpdateTestResults(AppConstants.indent8 + "Failed JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual: (" + actualValue + ")" + " for step " + fileStepIndex, true);
                     }
                 }
             }
