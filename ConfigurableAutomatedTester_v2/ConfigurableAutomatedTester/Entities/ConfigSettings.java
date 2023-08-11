@@ -18,6 +18,8 @@ public class ConfigSettings {
     private Boolean _sortSpecifiedTestFiles;
     private String _createCsvStatusFiles;
 
+    private Boolean _showAdditionalGa4Parameters;
+
     public ConfigSettings() {
         _testFiles = new ArrayList<>();
     }
@@ -153,6 +155,10 @@ public class ConfigSettings {
         this._createCsvStatusFiles = _createCsvStatusFiles;
     }
 
+    public Boolean get_showAdditionalGa4Parameters() {return _showAdditionalGa4Parameters; }
+    public void set_showAdditionalGa4Parameters(Boolean _showAdditionalGa4Parameters) {
+        this._showAdditionalGa4Parameters = _showAdditionalGa4Parameters;
+    }
 
 
 }

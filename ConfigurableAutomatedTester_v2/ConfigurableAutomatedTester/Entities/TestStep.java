@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class TestStep {
@@ -13,7 +14,7 @@ public class TestStep {
     public List<Argument> ArgumentList;
 
     public TestStep() {
-
+        ArgumentList = new ArrayList<>();
     }
 
     public String get_command() {
