@@ -38,7 +38,8 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
+            <version>4.13</version>
+            <!--<version>${junit.version}</version>-->
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -61,7 +62,8 @@
         <dependency>
             <groupId>com.codeborne</groupId>
             <artifactId>phantomjsdriver</artifactId>
-            <version>1.2.1</version>
+            <version>1.4.1</version>
+            <!--<version>1.2.1</version>-->
         </dependency>
 <!--        <dependency>-->
 <!--            <groupId>com.github.detro</groupId>-->
@@ -120,6 +122,7 @@
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
             <version>3.11.0</version>
+            <!--<version>3.11.0</version>-->
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
