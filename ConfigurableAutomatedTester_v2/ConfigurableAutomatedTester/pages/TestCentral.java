@@ -18,6 +18,10 @@ import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.logging.LogEntries;
+import org.openqa.selenium.logging.LogEntry;
+import org.openqa.selenium.logging.LogType;
+import org.openqa.selenium.logging.LoggingPreferences;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -32,6 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
@@ -307,7 +312,9 @@ public class TestCentral {
     @AfterAll
     private void TearDown() throws Exception {
         try {
+            WriteLogContent();
             WriteHarContent();
+
             driver.close();
             driver.quit();
             proxy.stop();
@@ -317,6 +324,32 @@ public class TestCentral {
         }
         PerformCleanup();
     }
+
+    private void WriteLogContent() {
+        //use the following URL for testing
+        //driver.get("https://testkru.com/TestUrls/TestConsoleLogs");
+        testHelper.DebugDisplay("In WriteLogContent() Method!");
+        String fileName = logFileName.substring(0, logFileName.lastIndexOf(".")-1) + "-Console-log.txt";
+        testHelper.DebugDisplay("In WriteLogContent() Method! fileName = " + fileName);
+        LogEntries entry = driver.manage().logs().get(LogType.BROWSER);
+        // Retrieving all logs
+        List<LogEntry> logs = entry.getAll();
+        testHelper.DebugDisplay("In WriteLogContent() Method! logs.size() = " + logs.size());
+        if (logs.size() > 0) {
+            // Printing details separately
+            for (LogEntry e : logs) {
+                System.out.println("Message: " + e.getMessage());
+                System.out.println("Level: " + e.getLevel());
+            }
+            testHelper.UpdateTestResults("Writing console log information to file.", false);
+            SaveFile(fileName, logs);
+            testHelper.UpdateTestResults("Console log information written file.", false);
+        } else {
+            testHelper.UpdateTestResults("No console log information to write!", false);
+        }
+    }
+
+
 
     /**************************************************************
      *  Description: This method writes the HAR content to a file.
@@ -669,6 +702,7 @@ public class TestCentral {
             } else {
                 testHelper.UpdateTestResults( AppConstants.indent8 + AppConstants.ANSI_BLUE_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Domain ((" + domainRestriction + ") restriction exception: " + href + "]", "═", 9, 157) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, false);
             }
+            WriteLogContent();
         }
     }
 
@@ -1351,6 +1385,20 @@ public class TestCentral {
         }
     }
 
+    private void SaveFile(String fileName, List<LogEntry> logs) {
+        String sFileName = testHelper.GetUnusedFileName(fileName);
+
+        //File consoleLogFile = new File(sFileName);
+        try {
+            // Printing details separately
+            for (LogEntry e : logs) {
+                testHelper.WriteToFile(sFileName, "Message: " + e.getMessage() + " - Level:" + e.getLevel());
+            }
+        } catch (Exception ex) {
+            System.out.println (ex.toString());
+            System.out.println("Could not find file " + sFileName);
+        }
+    }
     //endregion
 
 
@@ -1424,15 +1472,26 @@ public class TestCentral {
             testHelper.UpdateTestResults(AppConstants.indent5 + "[" + AppConstants.ANSI_GREEN + "Setting " + AppConstants.ANSI_RESET + "ChromeDriver]" + AppConstants.ANSI_RESET, true);
             //System.setProperty("webdriver.chrome.driver", chromeDriverPath);
             proxy = new BrowserMobProxyServer();
+            /******[ Moved ChromeOptions declaration here 8/14/2023 ]**********/
+            ChromeOptions options = new ChromeOptions();
+
             //proxy.start(80);
             DesiredCapabilities capabilities = new DesiredCapabilities();
             seleniumProxy = getSeleniumProxy(getProxyServer());
             capabilities.setCapability(CapabilityType.PROXY, seleniumProxy);
+
+            /***********[ Attempting to get log information here ]*******/
+            LoggingPreferences logPrefs = new LoggingPreferences();
+            logPrefs.enable(LogType.BROWSER, Level.ALL);
+            testHelper.DebugDisplay("logPrefs.getEnabledLogTypes() = " + logPrefs.getEnabledLogTypes());
+            options.setCapability("goog:loggingPrefs",logPrefs);  //this is the magic line
+            /************************************************************/
             WebDriverManager.chromedriver().setup();
 
 
+
             if (runHeadless) {
-                ChromeOptions options = new ChromeOptions();
+                //ChromeOptions options = new ChromeOptions();
                 //options.setCapability(CapabilityType.PROXY, proxy);
                 options.addArguments("window-size=1400,800");
                 options.addArguments("headless");
@@ -1442,10 +1501,9 @@ public class TestCentral {
                 options.setAcceptInsecureCerts(true);
                 options.setPageLoadStrategy(PageLoadStrategy.NONE);
                 driver = new ChromeDriver(options);
-
                 testHelper.set_is_Maximized(false);
             } else {
-                ChromeOptions options = new ChromeOptions();
+                //ChromeOptions options = new ChromeOptions();
                 options.setCapability(CapabilityType.PROXY, seleniumProxy);
                 options.setAcceptInsecureCerts(true);
                 //options.setCapability(CapabilityType.PROXY, proxy);
@@ -1471,14 +1529,28 @@ public class TestCentral {
      **************************************************************************** */
     private void SetFireFoxDriver() {
         WebDriverManager.firefoxdriver().setup();
+        /***********[ Attempting to get log information here ]*******/
+        //TODO: Figure out the correct logPrefs for FireFox to get console log events
+        LoggingPreferences logPrefs = new LoggingPreferences();
+        logPrefs.enable(LogType.BROWSER, Level.ALL);
+        testHelper.DebugDisplay("logPrefs.getEnabledLogTypes() = " + logPrefs.getEnabledLogTypes());
+
+        FirefoxOptions options = new FirefoxOptions();
+        //options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
+        options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
+
+        /************************************************************/
+
         if (runHeadless) {
             FirefoxBinary firefoxBinary = new FirefoxBinary();
             firefoxBinary.addCommandLineOptions("-headless");
-            FirefoxOptions options = new FirefoxOptions();
             driver = new FirefoxDriver(options);
             testHelper.set_is_Maximized(false);
         } else {
-            driver = new FirefoxDriver();
+            //driver = new FirefoxDriver();
+            /****[ Attempting to add logging ]*********/
+            driver = new FirefoxDriver(options);
+            /*****************************************/
             driver.manage().window().maximize(); //added 8-14-2019
             testHelper.set_is_Maximized(true);
         }
