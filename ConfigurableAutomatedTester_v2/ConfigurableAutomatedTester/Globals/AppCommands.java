@@ -77,6 +77,8 @@ public class AppCommands {
     public static String EntireSiteCommandsStart = "entire site commands start";
     public static String EntireSiteCommandsEnd = "entire site commands end";
 
+    public static String SaveConsoleLog = "save console log";
+
     //endregion
 
 
