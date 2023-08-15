@@ -146,6 +146,7 @@ public class TestCentral {
     private String configurationFile = "Config/ConfigurationSetup.xml";
     String configurationFolder = "Config/";
     String harFolder = configurationFolder + "HAR_files/";
+    String consoleLogFolder = configurationFolder + "Console_logs/";
     static String testPage = "https://www.myWebsite.com/";
     private boolean runHeadless = true;
     String screenShotSaveFolder;
@@ -177,6 +178,8 @@ public class TestCentral {
     private String helpFileName = configurationFile.contains("\\") ?
             configurationFile.substring(0, configurationFile.lastIndexOf("\\")) + "\\ConfigTester_Help.txt" :
             configurationFile.substring(0, configurationFile.lastIndexOf("/")) + "/ConfigTester_Help.txt";
+
+    private String consoleLogFileName =  consoleLogFolder + (logFileRootFileName + logFileUniqueName + ".log").substring(0, (logFileRootFileName + logFileUniqueName + ".log").lastIndexOf(".")-1) + "-Console-log.txt";
     private List<String> testFiles = new ArrayList<>();
     public List<GtmTag> GtmTagList;
     public List<GA4Tag> GA4TagList;
@@ -201,6 +204,8 @@ public class TestCentral {
     String jsonContent = null;
     String xmlContent = null;
     String _csvFileName;
+
+    List<String> consoleLogEntries;
 
     public void set_csvFileName(String _csvFileName) { this._csvFileName = _csvFileName;}
     public String get_csvFileName() { return _csvFileName;}
@@ -312,7 +317,7 @@ public class TestCentral {
     @AfterAll
     private void TearDown() throws Exception {
         try {
-            WriteLogContent();
+
             WriteHarContent();
 
             driver.close();
@@ -325,31 +330,193 @@ public class TestCentral {
         PerformCleanup();
     }
 
-    private void WriteLogContent() {
+    /***********************************************************
+     * Description: This method writes to the default console
+     *              log file and is intended to run prior to any
+     *              Navigation step, to gather all log information
+     *              from the current page before Navigating.
+     *              This is not triggerable from the test steps.
+     *
+     ***********************************************************/
+    void WriteLogContent() {
         //use the following URL for testing
         //driver.get("https://testkru.com/TestUrls/TestConsoleLogs");
-        testHelper.DebugDisplay("In WriteLogContent() Method!");
-        String fileName = logFileName.substring(0, logFileName.lastIndexOf(".")-1) + "-Console-log.txt";
-        testHelper.DebugDisplay("In WriteLogContent() Method! fileName = " + fileName);
+
         LogEntries entry = driver.manage().logs().get(LogType.BROWSER);
         // Retrieving all logs
         List<LogEntry> logs = entry.getAll();
-        testHelper.DebugDisplay("In WriteLogContent() Method! logs.size() = " + logs.size());
+
         if (logs.size() > 0) {
             // Printing details separately
-            for (LogEntry e : logs) {
-                System.out.println("Message: " + e.getMessage());
-                System.out.println("Level: " + e.getLevel());
-            }
             testHelper.UpdateTestResults("Writing console log information to file.", false);
-            SaveFile(fileName, logs);
+            for (LogEntry e : logs) {
+                testHelper.UpdateTestResults("Message: " + e.getMessage(),true);
+                testHelper.UpdateTestResults("Level: " + e.getLevel(),true);
+            }
+            SaveConsoleLogFile(consoleLogFileName, logs, "all", false);
             testHelper.UpdateTestResults("Console log information written file.", false);
+        } else if (consoleLogEntries != null && consoleLogEntries.size() > 0) {
+            WriteLogContentAlt();
+        } else {
+            testHelper.UpdateTestResults("No console log information to write!", false);
+        }
+    }
+
+    /****************************************************************
+     * Description: This method writes to the default console
+     *              log file and is intended to run prior to any
+     *              Navigation step, to gather all log information
+     *              from the current page before Navigating.
+     *              This is not triggerable from the test steps.
+     *              This alternate method uses the consoleLogEntries
+     *              array, which is populated when an explicit
+     *              Save Console Log command is issued, which for
+     *              some unknown reason, clears the Console log.
+     *              This may not have a complete console log listing.
+     ****************************************************************/
+    void WriteLogContentAlt() {
+        //use the following URL for testing
+        //driver.get("https://testkru.com/TestUrls/TestConsoleLogs");
+        if (consoleLogEntries.size() > 0) {
+            // Printing details separately
+            testHelper.UpdateTestResults(AppConstants.ANSI_YELLOW + AppConstants.indent5 + AppConstants.subsectionArrowLeft +  "[ Writing console log information to file ]" + AppConstants.subsectionArrowRight, false);
+            for (String e : consoleLogEntries) {
+                testHelper.UpdateTestResults("Message: " + e.substring(0,e.indexOf("-")), true);
+                testHelper.UpdateTestResults("Level: " + e.substring(e.indexOf("-"),e.length() - e.indexOf("-")), true);
+            }
+            //SaveFile(consoleLogFileName, logs);
+            SaveConsoleLogFileAlt(consoleLogFileName, consoleLogEntries); //, "all", false);
+            testHelper.UpdateTestResults(AppConstants.ANSI_YELLOW + AppConstants.indent5 + AppConstants.subsectionArrowLeft +  "[ Console log information written file.", false);
         } else {
             testHelper.UpdateTestResults("No console log information to write!", false);
         }
     }
 
 
+
+    /***********************************************************
+     * Description: This method either writes to the default console
+     *              log file or to an altenately supplied file
+     *              and is only triggerable from the test steps.
+     * @param ts - Test step initiating this command
+     * @param fileStepIndex - File step index
+     ***********************************************************/
+    public void WriteLogContent(TestStep ts, String fileStepIndex) {
+        String fileName = consoleLogFileName;
+        String altFileName = GetArgumentValue(ts,0,null);
+        String level = GetArgumentValue(ts,1,null);
+        Boolean messageOnly = Boolean.parseBoolean(GetArgumentValue(ts,2,"false"));
+        //use the following URL for testing
+        //driver.get("https://testkru.com/TestUrls/TestConsoleLogs");
+
+        testHelper.DebugDisplay("In WriteLogContent(ts,fileStepIndex) Method!");
+        //String fileName = logFileName.substring(0, logFileName.lastIndexOf(".")-1) + "-Console-log.txt";
+
+        //because by default the console log will be written using the default console log file name
+        //a unique name must be used to write to the console log of a test step command
+        if (!testHelper.IsNullOrEmpty(altFileName)) {
+            fileName = altFileName;
+        } else {
+            fileName = fileName.replace("-Console-log.txt","-Console-log-alt.txt");
+        }
+
+        LogEntries entry = driver.manage().logs().get(LogType.BROWSER);
+        // Retrieving all logs
+        List<LogEntry> logs = entry.getAll();
+        if (consoleLogEntries == null) {
+            consoleLogEntries = new ArrayList<>();
+        }
+        if (logs.size() > 0) {
+            // Printing details separately
+            for (LogEntry e : logs) {
+                testHelper.UpdateTestResults("Message: " + e.getMessage(),true);
+                testHelper.UpdateTestResults("Level: " + e.getLevel(),true);
+                consoleLogEntries.add(e.getMessage() + "-" + e.getLevel());
+            }
+            testHelper.UpdateTestResults(AppConstants.indent5 + "Writing to Console log file (" + fileName  + ") for step " + fileStepIndex, true);
+            testHelper.UpdateTestResults(AppConstants.indent8 + "Saving console logs(" + logs.size() + ") information to file for step " + fileStepIndex , true);
+            SaveConsoleLogFile(fileName, logs, level, messageOnly);
+            testHelper.UpdateTestResults(AppConstants.indent8 + "Console log information saved to file for step " + fileStepIndex , true);
+        } else {
+            testHelper.UpdateTestResults(AppConstants.indent5 + "No console log information to write! for step " + fileStepIndex , true);
+        }
+        testHelper.DebugDisplay("Logs object size after saving: " + logs.size());
+    }
+
+    /***********************************************************
+     * Description: This method either writes to the default console
+     *              log file or to an altenately supplied file
+     *              and is only triggerable from the test steps.
+     * @param fileName - name of the file where the console log
+     *                 will be written.
+     * @param logs - List of Console Log Entries
+     * @param level - Log level to limit file contents
+     * @param messageOnly - true if only message should be written
+     *                    false to include level too.
+     ***********************************************************/
+    private void SaveConsoleLogFile(String fileName, List<LogEntry> logs, String level, Boolean messageOnly) {
+        String sFileName = testHelper.GetUnusedFileName(fileName);
+        String message;
+
+        //clean up the console log message removing backslash and unintentional double quotes
+        try {
+            // Printing details separately
+            for (LogEntry e : logs) {
+                message = e.getMessage().replace("\\","");
+                message = message.replace("\"\"","\"");
+
+                while (message.indexOf(",\",") > 0) {
+                    message = message.replace(",\",",",\"\",");
+                }
+                if (!messageOnly) {
+                    if (testHelper.IsNullOrEmpty(level) || level.toLowerCase().equals(e.getLevel().toString().toLowerCase()) || level.toLowerCase().equals("all")) {
+                        testHelper.WriteToFile(sFileName, "Message: " + message + " - Level:" + e.getLevel());
+                    }
+                } else {
+                    testHelper.WriteToFile(sFileName, "Message: " + message);
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println (ex.toString());
+            System.out.println("Could not find file " + sFileName);
+        }
+    }
+
+    /****************************************************************
+     * Description: Alternate Console Log Save Method, written so that
+     *              when log is cleared by explicit save console log
+     *              command, the log can be saved prior to page navigation
+     *              and prior to application end
+     * @param consoleLogFileName - name of the file being saved
+     * @param consoleLogEntries - log entries saved from explicit saves
+     *
+     **********************************************************************/
+    private void SaveConsoleLogFileAlt(String consoleLogFileName, List<String> consoleLogEntries) {
+        //, String all, boolean messageOnly) {
+        String sFileName = testHelper.GetUnusedFileName(consoleLogFileName);
+        String message;
+        String level;
+
+        try {
+            // Printing details separately
+            for (String e : consoleLogEntries) {
+                //System.out.println("Message: " + e.substring(0,e.indexOf("-")));
+                //System.out.println("Level: " + e.substring(e.indexOf("-"),e.length() - e.indexOf("-")));
+                message = e.substring(0,e.indexOf("-"));
+                message = message.replace("\\", "");
+                message = message.replace("\"\"", "\"");
+                level = e.substring(e.indexOf("-"),e.length() - e.indexOf("-"));
+                while (message.indexOf(",\",") > 0) {
+                    message = message.replace(",\",", ",\"\",");
+                }
+                testHelper.WriteToFile(sFileName, "Message: " + message + " - Level:" + level);
+            }
+        } catch (Exception ex) {
+            System.out.println (ex.toString());
+            System.out.println("Could not find file " + sFileName);
+        }
+
+    }
 
     /**************************************************************
      *  Description: This method writes the HAR content to a file.
@@ -413,6 +580,7 @@ public class TestCentral {
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 +  "CSV File Name = " + AppConstants.ANSI_RESET  + logFileName, false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 +  "Help File Name = " + AppConstants.ANSI_RESET + helpFileName, false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 +  "Har File Folder = " + AppConstants.ANSI_RESET + harFolder, false);
+        testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 +  "Default Console Log File Name = " + AppConstants.ANSI_RESET + consoleLogFileName, false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 +  "HTML Help File Name = " + AppConstants.ANSI_RESET + helpFileName.replace(".txt", ".html"), false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 + "Executed From Main or as JUnit Test = " + AppConstants.ANSI_RESET + (is_executedFromMain() ? "Standalone App" : "JUnit Test"), false);
         testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent5 + "Running on "  + AppConstants.ANSI_RESET + (HelperUtilities.isWindows() ? "Windows" : "Mac"), false);
@@ -605,6 +773,7 @@ public class TestCentral {
             }
             testHelper.CreateSectionHeader("[ End of Test Script ]", AppConstants.FRAMED + AppConstants.ANSI_PURPLE_BACKGROUND + AppConstants.ANSI_BOLD, AppConstants.ANSI_YELLOW_BRIGHT, false, true, true);
         }
+        WriteLogContent();
         if (is_executedFromMain()) {
             TearDown();
 //            driver.close();
@@ -616,7 +785,7 @@ public class TestCentral {
     /****************************************************************************
      *  DESCRIPTION:
      *    Runs all tests read in from all test settings files between the
-     *    Entire Site Command Start and and the Entire Site Command End commands.
+     *    Entire Site Command Start and the Entire Site Command End commands.
      *
      **************************************************************************** */
     private void ExecuteEntireSiteCommands(TestStep tsInput, int fileIndex, int xStart, int xEnd) throws Exception {
@@ -629,25 +798,23 @@ public class TestCentral {
         String href = null;
         boolean isConditionalBlock = false;
 
-        //start by getting a list of pages from anchor tag hrefs
-        //ArrayList<String> links = GetPageLinks();
         //get the domain or page path to restrict the testing
         domainRestriction = GetArgumentValue(tsInput, 0, null);
         //get the pages that should also be scanned for additional hrefs
         ArrayList<String> scanPages = GetScanPages(tsInput);
+        //if domain restriction is a domain URL, add that to the pages to scan
         if (!testHelper.IsNullOrEmpty(domainRestriction) && domainRestriction.indexOf("http") > 0) {
             scanPages.add(domainRestriction);
-        } else {
-
         }
-        //testHelper.UpdateTestResults (AppConstants.indent8 +  AppConstants.subsectionArrowLeft + "[ Start Adding Links from Pages configured for scan ]" + AppConstants.subsectionArrowRight,true);
+
+        //Get Page links from all pages configured for scanning
         testHelper.UpdateTestResults( AppConstants.indent8 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start Adding Links from Pages configured for scan ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
         ArrayList<String> links = GetPageLinks(scanPages, fileIndex,0,0,tsInput.get_crucial());
         testHelper.UpdateTestResults( AppConstants.indent8 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End Adding Links from Pages configured for scan ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
-        //testHelper.UpdateTestResults (AppConstants.indent8 +  AppConstants.subsectionArrowLeft + "[ End Adding Links from Pages configured for scan ]" + AppConstants.subsectionArrowRight,true);
+
         //start with the first command in the list
         for (int pageIndex=0;pageIndex<links.size();pageIndex++) {
-            href = links.get(pageIndex); //.getAttribute("href");
+            href = links.get(pageIndex);
             //skip non-domain and in page links
             if (href.indexOf(domainRestriction) > -1 && (href.indexOf("#") <= -1)) {
                 testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.iFrameSectionTopLeft + testHelper.PrePostPad("[ Entire Site Check checking URL: " + href + "]", "═", 9, 157) + AppConstants.iFrameSectionBottomRight + AppConstants.ANSI_RESET, false);
@@ -702,7 +869,7 @@ public class TestCentral {
             } else {
                 testHelper.UpdateTestResults( AppConstants.indent8 + AppConstants.ANSI_BLUE_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Domain ((" + domainRestriction + ") restriction exception: " + href + "]", "═", 9, 157) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, false);
             }
-            WriteLogContent();
+            //WriteLogContent();
         }
     }
 
@@ -855,6 +1022,13 @@ public class TestCentral {
         return links;
     }
 
+    /****************************************************************************
+     *  DESCRIPTION:
+     *    This method creates a navigation test step to navigate to the href
+     *    passed in.  This method was designed to work with the Entire Site Command
+     *    to create the Navigation test step for each URL retrieved in that command
+     *    and proceed to the next page.
+     **************************************************************************** */
     public void CreateNavigateTestStepAndNavigate(String href, int fileIndex, int stepNum, int pageIndex, Boolean isCrucial) {
         TestStep navStep;
         List<Argument> argumentList;
@@ -866,7 +1040,6 @@ public class TestCentral {
             navStep.set_command("navigate");
             navStep.set_actionType("write");
             navStep.set_crucial(isCrucial);
-            //navStep.set_crucial(true);
             navStep.set_expectedValue(href);
             argument = new Argument();
             argument.set_parameter(href);
@@ -1031,6 +1204,7 @@ public class TestCentral {
      * @param fileStepIndex - the file index and the step index.
      ************************************************************ */
     void PerformExplicitNavigation(TestStep ts, String fileStepIndex) throws Exception {
+        WriteLogContent();
         String navigateUrl = GetArgumentValue(ts, 0, null);
         String delayTime = GetArgumentValue(ts, 1, null);
         String windowDimensions = GetArgumentValue(ts, 2, null);
@@ -1387,12 +1561,20 @@ public class TestCentral {
 
     private void SaveFile(String fileName, List<LogEntry> logs) {
         String sFileName = testHelper.GetUnusedFileName(fileName);
+        String message;
 
-        //File consoleLogFile = new File(sFileName);
+        //clean up the console log message removing backslash and unintentional double quotes
         try {
             // Printing details separately
             for (LogEntry e : logs) {
-                testHelper.WriteToFile(sFileName, "Message: " + e.getMessage() + " - Level:" + e.getLevel());
+                message = e.getMessage().replace("\\","");
+                message = message.replace("\"\"","\"");
+                //message = message.replace(",\",",",\"\",");
+                while (message.indexOf(",\",") > 0) {
+                    message = message.replace(",\",",",\"\",");
+                }
+                testHelper.WriteToFile(sFileName, "Message: " + message + " - Level:" + e.getLevel());
+                //testHelper.WriteToFile(sFileName, "Message: " + e.getMessage() + " - Level:" + e.getLevel());
             }
         } catch (Exception ex) {
             System.out.println (ex.toString());
@@ -2288,6 +2470,8 @@ public class TestCentral {
 
         testHelper.UpdateTestResults( AppConstants.indent8 + AppConstants.ANSI_RED + defaultCheckValuesOverridden + AppConstants.ANSI_RESET, true);
     }
+
+
     //endregion
 
 }

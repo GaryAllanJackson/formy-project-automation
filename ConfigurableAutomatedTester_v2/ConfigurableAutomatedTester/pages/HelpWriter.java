@@ -2438,7 +2438,49 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
-
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ SAVE CONSOLE LOG TO FILE ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "IMPORTANT: This command currently only works for the Chrome browser!!!\n\n");
+            WriteToFile(get_helpFileName(), "The Save Console Log command saves the console log to a file, which can be specified by including ");
+            WriteToFile(get_helpFileName(), "the file name as the first argument <arg1>filename</arg1>, or a default file name will be constructed based on the log file name.");
+            WriteToFile(get_helpFileName(), "When testing a page, there may be several reasons that the console log may be necessary to see as an error could prevent other commands ");
+            WriteToFile(get_helpFileName(), "from working as expected, or a prior JavaScript command may be writing to the console so that more information can be retrieved from the ");
+            WriteToFile(get_helpFileName(), "page in addition to the expected vs actual values.\n");
+            WriteToFile(get_helpFileName(), "When saving the console log, there are 3 optional arguments at the time of this entry.\n");
+            WriteToFile(get_helpFileName(), "Argument 1 - The required file name parameter, which must be included to write to a file other than the default console log file.\n");
+            WriteToFile(get_helpFileName(), "\tBy default, the console log will be written to the defauld console log prior to navigation and this is not configurable.\n");
+            WriteToFile(get_helpFileName(), "\tThe default console log will have all messages and log levels.\n");
+            WriteToFile(get_helpFileName(), "Argument 2 - The optional console log level parameter, include this to limit the types of logs saved to the file.\n");
+            WriteToFile(get_helpFileName(), "\tPossible values are: info, warn, error, debug, all and all is the default.\n");
+            WriteToFile(get_helpFileName(), "Argument 3 - The optional message only boolean parameter.\n");
+            WriteToFile(get_helpFileName(), "\tPossible values are: true - save message only, false - save message and console log level.\n");
+            WriteToFile(get_helpFileName(), "It is suggested that this command be issued prior to navigation to capture all logs on the current page.\n");
+            WriteToFile(get_helpFileName(), "\tThe only required argument for this command is as follows:");
+            WriteToFile(get_helpFileName(), "\t<arg1>This argument specifies the File name for the console log file.  If no path is included, it will be saved in the /config/ folder.");
+            WriteToFile(get_helpFileName(), "<step>\n" +
+                    "\t<command>save console log</command>\n" +
+                    "\t<actionType>read</actionType>\n" +
+                    "\t<arguments>\n" +
+                    "\t\t<!-- File Name to save console log file -->\n" +
+                    "\t\t<arg1>C:\\Gary\\Java Utilities\\Console logs\\console_log.txt</arg1>\n" +
+                    "\t\t<!-- type of log to include. Values include: info, warn, error, debug, all - all is default if not provided -->\n" +
+                    "\t\t<arg2>Info</arg2>\n" +
+                    "\t\t<!-- true for message only else message and level Ie.. message - level.  Message - level is the default if not provided -->\n" +
+                    "\t\t<arg3>true</arg3>\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>\n");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ DEFAULT SAVE CONSOLE LOG TO FILE ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "IMPORTANT: This command currently only works for the Chrome browser!!!\n\n");
+            WriteToFile(get_helpFileName(), "IMPORTANT: This command only fires if an explicit \"save console log\" command has not been issued!\n");
+            WriteToFile(get_helpFileName(), "By default, all console log entries are saved prior to Navigation and in the Tear down method prior to the application ending.\n\n");
+            WriteToFile(get_helpFileName(), "If the log file is not present, there was no console logging performed or a prior explicit save emptied the logs object.\n\n");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
             WriteToFile(get_helpFileName(), "║                                              INCLUDED TEST FILES                                                                                     ║");
             WriteToFile(get_helpFileName(), "╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
@@ -2648,6 +2690,9 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(),  testHelper.PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+
+
             //region { Template }
 //            WriteToFile(get_helpFileName(),  testHelper.PrePostPad("═", "═", 1, 159));
 //            WriteToFile(get_helpFileName(), "");

@@ -142,6 +142,8 @@ public class ReadCommands {
                 CheckGtmTagValues(ts, fileStepIndex);
             } else if (ts.get_command().toLowerCase().equals(AppCommands.CheckGtmGa4Tag)) {
                 CheckGA4TagValues(ts, fileStepIndex);
+            } else if (ts.get_command().toLowerCase().equals(AppCommands.SaveConsoleLog)) {
+                testCentral.WriteLogContent(ts,fileStepIndex);
             }
         }
     }
