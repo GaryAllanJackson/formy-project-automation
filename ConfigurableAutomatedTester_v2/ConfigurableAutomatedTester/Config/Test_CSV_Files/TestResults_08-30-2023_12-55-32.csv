@@ -1,0 +1,18 @@
+File And Step Number,Test Performed,Execution Status,Variable Output,Test File Name
+F0_S0,Navigation and URL Check.  Expected: (https://www.mycoolsite.com/en/coffee/recipes) Actual: (https://www.mycoolsite.com/en/coffee/recipes),Successful,,C:\Automated Tests\MyCoolSite-Test.xml
+F0_S1,JavaScript Value - Expected (Pass) Actual: (Pass),Successful,,C:\Automated Tests\MyCoolSite-Test.xml
+F0_S12_Iteration:12,Navigation and URL Check.  Expected: (https://www.mycoolsite.com/en/coffee/recipes) Actual: (https://www.mycoolsite.com/en/coffee/recipes),Successful,,C:\Automated Tests\MyCoolSite-Test.xml
+F0_S4_Iteration:12,JavaScript Value - Expected (RecipeViewTestPass) Actual: (null),Failure,,C:\Automated Tests\MyCoolSite-Test.xml
+F0_S18_Iteration:18,Navigation and URL Check.  Expected: (https://www.mycoolsite.com/en/coffee/recipes/cacito) Actual: (https://www.mycoolsite.com/en/coffee/recipes/cacito),Successful,,C:\Automated Tests\MyCoolSite-Test.xml
+F0_S4_Iteration:18,JavaScript Value - Expected (RecipeViewTestPass) Actual: (null),Failure,,C:\Automated Tests\MyCoolSite-Test.xml
+F0_S19_Iteration:19,Navigation and URL Check.  Expected: (https://www.mycoolsite.com/en/coffee/recipes/leche-cito) Actual: (https://www.mycoolsite.com/en/coffee/recipes/leche-cito),Successful,,C:\Automated Tests\MyCoolSite-Test.xml
+F0_S4_Iteration:19,JavaScript Value - Expected (RecipeViewTestPass) Actual: (null),Failure,,C:\Automated Tests\MyCoolSite-Test.xml
+F0_S20_Iteration:20,Navigation and URL Check.  Expected: (https://www.mycoolsite.com/en/coffee/recipes/jengibre-cito) Actual: (https://www.mycoolsite.com/en/coffee/recipes/jengibre-cito),Successful,,C:\Automated Tests\MyCoolSite-Test.xml
+F0_S4_Iteration:20,JavaScript Value - Expected (RecipeViewTestPass) Actual: (null),Failure,,C:\Automated Tests\MyCoolSite-Test.xml
+F0_S21_Iteration:21,Navigation and URL Check.  Expected: (https://www.mycoolsite.com/en/coffee/recipes/champurrado) Actual: (https://www.mycoolsite.com/en/coffee/recipes/champurrado),Successful,,C:\Automated Tests\MyCoolSite-Test.xml
+F0_S4_Iteration:21,JavaScript Value - Expected (RecipeViewTestPass) Actual: (null),Failure,,C:\Automated Tests\MyCoolSite-Test.xml
+F0_S22_Iteration:22,Navigation and URL Check.  Expected: (https://www.mycoolsite.com/en/coffee/recipes/dalgona) Actual: (https://www.mycoolsite.com/en/coffee/recipes/dalgona),Successful,,C:\Automated Tests\MyCoolSite-Test.xml
+F0_S4_Iteration:22,JavaScript Value - Expected (RecipeViewTestPass) Actual: (null),Failure,,C:\Automated Tests\MyCoolSite-Test.xml
+F0_S23_Iteration:23,Navigation and URL Check.  Expected: (https://www.mycoolsite.com/en/coffee/recipes/con-almibar) Actual: (https://www.mycoolsite.com/en/coffee/recipes/con-almibar),Successful,,C:\Automated Tests\MyCoolSite-Test.xml
+F0_S4_Iteration:23,JavaScript Value - Expected (RecipeViewTestPass) Actual: (null),Failure,,C:\Automated Tests\MyCoolSite-Test.xml
+File And Step Number,Test Performed,Execution Status,Variable Output,Test File Name
