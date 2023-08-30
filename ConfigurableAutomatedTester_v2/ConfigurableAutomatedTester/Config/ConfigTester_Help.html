@@ -206,6 +206,9 @@
 		<a href="#saveharfile" class="tableOfContentsLink">SAVE HAR FILE</a>
 		<a href="#checkgoogleanalyticsuatag-checkgtmtag" class="tableOfContentsLink">CHECK Google Analytics UA TAG - check gtm tag</a>
 		<a href="#checkgoogleanalyticsga4tag-checkga4tag" class="tableOfContentsLink">CHECK Google Analytics GA4 TAG - check ga4 tag</a>
+		<a href="#saveconsolelogtofile" class="tableOfContentsLink">SAVE CONSOLE LOG TO FILE</a>
+		<a href="#combineconsolelogs" class="tableOfContentsLink">COMBINE CONSOLE LOGS</a>
+		<a href="#spidersite" class="tableOfContentsLink">SPIDER SITE</a>
 		<span class="tableOfContentsSectionHeader">INCLUDED TEST FILES</span>
 		<a href="#testfilesdescribed" class="tableOfContentsLink">TEST FILES DESCRIBED</a>
 		<span class="tableOfContentsSectionHeader">Troubleshooting</span>
@@ -225,11 +228,13 @@ WELCOME TO THE CONFIGURABLE AUTOMATED TEST APPLICATION!!!This application was de
 		<p>
 This can be run as a stand-alone application or as a JUnit test within the IDE, as it was frequently run within IntelliJ.	Colors and other special ANSI characters are removed from the Stand-alone application as they are unsupported	outside of the IDE.Working as a stand-alone application allows this to be scheduled to run whenever it is desired by either creating a Scheduled Taskor using some other automated process tool, or writing one of your own.Running outside of the IDE means that it can be quickly executed without opening the IDE and then the source project.The Log file name will be preceded with "StandAlone_" when run as a stand-alone application.By default, log and CSV files will be created in the "\Config" folder, which is part of this project.The log file records all test steps performed as well as the success and fail status of assertion steps which include steps thatcompare a value to a supplied expected value.The CSV file records only success and fail status steps but none of the supporting steps surrounding those checks.Look at the Project_Setup.txt file for directions on running the stand-alone application as part of a batch file.		</p>
 		<p>
-The application covers most testing, including: Navigation, Form Population, Value checking, Value Persistence for use in upcoming test step comparisons or form populations, context menu access, iFrame access, switching  browser tabs, SQL Server Connectivity and Querying, anchor href and text property checking, image src and alt propertychecking, checking color contrast, conditional block to run tests only if a condition step passes,and unique value generation so that form population tests can be run over and over using this value to ensure that entry is unique each time.		</p>
+The application covers most testing, including: Navigation, Form Population, Value checking, Value Persistence for use in upcoming test step comparisons or form populations, context menu access, iFrame access, switching  browser tabs, SQL Server Connectivity and Querying, anchor href and text property checking, image src and alt property checking, checking color contrast, conditional block to run tests only if a condition step passes, retrieving links and repeating one or more commands on all pages, and unique value generation so that form population tests can be run over and over using this value to ensure that entry is unique each time.		</p>
 		<p>
 Additionally, it includes waiting a specific length of time, for document state complete, for a specific element, taking screenshots and comparing images using ImageMagick and getting a pixel difference percentage along with a.difference image with the differences highlighted.In addition to Conditional Blocks, each step can be marked as Crucial or non-Crucial.Crucial test steps must pass or the application terminates on failure, while non-Crucial stepscan fail and the application will continue running tests.This behavior ensures that necessary steps for subsequent testing are successful such as navigation, connecting to SQL Serverretrieving JSON from an endpoint etc...  If these steps fail, the subsequent tests reliant upon them will also fail but to avoidwasting time waiting for those steps to fail, marking these steps as crucial stops execution when they fail and the testercan see where the application terminated and perform further investigation.An added test step configuration can be used to create a test step file for a specific page and while this is not a test,it can make creating test files much faster.		</p>
 		<p>
-Creating a Configurable Automated test consists of creating one Configuration file and one or more Test files.This application can run any number of Test Files, which need to be configured in the Configuration file eitherindividually or within a specified folder which can be filtered to select just targeted files.		</p>
+Creating a Configurable Automated test consists of creating one Configuration file and one or more Test files.This application can run any number of Test Files, which need to be configured in the Configuration file either individually or within a specified folder which can be filtered to select just targeted files.		</p>
+		<p>
+This application saves the test log, a CSV log, HAR file and Console log files.		</p>
 		<p>
 * * * * * * * * * * [ IMPORTANT NOTES ]* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 		</p>
 		<p>
@@ -2245,6 +2250,118 @@ IMPORTANT: This command only fires if an explicit "save console log" command has
 By default, all console log entries are saved prior to Navigation and in the Tear down method prior to the application ending.		</p>
 		<p>
 If the log file is not present, there was no console logging performed or a prior explicit save emptied the logs object.		</p>
+<span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
+<a name="combineconsolelogs" class="sectionTitle">COMBINE CONSOLE LOGS</a>
+		<p>
+For a simple test, only 1 console log file may be produced, but for multiple page testing or an Entire Site test, a new Console log file is generated for each page, by default with no command specified, so to see all logs in one place, it may be necessary to combine these into one file.IMPORTANT: For subsequent runs, the existing combined file will be deleted before creating the new combined file, with the same name.	If keeping multiple combined files for the same console logs is desired, use a different alternate file name, or rename them 	in the folder manually.		</p>
+		<p>
+The Combine Console Logs command first, finds all files based on the root file name provided, then based on the command configuration either includes or excludes the log level, includes or excludes the console-api prefix, starts at a particular phrase, excludes a comma delimited list of phrases, removes headers based on the header end delimiter , can add a dashed line at the last header delimiter prior to the length break indicator value provided, and allows for an alternate more descriptive file name to be used in place of the default file name.It is suggested that you create a bare bones Combine Console Logs test with just the root file name to see the full log before adding the optional parameters that are intended to remove some log content.Doing so, will display issues that may be overlooked when consolidating with the optional parameters.As these are named arguments, the order of the arguments does not matter but the required parameters must be present.		</p>
+		<p>
+	There are 8 optional named arguments for this command as follows:		</p>
+		<p>
+	&lt;arg1&gt;root file name=&lt;/arg1&gt; - This argument specifies the Root File name for the console log files that will be combined.		If this argument is missing, the last modified console log file name will be used and parsed to get the root file name.		</p>
+		<p>
+		IMPORTANT: These console log files must be stored in the default \Console_logs folder!!!!		</p>
+		<p>
+	&lt;arg2&gt;exclude level=&lt;/arg2&gt; - This optional argument specifies whether to exclude the logging level.		true to exclude the log level, false to display the log level.		</p>
+		<p>
+	&lt;arg3&gt;exclude console-api=&lt;/arg3&gt; - This optional argument specifies whether to exclude the console-api prefix.		</p>
+		<p>
+		true to exclude the console-api prefix, false to display the console-api prefix.		</p>
+		<p>
+	&lt;arg4&gt;include start=&lt;/arg4&gt; - This optional argument specifies the start phrase for the line.		</p>
+		<p>
+		If present, a sub-string starting at that phrase will begin the line.		</p>
+		<p>
+		Because this argument removes everything prior to the specified phrase, the console-api removal argument may not be necessary 		to get the results needed.		</p>
+		<p>
+	&lt;arg5&gt;exclude=&lt;/arg5&gt; - This argument specifies a comma delimited list of phrases to exclude.		</p>
+		<p>
+		If present, all delimited phrases will be removed from .		</p>
+		<p>
+	&lt;arg6&gt;remove additional headers=&lt;/arg6&gt; - This argument allows for removing subsequent headers after the initial headers have 	 - been written so that if moving the contents to Excel, only one header is present.		</p>
+		<p>
+		If header end delimiter present, subsequent headers will be removed.		</p>
+		<p>
+	&lt;arg7&gt;length break indicator=&lt;/arg7&gt; - This argument inserts a dashed line prior to the number listed by testing the current 		length and the length of the next line and if the combination is greater than the argument value, the dashed line is inserted.		</p>
+		<p>
+			If you are pasting the content into another application, like Excel, that has a cell character limit of 32765 			this functionality will help to quickly identify where to stop.		</p>
+		<p>
+		If left blank or set to 0, no identifier will be inserted into the combined console log file.		</p>
+		<p>
+	&lt;arg8&gt;alternate file name=&lt;/arg8&gt; - This argument allows for changing the default combined file name so that when combining 		multiple different test runs, the correct file can be quickly identified.		</p>
+		<p>
+		If left blank, the default console log file name will be used.		</p>
+<pre>
+</br>		<p>
+&lt;step&gt;
+	&lt;command&gt;Combine console logs&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;arguments&gt;
+		&lt;!-- root console log file name, which is the console log file without numbers prior to the  .txt file extension			 if not provided, the latest file name will be retrieved and parsed to get the root file name --&gt;
+		&lt;arg1&gt;root file name=TestResults_08-16-2023_11-56-2-Console-log.txt&lt;/arg1&gt;
+		&lt;!-- true for message only, false includes message level --&gt;
+		&lt;arg2&gt;exclude level=true&lt;/arg2&gt;
+		&lt;!-- true exclude console-api prefix, false include console-api prefix --&gt;
+		&lt;arg3&gt;exclude console-api=true&lt;/arg3&gt;
+		&lt;!-- remove everything prior to this phrase --&gt;
+		&lt;arg4&gt;include start="Page URL&lt;/arg4&gt;
+		&lt;!-- remove comma delimited list of items below from each line --&gt;
+		&lt;arg5&gt;exclude=dataLayerReadyTestPass&lt;/arg5&gt;
+		&lt;!-- remove subsequent headers by removing everything before the ; character --&gt;
+		&lt;arg6&gt;remove additional headers=;&lt;/arg6&gt;
+		&lt;!-- add a dash line before the number listed below where the remove additional headers delimiter is found --&gt;
+		&lt;arg7&gt;length break indicator=32765&lt;/arg7&gt;
+		&lt;!-- use a more descriptive name for the combined file, if blank the default combined file name will be used --&gt;
+		&lt;arg8&gt;alternate file name=Privacy Links-Consolidated.txt&lt;/arg7&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
+		</p>
+<span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
+<a name="spidersiteorspydersite" class="sectionTitle">SPIDER SITE or SPYDER SITE</a>
+		<p>
+This command allows you to crawl a site, get a list of URLs for the URLs found and save the list of URLs to a file. This command requires a domain restriction to limit URLs to just the domain being crawled and it is desireable to list the sitemap page, if it exists, to find the most amount of URLs in the easiest way possible.		</p>
+		<p>
+The domain restriction page is searched for all resolved links, but all subsequent pages are retrieved and string manipulation is used to locate and retrieve the URLs.		</p>
+		<p>
+This method reduced crawl times from over 3 hours to approximately 37 minutes during testing.		</p>
+		<p>
+All links, on the pages provided, are searched for the href parameter value, and if the href does not contain an invalid URL, it is reviewed to determine if it contains the domain.		</p>
+		<p>
+If the href contains a domain, the domain is checked against the domain restriction argument but if the href does not contain a domain, the domain restriction is prepended.  This helps to provide a full URL when relative linking is employed.Some invalid URLs are for images, javascript and hash tags for in page links all of which are disregarded.		</p>
+		<p>
+	There are 3 required arguments for this command, and an unlimited number of optional arguments as follows:	&lt;arg1&gt;This is the file name where the URLs are to be saved and is required.		</p>
+		<p>
+	&lt;arg2&gt;rThis is the domain restriction that limits URLs retrieved to just this domain and is required and must end with a forward slash /.		</p>
+		<p>
+		ie.  https://www.mycoolsite.com/		</p>
+		<p>
+	&lt;arg3&gt;This is the sitemap page and should be included if it exists else leave this argument empty.		</p>
+		<p>
+	&lt;arg4&gt; - &lt;arg??&gt; - These are additional pages that should be scanned for links, and these are optional.		</p>
+<pre>
+</br>		<p>
+&lt;step&gt;
+	&lt;command&gt;spider site&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;arguments&gt;
+		&lt;!-- Required: file name where results are to be saved. --&gt;
+		&lt;arg1&gt;C:\Gary\Java Utilities\Spyder Files\MySite.txt&lt;/arg1&gt;
+		&lt;!-- Required: Domain restriction must end with forward slash (/). --&gt;
+		&lt;arg2&gt;https://www.mycoolsite.com/&lt;/arg2&gt;
+		&lt;!-- Required: The sitemap URL or leave empty --&gt;
+		&lt;arg3&gt;https://www.mycoolsite.com/sitemap&lt;/arg3&gt;
+		&lt;!-- Optional: additional pages to crawl for URLs --&gt;
+		&lt;arg4&gt;https://www.mycoolsite.com/products&lt;/arg4&gt;
+		&lt;arg5&gt;https://www.mycoolsite.com/recipes&lt;/arg5&gt;
+		&lt;arg5&gt;https://www.mycoolsite.com/articles&lt;/arg5&gt;
+		&lt;arg5&gt;https://www.mycoolsite.com/legal&lt;/arg5&gt;
+	&lt;/arguments&gt;
+<pre>
+</br>&lt;step&gt;
+		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 		</div>
 		<div class="heading"><a class="headingLink" id="includedtestfiles">INCLUDED TEST FILES</a></div>

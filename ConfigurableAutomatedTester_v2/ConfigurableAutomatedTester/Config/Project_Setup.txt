@@ -150,6 +150,14 @@ SETTING UP A NEW PROJECT FOR TESTING:
 		create CSV files containing just the Successful or Failure test step outputs.  
 		By default this is set to "none", which does not create the CSV file(s). (See help for more information)
 		
+	5.  IMPORTANT: Create the sub-folders, shown below, in the Config folder to keep the Config folder clear of test files:
+		Test_logs - this is where the test output text files will be saved.
+		Test_CSV_Files - this is where the test output CSV files will be saved.
+		HAR_files - this is where HAR files will be saved, which is important for GTM GA/GA4 Tag Testing.
+		Console_logs - this is where console log output text files will be saved.
+		Console_logs\Combined - this is where consolidated console log files will be saved to allow for quickly 
+								deleting console log files in the parent directory once the combined file has been created.
+		
 	5.  Open the Project in IntelliJ, go to the TestCentral.java file.
 		In the TestCentral.java file go to the ConfigurableTestController() method marked with the @Test attribute, 
 		right click the method and select Run ConfigurableTestController() or hit (Ctrl + Shift + F10).
