@@ -9,8 +9,8 @@ import java.util.List;
  ******************************************************/
 public class HelpWriter {
 
-    TestCentral testCentral;
-    TestHelper testHelper;
+    final TestCentral testCentral;
+    final TestHelper testHelper;
 
     private String _helpFileName;
     String get_helpFileName() {
@@ -131,6 +131,9 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "\t\tSAVE HAR FILE \r\n");
             WriteToFile(get_helpFileName(), "\t\tCHECK Google Analytics UA TAG - check gtm tag\r\n");
             WriteToFile(get_helpFileName(), "\t\tCHECK Google Analytics GA4 TAG - check ga4 tag \r\n");
+            WriteToFile(get_helpFileName(), "\t\tSAVE CONSOLE LOG TO FILE \r\n");
+            WriteToFile(get_helpFileName(), "\t\tCOMBINE CONSOLE LOGS \r\n");
+            WriteToFile(get_helpFileName(), "\t\tSPIDER SITE \r\n");
 
             WriteToFile(get_helpFileName(), AppConstants.indent5 + testHelper.PrePostPad("[ INCLUDED TEST FILES ]", "═", 9, 100));
             WriteToFile(get_helpFileName(), "\t\tTEST FILES DESCRIBED \r\n");
@@ -173,8 +176,9 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "Look at the Project_Setup.txt file for directions on running the stand-alone application as part of a batch file.\r\n");
             WriteToFile(get_helpFileName(), "The application covers most testing, including: Navigation, Form Population, Value checking, Value Persistence for use in ");
             WriteToFile(get_helpFileName(), "upcoming test step comparisons or form populations, context menu access, iFrame access, switching  browser tabs, ");
-            WriteToFile(get_helpFileName(), "SQL Server Connectivity and Querying, anchor href and text property checking, image src and alt property");
-            WriteToFile(get_helpFileName(), "checking, checking color contrast, conditional block to run tests only if a condition step passes,");
+            WriteToFile(get_helpFileName(), "SQL Server Connectivity and Querying, anchor href and text property checking, image src and alt property ");
+            WriteToFile(get_helpFileName(), "checking, checking color contrast, conditional block to run tests only if a condition step passes, ");
+            WriteToFile(get_helpFileName(), "retrieving links and repeating one or more commands on all pages, ");
             WriteToFile(get_helpFileName(), "and unique value generation so that form population tests can be run over and over using this value to ");
             WriteToFile(get_helpFileName(), "ensure that entry is unique each time.\r\n");
             WriteToFile(get_helpFileName(), "Additionally, it includes waiting a specific length of time, for document state complete, for a specific element, ");
@@ -190,8 +194,9 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "An added test step configuration can be used to create a test step file for a specific page and while this is not a test,\r\n" +
                     "it can make creating test files much faster.\r\n");
             WriteToFile(get_helpFileName(), "Creating a Configurable Automated test consists of creating one Configuration file and one or more Test files.");
-            WriteToFile(get_helpFileName(), "This application can run any number of Test Files, which need to be configured in the Configuration file either");
+            WriteToFile(get_helpFileName(), "This application can run any number of Test Files, which need to be configured in the Configuration file either ");
             WriteToFile(get_helpFileName(), "individually or within a specified folder which can be filtered to select just targeted files.\r\n");
+            WriteToFile(get_helpFileName(), "This application saves the test log, a CSV log, HAR file and Console log files.\n");
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ IMPORTANT NOTES ]", "* ", 10, 60));
             WriteToFile(get_helpFileName(), "\r\nNOTE: Test Steps are numbered by File underscore then Test Step.");
             WriteToFile(get_helpFileName(), "\tThe F describes the Test File being run while the S describes the Test Step being run.");
@@ -2479,6 +2484,109 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "If the log file is not present, there was no console logging performed or a prior explicit save emptied the logs object.\n\n");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ COMBINE CONSOLE LOGS ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "For a simple test, only 1 console log file may be produced, but for multiple page testing or an Entire Site test, a new Console log ");
+            WriteToFile(get_helpFileName(), "file is generated for each page, by default with no command specified, so to see all logs in one place, it may be necessary ");
+            WriteToFile(get_helpFileName(), "to combine these into one file.");
+            WriteToFile(get_helpFileName(), "IMPORTANT: For subsequent runs, the existing combined file will be deleted before creating the new combined file, with the same name.");
+            WriteToFile(get_helpFileName(), "\tIf keeping multiple combined files for the same console logs is desired, use a different alternate file name, or rename them ");
+            WriteToFile(get_helpFileName(), "\tin the folder manually.\n");
+            WriteToFile(get_helpFileName(), "The Combine Console Logs command first, finds all files based on the root file name provided, then ");
+            WriteToFile(get_helpFileName(), "based on the command configuration either includes or excludes the log level, includes or excludes the console-api prefix, ");
+            WriteToFile(get_helpFileName(), "starts at a particular phrase, excludes a comma delimited list of phrases, removes headers based on the header end delimiter , ");
+            WriteToFile(get_helpFileName(), "can add a dashed line at the last header delimiter prior to the length break indicator value provided, and allows for an alternate ");
+            WriteToFile(get_helpFileName(), "more descriptive file name to be used in place of the default file name.");
+            WriteToFile(get_helpFileName(), "It is suggested that you create a bare bones Combine Console Logs test with just the root file name to see the full log before ");
+            WriteToFile(get_helpFileName(), "adding the optional parameters that are intended to remove some log content.");
+            WriteToFile(get_helpFileName(), "Doing so, will display issues that may be overlooked when consolidating with the optional parameters.");
+            WriteToFile(get_helpFileName(), "As these are named arguments, the order of the arguments does not matter but the required parameters must be present.\n");
+            WriteToFile(get_helpFileName(), "\tThere are 8 optional named arguments for this command as follows:\n");
+            WriteToFile(get_helpFileName(), "\t<arg1>root file name=</arg1> - This argument specifies the Root File name for the console log files that will be combined.");
+            WriteToFile(get_helpFileName(), "\t\tIf this argument is missing, the last modified console log file name will be used and parsed to get the root file name.\n");
+            WriteToFile(get_helpFileName(), "\t\tIMPORTANT: These console log files must be stored in the default \\Console_logs folder!!!!\n");
+            WriteToFile(get_helpFileName(), "\t<arg2>exclude level=</arg2> - This optional argument specifies whether to exclude the logging level.");
+            WriteToFile(get_helpFileName(), "\t\ttrue to exclude the log level, false to display the log level.\n");
+            WriteToFile(get_helpFileName(), "\t<arg3>exclude console-api=</arg3> - This optional argument specifies whether to exclude the console-api prefix.\n");
+            WriteToFile(get_helpFileName(), "\t\ttrue to exclude the console-api prefix, false to display the console-api prefix.\n");
+            WriteToFile(get_helpFileName(), "\t<arg4>include start=</arg4> - This optional argument specifies the start phrase for the line.\n");
+            WriteToFile(get_helpFileName(), "\t\tIf present, a sub-string starting at that phrase will begin the line.\n");
+            WriteToFile(get_helpFileName(), "\t\tBecause this argument removes everything prior to the specified phrase, the console-api removal argument may not be necessary ");
+            WriteToFile(get_helpFileName(), "\t\tto get the results needed.\n");
+            WriteToFile(get_helpFileName(), "\t<arg5>exclude=</arg5> - This argument specifies a comma delimited list of phrases to exclude.\n");
+            WriteToFile(get_helpFileName(), "\t\tIf present, all delimited phrases will be removed from .\n");
+            WriteToFile(get_helpFileName(), "\t<arg6>remove additional headers=</arg6> - This argument allows for removing subsequent headers after the initial headers have ");
+            WriteToFile(get_helpFileName(), "\t - been written so that if moving the contents to Excel, only one header is present.\n");
+            WriteToFile(get_helpFileName(), "\t\tIf header end delimiter present, subsequent headers will be removed.\n");
+            WriteToFile(get_helpFileName(), "\t<arg7>length break indicator=</arg7> - This argument inserts a dashed line prior to the number listed by testing the current ");
+            WriteToFile(get_helpFileName(), "\t\tlength and the length of the next line and if the combination is greater than the argument value, the dashed line is inserted.\n");
+            WriteToFile(get_helpFileName(), "\t\t\tIf you are pasting the content into another application, like Excel, that has a cell character limit of 32765 ");
+            WriteToFile(get_helpFileName(), "\t\t\tthis functionality will help to quickly identify where to stop.\n");
+            WriteToFile(get_helpFileName(), "\t\tIf left blank or set to 0, no identifier will be inserted into the combined console log file.\n");
+            WriteToFile(get_helpFileName(), "\t<arg8>alternate file name=</arg8> - This argument allows for changing the default combined file name so that when combining ");
+            WriteToFile(get_helpFileName(), "\t\tmultiple different test runs, the correct file can be quickly identified.\n");
+            WriteToFile(get_helpFileName(), "\t\tIf left blank, the default console log file name will be used.\n");
+            WriteToFile(get_helpFileName(), "<step>\n" +
+                    "\t<command>Combine console logs</command>\n" +
+                    "\t<actionType>read</actionType>\n" +
+                    "\t<arguments>\n" +
+                    "\t\t<!-- root console log file name, which is the console log file without numbers prior to the  .txt file extension\n" +
+                    "\t\t\t if not provided, the latest file name will be retrieved and parsed to get the root file name -->\n" +
+                    "\t\t<arg1>root file name=TestResults_08-16-2023_11-56-2-Console-log.txt</arg1>\n" +
+                    "\t\t<!-- true for message only, false includes message level -->\n" +
+                    "\t\t<arg2>exclude level=true</arg2>\n" +
+                    "\t\t<!-- true exclude console-api prefix, false include console-api prefix -->\n" +
+                    "\t\t<arg3>exclude console-api=true</arg3>\n" +
+                    "\t\t<!-- remove everything prior to this phrase -->\n" +
+                    "\t\t<arg4>include start=\"Page URL</arg4>\n" +
+                    "\t\t<!-- remove comma delimited list of items below from each line -->\n" +
+                    "\t\t<arg5>exclude=dataLayerReadyTestPass</arg5>\n" +
+                    "\t\t<!-- remove subsequent headers by removing everything before the ; character -->\n" +
+                    "\t\t<arg6>remove additional headers=;</arg6>\n" +
+                    "\t\t<!-- add a dash line before the number listed below where the remove additional headers delimiter is found -->\n" +
+                    "\t\t<arg7>length break indicator=32765</arg7>\n" +
+                    "\t\t<!-- use a more descriptive name for the combined file, if blank the default combined file name will be used -->\n" +
+                    "\t\t<arg8>alternate file name=Privacy Links-Consolidated.txt</arg7>\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>\n");
+
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ SPIDER SITE or SPYDER SITE ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "This command allows you to crawl a site, get a list of URLs for the URLs found and save the list of URLs to a file. ");
+            WriteToFile(get_helpFileName(), "This command requires a domain restriction to limit URLs to just the domain being crawled and it is desireable to list ");
+            WriteToFile(get_helpFileName(), "the sitemap page, if it exists, to find the most amount of URLs in the easiest way possible.\n");
+            WriteToFile(get_helpFileName(), "The domain restriction page is searched for all resolved links, but all subsequent pages are retrieved and string manipulation ");
+            WriteToFile(get_helpFileName(), "is used to locate and retrieve the URLs.\n");
+            WriteToFile(get_helpFileName(), "This method reduced crawl times from over 3 hours to approximately 37 minutes during testing.\n");
+            WriteToFile(get_helpFileName(), "All links, on the pages provided, are searched for the href parameter value, and if the href does not contain an invalid ");
+            WriteToFile(get_helpFileName(), "URL, it is reviewed to determine if it contains the domain.\n");
+            WriteToFile(get_helpFileName(), "If the href contains a domain, the domain is checked against the domain restriction argument but if the href does not contain ");
+            WriteToFile(get_helpFileName(), "a domain, the domain restriction is prepended.\n  This helps to provide a full URL when relative linking is employed.");
+            WriteToFile(get_helpFileName(), "Some invalid URLs are for images, javascript and hash tags for in page links all of which are disregarded.\n");
+            WriteToFile(get_helpFileName(), "\tThere are 3 required arguments for this command, and an unlimited number of optional arguments as follows:");
+            WriteToFile(get_helpFileName(), "\t<arg1>This is the file name where the URLs are to be saved and is required.\n");
+            WriteToFile(get_helpFileName(), "\t<arg2>rThis is the domain restriction that limits URLs retrieved to just this domain and is required and must end with a forward slash /.\n");
+            WriteToFile(get_helpFileName(), "\t\tie.  https://www.mycoolsite.com/\n");
+            WriteToFile(get_helpFileName(), "\t<arg3>This is the sitemap page and should be included if it exists else leave this argument empty.\n");
+            WriteToFile(get_helpFileName(), "\t<arg4> - <arg??> - These are additional pages that should be scanned for links, and these are optional.\n");
+            WriteToFile(get_helpFileName(), "<step>\n" +
+                    "\t<command>spider site</command>\n" +
+                    "\t<actionType>read</actionType>\n" +
+                    "\t<arguments>\n" +
+                    "\t\t<!-- Required: file name where results are to be saved. -->\n" +
+                    "\t\t<arg1>C:\\Gary\\Java Utilities\\Spyder Files\\MySite.txt</arg1>\n" +
+                    "\t\t<!-- Required: Domain restriction must end with forward slash (/). -->\n" +
+                    "\t\t<arg2>https://www.mycoolsite.com/</arg2>\n" +
+                    "\t\t<!-- Required: The sitemap URL or leave empty -->\n" +
+                    "\t\t<arg3>https://www.mycoolsite.com/sitemap</arg3>\n" +
+                    "\t\t<!-- Optional: additional pages to crawl for URLs -->\n" +
+                    "\t\t<arg4>https://www.mycoolsite.com/products</arg4>\n" +
+                    "\t\t<arg5>https://www.mycoolsite.com/recipes</arg5>\n" +
+                    "\t\t<arg5>https://www.mycoolsite.com/articles</arg5>\n" +
+                    "\t\t<arg5>https://www.mycoolsite.com/legal</arg5>\n" +
+                    "\t</arguments>\n" +
+                    "<step>\n");
+
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
@@ -2745,9 +2853,9 @@ public class HelpWriter {
 
 
         try {
-            testHelper.DebugDisplay("ReadFileAsList() fileName = " + fileName);
+            //testHelper.DebugDisplay("ReadFileAsList() fileName = " + fileName);
             //URI uri = this.getClass().getResource(fileName).toURI();
-            testHelper.DebugDisplay("#2 ReadFileAsList() fileName = " + fileName);
+            //testHelper.DebugDisplay("#2 ReadFileAsList() fileName = " + fileName);
             //List<String> lines = Files.readAllLines(Paths.get(uri),
             //lines = Files.readAllLines(Paths.get(uri),
             lines = Files.readAllLines(Paths.get(fileName),

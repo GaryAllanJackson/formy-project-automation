@@ -21,7 +21,7 @@ public class HelperUtilities {
     //Image files
     public File differenceImageFile;
     public File differenceFileForParent = null;
-    private static String OS = System.getProperty("os.name").toLowerCase();
+    private static final String OS = System.getProperty("os.name").toLowerCase();
     TestHelper testHelper; // = new TestHelper();
     private boolean _executedFromMain;
     private boolean is_executedFromMain() {

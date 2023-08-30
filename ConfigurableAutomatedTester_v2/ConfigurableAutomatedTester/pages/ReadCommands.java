@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ReadCommands {
 
-    TestCentral testCentral;  // = new TestCentral();
+    final TestCentral testCentral;  // = new TestCentral();
     TestHelper testHelper; // = new TestHelper();
     WriteCommands writeCommands;  // = new WriteCommands();
     WebDriver driver;
@@ -144,6 +144,11 @@ public class ReadCommands {
                 CheckGA4TagValues(ts, fileStepIndex);
             } else if (ts.get_command().toLowerCase().equals(AppCommands.SaveConsoleLog)) {
                 testCentral.WriteLogContent(ts,fileStepIndex);
+            }  else if (ts.get_command().toLowerCase().equals(AppCommands.CombineConsoleLogs)) {
+                testCentral.CombineLogContent(ts,fileStepIndex);
+            }
+            else if (ts.get_command().toLowerCase().equals(AppCommands.SpyderSite) || ts.get_command().toLowerCase().equals(AppCommands.SpiderSite)) {
+                testCentral.SpiderSite(ts,fileStepIndex);
             }
         }
     }
@@ -1066,7 +1071,7 @@ public class ReadCommands {
         //endregion
         String tagType =  testCentral.GetArgumentValue(ts, 0, null);
 
-        testHelper.UpdateTestResults(AppConstants.indent5 + "Checking color contrast of " + tagType + " on page " + testCentral.testPage + " for step " + fileStepIndex, false);
+        testHelper.UpdateTestResults(AppConstants.indent5 + "Checking color contrast of " + tagType + " on page " + TestCentral.testPage + " for step " + fileStepIndex, false);
         CheckColorContrast(ts, fileStepIndex);
     }
 
@@ -1169,7 +1174,7 @@ public class ReadCommands {
      * @throws Exception - Possible Exception attempting to retrieve JSON/XML
      *                      from API endpoint
      * *******************************************************************************/
-    private String GetHttpResponse(TestStep ts, String fileStepIndex) throws Exception {
+    public String GetHttpResponse(TestStep ts, String fileStepIndex) throws Exception {
         String url = testCentral.GetArgumentValue(ts, 0, testCentral.GetCurrentPageUrl());
         StringBuffer response = new StringBuffer();
 
@@ -1704,6 +1709,7 @@ public class ReadCommands {
                 testHelper.UpdateTestResults(AppConstants.indent8 + "Executing Javascript command: {{JavaScript Command}} for step " + fileStepIndex, true);
             }
             actualValue = (String) ((JavascriptExecutor) driver).executeScript(javaScriptText);
+            //testHelper.DebugDisplay("actualValue = " + actualValue);
             if (ts.get_crucial()) {
                 if ("=".equals(comparisonType)) {
                     assertEquals(ts.get_expectedValue(), actualValue);
@@ -1712,13 +1718,13 @@ public class ReadCommands {
                 }
             } else {
                 if ("=".equals(comparisonType)) {
-                    if (actualValue.equals(ts.get_expectedValue())) {
+                    if (!testHelper.IsNullOrEmpty(actualValue) && actualValue.equals(ts.get_expectedValue())) {
                         testHelper.UpdateTestResults(AppConstants.indent8 + "Successful JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual: (" + actualValue + ")" + " for step " + fileStepIndex, true);
                     } else {
                         testHelper.UpdateTestResults(AppConstants.indent8 + "Failed JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual: (" + actualValue + ")" + " for step " + fileStepIndex, true);
                     }
                 } else {
-                    if (!actualValue.equals(ts.get_expectedValue())) {
+                    if (!testHelper.IsNullOrEmpty(actualValue) && !actualValue.equals(ts.get_expectedValue())) {
                         testHelper.UpdateTestResults(AppConstants.indent8 + "Successful JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual: (" + actualValue + ")" + " for step " + fileStepIndex, true);
                     } else {
                         testHelper.UpdateTestResults(AppConstants.indent8 + "Failed JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual: (" + actualValue + ")" + " for step " + fileStepIndex, true);

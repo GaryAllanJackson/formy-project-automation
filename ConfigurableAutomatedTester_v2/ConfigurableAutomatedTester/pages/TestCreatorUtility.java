@@ -7,8 +7,8 @@ import java.util.List;
 
 public class TestCreatorUtility {
 
-    TestCentral testCentral;
-    TestHelper testHelper;
+    final TestCentral testCentral;
+    final TestHelper testHelper;
     WebDriver driver;
 
     public TestCreatorUtility(TestCentral testCentral, TestHelper testHelper) {
@@ -78,10 +78,10 @@ public class TestCreatorUtility {
             testHelper.DebugDisplay("formatted = " + formatted);
             if (formatted) {
                 testHelper.WriteToFile(newFileName, CreateXmlFileStartAndEnd(true));
-                testHelper.WriteToFile(newFileName, CreateNavigationXmlTestStep(testCentral.testPage, "TRUE"));
+                testHelper.WriteToFile(newFileName, CreateNavigationXmlTestStep(TestCentral.testPage, "TRUE"));
                 testHelper.WriteToFile(newFileName, CreateScreenShotTestStep("FALSE"));
             } else {
-                testHelper.WriteToFile(newFileName, "URL being used: " + testCentral.testPage);
+                testHelper.WriteToFile(newFileName, "URL being used: " + TestCentral.testPage);
             }
 
             testHelper.DebugDisplay("elements.size() = " + elements.size());
@@ -250,7 +250,7 @@ public class TestCreatorUtility {
     private String CreateScreenShotTestStep(String isCrucial) {
         String returnValue = "";
 
-        if (testCentral.testPage != null && !testCentral.testPage.isEmpty()) {
+        if (TestCentral.testPage != null && !TestCentral.testPage.isEmpty()) {
             returnValue = "\t<step>\n" +
                     "\t\t<command>screenshot</command>\r\n" +
                     "\t\t<actionType>write</actionType>\r\n" +

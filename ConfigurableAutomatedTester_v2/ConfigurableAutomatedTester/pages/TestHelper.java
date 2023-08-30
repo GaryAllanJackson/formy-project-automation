@@ -109,8 +109,8 @@ public class TestHelper{
     String get_testFileName() {return _testFileName; }
 
     Dimension savedDimension = null;
-    TestCentral testCentral;
-    HelpWriter helpWriter;
+    final TestCentral testCentral;
+    final HelpWriter helpWriter;
 
     public TestHelper(TestCentral testCentral) {
         this.testCentral = testCentral;

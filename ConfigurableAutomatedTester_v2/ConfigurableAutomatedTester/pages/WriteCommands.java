@@ -3,7 +3,7 @@ import net.lightbody.bmp.core.har.HarEntry;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.awt.*;
@@ -19,11 +19,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WriteCommands {
 
-    TestCentral testCentral;
+    final TestCentral testCentral;
     TestHelper testHelper;  // = new TestHelper();
-    ReadCommands readCommands;
-    HelperUtilities helperUtilities; // = new HelperUtilities();
-    TestCreatorUtility testCreatorUtility;
+    final ReadCommands readCommands;
+    final HelperUtilities helperUtilities; // = new HelperUtilities();
+    final TestCreatorUtility testCreatorUtility;
     WebDriver driver;
     public void setDriver(WebDriver driver) {
         this.driver = driver;
@@ -299,7 +299,14 @@ public class WriteCommands {
 
         try {
             if (!accessorType.equals("page")) {
-                element = new WebDriverWait(driver, maxTimeInSeconds).until(ExpectedConditions.presenceOfElementLocated((By) readCommands.GetWebElementByAccessor(ts)));
+                element = readCommands.GetWebElementByAccessor(ts);
+                //WebDriverWait wait = new WebDriverWait(driver, maxTimeInSeconds);
+                Wait<WebDriver> wait = new WebDriverWait(driver, maxTimeInSeconds);
+                WebElement finalElement = element;
+                wait.until(d -> finalElement.isDisplayed());
+
+                //element = new WebDriverWait(driver, maxTimeInSeconds).until(ExpectedConditions.presenceOfElementLocated((By) readCommands.GetWebElementByAccessor(ts)));
+                //element = new WebDriverWait(driver, maxTimeInSeconds).until(ExpectedConditions.presenceOfElementLocated(By)); readCommands.GetWebElementByAccessor(ts)));
             } else {
                 if (!elementIdentifier.toLowerCase().trim().contains("n/a")) {
                     try {
@@ -683,17 +690,17 @@ public class WriteCommands {
             List<GA4Parameter> ga4ParameterList = new ArrayList<>();
             GA4Parameter ga4Parameter;
             Boolean ga4TagStarted = false;
-            Har har = testCentral.proxy.getHar();
+            Har har = TestCentral.proxy.getHar();
             String comment = null;
             Boolean uaTagStarted = false;
 
-            String fileName = testHelper.GetUnusedFileName(testCentral.GetArgumentValue(ts, 0, testCentral.testPage));
+            String fileName = testHelper.GetUnusedFileName(testCentral.GetArgumentValue(ts, 0, TestCentral.testPage));
             testHelper.CreateSectionHeader("[ Start Save Har File and Populate GTM Tags Object Event ]", "", AppConstants.ANSI_BLUE_BRIGHT, true, false, true);
             //testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start Save Har File and Populate GTM Tags Object Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
             testHelper.UpdateTestResults(AppConstants.indent5 + "Writing HAR file, based on supplied file name (" + fileName + "), for step " + fileStepIndex, true);
             String sFileName = SaveHarFile(har, fileName);
             testHelper.UpdateTestResults(AppConstants.indent5 + "HAR file saved as (" + sFileName + ") based on supplied and existing file names for step " + fileStepIndex, true);
-            List<HarEntry> entries = testCentral.proxy.getHar().getLog().getEntries();
+            List<HarEntry> entries = TestCentral.proxy.getHar().getLog().getEntries();
             testHelper.UpdateTestResults(AppConstants.indent5 + "Populating GTM Tags Object from HAR for step " + fileStepIndex, true);
             for (HarEntry entry : entries) {
                 int size = entry.getRequest().getQueryString().size();
