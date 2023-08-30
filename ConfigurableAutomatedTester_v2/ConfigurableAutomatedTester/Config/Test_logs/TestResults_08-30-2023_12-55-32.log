@@ -1,0 +1,26 @@
+     Configured Browser Selection = Chrome
+     [Setting ChromeDriver]
+╔═════════[ Running Test Script ]═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+Running Test Script file: C:\Test Files\MyCoolSite-Test.xml
+CSV Status file: Config/Test_CSV_Files/TestResults_08-30-2023_12-55-32.csv
+     «═════════[ Start Explicit Navigation Event ]════════════════════════════════════»
+        Navigating to https://www.mycoolsites.com/en/coffee/recipes for step F0_S0
+        Backend Performance Timing: 1.062 seconds.
+        Frontend Performance Timing: 3.899 seconds.
+        Successful Navigation and URL Check.  Expected: (https://www.mycoolsites.com/en/coffee/recipes) Actual: (https://www.mycoolsites.com/en/coffee/recipes) for step F0_S0
+
+     «═════════[ End Explicit Navigation Event ]══════════════════════════════════════»
+
+     «═════════[ Start JavaScript Execution Event ]═══════════════════════════════════»
+        Executing Javascript command: {{JavaScript Command}} for step F0_S1
+        Successful JavaScript Value - Expected (Pass) Actual: (Pass) for step F0_S1
+
+     «═════════[ End JavaScript Execution Event ]═════════════════════════════════════»
+
+             «═════════[ Start Retrieving Scan Pages ]════════════════════════════════════════»
+             «═════════[ End Retrieving Scan Pages ]══════════════════════════════════════════»
+
+        «═════════[ Start Adding Links from Pages configured for scan ]══════════════════»
+        «═════════[ End Adding Links from Pages configured for scan ]════════════════════»
+Start Writing HAR file for end of test!
+End Writing HAR file!
