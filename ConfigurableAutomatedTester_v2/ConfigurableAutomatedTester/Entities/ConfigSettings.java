@@ -20,6 +20,8 @@ public class ConfigSettings {
 
     private Boolean _showAdditionalGa4Parameters;
 
+    private String _imageMagickPath;
+
     public ConfigSettings() {
         _testFiles = new ArrayList<>();
     }
@@ -68,6 +70,8 @@ public class ConfigSettings {
     public String get_testSettingsFile() {
         return _testSettingsFile;
     }
+
+    public String get_imageMagickPath() {return _imageMagickPath; }
 
     public void set_testSettingsFile(String _testSettingsFile) {
         this._testSettingsFile = _testSettingsFile;
@@ -158,6 +162,10 @@ public class ConfigSettings {
     public Boolean get_showAdditionalGa4Parameters() {return _showAdditionalGa4Parameters; }
     public void set_showAdditionalGa4Parameters(Boolean _showAdditionalGa4Parameters) {
         this._showAdditionalGa4Parameters = _showAdditionalGa4Parameters;
+    }
+
+    public void set_imageMagickPath(String imageMagickPath) {
+        this._imageMagickPath = imageMagickPath;
     }
 
 
