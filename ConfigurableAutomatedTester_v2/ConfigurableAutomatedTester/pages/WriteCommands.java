@@ -11,7 +11,10 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static java.lang.Integer.parseInt;
@@ -117,6 +120,13 @@ public class WriteCommands {
                 testCentral.CheckScreenShotArgumentOrder(ts);
                 String fileName = testCentral.GetArgumentValue(ts, 0, null);
                 String stringDimensions = testCentral.GetArgumentValue(ts, 1, null);
+                if (stringDimensions.indexOf("=") == stringDimensions.lastIndexOf("=")) {
+                    String width = testCentral.GetSpecificArgumentValue(ts,"w","=", null);
+                    String height = testCentral.GetSpecificArgumentValue(ts,"h","=", null);
+                    if (width != null && height != null) {
+                        stringDimensions = "w=" + width + " h=" + height;
+                    }
+                }
                 if (stringDimensions != null) {
                     SetScreenShotDimensions(stringDimensions);
                 }
@@ -155,9 +165,169 @@ public class WriteCommands {
                 CompareImagesController(ts, fileStepIndex);
             } else if (ts.get_command().toLowerCase().equals(AppCommands.SaveHarFile)) {
                 WriteHarContent(ts, fileStepIndex);
+            } else if (ts.get_command().toLowerCase().equals(AppCommands.SetCookie)) {
+                SetCookieValue(ts, fileStepIndex);
+            } else if (ts.get_command().toLowerCase().equals(AppCommands.ShowAllGATags)) {
+                ShowAllGATags(ts, fileStepIndex);
             }
         }
     }
+
+
+
+    private void SetCookieValue(TestStep ts, String fileStepIndex) {
+        String argumentValue;
+        int cookieCount = 0;
+        int validCookieCount = 0;
+        String singularOrPlural = "Cookie";
+        //DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime nowDateTime = LocalDateTime.now();
+        String cookieKey;
+        boolean isCrucial = ts.get_crucial() != null ? ts.get_crucial() : false;
+        String [] cookieParts;
+        String cookieName, cookieValue, cookiePath, cookieDomain;
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Date cookieExpiration = new Date();
+        Boolean cookieSecure;
+        int cookieExpirationMultiplier = 1;
+        Boolean inValidDomain = false;
+        String invalidCookieName = "", invalidCookieDomain = "";
+
+        if (ts.ArgumentList.size() > 1) {
+            singularOrPlural = "Cookies";
+        }
+        //testHelper.DebugDisplay("Now time is:" + nowDateTime);
+        testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_YELLOW_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Setting " + ts.ArgumentList.size() + " " + singularOrPlural + " at " + nowDateTime +  " for Step " +  fileStepIndex + " ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+        testHelper.UpdateTestResults(AppConstants.indent8 + AppConstants.ANSI_YELLOW_BRIGHT + "Only cookies with valid domains will be set and validated.  Invalid cookies will be ignored." + AppConstants.ANSI_RESET, true);
+        for (int x=0;x<ts.ArgumentList.size();x++) {
+            argumentValue =  testCentral.GetArgumentValue(ts,x,null);
+            cookieParts = argumentValue.split(";");
+            cookieName = cookieParts[0].substring(0, cookieParts[0].indexOf("="));
+            cookieValue = cookieParts[0].substring(cookieParts[0].indexOf("=")+1);
+            cookieExpiration = new Date();
+            cookiePath = "";
+            cookieDomain = "";
+            cookieSecure = false;
+
+
+            for (int i=1;i<cookieParts.length;i++) {
+                if (cookieParts[i].indexOf("expires=") > -1) {
+                    cookieExpirationMultiplier = parseInt(cookieParts[i].substring(cookieParts[i].indexOf("=")+1));
+                    cookieExpiration = new Date(new Date().getTime() + (cookieExpirationMultiplier *3600*1000));
+                } else if (cookieParts[i].indexOf("path=") > -1) {
+                    cookiePath = cookieParts[i].substring(cookieParts[i].indexOf("=")+1);
+                } else if (cookieParts[i].indexOf("domain=") > -1) {
+                    cookieDomain = cookieParts[i].substring(cookieParts[i].indexOf("=")+1);
+                } else if (cookieParts[i].indexOf("secure=") > -1) {
+                    cookieSecure = Boolean.parseBoolean(cookieParts[i].substring(cookieParts[i].indexOf("=")+1));
+                }
+            }
+            try {
+                //testHelper.DebugDisplay("Name:" + cookieName + "\n - Value:" + cookieValue + "\nDomain:" + cookieDomain + "\nPath:" + cookiePath + "\nExpires:" + cookieExpiration + "\nSecure:" + cookieSecure);
+                Cookie ck = new Cookie(cookieName, cookieValue, cookieDomain, cookiePath, cookieExpiration, cookieSecure);
+                driver.manage().addCookie(ck);
+                cookieCount++;
+            } catch(InvalidCookieDomainException ie) {
+                testHelper.UpdateTestResults(AppConstants.indent8 + "Cookie Name: " + cookieName + " domain: " + cookieDomain + " not written.  Invalid domain exception.", true);
+                inValidDomain = true;
+                invalidCookieName = cookieName;
+                invalidCookieDomain = cookieDomain;
+            }
+        }
+
+        if (isCrucial) {
+            for (int x=0;x<ts.ArgumentList.size();x++) {
+                argumentValue = testCentral.GetArgumentValue(ts, x, null);
+                if (!testHelper.IsNullOrEmpty(argumentValue) && argumentValue.indexOf("=") > -1) {
+                    cookieParts = argumentValue.split(";");
+                    cookieKey = cookieParts[0].substring(0,argumentValue.indexOf("="));
+                    cookieValue = cookieParts[0].substring(cookieParts[0].indexOf("=")+1);
+                    try {
+                        if (driver.manage().getCookieNamed(cookieKey).toString().indexOf(cookieValue) > -1) {
+                            validCookieCount++;
+                            //testHelper.DebugDisplay("Valid Cookie: " + cookieKey + " = " + cookieValue);
+                        }
+                    } catch(Exception ex) {
+                        if (inValidDomain) {
+                            testHelper.UpdateTestResults(AppConstants.indent8 + "Cannot validate cookie with invalid domain. Name: " + invalidCookieName + " domain: " + invalidCookieDomain + " was not written.", true);
+                        } else {
+                            testHelper.UpdateTestResults(AppConstants.indent8 + "Cookie validation error: " + ex.getMessage(), true);
+                        }
+                    }
+                }
+            }
+            testHelper.UpdateTestResults( AppConstants.indent8 + AppConstants.ANSI_YELLOW_BRIGHT + "Pass (Only valid cookies counted.) Expected (" + cookieCount + ") Actual (" + validCookieCount + ").  ", true);
+            assertEquals(cookieCount,validCookieCount);
+        }
+        testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_YELLOW_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ " + cookieCount + " " + singularOrPlural +  " set for Step " +  fileStepIndex + " ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+    }
+
+    private void ShowAllGATags(TestStep ts, String fileStepIndex) {
+        String tagTypes = testCentral.GetArgumentValue(ts, 0, "all");
+        String ga4TagLimitString = testCentral.GetSpecificArgumentValue(ts, "limit ga4 tags","=",null);
+        //String ga4TagLimitByValue = testCentral.GetSpecificArgumentValue(ts, "limit ga4 by values","=",null);
+        String outValue = "";
+        String message = "GA4 Tags shown below:\r\n";
+        testHelper.DebugDisplay("ga4TagLimitString = " + ga4TagLimitString);
+        String [] ga4TagLimitList = null;
+        String oldValue = "";
+        //String [] ga4ValueLimitList = null;
+
+        if (!testHelper.IsNullOrEmpty(ga4TagLimitString)) {
+            ga4TagLimitList = ga4TagLimitString.split(",");
+        }
+        /*if (!testHelper.IsNullOrEmpty(ga4TagLimitByValue)) {
+            ga4ValueLimitList = ga4TagLimitByValue.split(",");
+        }*/
+
+        testHelper.UpdateTestResults(AppConstants.indent5 + AppConstants.ANSI_YELLOW_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start View " + tagTypes + " Tags set for Step " + fileStepIndex + " ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+
+        if (tagTypes.equals("ga4") || tagTypes.equals("all")) {
+            if (GA4TagList.size() > 0) {
+                for (GA4Tag gaTag : GA4TagList) {
+                    for (int x = 0; x < gaTag.getGA4Parameters().size(); x++) {
+                        if (testHelper.IsNullOrEmpty(ga4TagLimitString)) {
+                            outValue += AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent8 + gaTag.getGA4Parameter(x).get_parameterName() + ":" + gaTag.getGA4Parameter(x).get_parameterValue() + "\r\n";
+                        } else if (ga4TagLimitString.indexOf(gaTag.getGA4Parameter(x).get_parameterName()) > -1) {
+                            for (int i=0;i<ga4TagLimitList.length;i++) {
+                                if (ga4TagLimitList[i].equals(gaTag.getGA4Parameter(x).get_parameterName())) {
+                                    outValue += AppConstants.ANSI_BLUE_BRIGHT + AppConstants.indent8 + gaTag.getGA4Parameter(x).get_parameterName() + ":" + gaTag.getGA4Parameter(x).get_parameterValue() + "\r\n";
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (!outValue.equals(oldValue)) {
+                        testHelper.UpdateTestResults(message + outValue + AppConstants.ANSI_RESET, true);
+                        testHelper.UpdateTestResults("-------------------------------------------------------------", true);
+                    }
+                    oldValue = outValue;
+                    outValue = "";
+                    message = "";
+                }
+
+            }
+        }
+        if (tagTypes.equals("ua") || tagTypes.equals("all")) {
+            outValue = "";  //reset this since ga4 tags have been written, if both are applicable
+            if (GtmTagList.size() > 0) {
+                for (GtmTag gaTag : GtmTagList) {
+                    outValue += AppConstants.ANSI_YELLOW_BRIGHT + AppConstants.indent8 + "dl:" + gaTag.get_documentLocation() + "\r\n" +
+                            AppConstants.indent8 + "t:" + gaTag.get_hitType() + "\r\n" +
+                            AppConstants.indent8 + "ec:" + gaTag.get_eventCategory() + "\r\n" +
+                            AppConstants.indent8 + "ea:" + gaTag.get_eventAction() + "\r\n" +
+                            AppConstants.indent8 + "el:" + gaTag.get_eventLabel() + "\r\n" +
+                            AppConstants.indent8 + "tid:" + gaTag.get_trackingId() + "\r\n" +
+                            AppConstants.indent8 + "cg1:" + gaTag.get_contentGroup1() + "\r\n";
+
+                }
+                testHelper.UpdateTestResults("UA Tags shown below:\r\n" + outValue  + "\r\n" + AppConstants.ANSI_RESET,true);
+            }
+        }
+        testHelper.UpdateTestResults(AppConstants.indent5 + AppConstants.ANSI_YELLOW_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End View " + tagTypes + " Tags set for Step " + fileStepIndex + " ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+
+    }
+
 
 
     /*********************************************************************************************
@@ -225,6 +395,7 @@ public class WriteCommands {
             }
         }
     }
+
 
 
     /******************************************************************************
@@ -739,20 +910,25 @@ public class WriteCommands {
                         item.set_TrackingId(entry.getRequest().getQueryString().get(x).getName().equals("tid") ? entry.getRequest().getQueryString().get(x).getValue() : item.get_trackingId());
 
                     } else if (entry.getRequest().getUrl().indexOf("collect?v=2") > -1)  { //if (entry.getRequest().getQueryString().get(x).getName().equals("v")) { //if (entry.getRequest().getQueryString().get(x).getValue().indexOf("collect?v=2") > -1 || (entry.getRequest().getQueryString().get(x).getName().equals("v") && entry.getRequest().getQueryString().get(x).getValue().equals("2")))  {
+                        //testHelper.DebugDisplay("#1 - else if - ga4 tag found - collect?v=2");
                         if (entry.getRequest().getQueryString().get(x).getName().equals("v") && entry.getRequest().getQueryString().get(x).getValue().equals("2")) {
+                            //testHelper.DebugDisplay("#2 - if v and 2 found");
                             if (!testHelper.IsNullOrEmpty(gA4item.get_eventName()) && !testHelper.IsNullOrEmpty(gA4item.get_gtmTagName()) && gA4item != null) {
                                 //testHelper.DebugDisplay(gA4item.get_eventName() + " - " + gA4item.get_productName());
+                                //testHelper.DebugDisplay("#3 - gA4item.get_eventName() and gA4item.get_gtmTagName() not null!!!");
                                 gA4item.set_GA4Parameters(ga4ParameterList);
                                 GA4TagList.add(gA4item);
                                 ga4TagStarted = false;
                                 gA4item = null;
                             }
+                            //testHelper.DebugDisplay("#4 - New GA4Tag created");
                             gA4item = new GA4Tag();
                             ga4TagStarted = true;
                             ga4ParamName = "";
                             ga4ParameterList = new ArrayList<>();
                         }
                         if (ga4TagStarted) {
+                            //testHelper.DebugDisplay("#5 - ga4TagStarted is true");
                             gA4item.set_PageRef(entry.getPageref());
                             gA4item.set_RequestUrl(entry.getRequest().getQueryString().get(x).getName().equals("url") ? entry.getRequest().getQueryString().get(x).getValue() : gA4item.get_requestUrl());
                             gA4item.set_DocumentLocation(entry.getRequest().getQueryString().get(x).getName().equals("dl") ? entry.getRequest().getQueryString().get(x).getValue() : gA4item.get_documentLocation());

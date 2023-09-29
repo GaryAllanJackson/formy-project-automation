@@ -77,9 +77,9 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "\t\tTEST FILE OVERVIEW");
             WriteToFile(get_helpFileName(), "\t\tTEST FILE FIELDS AND DESCRIPTIONS");
             WriteToFile(get_helpFileName(), "\t\tCHECK ENTIRE SITE");
-            WriteToFile(get_helpFileName(), "\t\tNAVIGATION");
-            WriteToFile(get_helpFileName(), "\t\tNAVIGATION WITH SUCCESSFUL NAVIGATION CONFIRMATION");
-            WriteToFile(get_helpFileName(), "\t\tNAVIGATION WITH AUTHENTICATION WITH AND WITHOUT NAVIGATION CONFIRMATION");
+            WriteToFile(get_helpFileName(), "\t\tNAVIGATE");
+            WriteToFile(get_helpFileName(), "\t\tNAVIGATE WITH SUCCESSFUL NAVIGATION CONFIRMATION");
+            WriteToFile(get_helpFileName(), "\t\tNAVIGATE WITH AUTHENTICATION WITH AND WITHOUT NAVIGATION CONFIRMATION");
             WriteToFile(get_helpFileName(), "\t\tLOGIN WITH NAVIGATION");
             WriteToFile(get_helpFileName(), "\t\tALERT POPUP LOGIN");
             WriteToFile(get_helpFileName(), "\t\tCHECK URL WITHOUT NAVIGATION");
@@ -129,11 +129,14 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "\t\tPARSE AND CALCULATE LONG ");
             WriteToFile(get_helpFileName(), "\t\tCHECK JAVASCRIPT VALUE \r\n");
             WriteToFile(get_helpFileName(), "\t\tSAVE HAR FILE \r\n");
-            WriteToFile(get_helpFileName(), "\t\tCHECK Google Analytics UA TAG - check gtm tag\r\n");
-            WriteToFile(get_helpFileName(), "\t\tCHECK Google Analytics GA4 TAG - check ga4 tag \r\n");
+            WriteToFile(get_helpFileName(), "\t\tCHECK GOOGLE ANALYTICS UA TAG - check gtm tag\r\n");
+            WriteToFile(get_helpFileName(), "\t\tCHECK GOOGLE ANALYTICS GA4 TAG - check ga4 tag \r\n");
+            WriteToFile(get_helpFileName(), "\t\tSHOW ALL GOOGLE ANALYTICS TAGS (UA AND OR GA4) - show all ga tags \r\n");
             WriteToFile(get_helpFileName(), "\t\tSAVE CONSOLE LOG TO FILE \r\n");
             WriteToFile(get_helpFileName(), "\t\tCOMBINE CONSOLE LOGS \r\n");
-            WriteToFile(get_helpFileName(), "\t\tSPIDER SITE \r\n");
+            WriteToFile(get_helpFileName(), "\t\tSPIDER SITE or SPYDER SITE \r\n");
+            WriteToFile(get_helpFileName(), "\t\tSET COOKIE \r\n");
+            WriteToFile(get_helpFileName(), "\t\tGET ALL COOKIES \r\n");
 
             WriteToFile(get_helpFileName(), AppConstants.indent5 + testHelper.PrePostPad("[ INCLUDED TEST FILES ]", "═", 9, 100));
             WriteToFile(get_helpFileName(), "\t\tTEST FILES DESCRIBED \r\n");
@@ -169,9 +172,9 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "Running outside of the IDE means that it can be quickly executed without opening the IDE and then the source project.");
             WriteToFile(get_helpFileName(), "The Log file name will be preceded with \"StandAlone_\" when run as a stand-alone application.");
             WriteToFile(get_helpFileName(), "By default, log and CSV files will be created in the \"\\Config\" folder, which is part of this project.");
-            WriteToFile(get_helpFileName(), "The log file records all test steps performed as well as the success and fail status of assertion steps which include steps that");
-            WriteToFile(get_helpFileName(), "compare a value to a supplied expected value.");
-            WriteToFile(get_helpFileName(), "The CSV file records only success and fail status steps but none of the supporting steps surrounding those checks.");
+            WriteToFile(get_helpFileName(), "The log file records all test steps performed as well as the success and fail status of assertion steps, ");
+            WriteToFile(get_helpFileName(), "which include steps that compare a value to a supplied expected value.");
+            WriteToFile(get_helpFileName(), "The CSV file records only success and fail status steps, but none of the supporting steps surrounding those checks.");
 
             WriteToFile(get_helpFileName(), "Look at the Project_Setup.txt file for directions on running the stand-alone application as part of a batch file.\r\n");
             WriteToFile(get_helpFileName(), "The application covers most testing, including: Navigation, Form Population, Value checking, Value Persistence for use in ");
@@ -196,7 +199,7 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "Creating a Configurable Automated test consists of creating one Configuration file and one or more Test files.");
             WriteToFile(get_helpFileName(), "This application can run any number of Test Files, which need to be configured in the Configuration file either ");
             WriteToFile(get_helpFileName(), "individually or within a specified folder which can be filtered to select just targeted files.\r\n");
-            WriteToFile(get_helpFileName(), "This application saves the test log, a CSV log, HAR file and Console log files.\n");
+            WriteToFile(get_helpFileName(), "This application saves the test log file, a HAR file, a Console log file, and an optional CSV log file.\n");
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ IMPORTANT NOTES ]", "* ", 10, 60));
             WriteToFile(get_helpFileName(), "\r\nNOTE: Test Steps are numbered by File underscore then Test Step.");
             WriteToFile(get_helpFileName(), "\tThe F describes the Test File being run while the S describes the Test Step being run.");
@@ -209,6 +212,10 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "\tAdditionally, in the console, Successful results are displayed in green, while Failure results are displayed in Red.");
             WriteToFile(get_helpFileName(), "\tAny item appear in the console in Red means that either the item failed or it was configured improperly or an important item");
             WriteToFile(get_helpFileName(), "\twas not configured at all.\r\n\tLOOK AT ALL ITEMS IN RED AND MAKE UPDATES ACCORDINGLY!!!");
+            WriteToFile(get_helpFileName(), "One test log file per test file is generated when running individual tests but when running entire site tests ");
+            WriteToFile(get_helpFileName(), "\tone log file per iteration is created based on the root log name followed by an increasing iteration number.");
+            WriteToFile(get_helpFileName(), "\tCSV files follow suit if the configuration entry is set to many.<createCsvStatusFiles>many</createCsvStatusFiles>\r\n");
+
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("", "*", 30, 100) + "\r\n");
 
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ HELP FILE SECTIONS ]", "═", 9, 151));
@@ -224,8 +231,8 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "Future functionality to be added to this application:");
             WriteToFile(get_helpFileName(), "\tGreater Than and Less Than Operator.");
             WriteToFile(get_helpFileName(), "\t\t-\tThis could be a good addition when used with Conditional Blocks.");
-            WriteToFile(get_helpFileName(), "\t\t-\tCurrently, only validatable(read actionType) commands can be used for the conditional statement such as an text, src, alt or\r\n" +
-                    "\t\t\t\thref assertion or element found.\r\n");
+            WriteToFile(get_helpFileName(), "\t\t-\tCurrently, only validatable (read actionType) commands can be used for the conditional statement such as an text, \r\n" +
+                    "\t\t\t\tsrc, alt or href assertion or element found.\r\n");
             WriteToFile(get_helpFileName(), "\tColor Contrast code has been implemented to allow for color contrast checking using this page's formula.");
             WriteToFile(get_helpFileName(), "\t\t-\thttps://www.w3.org/TR/AERT/#color-contrast");
             WriteToFile(get_helpFileName(), "\t\t-\tCurrently reviewing and comparing pages to determine whether to implement color contrast using this page:");
@@ -253,7 +260,7 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "THIS APPLICATION IGNORES ALL COMMENTS.\r\nCOMMENTS ARE FOR THE USER.\r\n");
             WriteToFile(get_helpFileName(), "Some of the comments are descriptive and some show alternative options, but it is suggested that you read the help file");
             WriteToFile(get_helpFileName(), "to best understand how to use this Configurable Automated Testing Application.");
-            WriteToFile(get_helpFileName(), "Refer to an XML guide for proper commenting.  Google it!!!!");
+            WriteToFile(get_helpFileName(), "Refer to an XML guide for proper commenting.  \nGoogle it!!!!");
             WriteToFile(get_helpFileName(), "Both configuration file examples can be used as starting points, just substitute values accordingly.");
             WriteToFile(get_helpFileName(), "The terms element and node may be used interchangeably below to refer to the same thing.");
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CONFIGURATION FILE FIELDS AND DESCRIPTIONS ]", "═", 9, 151));
@@ -276,6 +283,9 @@ public class HelpWriter {
                     "\t<!-- showAdditionalGa4Parameters settings are \"true\" to see additional GA4 Parameters beyond those configured for \r\n" +
                     "\t\tthe test or \"false\" to see only configured parameters. -->\r\n" +
                     "\t<showAdditionalGa4Parameters>false</showAdditionalGa4Parameters>\r\n" +
+                    "\t<!-- The following setting is the path to the ImageMagick compare executable \r\n" +
+                    "\t\tmoved here so that code doesn't have to be updated when a new version is downloaded -->\r\n" +
+                    "\t<imageMagickFilePath>C:\\Program Files\\ImageMagick-7.1.1-Q16-HDRI</imageMagickFilePath>\r\n" +
                     "\t<!-- Individual File Settings -->\r\n" +
                     "\t<testFiles>\r\n" +
                     "\t\t<!--<testFileName1>C:\\ConfigurableAutomatedTester\\Tests\\SqlServerAccess-Test.xml</testFileName1>\r\n" +
@@ -363,6 +373,10 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(),"\tThis will have no effect if the matching tag is not found. \r\n");
             WriteToFile(get_helpFileName(),"\t\tWhen set to \"false\", only the supplied parameters are displayed for the matching tag. \r\n");
             WriteToFile(get_helpFileName(),"\t\tThis setting was added here to apply to all GA4 Tags instead of on a tag by tag basis, if added to the test step. \r\n");
+            WriteToFile(get_helpFileName(), "The <imageMagickFilePath></imageMagickFilePath> element allows the path to the Image Magick compare executable to be set \r\n");
+            WriteToFile(get_helpFileName(),"\tThis will allow the user to update the path in the configuration file instead of going in to edit the code.\r\n");
+            WriteToFile(get_helpFileName(),"\t\tA hard coded version of the path exists in the code as a backup, in case this parameter is not populated, ");
+            WriteToFile(get_helpFileName(), "\t\tbut it may be pointing to an older version than the one downloaded so be sure to update this to the correct path.\r\n");
             WriteToFile(get_helpFileName(), "The <testFiles></testFiles> element is a container element for the testFileName elements and has no textual content of its own.\r\n");
             WriteToFile(get_helpFileName(), "The <testFileName1></testFileName1> element specifies the test file to use for the test and each element should end with an incremental numeric value.");
             WriteToFile(get_helpFileName(), "\tExample:\r\n\t\t<testFileName1></testFileName1>\r\n\t\t<testFileName2></testFileName2>\r\n");
@@ -556,8 +570,8 @@ public class HelpWriter {
                     "\t<command>entire site commands end</command>\r\n" +
                     "</step>\r\n");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ NAVIGATION ]", "═", 9, 151));
-            WriteToFile(get_helpFileName(), "The Navigation command navigates the browser to the provided URL.");
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ NAVIGATE ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "The Navigate command navigates the browser to the provided URL.");
             WriteToFile(get_helpFileName(), "All Navigation steps should be marked as crucial, as all subsequent checks require that navigation complete successfully!!!");
             WriteToFile(get_helpFileName(), "An assertion does not have to be part of navigation, but it probably should be!!!");
             WriteToFile(get_helpFileName(), "As some testers may like to separate test steps, this is not enforced by the application and since a tester could choose to");
@@ -572,16 +586,45 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "The required first argument, <arg1></arg1>, contains the URL to be loaded.");
             WriteToFile(get_helpFileName(), "The optional second argument, <arg2></arg2>, contains the time in milliseconds to wait to allow the page to load. ");
             WriteToFile(get_helpFileName(), " -  The default is 10 seconds.");
-            WriteToFile(get_helpFileName(), "The optional third argument, <arg3></arg3>, contains the dimensions for setting the browser window height and width.");
+            WriteToFile(get_helpFileName(), "IMPORTANT: Named arguments require an equal sign as a delimiter and should contain no spaces in the argument unless ");
+            WriteToFile(get_helpFileName(), "the value is intended to have a space, otherwise, the formatting is name=value.\n");
+            WriteToFile(get_helpFileName(), "The optional named arguments <arg3></arg3> - <arg6></arg6> are for the Browser dimensions and the time in seconds ");
+            WriteToFile(get_helpFileName(), "for the Back-End and Front-End load times.");
+
+            WriteToFile(get_helpFileName(), "The order of these arguments do not matter, but the formatting of the argument does.\n");
+            WriteToFile(get_helpFileName(), "The Browser Dimension arguments are for setting the height and width of the browser, which can be crucial when taking ");
+            WriteToFile(get_helpFileName(), "screenshots for image comparisons.\r\n");
+            WriteToFile(get_helpFileName(), "\tBrowser height, uses h as the name <arg3>h=800</arg3> - sets the browser height dimension to 800 pixels.\n");
+            WriteToFile(get_helpFileName(), "\tBrowser width, uses w as the name <arg3>w=800</arg3> - sets the browser width dimension to 800 pixels.\n");
+
+            WriteToFile(get_helpFileName(), "The Page load timings arguments are for setting the maximum amount of time it should take for a page to load ");
+            WriteToFile(get_helpFileName(), "in the Back-End and the Front-End.\n");
+            WriteToFile(get_helpFileName(), "These values can set to ensure that the pages are loading within a given time frame and allows users to see which ");
+            WriteToFile(get_helpFileName(), "portion of the page delivery is delaying the page load.");
+            WriteToFile(get_helpFileName(), "\tTiming Front-End uses fe as the name <arg3>fe=3.75</arg3> - sets the Front-End max load time to 3.75 seconds.\n");
+            WriteToFile(get_helpFileName(), "\tTiming Back-End uses be as the name <arg3>be=.5</arg3> - sets the Back-End max load time to .5 seconds.\n");
+            WriteToFile(get_helpFileName(), "NOTE: It is possible to combine these named arguments, but all argument sets must be set individually or combined!\n");
+            WriteToFile(get_helpFileName(), "\tCombined Dimensions <arg2>w=1800 h=862</arg2> set the width and height in one argument and requires that ");
+            WriteToFile(get_helpFileName(), "each argument have no space between the name, delimiter and value but a space is required to separate the ");
+            WriteToFile(get_helpFileName(), "different argument types.\n");
+            WriteToFile(get_helpFileName(), "\tCombined Page Load Timings <arg2>fe=3.75 be=.5</arg2> set the Front-End and Back-End timing limits  ");
+            WriteToFile(get_helpFileName(), "in one argument and requires that each argument have no space between the name, delimiter and value, ");
+            WriteToFile(get_helpFileName(), "but a space is required to separate the different argument types.\n");
+
+
+
+           /* WriteToFile(get_helpFileName(), "The optional third argument, <arg3></arg3>, contains the dimensions for setting the browser window height and width.");
             WriteToFile(get_helpFileName(), "The optional fourth argument, <arg4></arg4>, contains the maximum time in seconds for the  Back-End and Front-End  to load.");
+            WriteToFile(get_helpFileName(), "The optional third argument, <arg5></arg5>, contains the dimensions for setting the browser window height and width.");
+            WriteToFile(get_helpFileName(), "The optional fourth argument, <arg6></arg6>, contains the maximum time in seconds for the  Back-End and Front-End  to load.");
             WriteToFile(get_helpFileName(), " - This last optional argument actually performs a test based on the values entered and reports if the Back-End and Front-End load ");
-            WriteToFile(get_helpFileName(), " - times were within the maximum allotted time provided.");
+            WriteToFile(get_helpFileName(), " - times were within the maximum allotted time provided.");*/
             WriteToFile(get_helpFileName(), " - Individual times are displayed in Green, when within the allotted time, and in Red, when outside the allotted time.");
-            WriteToFile(get_helpFileName(), " - This check is not part of the Crucial or Conditional functionality and will only display results but never determine");
+            WriteToFile(get_helpFileName(), " - This check is not part of the Crucial or Conditional functionality and will only display results but never determine ");
             WriteToFile(get_helpFileName(), " - subsequent functionality.");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "To Navigate, without checking the URL to ensure that navigation occurred properly, to wait 4000 milli-seconds ");
-            WriteToFile(get_helpFileName(), "and to set the window dimensions to (800 x 800).");
+            WriteToFile(get_helpFileName(), "and to set the browser dimensions to (800 x 800).");
             WriteToFile(get_helpFileName(), "Please note that making this crucial is irrelevant as no assertions will be made.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<!-- Command - ALWAYS REQUIRED!!! -->\r\n" +
@@ -594,11 +637,12 @@ public class HelpWriter {
                     "\t\t<!-- second argument optional - Time Delay - default is 4000 if not included but should be included if entering the third parameter -->\r\n" +
                     "\t\t<arg2>4000</arg2>\r\n" +
                     "\t\t<!-- third argument, optional - Window Dimensions width then height separated by space -->\r\n" +
-                    "\t\t<arg3>w=800 h=800</arg3>\r\n" +
+                    "\t\t<arg3>w=800</arg3>\r\n" +
+                    "\t\t<arg4>h=800</arg4>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ NAVIGATION WITH SUCCESSFUL NAVIGATION CONFIRMATION ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ NAVIGATE WITH SUCCESSFUL NAVIGATION CONFIRMATION ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "To Navigate, assert that the URL is what is in the expectedValue node and to wait 4 thousand milli-seconds before making the assertion to");
             WriteToFile(get_helpFileName(), "allow the page to load,");
             WriteToFile(get_helpFileName(), "and to check that the Back end loads under .5 seconds and that the Front end loads under 3.75 seconds.");
@@ -610,9 +654,9 @@ public class HelpWriter {
                     "\t<arguments>\r\n" +
                     "\t\t<arg1>https://formy-project.herokuapp.com/form</arg1>\r\n" +
                     "\t\t<arg2>4000</arg2>\r\n" +
-                    "\t\t<arg3></arg3>\r\n" +
-                    "\t\t<!-- fourth argument, optional - Back End (BE) and Front End (FE) Page Max Load time in seconds -->\r\n" +
-                    "\t\t<arg4>FE=3.75 BE=.5</arg4>\r\n" +
+                    "\t\t<!-- optional - Back End (BE) and Front End (FE) Page Max Load time in seconds -->\r\n" +
+                    "\t\t<arg3>fe=3.75</arg3>\r\n" +
+                    "\t\t<arg4>be=.5</arg4>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
@@ -621,7 +665,9 @@ public class HelpWriter {
                     "\t<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>\r\n" +
                     "\t<crucial>TRUE</crucial>\r\n\t<arguments>\r\n" +
                     "\t\t<arg1>https://formy-project.herokuapp.com/form</arg1>\r\n" +
-                    "\t\t<arg2>4000</arg2>\r\n\t\t<arg3>w=800 h=800</arg3>\n" +
+                    "\t\t<arg2>4000</arg2>\r\n" +
+                    "\t\t<arg3>w=800</arg3>\n" +
+                    "\t\t<arg3>h=800</arg3>\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
@@ -631,12 +677,15 @@ public class HelpWriter {
                     "\t<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>\r\n" +
                     "\t<crucial>TRUE</crucial>\r\n\t<arguments>\r\n" +
                     "\t\t<arg1>https://formy-project.herokuapp.com/form</arg1>\r\n" +
-                    "\t\t<arg2>4000</arg2>\r\n\t\t<arg3>w=800 h=800</arg3>\n" +
-                    "\t\t<arg4>FE=3.75 BE=.5</arg4>\r\n" +
+                    "\t\t<arg2>4000</arg2>\r\n" +
+                    "\t\t<arg3>w=800</arg3>\n" +
+                    "\t\t<arg4>h=800</arg4>\n" +
+                    "\t\t<arg5>FE=3.75</arg5>\r\n" +
+                    "\t\t<arg6>BE=.5</arg6>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ NAVIGATION WITH AUTHENTICATION WITH AND WITHOUT NAVIGATION CONFIRMATION ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ NAVIGATE WITH AUTHENTICATION WITH AND WITHOUT NAVIGATION CONFIRMATION ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Navigate command can be used to authenticate while navigating.");
             WriteToFile(get_helpFileName(), "This is done by passing the username and password as part of the url delimited by a : and ending with the @ symbol.");
             WriteToFile(get_helpFileName(), "It should be mentioned that this does not work for all authentication which is why there are different authentication methods.");
@@ -1342,20 +1391,22 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "");
 
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ TAKING SCREENSHOTS ]", "═", 9, 151));
-            WriteToFile(get_helpFileName(), "The ScreenShot command takes a screenshot of the current page.");
+            WriteToFile(get_helpFileName(), "The ScreenShot command takes a screenshot of the current page.  \n");
             WriteToFile(get_helpFileName(), "To take a screen shot/print screen, the browser will be resized automatically to capture all page content,");
             WriteToFile(get_helpFileName(), "if browser dimensions are not supplied; however, in the event that browser dimensions are supplied, the browser");
-            WriteToFile(get_helpFileName(), "will resize to the supplied dimensions.");
+            WriteToFile(get_helpFileName(), "will resize to the supplied dimensions. \n");
             WriteToFile(get_helpFileName(), "The ability to resize the browser to specific dimensions allows for image pixel comparison as images being compared");
-            WriteToFile(get_helpFileName(), "must have the same width and height dimensions.");
+            WriteToFile(get_helpFileName(), "must have the same width and height dimensions. \n");
             WriteToFile(get_helpFileName(), "This command allows for overriding the configured screenshot folder and dynamic filename creation and either saving ");
-            WriteToFile(get_helpFileName(), "the images with a specified name in the configured screenshot folder or saving the images to a file naame and path ");
+            WriteToFile(get_helpFileName(), "the images with a specified name, in the configured screenshot folder, or saving the images to a file name and path ");
             WriteToFile(get_helpFileName(), "specified as <arg1></arg1> but if <arg1></arg1> is not provided a name is constructed and the file is saved in the ");
-            WriteToFile(get_helpFileName(), "configured folder.");
+            WriteToFile(get_helpFileName(), "configured folder.  \n");
             WriteToFile(get_helpFileName(), "This command also allows for specifying the browser dimensions so that you get an image the exact size that you need.");
             WriteToFile(get_helpFileName(), "Specifying the browser dimensions is the same as when navigating, where w= identifies the width value and h= identifies");
             WriteToFile(get_helpFileName(), "the height value as shown here: <arg2>w=1400 h=1000</arg2>.");
-            WriteToFile(get_helpFileName(), "The ability to name the screenshot allows for executing subsequent Image Comparison steps and speficying the file names");
+            WriteToFile(get_helpFileName(), "NOTE: The Navigation command can also take an optional height and width argument and it does not matter which is used ");
+            WriteToFile(get_helpFileName(), "as long as the two images being compared both use the same settings so that they have the same dimensions.");
+            WriteToFile(get_helpFileName(), "The ability to name the screenshot allows for executing subsequent Image Comparison steps and specifying the file names");
             WriteToFile(get_helpFileName(), "based on the screenshots being taken.");
             WriteToFile(get_helpFileName(), "In the following example, a default name will be provided for the  screenshot consisting of the browser used and the test step");
             WriteToFile(get_helpFileName(), "where the command was called. (This is the default functionality.)");
@@ -1389,6 +1440,46 @@ public class HelpWriter {
                     "\t<crucial>false</crucial>\r\n" +
                     "\t<arguments>\r\n" +
                     "\t\t<arg1>c:\\myScreehShots\\Actual\\MyScreenShot.png</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "In the following example, the screenshot will be set to specific width and height ");
+            WriteToFile(get_helpFileName(), "dimensions before being saved to the folder and file name provided. \n");
+            WriteToFile(get_helpFileName(), "Setting the screenshot dimensions is necessary to guarantee the image size for image comparisons.  \n");
+            WriteToFile(get_helpFileName(), "IMPORTANT: Only images of the same dimensions can be compared using the Compare Images command. \n");
+            WriteToFile(get_helpFileName(), "Include dimension arguments <arg2> and <arg3> and remember that these are named arguments ");
+            WriteToFile(get_helpFileName(), "w= for width and h= for height but the order does not matter.\n");
+            WriteToFile(get_helpFileName(), "IMPORTANT: The dimension setting consists of the name, equal sign and value with no additional spaces.\n");
+            WriteToFile(get_helpFileName(), "This functionality allows for saving to the file for subsequent image comparisons.");
+            WriteToFile(get_helpFileName(), "This is the preferred command structure when subsequently performing image comparisons.");
+            WriteToFile(get_helpFileName(), "This structure allows for separation of images into separate folders for quickly referencing differences ");
+            WriteToFile(get_helpFileName(), "and lists the dimension arguments individually.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>screenshot</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>false</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>c:\\myScreehShots\\Actual\\MyScreenShot.png</arg1>\r\n" +
+                    "\t\t<!-- include the image width and height dimensions argument to size the screenshot to those dimensions -->\r\n" +
+                    "\t\t<arg2>w=1400</arg2>\r\n" +
+                    "\t\t<arg3>h=1000</arg3>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "This command is one of two where the dimensions can be set in individual arguments or  " +
+                    "grouped together in one argument. \n");
+            WriteToFile(get_helpFileName(), "IMPORTANT: When grouping arguments together, the correct grouping is name=value space name=value.\n");
+            WriteToFile(get_helpFileName(), "\tie. <arg2>w=1400 h=1000</arg2>\n");
+            WriteToFile(get_helpFileName(), "The following example, is the same as the previous example except with the arguments combined. \n");
+            WriteToFile(get_helpFileName(), "It is always best to supply dimensions so that image comparisons can be made later.\n");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>screenshot</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>false</crucial>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>c:\\myScreehShots\\Actual\\MyScreenShot.png</arg1>\r\n" +
+                    "\t\t<!-- include the image width and height dimensions argument to size the screenshot to those dimensions -->\r\n" +
+                    "\t\t<arg2>w=1400 h=1000</arg2>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
@@ -2442,11 +2533,34 @@ public class HelpWriter {
 
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
+            //SHOW ALL GOOGLE ANALYTICS TAGS (UA AND OR GA4) - show all ga tags
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ SHOW ALL GOOGLE ANALYTICS TAGS (UA AND OR GA4) - show all ga tags ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "The Show all Google Analytics tags command displays all tags fired during the test.\r\n");
+            WriteToFile(get_helpFileName(), "This command can be configured to display all (both GA4 and UA tags), ga4(just Ga4 tags) or ua (just UA tags)\r\n");
+            WriteToFile(get_helpFileName(), "Additionally, this command can be set to limit the number of GA4 parameters displayed because all GA4 parameters are captured.\r\n");
+            WriteToFile(get_helpFileName(), "UA Tags by design were limited to just a specific set of fields, so all fields will be displayed.\r\n");
+            WriteToFile(get_helpFileName(), "IMPORTANT: Only unique GA4 Tags are displayed so ensure that when limiting GA4 display parameters ");
+            WriteToFile(get_helpFileName(), "that one or more unique values are configured.\r\n");
+            WriteToFile(get_helpFileName(), "\t<arg1> - The first argument for this command is required and specifies the type of tags to display.\r\n");
+            WriteToFile(get_helpFileName(), "\t\tIf not provided, the default of all will be used.\r\n");
+            WriteToFile(get_helpFileName(), "\t<arg2>This argument specifies the limited GA4 parameters to display.");
+            WriteToFile(get_helpFileName(), "<step>\n" +
+                    "\t<command>show all ga tags</command>\n" +
+                    "\t<actionType>write</actionType>\n" +
+                    "\t<arguments>\n" +
+                    "\t<!-- possible values for arg1 are: ua, ga4, all (default) -->" +
+                    "\t\t<arg1>all</arg1>\n" +
+                    "\t\t<arg2>limit ga4 tags=dl,tid,ep.gtm_settings,ep.site_section,ep.page_template,en,ep.gtm_tag_name,ep.product_name,ep.product_category</arg2>\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>\n");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ SAVE CONSOLE LOG TO FILE ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "IMPORTANT: This command currently only works for the Chrome browser!!!\n\n");
+            WriteToFile(get_helpFileName(), "Because the Console Logs are automatically saved prior to Page Navigation and in the Tear down method, it is ");
+            WriteToFile(get_helpFileName(), "strongly suggested that you not use this command unless it is absolutely necessary to capture the log at a specific point in time.");
+            WriteToFile(get_helpFileName(), "Instead of using this command, use the default console log as using this command may cause the default to miss certain console log events. \n");
             WriteToFile(get_helpFileName(), "The Save Console Log command saves the console log to a file, which can be specified by including ");
             WriteToFile(get_helpFileName(), "the file name as the first argument <arg1>filename</arg1>, or a default file name will be constructed based on the log file name.");
             WriteToFile(get_helpFileName(), "When testing a page, there may be several reasons that the console log may be necessary to see as an error could prevent other commands ");
@@ -2468,7 +2582,7 @@ public class HelpWriter {
                     "\t<actionType>read</actionType>\n" +
                     "\t<arguments>\n" +
                     "\t\t<!-- File Name to save console log file -->\n" +
-                    "\t\t<arg1>C:\\Gary\\Java Utilities\\Console logs\\console_log.txt</arg1>\n" +
+                    "\t\t<arg1>C:\\MyFiles\\MyParentFolder\\Console logs\\console_log.txt</arg1>\n" +
                     "\t\t<!-- type of log to include. Values include: info, warn, error, debug, all - all is default if not provided -->\n" +
                     "\t\t<arg2>Info</arg2>\n" +
                     "\t\t<!-- true for message only else message and level Ie.. message - level.  Message - level is the default if not provided -->\n" +
@@ -2488,9 +2602,12 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "For a simple test, only 1 console log file may be produced, but for multiple page testing or an Entire Site test, a new Console log ");
             WriteToFile(get_helpFileName(), "file is generated for each page, by default with no command specified, so to see all logs in one place, it may be necessary ");
             WriteToFile(get_helpFileName(), "to combine these into one file.");
-            WriteToFile(get_helpFileName(), "IMPORTANT: For subsequent runs, the existing combined file will be deleted before creating the new combined file, with the same name.");
+            WriteToFile(get_helpFileName(), "IMPORTANT: #1 For subsequent runs, the existing combined file will be deleted before creating the new combined file, with the same name.");
             WriteToFile(get_helpFileName(), "\tIf keeping multiple combined files for the same console logs is desired, use a different alternate file name, or rename them ");
             WriteToFile(get_helpFileName(), "\tin the folder manually.\n");
+            WriteToFile(get_helpFileName(), "IMPORTANT: #2 When running multiple different tests, only one combine command can be run with a group of other tests.\n");
+            WriteToFile(get_helpFileName(), "\tTo combine multiple different test runs, run the combines after the tests run and then use the root file name argument to combine the ");
+            WriteToFile(get_helpFileName(), "\tseparate runs into the corresponding composite console logs.\n");
             WriteToFile(get_helpFileName(), "The Combine Console Logs command first, finds all files based on the root file name provided, then ");
             WriteToFile(get_helpFileName(), "based on the command configuration either includes or excludes the log level, includes or excludes the console-api prefix, ");
             WriteToFile(get_helpFileName(), "starts at a particular phrase, excludes a comma delimited list of phrases, removes headers based on the header end delimiter , ");
@@ -2574,7 +2691,7 @@ public class HelpWriter {
                     "\t<actionType>read</actionType>\n" +
                     "\t<arguments>\n" +
                     "\t\t<!-- Required: file name where results are to be saved. -->\n" +
-                    "\t\t<arg1>C:\\Gary\\Java Utilities\\Spyder Files\\MySite.txt</arg1>\n" +
+                    "\t\t<arg1>C:\\myFiles\\MyFirstFolder\\Spyder Files\\MySite.txt</arg1>\n" +
                     "\t\t<!-- Required: Domain restriction must end with forward slash (/). -->\n" +
                     "\t\t<arg2>https://www.mycoolsite.com/</arg2>\n" +
                     "\t\t<!-- Required: The sitemap URL or leave empty -->\n" +
@@ -2582,10 +2699,104 @@ public class HelpWriter {
                     "\t\t<!-- Optional: additional pages to crawl for URLs -->\n" +
                     "\t\t<arg4>https://www.mycoolsite.com/products</arg4>\n" +
                     "\t\t<arg5>https://www.mycoolsite.com/recipes</arg5>\n" +
-                    "\t\t<arg5>https://www.mycoolsite.com/articles</arg5>\n" +
-                    "\t\t<arg5>https://www.mycoolsite.com/legal</arg5>\n" +
-                    "\t</arguments>\n" +
-                    "<step>\n");
+                    "\t\t<arg6>https://www.mycoolsite.com/articles</arg6>\n" +
+                    "\t\t<arg7>https://www.mycoolsite.com/legal</arg7>\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>\n");
+            //SET COOKIE
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ SET COOKIE  ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "This command allows you to set one or more cookies. ");
+            WriteToFile(get_helpFileName(), "When testing a site, it is sometimes necessary to set a cookie to expose certain functionality. ");
+            WriteToFile(get_helpFileName(), "There may be actions that are required to create the cookie on the site, but instead of completing these actions ");
+            WriteToFile(get_helpFileName(), "to set the cookie, using this command allows for directly setting the cookies without creating a list of test steps ");
+            WriteToFile(get_helpFileName(), "to expose the desired results. \n");
+            WriteToFile(get_helpFileName(), "The cookie name, value, expires, path and domain values can all be set using this command. ");
+            WriteToFile(get_helpFileName(), "Each value is semi-colon delimited, and although value parameters may contain html encoded values containing a semi-colon ");
+            WriteToFile(get_helpFileName(), "that value will be decoded and those semi-colons will not be recognized by the application. ");
+            WriteToFile(get_helpFileName(), "Most values are fairly straightforward, with the exception of the expires value. \n");
+            WriteToFile(get_helpFileName(), "The expires value is an hourly multiplier, so if you set the expires to 1, the cookie will expire in 1 hour, setting it to ");
+            WriteToFile(get_helpFileName(), "2 will set the cookie to expire in 2 hours etc... \n");
+            WriteToFile(get_helpFileName(), "For testing, it is not necessary to set this value too far into the future as it only needs to last as long as the test is running.  ");
+            WriteToFile(get_helpFileName(), "Any singular test running for over 3 hours will likely timeout, so for complex testing, splitting test steps up into separate files ");
+            WriteToFile(get_helpFileName(), "may be the best option to ensure success.  \n");
+            WriteToFile(get_helpFileName(), "IMPORTANT NOTE: The domain must match the site being tested and cannot be for another site, or a domain mismatch error will occur.  \n");
+            WriteToFile(get_helpFileName(), "Alternatively, the Check Javascript Value command can also be used to set a cookie but will require JavaScript knowledge to do so.\n");
+            WriteToFile(get_helpFileName(), "If this command is set to be crucial, the cookie will be read after being set and compared to the set value and if the ");
+            WriteToFile(get_helpFileName(), "cookie contains the set value, it passes the assertion.\n");
+            WriteToFile(get_helpFileName(), "\tThere is one required argument for this command, but any number of arguments can be added to create as many cookies as necessary.\n");
+            WriteToFile(get_helpFileName(), "\t<arg1>Cookie Parameters are delimited by a semi-colon and parameter names and values are separated by an equal (\"=\") sign.\n");
+            WriteToFile(get_helpFileName(), "\tThe Cookie Name is first, followed by an equal sign (\"=\") and then the Cookie Value followed by a semi-colon (\";\").\n");
+            WriteToFile(get_helpFileName(), "\tSubsequent parameters follow the same format with the parameter name, followed by by an equal sign (\"=\") and then the parameter value.\n");
+            WriteToFile(get_helpFileName(), "\tTo set a complex cookie with all parameters set, refer to <arg1> in the example below.\n");
+            WriteToFile(get_helpFileName(), "\tFor a basic cookie with just a value set, refer to <arg2> in the example below.");
+            WriteToFile(get_helpFileName(), "<step>\n" +
+                    "\t<command>set cookie</command>\n" +
+                    "\t<actionType>Write</actionType>\n" +
+                    "\t<crucial>True</crucial>\n" +
+                    "\t<arguments>\n" +
+                    "\t\t<!-- Required: At least one cookie to be set -->\n" +
+                    "\t\t<arg1>CookieName=CookieValue=0&amp;datestamp=Thu+Aug+31+2023+15%3A48%3A44+GMT-0400+(Eastern+Daylight+Time)&amp;version=12345.6.0;expires=2;path=/;domain=.mycoolsite.com;secure=true</arg1>\n" +
+                    "\t\t<!-- Optional any number of additional cookies:\n\t\t Simple cookie -->\n" +
+                    "\t\t<arg2>OtherCookieName=2023-08-31T19:48:43.993Z</arg2>\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>\n");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ GET ALL COOKIES ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "This command allows you to get all cookies for the current domain.  ");
+            WriteToFile(get_helpFileName(), "Using this command, will retrieve the cookie name, value, expiration, path, domain and if the cookie is secure or not. \n");
+            WriteToFile(get_helpFileName(), "At this time, only cookies from the current domain can be read because reading cookies from other domains requires saving the ");
+            WriteToFile(get_helpFileName(), "Network information and that can make the HAR file exponentially larger, for instance a HAR file without Network information that is ");
+            WriteToFile(get_helpFileName(), "approximately 300kb in size, would be 95MB with Network information and running this application that automatically saves HAR files ");
+            WriteToFile(get_helpFileName(), "could quickly deplete a computer's free space. \n");
+            WriteToFile(get_helpFileName(), "In the future, functionality will be added to iterate through the Network information and retrieve the cookie information for all domains.");
+            WriteToFile(get_helpFileName(), "This command has two arguments with the first being required if providing the second.\n");
+            WriteToFile(get_helpFileName(), "If the first argument is not provided, do not provide the second argument as that will cause the application to believe that the second ");
+            WriteToFile(get_helpFileName(), "argument is actually the first argument and an error will occur. \n");
+            WriteToFile(get_helpFileName(), "If the application is being used to retrieve cookies, it is assumed that the information needs to be available separately ");
+            WriteToFile(get_helpFileName(), "from the log to isolate this information for review.");
+            WriteToFile(get_helpFileName(), "If there is no need to save this information to a separate file, use this command with NO ARGUMENTS or keep <arg1> empty.\n");
+            WriteToFile(get_helpFileName(), "\t<arg1>This is the file name where the Cookie information can be saved separately from the test log.\n");
+            WriteToFile(get_helpFileName(), "\t<arg2>This is the save type directive which can be overwrite, append or new and these settings depend upon the file name used.\n");
+            WriteToFile(get_helpFileName(), "\tIf the file does not exist, the file will be created and the cookie information saved to the file.\n");
+            WriteToFile(get_helpFileName(), "\t\tOverwrite - overwrites the file if the file already exists.\n");
+            WriteToFile(get_helpFileName(), "\t\tAppend - appends the current information to any existing information in an existing file or writes to a new file if the file does not exist.\n");
+            WriteToFile(get_helpFileName(), "\t\tNew - Deletes the existing file and then writes the content to a new file with the same name.");
+            WriteToFile(get_helpFileName(), "The following command saves the cookie information to a file, overwriting the existing file.\n");
+            WriteToFile(get_helpFileName(), "<step>\n" +
+                    "\t<command>get all cookies</command>\n" +
+                    "\t<actionType>read</actionType>\n" +
+                    "\t<crucial>True</crucial>\n" +
+                    "\t<arguments>\n" +
+                    "\t\t<arg1>c:\\myfiles\\myCookieInformation.txt</arg1>\n" +
+                    "\t\t<!-- overwrite, append, new -->\n" +
+                    "\t\t<arg2>overwrite</arg2>\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>\n");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "The following command does not save the cookie information to a separate file.\n");
+            WriteToFile(get_helpFileName(), "<step>\n" +
+                    "\t<command>get all cookies</command>\n" +
+                    "\t<actionType>read</actionType>\n" +
+                    "\t<crucial>True</crucial>\n" +
+                    "\t<arguments>\n" +
+                    "\t\t<arg1></arg1>\n" +
+                    "\t\t<arg2></arg2>\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>\n");
+            WriteToFile(get_helpFileName(), "The following command also does not save the cookie information to a separate file.\n");
+            WriteToFile(get_helpFileName(), "<step>\n" +
+                    "\t<command>get all cookies</command>\n" +
+                    "\t<actionType>read</actionType>\n" +
+                    "\t<crucial>True</crucial>\n" +
+                    "</step>\n");
+
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
 
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
@@ -2881,7 +3092,11 @@ public class HelpWriter {
                 "			}\r\n" +
                 "			p {\r\n" +
                 "				padding: 0 0 10 30;\r\n" +
-                "				margin:0;\r\n" +
+                "				/*margin:0;*/\r\n" +
+                "				margin-left:0;\r\n" +
+                "				margin-right:70;\r\n" +
+                "				margin-bottom:0;\r\n" +
+                "				margin-top:0;\r\n" +
                 "			}\r\n" +
                 "			ol, li {\r\n" +
                 "				padding-top: 0;\r\n" +
@@ -2903,7 +3118,7 @@ public class HelpWriter {
                 "				margin-top:20px;\r\n" +
                 "				margin-bottom:20px;\r\n" +
                 "			}\r\n" +
-                "           th {\r\n" +
+                "            th {\r\n" +
                 "				background-color:#f5f5f5;\r\n" +
                 "			    font-weight:bold;\r\n" +
                 "			    width:500px;\r\n" +
@@ -2912,7 +3127,7 @@ public class HelpWriter {
                 "				background-color:#f5f5f5;\r\n" +
                 "               padding:5 10\r\n" +
                 "			}\r\n" +
-                "           td.head {\r\n" +
+                "            td.head {\r\n" +
                 "				background-color:#f5f5f5;\r\n" +
                 "			    font-weight:bold;\r\n" +
                 "			    width:500px;\r\n" +
@@ -2920,7 +3135,7 @@ public class HelpWriter {
                 "			pre {\r\n" +
                 "               padding-left:30px;\r\n" +
                 "               tab-size:4;\r\n" +
-                "           }\r\n" +
+                "            }\r\n" +
                 "			.heading {\r\n" +
                 "				font: 24pt arial, sans-serif;\r\n" +
                 "				background-color:#0060F0;\r\n" +
@@ -2980,6 +3195,7 @@ public class HelpWriter {
                 "			.tableOfContentsLink {\r\n" +
                 "				text-decoration:none;\r\n" +
                 "				display:block;\r\n" +
+                "				margin-left:30px;\r\n" +
                 "			}\r\n" +
                 "			.examples {\r\n" +
                 "				font-weight:bold;\r\n" +
@@ -2999,7 +3215,7 @@ public class HelpWriter {
                 "			}\r\n" +
                 "           .container {\r\n" +
                 "               margin-left:10px;\r\n" +
-                "               margin - right:10px;\r\n" +
+                "               margin-right:10px;\r\n" +
                 "           }\r\n" +
                 "           .verticalspacing {\r\n" +
                 "               margin-top:20px;\r\n" +

@@ -27,6 +27,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 import javax.net.ssl.SSLException;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
@@ -179,7 +180,7 @@ public class TestCentral {
     private String testFileName;
     //private String _testFileName;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy_HH-mm-ss");
-    private final String logFileUniqueName = dateFormat.format(new Date());
+    private String logFileUniqueName = dateFormat.format(new Date());
     private final String logFileRootFileName = "TestResults_";   //root name of the log file, change this not the logfile name
 
 
@@ -190,11 +191,40 @@ public class TestCentral {
             configurationFile.substring(0, configurationFile.lastIndexOf("\\")) + "\\ConfigTester_Help.txt" :
             configurationFile.substring(0, configurationFile.lastIndexOf("/")) + "/ConfigTester_Help.txt";
 
-    private final String consoleLogFileName =  consoleLogFolder + (logFileRootFileName + logFileUniqueName + ".log").substring(0, (logFileRootFileName + logFileUniqueName + ".log").lastIndexOf(".")-1) + "-Console-log.txt";
+    private String consoleLogFileName =  consoleLogFolder + (logFileRootFileName + logFileUniqueName + ".log").substring(0, (logFileRootFileName + logFileUniqueName + ".log").lastIndexOf(".")-1) + "-Console-log.txt";
     private List<String> testFiles = new ArrayList<>();
     public List<GtmTag> GtmTagList;
     public List<GA4Tag> GA4TagList;
     public String get_testFileName() {return testFileName;}
+
+    public String GetNewLogFileNames() {
+        String oldLogFileName = logFileName;
+        testHelper.DebugDisplay("Previous Logfile Name: " + logFileName);
+        logFileUniqueName = dateFormat.format(new Date());
+        logFileName = configurationFile.contains("\\") ?
+                configurationFile.substring(0, configurationFile.lastIndexOf("\\")) + "\\" + logFileFolder.replace("/","\\") + logFileRootFileName + logFileUniqueName + ".log" :
+                configurationFile.substring(0, configurationFile.lastIndexOf("/")) + "/" + logFileFolder + logFileRootFileName + logFileUniqueName + ".log";
+        if (logFileName.equals(oldLogFileName)) {
+            int characterCode = 97;
+            while (logFileName.equals(oldLogFileName)) {
+                logFileName = oldLogFileName.replace(".log", (char)(characterCode) + ".log");
+                characterCode ++;
+            }
+        }
+        testHelper.set_logFileName(logFileName);
+        readCommands.testHelper.set_logFileName(logFileName);
+        writeCommands.testHelper.set_logFileName(logFileName);
+        testHelper.DebugDisplay("New Logfile Name: " + logFileName);
+        SetCSVFileName(logFileName);
+        testHelper.set_csvFileName(_csvFileName);
+        readCommands.testHelper.set_csvFileName(_csvFileName);
+        writeCommands.testHelper.set_csvFileName(_csvFileName);
+        consoleLogFileName =  consoleLogFolder + (logFileRootFileName + logFileUniqueName + ".log").substring(0, (logFileRootFileName + logFileUniqueName + ".log").lastIndexOf(".")-1) + "-Console-log.txt";
+        testHelper.testCentral.consoleLogFileName = consoleLogFileName;
+        readCommands.testCentral.consoleLogFileName = consoleLogFileName;
+        writeCommands.testCentral.consoleLogFileName = consoleLogFileName;
+        return logFileName;
+    }
 
     //region { WebDriver Browser Driver Configured Locations }
     private final String phantomJsDriverPath = "/gary/java utilities/BrowserDrivers/phantomjs.exe";
@@ -218,6 +248,8 @@ public class TestCentral {
 
     List<String> consoleLogEntries;
 
+    String _imageMagicFilePath = null;
+
     public void set_csvFileName(String _csvFileName) { this._csvFileName = _csvFileName;}
     public String get_csvFileName() { return _csvFileName;}
 
@@ -238,6 +270,13 @@ public class TestCentral {
     void set_showAdditionalGA4Parameters(Boolean _showAdditionalGA4Parameters) {this._showAdditionalGA4Parameters = _showAdditionalGA4Parameters;}
     Boolean get_showAdditionalGA4Parameters() {
         return this._showAdditionalGA4Parameters;
+    }
+
+    void set_imageMagicFilePath(String imageMagicFilePath) {
+        this._imageMagicFilePath = imageMagicFilePath;
+    }
+    public String get_imageMagicFilePath() {
+        return this._imageMagicFilePath;
     }
 
     void set_selectedBrowserType(BrowserTypes newValue) {
@@ -415,6 +454,7 @@ public class TestCentral {
      * @param fileStepIndex - File step index
      ***********************************************************/
     public void WriteLogContent(TestStep ts, String fileStepIndex) {
+
         String fileName = consoleLogFileName;
         String altFileName = GetArgumentValue(ts,0,null);
         String level = GetArgumentValue(ts,1,null);
@@ -573,7 +613,7 @@ public class TestCentral {
             alternateFileName = GetSpecificArgumentValue(ts, "alternate file name", "=", null);
             tempFileName = !testHelper.IsNullOrEmpty(alternateFileName) ? alternateFileName : combinedFileName;
             //next, find the max file number to append
-            maxFiles = GetNumberOfFilesInFolder(consoleLogFolder);
+            maxFiles = GetNumberOfFilesInFolder(consoleLogFolder, rootFileName);
             testHelper.UpdateTestResults(AppConstants.ANSI_CYAN + AppConstants.indent5 + AppConstants.subsectionArrowLeft + " [ Combining " + maxFiles + " Console log files using root name (" + rootFileName  + ") \n" + AppConstants.indent8 + "into (" + tempFileName + ") for step " + fileStepIndex + " ] "+ AppConstants.subsectionArrowRight, true);
             //read all files in the folder
             for (int x = 0; x <= maxFiles; x++) {
@@ -589,15 +629,20 @@ public class TestCentral {
                         while (logReader.hasNextLine()) {
                             lineContent = logReader.nextLine();
                             //remove level, if configured
+                            testHelper.DebugDisplay("Before Exclude level excludeLevel = " + excludeLevel);
                             if (excludeLevel) {
                                 if (lineContent.indexOf("Level:INFO") > -1) {
                                     lineContent = lineContent.replace(";\" - Level:INFO", ";");
+                                    lineContent = lineContent.replace("\" - Level:INFO", ";");
                                 } else if (lineContent.indexOf("Level:WARN") > -1) {
                                     lineContent = lineContent.replace(";\" - Level:WARN", ";");
+                                    lineContent = lineContent.replace("\" - Level:WARN", ";");
                                 } else if (lineContent.indexOf("Level:ERROR") > -1) {
                                     lineContent = lineContent.replace(";\" - Level:ERROR", ";");
+                                    lineContent = lineContent.replace("\" - Level:ERROR", ";");
                                 } else if (lineContent.indexOf("Level:DEBUG") > -1) {
                                     lineContent = lineContent.replace(";\" - Level:DEBUG", ";");
+                                    lineContent = lineContent.replace("\" - Level:DEBUG", ";");
                                 }
                             }
 
@@ -655,25 +700,32 @@ public class TestCentral {
     }
 
     //public static File GetLastModifiedFileName(String directoryFilePath)
-    public static String GetLastModifiedFileName(String directoryFilePath)
+    public String GetLastModifiedFileName(String directoryFilePath)
     {
         File directory = new File(directoryFilePath);
         File[] files = directory.listFiles(File::isFile);
         long lastModifiedTime = Long.MIN_VALUE;
         File chosenFile = null;
 
+        String fileNamePrefix = "TestResults_";
+
+
         if (files != null)
         {
             for (File file : files)
             {
-                if (file.lastModified() > lastModifiedTime)
+                if (file.lastModified() > lastModifiedTime) // && file.getName().startsWith(fileNamePrefix))
                 {
                     chosenFile = file;
                     lastModifiedTime = file.lastModified();
                 }
             }
         }
-        return chosenFile.getName();
+        if (chosenFile.getName() != null) {
+            return chosenFile.getName();
+        } else {
+            return consoleLogFileName;
+        }
     }
 
     /*****************************************************************
@@ -689,7 +741,7 @@ public class TestCentral {
         String temp;
         String returnValue = defaultValue;
 
-        for (int x=1;x<ts.ArgumentList.size();x++) {
+        for (int x=0;x<ts.ArgumentList.size();x++) {
             temp = GetArgumentValue(ts, x, null);
             if (!testHelper.IsNullOrEmpty(temp)) {
                 if (temp.indexOf(searchPhrase) > -1) {
@@ -717,6 +769,29 @@ public class TestCentral {
         return maxFiles;
     }
 
+    long GetNumberOfFilesInFolder(String folderName, String rootFileName) {
+        long maxFiles = 10000;
+        String fileRoot = rootFileName.substring(0,rootFileName.lastIndexOf(".")-1);
+
+        File directory = new File(folderName);
+        if (!(directory.exists() && directory.isDirectory()))
+        {
+            System.out.println(String.format("Directory %s does not exist", directory));
+            return 0;
+        }
+        FileFilter logFilefilter = new FileFilter() {
+            public boolean accept(File file) {
+                if (file.getName().startsWith(fileRoot)) {
+                    return true;
+                }
+                return false;
+            }
+        };
+        File[] files = directory.listFiles(logFilefilter);
+        maxFiles = files.length;
+
+        return maxFiles;
+    }
 
 
     /**************************************************************
@@ -856,6 +931,7 @@ public class TestCentral {
             this.createCSVStatusFiles = configSettings.get_createCsvStatusFiles();
             this._showAdditionalGA4Parameters = configSettings.get_showAdditionalGa4Parameters();
             set_showAdditionalGA4Parameters(configSettings.get_showAdditionalGa4Parameters());
+            set_imageMagicFilePath(configSettings.get_imageMagickPath());
             readCommands.set_testPage(testPage);
             readCommands.set_showAdditionalGa4Parameters(get_showAdditionalGA4Parameters());
 
@@ -888,6 +964,7 @@ public class TestCentral {
         boolean revertToParent = false;
         String csvFileName;
         testHelper.set_csvFileName(null);
+        String originalLogFileName = logFileName;
 
         for (int fileIndex = 0; fileIndex < testFiles.size(); fileIndex++) {
             testFileName = testFiles.get(fileIndex);
@@ -905,11 +982,22 @@ public class TestCentral {
             boolean isConditionalBlock = false;
             conditionalSuccessful = false;
             testSteps = testHelper.ReadTestSettingsXmlFile(testSteps, testFileName);
+            //for individual log files when running multiple tests, but need a configuration setting for this
+            if (fileIndex > 0) {
+                if (testFiles.size() >= (fileIndex + 2)) {
+                    WriteLogContent();  //write log content before changing log file names
+                    GetNewLogFileNames();
+                    if (createCSVStatusFiles.equals("many")) {
+                        SetCSVFileName(logFileName);
+                    }
+                }
+            }
 
             if (this.createCSVStatusFiles.equals("many")) {
                 SetCSVFileName(testFileName);  //added for individual CSV files
             } else if (this.createCSVStatusFiles.equals("one") && testHelper.get_csvFileName() == null) {
-                SetCSVFileName(logFileName);
+                //SetCSVFileName(logFileName);
+                SetCSVFileName(originalLogFileName);
             } else if (this.createCSVStatusFiles.equals("none")) {
                 testHelper.set_csvFileName(null);
                 set_csvFileName(null);
@@ -979,6 +1067,15 @@ public class TestCentral {
                 }
             }
             testHelper.CreateSectionHeader("[ End of Test Script ]", AppConstants.FRAMED + AppConstants.ANSI_PURPLE_BACKGROUND + AppConstants.ANSI_BOLD, AppConstants.ANSI_YELLOW_BRIGHT, false, true, true);
+            testHelper.DebugDisplay("testFiles.size() = " + testFiles.size() + " and fileIndex = " + fileIndex);
+
+            //for individual log files when running multiple tests, but need a configuration setting for this
+            /*if (testFiles.size() >= (fileIndex + 2)) {
+                GetNewLogFileNames();
+                if (createCSVStatusFiles.equals("many")) {
+                    SetCSVFileName(logFileName);
+                }
+            }*/
         }
         WriteLogContent();
         if (is_executedFromMain()) {
@@ -1006,7 +1103,7 @@ public class TestCentral {
         boolean isConditionalBlock = false;
         int waitTime = 1000;
         Boolean isCrucial = tsInput.get_crucial() != null ? tsInput.get_crucial() : false;
-        //driver.manage().addCookie((new Cookie("jmsa", "2.0||JpOxRWqCYa||2023-08-17T12:53:18Z")));
+
         //get the domain or page path to restrict the testing
         domainRestriction = GetArgumentValue(tsInput, 0, null);
         //get the pages that should also be scanned for additional hrefs
@@ -1582,7 +1679,6 @@ public class TestCentral {
         } catch(Exception e) {
             testHelper.UpdateTestResults("Failed Site Navigation for href = " + href + " for step " + fileStepIndex,true);
         }
-
     }
 
 
@@ -1730,6 +1826,10 @@ public class TestCentral {
      * @param fileStepIndex - the file index and the step index.
      ************************************************************ */
     void PerformExplicitNavigation(TestStep ts, String fileStepIndex) throws Exception {
+        if (!AreArgumentsAreCombined(ts,2)) {
+            PerformExplicitNavigationNew(ts, fileStepIndex);
+            return;
+        }
         WriteLogContent();
         String navigateUrl = GetArgumentValue(ts, 0, null);
         String delayTime = GetArgumentValue(ts, 1, null);
@@ -1834,6 +1934,106 @@ public class TestCentral {
         }
         testHelper.UpdateTestResults( indentMargin + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End Explicit Navigation Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
     }
+
+    void PerformExplicitNavigationNew(TestStep ts, String fileStepIndex) throws Exception {
+        if (AreArgumentsAreCombined(ts,2)) {
+            PerformExplicitNavigationNew(ts, fileStepIndex);
+            return;
+        }
+        WriteLogContent();
+        String navigateUrl = GetArgumentValue(ts, 0, null);
+        String delayTime = GetArgumentValue(ts, 1, null);
+        String windowDimensionHeight = GetSpecificArgumentValue(ts, "h","=",null);
+        String windowDimensionWidth = GetSpecificArgumentValue(ts, "w","=",null);
+        String pageTimingFE = GetSpecificArgumentValue(ts, "fe","=",null);
+        String pageTimingBE = GetSpecificArgumentValue(ts, "be","=",null);
+        String indentMargin = ts.get_command().toLowerCase().equals(AppCommands.Navigate) ? AppConstants.indent5 : AppConstants.indent8;
+        String subIndent = indentMargin.equals(AppConstants.indent5) ? AppConstants.indent8 : AppConstants.indent5 + AppConstants.indent8;
+
+        //String pageTimings = GetArgumentValue(ts, 3, null);
+        double frontEndTiming = 0;
+        double backEndTiming = 0;
+        String expectedUrl = null;
+        int delayMilliSeconds = 0;
+
+        if (navigateUrl != null && !navigateUrl.isEmpty()) {
+            testHelper.UpdateTestResults( indentMargin + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start Explicit Navigation Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+            expectedUrl = ts.get_expectedValue() != null ? ts.get_expectedValue().trim() : null;
+
+            if (delayTime != null && !delayTime.isEmpty()) {
+                delayMilliSeconds = parseInt(delayTime.trim());
+            }
+            if (windowDimensionHeight != null && windowDimensionWidth != null) {
+
+                int width = parseInt(windowDimensionWidth);
+                int height = parseInt(windowDimensionHeight);
+
+                testHelper.UpdateTestResults(subIndent + "Setting browser dimensions to (Width=" + width + " Height=" + height + ")", true);
+                testHelper.SetWindowContentDimensions(driver, width, height);
+            }
+            testHelper.DebugDisplay("pageTimingFE = " + pageTimingFE + " - pageTimingBE = " + pageTimingBE);
+            if (pageTimingFE != null && pageTimingBE != null) {
+                backEndTiming = parseDouble(pageTimingBE);
+                frontEndTiming =  parseDouble(pageTimingFE);
+            }
+        }
+        testPage = navigateUrl;
+        //Explicit Navigation Event
+        testHelper.UpdateTestResults(subIndent + "Navigating to " + navigateUrl + " for step " + fileStepIndex, true);
+        testHelper.set_fileStepIndex(fileStepIndex);
+        //testHelper.DebugDisplay("Calling CheckPageURL(" + delayMilliSeconds + ")");
+        String actualUrl = CheckPageUrl(delayMilliSeconds);
+        String timingMessage = "";
+        if (expectedUrl != null && expectedUrl.trim().length() > 0) {
+            if (ts.get_crucial()) {
+                assertEquals(expectedUrl, actualUrl);
+            } else {
+                try
+                {
+                    assertEquals(expectedUrl, actualUrl);
+                } catch (AssertionError ae) {
+                    //do nothing, this just traps the assertion error so that processing can continue
+                }
+            }
+            //testHelper.DebugDisplay("#2 actualUrl = " + actualUrl);
+            if (expectedUrl.trim().equals(actualUrl.trim())) {
+                if (frontEndTiming > 0 && backEndTiming > 0) {
+                    timingMessage = GetTimingMessage(frontEndTiming, backEndTiming, subIndent);
+                    testHelper.UpdateTestResults(subIndent + "Successful Navigation and URL Check.  Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")\r\n" + timingMessage + " for step " + fileStepIndex, true);
+                } else {
+                    testHelper.UpdateTestResults(subIndent + "Successful Navigation and URL Check.  Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ") for step " + fileStepIndex, true);
+                }
+                //subIndent
+            } else {
+                if (frontEndTiming > 0 && backEndTiming > 0) {
+                    timingMessage = GetTimingMessage(frontEndTiming, backEndTiming, subIndent);
+                    testHelper.UpdateTestResults(subIndent + "Failed Navigation and URL Check.  Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ")\r\n" + timingMessage + " for step " + fileStepIndex, true);
+                } else {
+                    testHelper.UpdateTestResults(subIndent + "Failed Navigation and URL Check.  Expected: (" + expectedUrl + ") Actual: (" + actualUrl + ") for step " + fileStepIndex, true);
+                }
+            }
+        }
+        testHelper.UpdateTestResults( indentMargin + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End Explicit Navigation Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+    }
+
+     Boolean AreArgumentsAreCombined(TestStep ts, int startIndex) {
+        String testValue;
+        int firstOccurrence;
+        int secondOccurrence;
+        Boolean returnValue = false;
+
+        for (int i=startIndex;i<ts.ArgumentList.size();i++) {
+            testValue = GetArgumentValue(ts, i, null);
+            firstOccurrence = testValue.indexOf("=");
+            secondOccurrence = testValue.lastIndexOf("=");
+            if (firstOccurrence != secondOccurrence) {
+                returnValue = true;
+                break;
+            }
+        }
+        return returnValue;
+    }
+
 
     /****************************************************************************
      * Description: Gets the BackEnd and FrontEnd Timing Message based on the
@@ -2233,6 +2433,9 @@ public class TestCentral {
             DesiredCapabilities capabilities = new DesiredCapabilities();
             seleniumProxy = getSeleniumProxy(getProxyServer());
             capabilities.setCapability(CapabilityType.PROXY, seleniumProxy);
+            //the line below adds network traffic to the HAR file and increases the site of the file exponentially.
+            //a 280K-320K file will be about 95Megs!!!
+            //proxy.enableHarCaptureTypes(CaptureType.REQUEST_CONTENT, CaptureType.RESPONSE_CONTENT);
 
             /***********[ Attempting to get log information here ]*******/
             LoggingPreferences logPrefs = new LoggingPreferences();
@@ -3044,7 +3247,6 @@ public class TestCentral {
 
         testHelper.UpdateTestResults( AppConstants.indent8 + AppConstants.ANSI_RED + defaultCheckValuesOverridden + AppConstants.ANSI_RESET, true);
     }
-
 
 
 

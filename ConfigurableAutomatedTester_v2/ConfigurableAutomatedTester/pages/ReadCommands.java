@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static java.lang.Integer.parseInt;
 import static org.junit.jupiter.api.Assertions.*;
@@ -144,11 +145,13 @@ public class ReadCommands {
                 CheckGA4TagValues(ts, fileStepIndex);
             } else if (ts.get_command().toLowerCase().equals(AppCommands.SaveConsoleLog)) {
                 testCentral.WriteLogContent(ts,fileStepIndex);
-            }  else if (ts.get_command().toLowerCase().equals(AppCommands.CombineConsoleLogs)) {
+            } else if (ts.get_command().toLowerCase().equals(AppCommands.CombineConsoleLogs)) {
                 testCentral.CombineLogContent(ts,fileStepIndex);
-            }
-            else if (ts.get_command().toLowerCase().equals(AppCommands.SpyderSite) || ts.get_command().toLowerCase().equals(AppCommands.SpiderSite)) {
+            } else if (ts.get_command().toLowerCase().equals(AppCommands.SpyderSite) || ts.get_command().toLowerCase().equals(AppCommands.SpiderSite)) {
                 testCentral.SpiderSite(ts,fileStepIndex);
+            } else if (ts.get_command().toLowerCase().equals(AppCommands.GetAllCookies)) {
+                //testCentral.GetAllCookies(ts,fileStepIndex);
+                GetAllCookies(ts,fileStepIndex);
             }
         }
     }
@@ -211,7 +214,7 @@ public class ReadCommands {
             }
             if (index > -1 && doesMatch) {
                 //testHelper.UpdateTestResults("The Save Har File command must first be used before using this command!", true);
-                testHelper.UpdateTestResults("Successful GTM Tag found matching specified criteria: \r\n" +
+                testHelper.UpdateTestResults(AppConstants.indent5 + "Successful GTM Tag found matching specified criteria: \r\n" +
                         AppConstants.indent8 + "Expected: (dl=" + item.get_documentLocation() + ") Actual: (dl=" + listItem.get_documentLocation() + ")\r\n" +
                         AppConstants.indent8 + "Expected: (t=" + item.get_hitType() + ")  Actual: (t=" + listItem.get_hitType() + ")\r\n" +
                         AppConstants.indent8 + "Expected: (ec=" + item.get_eventCategory() + ") Actual: (ec=" + listItem.get_eventCategory() + ")\r\n" +
@@ -1854,6 +1857,52 @@ public class ReadCommands {
         testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_YELLOW + AppConstants.subsectionArrowLeft + testHelper.PrePostPad(AppConstants.ANSI_RESET + "[ End Check Color Contrast ]" + AppConstants.ANSI_YELLOW, "═", 9, 80) + AppConstants.ANSI_YELLOW + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
     }
 
+    /***************************************************************
+     * Description: Gets All Cookies and displays them and writes them to
+     *              the logs.
+     *              I currently only see cookies for the current domain.
+     * @param ts - Test Step Object containing all related information
+     *           for the particular test step.
+     * @param fileStepIndex - the file index and the step index.
+     ***************************************************************/
+    public void GetAllCookies(TestStep ts, String fileStepIndex) {
+        Set<Cookie> cookies = driver.manage().getCookies();
+        System.out.println(cookies);
+        String cookieName, cookieValue, cookieExpiration, cookiePath,cookieDomain;
+        String fileContents = "URL: " + driver.getCurrentUrl() + "\n\n";
+        String fileName = testCentral.GetArgumentValue(ts,0,null);
+        String originalFileName = fileName;
+        String fileInstructions = testCentral.GetArgumentValue(ts,1,null);
+        boolean cookieSecure = false;
+        testHelper.DebugDisplay("fileName = " + fileName);
+        testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_CYAN_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Displaying Cookie Information for Step " +  fileStepIndex + " ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+        for (Cookie cookie :cookies) {
+            cookieName = cookie.getName();
+            cookieValue = cookie.getValue();
+            cookieExpiration = !testHelper.IsNullOrEmpty(String.valueOf(cookie.getExpiry())) && String.valueOf(cookie.getExpiry()) != "null" ? String.valueOf(cookie.getExpiry()) : "unknown";
+            cookiePath = !testHelper.IsNullOrEmpty(cookie.getPath()) ? cookie.getPath() : "unknown";
+            cookieDomain = !testHelper.IsNullOrEmpty(cookie.getDomain()) ? cookie.getDomain() : "unknown";
+            cookieSecure = cookie.isSecure();
+
+            testHelper.UpdateTestResults(AppConstants.indent8 + AppConstants.ANSI_CYAN_BRIGHT + "Cookie Name: " + cookieName + "\n" +
+                    AppConstants.indent8 + "Cookie Value: " + cookieValue + "\n" +
+                    AppConstants.indent8 + "Cookie Expires: " + cookieExpiration + "\n" +
+                    AppConstants.indent8 + "Cookie Path: " + cookiePath + "\n" +
+                    AppConstants.indent8 + "Cookie Domain: " + cookieDomain + "\n" +
+                    AppConstants.indent8 + "Cookie Secure: " + cookieSecure + AppConstants.ANSI_RESET + "\n", true);
+            fileContents += "Cookie Name: " + cookieName + "\n" + "Cookie Value: " + cookieValue + "\n" + "Cookie Expires: " + cookieExpiration + "\n" + "Cookie Path: " + cookiePath + "\n" + "Cookie Domain: " + cookieDomain + "\n" + "Cookie Secure:" + cookieSecure + "\n\n";
+        }
+        if (!testHelper.IsNullOrEmpty(fileName)) {
+            if (fileInstructions.toLowerCase().equals("overwrite")) {
+                testHelper.DeleteFile(fileName);
+            } else if (fileInstructions.toLowerCase().equals("new")) {
+                fileName = testHelper.GetUnusedFileName(fileName);
+            }
+            testHelper.WriteToFile(fileName, fileContents);
+            testHelper.UpdateTestResults( AppConstants.indent8 + "Cookies saved to file: " + fileName + " for step " + fileStepIndex, true);
+        }
+        testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_CYAN_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End of Display Cookie Information ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+    }
 
     //region { SQL Server Methods }
     /**************************************************************************
@@ -1964,6 +2013,9 @@ public class ReadCommands {
         }
     }
     //endregion
+
+
+
 
     //region {Partially implemented MongoDb connectivity }
     /***************************************************************************

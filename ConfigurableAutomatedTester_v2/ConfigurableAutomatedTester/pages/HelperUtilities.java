@@ -71,7 +71,14 @@ public class HelperUtilities {
         final String metric = "AE";
 
         String differenceImage = difference;
-        ProcessStarter.setGlobalSearchPath("C:\\Program Files (x86)\\ImageMagick-7.0.8-Q16-HDRI");
+        //testHelper.DebugDisplay("testHelper.testCentral.get_imageMagicFilePath() = " + testHelper.testCentral.get_imageMagicFilePath());
+        if (!testHelper.IsNullOrEmpty(testHelper.testCentral.get_imageMagicFilePath())) {
+            //testHelper.DebugDisplay("Perfect!!!");
+            ProcessStarter.setGlobalSearchPath(testHelper.testCentral.get_imageMagicFilePath());
+        } else {
+            ProcessStarter.setGlobalSearchPath("C:\\Program Files\\ImageMagick-7.1.1-Q16-HDRI");
+            //testHelper.DebugDisplay("Failure!!!");
+        }
         differenceImageFile = new File (difference);
         testHelper.set_executedFromMain(is_executedFromMain());
         String globalImageMessage = "";

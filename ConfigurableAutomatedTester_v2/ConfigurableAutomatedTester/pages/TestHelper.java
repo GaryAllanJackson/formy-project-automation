@@ -221,6 +221,12 @@ public class TestHelper{
                 configSettings.set_showAdditionalGa4Parameters(Boolean.parseBoolean(configValue));
                 UpdateTestResults(AppConstants.ANSI_YELLOW + AppConstants.indent5 + "ShowAdditionalGA4Parameters = "  + AppConstants.ANSI_RESET + configSettings.get_showAdditionalGa4Parameters().toString(), false);
 
+                //image magick path
+                configValue = (eElement.getElementsByTagName(AppConstants.ImageMagickFilePath).item(0) != null) ?
+                        eElement.getElementsByTagName(AppConstants.ImageMagickFilePath).item(0).getTextContent() : null;
+                configSettings.set_imageMagickPath(configValue);
+                UpdateTestResults(AppConstants.ANSI_YELLOW + AppConstants.indent5 + "ImageMagickFilePath = "  + AppConstants.ANSI_RESET + configSettings.get_imageMagickPath(), false);
+
 
                 //TestFolderName - default set to null
                 configValue = (eElement.getElementsByTagName(AppConstants.TestFolderNameNode).item(0) != null) ?
@@ -239,6 +245,7 @@ public class TestHelper{
                         eElement.getElementsByTagName(AppConstants.FolderFileFilterNode).item(0).getTextContent() : null;
                 configSettings.set_folderFileFilter(configValue);
                 UpdateTestResults(AppConstants.ANSI_YELLOW + AppConstants.indent5 + "FolderFileFilter = "  + AppConstants.ANSI_RESET + configSettings.get_folderFileFilter(), false);
+
 
 
                 if (eElement.getElementsByTagName(AppConstants.TestFilesNode).item(0) != null) {
@@ -621,6 +628,7 @@ public class TestHelper{
 //                DebugDisplay("screenHeight = " + screenHeight);
 //                DebugDisplay("screenWidth = " + screenWidth);
                 //endregion
+
 
                 //reset the browser dimensions to capture all content
                 Dimension dimension = GetWindowContentDimensions(driver);
