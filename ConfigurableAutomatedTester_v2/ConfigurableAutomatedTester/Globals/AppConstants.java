@@ -19,6 +19,8 @@ public class AppConstants {
     public static final String CreateCSVStatusFiles = "createCsvStatusFiles";
 
     public static final String ShowAdditionalGA4Parameters = "showAdditionalGa4Parameters";
+
+    public static final String ImageMagickFilePath = "imageMagickFilePath";
     //endregion
 
     //region { XML Node name constants for Test Settings }

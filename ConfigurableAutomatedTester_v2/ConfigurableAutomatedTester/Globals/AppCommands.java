@@ -40,9 +40,13 @@ public class AppCommands {
     public static final String  Check_Contrast = "check contrast";
     public static final String  SaveHarFile = "save har file";
 
+    public static final String SetCookie = "set cookie";
+
+    public static final String ShowAllGATags = "show all ga tags";
+
     //endregion
 
-    //region { Read Action Commands
+    //region { Read Action Commands }
     public static final String  CheckImage = "check_image";
     public static final String  Check_Image = "check image";
     public static final String  CheckAHref = "check_a_href";
@@ -81,6 +85,8 @@ public class AppCommands {
     public static final String  CombineConsoleLogs = "combine console logs";
     public static final String  SpiderSite = "spider site";
     public static final String  SpyderSite = "spyder site";
+
+    public static final String GetAllCookies = "get all cookies";
 
     //endregion
 
