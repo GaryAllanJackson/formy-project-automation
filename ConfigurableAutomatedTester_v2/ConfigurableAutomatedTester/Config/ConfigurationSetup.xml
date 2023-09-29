@@ -15,102 +15,12 @@
 	<!-- createCsvStatusFiles settings - many, one or none -->
 	<createCsvStatusFiles>one</createCsvStatusFiles>
 	<showAdditionalGa4Parameters>false</showAdditionalGa4Parameters>
+	<imageMagickFilePath>C:\Program Files\ImageMagick-7.1.1-Q16-HDRI</imageMagickFilePath>
+	
+	
 	<!-- Individual File Settings -->
 	<testFiles>
-		<!-- alphabetical order -->	
 		
-		<!-- GA4 Tag Testing -->
-		<testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\CAB\CAB-Tests\CAB-EDL2.0-RLP Recipe Clicks-Test.xml</testFileName1>
-		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\CAB\CAB-Tests\CAB-EDL2.0-Recipe View-Test.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\CAB\CAB-Tests\CAB-EDL2.0-Recipe Clicks-Test.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\CAB\CAB-Tests\CAB-EDL2.0-Read Reviews.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\CAB\CAB-Tests\CAB-EDL2.0-Product View + Detail-Test.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\CAB\CAB-Tests\CAB-EDL2.0-Product Impressions-Test.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\CAB\CAB-Tests\CAB-EDL2.0-Product Clicks + Ecomm-Test.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\CAB\CAB-Tests\CAB-EDL2.0-Privacy Links-Test.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\CAB\CAB-Tests\CAB-EDL2.0-PDP Social Share-Test.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\CAB\CAB-Tests\CAB-EDL2.0-DataLayerReady-Test.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\CAB\CAB-Tests\CAB-BuyNow-Click-Test.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\GA4_Tests\Milkbone-BuyNow-Click-Test.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\GA4_Tests\Spider-Milkbone-Alt-Test.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\GA4_Tests\Spider-Milkbone-Test.xml</testFileName1> -->
-		<testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\Consolidate-Console-log-Test.xml</testFileName1>
-		<!-- <testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\Consolidate-Console-log-No-Parameter-Values-Test.xml</testFileName1> -->
-		
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\GA4_Tests\Milkbone-DataLayerReady-1 Page-Test.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\GA4_Tests\Milkbone-DataLayerReady-Test.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\GA4_Tests\Sahale-PLP-BuyNowClick-Test.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\GA4_Tests\Entire-Site-Command-Template.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\GA4_Tests\Dunkin-New-PCP-Format-Test.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\GA4_Tests\Smuckers-GA4-Test.xml</testFileName1> -->
-		<!-- Check A Href Testing -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\GA4_Tests\Smuckers-check_a_href-Test.xml</testFileName1> -->
-		
-		
-		<!-- Excel Automated Test Writer Testing -->
-		<!-- <testFileName1>C:\My Automated Test Files\test1.xml</testFileName1> -->
-		<!-- <testFileName1>C:\My Automated Test Files\Smuckers-PLP-ProductClick-Test.xml</testFileName1> -->
-		<!-- <testFileName1>C:\My Automated Test Files\JIF-EDL2.0-Test1.xml</testFileName1> -->
-		<!-- <testFileName1>C:\My Automated Test Files\Milkbone-EDL2.0-Test1.xml</testFileName1> -->
-		<!-- <testFileName1>C:\My Automated Test Files\Milkbone-EDL2.0-ArticleClick-Test1.xml</testFileName1> -->
-		<!-- <testFileName1>C:\My Automated Test Files\Milkbone-EDL2.0-MainMenuExpandedClick-Test1.xml</testFileName1> -->
-		
-		<!-- JMS GTM Tag Testing -->
-		<!-- Test SCO PLP Page Product Clicks and Buy Now CTA Clicks -->
-		
-		<!-- JMS Redirect Tests -->
-		<!-- <testFileName1>C:\Gary\TestFiles\Smuckers-Redirects-Test.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\TestTemplate-SCO-PLP-Page-ProductAndBuyNowClick-Test1.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\TestTemplate-SMK-PLP-Page-ProductAndBuyNowClick-Test1.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\TestTemplate-SCO-PLP-Page-ProductClick-Test3.xml</testFileName1> -->
-		<!-- Test SCO PLP Page Product Clicks -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\TestTemplate-SCO-PLP-Page-ProductClick-Test2.xml</testFileName1> -->
-		<!-- [ End of MS GTM Tag Testing ]-->
-		
-		<!-- JMS EPC PageView Testing -->
-		<!-- <testFileName1>C:\Gary\TestFiles\AllBrandSearchResults-DL-Test.xml</testFileName1> -->
-		<!-- <testFileName1>C:\My Automated Test Files\RFPs\tkmaxx-UK-GetAllLinks-Test.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\NutrishRedesign-Find-Videos.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\NutrishRedesign-Find-IDP-Featured-Prod-Art.xml</testFileName1> -->
-		
-		<!-- <testFileName1>C:\My Automated Test Files\Jif-RLP-Test1.xml</testFileName1> -->
-		<!-- <testFileName1>C:\My Automated Test Files\Smuckers-RLP-Test1.xml</testFileName1> -->
-		<!--<testFileName1>C:\My Automated Test Files\Dunkin-EDL2.0-ProductClick-Test1.xml</testFileName1>-->
-		<!-- <testFileName1>c:\My Automated Test Files\Dunkin-EDL2.0-Test1.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\1850-Staging-Test.xml</testFileName1> -->
-		<!-- <testFileName1>C:\My Automated Test Files\Multi-Brand-BuyNow-Gtin-DataAttribute-Test.xml</testFileName1> -->
-		<!-- <testFileName1>C:\My Automated Test Files\Smuckers-Automated-ProductClick-Test1.xml</testFileName1> -->
-		<!-- <testFileName1>C:\My Automated Test Files\Smuckers-Automated-Test1.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\CAB_AddToCartClick-Tests.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\Smuckers-Redirect-Test.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\CAB_ProductClick-Tests.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\CAB-EComm-Product-Detail-Test.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\ObservePoint-Verification-tests\SubmitReview-Test.xml</testFileName1>				    -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\CAB-ProductDetail-Test.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\CAB-Product-Impressions-Test.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\Missing-Har-ProductIds-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-Pupperoni-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-Cafe-Bustelo-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-TruRoots-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-Sahale-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-RW-Knudsen-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-Smuckers-Uncrustables-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-Smuckers-Nav-Test-for-EPC-PromoId2.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-Smuckers-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-Nutrish-Nav-Test-for-EPC-PromoId2.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-Nutrish-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-Natures-Recipe-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-Milkbone-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-MeowMix-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-JIF-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-Folgers-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-Dunkin-at-Home-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
-		<!-- OLD JMS EPC PageView Testing -->
-		<!-- <testFileName1>C:\Gary\TestFiles\Nutrish-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\Folgers-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\Dunkin-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
-		<!-- <testFileName1>C:\Gary\TestFiles\CAB-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
-		<!-- [ End of JMS EPC testing ]-->
 		
 		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester_v2\Tests\Double-Tagging-Test1.xml</testFileName1> -->
 		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester_v2\ProductView-Name-Category-Test.xml</testFileName1> -->
@@ -135,8 +45,7 @@
 		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester_v2\Tests\CheckPageWithoutNavigation-Test.xml</testFileName1> -->
 			
 			
-		<!-- Group 3 - Single or Specific Element checks -->
-		
+		<!-- Group 3 - Single or Specific Element checks -->		
 		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester_v2\Tests\CheckSingleImageSrcWithSeparateNavigationStep-Test.xml</testFileName1> -->
 		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester_v2\Tests\CheckSpecificAnchorhref-Test.xml</testFileName1> -->
 		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester_v2\Tests\CheckSpecificImageSource-Test.xml</testFileName1> -->
