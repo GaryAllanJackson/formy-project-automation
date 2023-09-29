@@ -9,7 +9,11 @@
 			}
 			p {
 				padding: 0 0 10 30;
-				margin:0;
+				/*margin:0;*/
+				margin-left:0;
+				margin-right:70;
+				margin-bottom:0;
+				margin-top:0;
 			}
 			ol, li {
 				padding-top: 0;
@@ -31,7 +35,7 @@
 				margin-top:20px;
 				margin-bottom:20px;
 			}
-           th {
+            th {
 				background-color:#f5f5f5;
 			    font-weight:bold;
 			    width:500px;
@@ -40,7 +44,7 @@
 				background-color:#f5f5f5;
                padding:5 10
 			}
-           td.head {
+            td.head {
 				background-color:#f5f5f5;
 			    font-weight:bold;
 			    width:500px;
@@ -48,7 +52,7 @@
 			pre {
                padding-left:30px;
                tab-size:4;
-           }
+            }
 			.heading {
 				font: 24pt arial, sans-serif;
 				background-color:#0060F0;
@@ -108,6 +112,7 @@
 			.tableOfContentsLink {
 				text-decoration:none;
 				display:block;
+				margin-left:30px;
 			}
 			.examples {
 				font-weight:bold;
@@ -127,7 +132,7 @@
 			}
            .container {
                margin-left:10px;
-               margin - right:10px;
+               margin-right:10px;
            }
            .verticalspacing {
                margin-top:20px;
@@ -152,9 +157,9 @@
 		<a href="#testfileoverview" class="tableOfContentsLink">TEST FILE OVERVIEW</a>
 		<a href="#testfilefieldsanddescriptions" class="tableOfContentsLink">TEST FILE FIELDS AND DESCRIPTIONS</a>
 		<a href="#checkentiresite" class="tableOfContentsLink">CHECK ENTIRE SITE</a>
-		<a href="#navigation" class="tableOfContentsLink">NAVIGATION</a>
-		<a href="#navigationwithsuccessfulnavigationconfirmation" class="tableOfContentsLink">NAVIGATION WITH SUCCESSFUL NAVIGATION CONFIRMATION</a>
-		<a href="#navigationwithauthenticationwithandwithoutnavigationconfirmation" class="tableOfContentsLink">NAVIGATION WITH AUTHENTICATION WITH AND WITHOUT NAVIGATION CONFIRMATION</a>
+		<a href="#navigate" class="tableOfContentsLink">NAVIGATE</a>
+		<a href="#navigatewithsuccessfulnavigationconfirmation" class="tableOfContentsLink">NAVIGATE WITH SUCCESSFUL NAVIGATION CONFIRMATION</a>
+		<a href="#navigatewithauthenticationwithandwithoutnavigationconfirmation" class="tableOfContentsLink">NAVIGATE WITH AUTHENTICATION WITH AND WITHOUT NAVIGATION CONFIRMATION</a>
 		<a href="#loginwithnavigation" class="tableOfContentsLink">LOGIN WITH NAVIGATION</a>
 		<a href="#alertpopuplogin" class="tableOfContentsLink">ALERT POPUP LOGIN</a>
 		<a href="#checkurlwithoutnavigation" class="tableOfContentsLink">CHECK URL WITHOUT NAVIGATION</a>
@@ -204,11 +209,14 @@
 		<a href="#parseandcalculatelong" class="tableOfContentsLink">PARSE AND CALCULATE LONG</a>
 		<a href="#checkjavascriptvalue" class="tableOfContentsLink">CHECK JAVASCRIPT VALUE</a>
 		<a href="#saveharfile" class="tableOfContentsLink">SAVE HAR FILE</a>
-		<a href="#checkgoogleanalyticsuatag-checkgtmtag" class="tableOfContentsLink">CHECK Google Analytics UA TAG - check gtm tag</a>
-		<a href="#checkgoogleanalyticsga4tag-checkga4tag" class="tableOfContentsLink">CHECK Google Analytics GA4 TAG - check ga4 tag</a>
+		<a href="#checkgoogleanalyticsuatag-checkgtmtag" class="tableOfContentsLink">CHECK GOOGLE ANALYTICS UA TAG - check gtm tag</a>
+		<a href="#checkgoogleanalyticsga4tag-checkga4tag" class="tableOfContentsLink">CHECK GOOGLE ANALYTICS GA4 TAG - check ga4 tag</a>
+		<a href="#showallgoogleanalyticstags(uaandorga4)-showallgatags" class="tableOfContentsLink">SHOW ALL GOOGLE ANALYTICS TAGS (UA AND OR GA4) - show all ga tags</a>
 		<a href="#saveconsolelogtofile" class="tableOfContentsLink">SAVE CONSOLE LOG TO FILE</a>
 		<a href="#combineconsolelogs" class="tableOfContentsLink">COMBINE CONSOLE LOGS</a>
-		<a href="#spidersite" class="tableOfContentsLink">SPIDER SITE</a>
+		<a href="#spidersiteorspydersite" class="tableOfContentsLink">SPIDER SITE or SPYDER SITE</a>
+		<a href="#setcookie" class="tableOfContentsLink">SET COOKIE</a>
+		<a href="#getallcookies" class="tableOfContentsLink">GET ALL COOKIES</a>
 		<span class="tableOfContentsSectionHeader">INCLUDED TEST FILES</span>
 		<a href="#testfilesdescribed" class="tableOfContentsLink">TEST FILES DESCRIBED</a>
 		<span class="tableOfContentsSectionHeader">Troubleshooting</span>
@@ -226,7 +234,7 @@
 		<p>
 WELCOME TO THE CONFIGURABLE AUTOMATED TEST APPLICATION!!!This application was designed to perform automated testing using configuration and test step files.It was intended to remove the need for per project automated test coding, but grew out of the curiosity to learn more about headless testing with Java and Selenium.		</p>
 		<p>
-This can be run as a stand-alone application or as a JUnit test within the IDE, as it was frequently run within IntelliJ.	Colors and other special ANSI characters are removed from the Stand-alone application as they are unsupported	outside of the IDE.Working as a stand-alone application allows this to be scheduled to run whenever it is desired by either creating a Scheduled Taskor using some other automated process tool, or writing one of your own.Running outside of the IDE means that it can be quickly executed without opening the IDE and then the source project.The Log file name will be preceded with "StandAlone_" when run as a stand-alone application.By default, log and CSV files will be created in the "\Config" folder, which is part of this project.The log file records all test steps performed as well as the success and fail status of assertion steps which include steps thatcompare a value to a supplied expected value.The CSV file records only success and fail status steps but none of the supporting steps surrounding those checks.Look at the Project_Setup.txt file for directions on running the stand-alone application as part of a batch file.		</p>
+This can be run as a stand-alone application or as a JUnit test within the IDE, as it was frequently run within IntelliJ.	Colors and other special ANSI characters are removed from the Stand-alone application as they are unsupported	outside of the IDE.Working as a stand-alone application allows this to be scheduled to run whenever it is desired by either creating a Scheduled Taskor using some other automated process tool, or writing one of your own.Running outside of the IDE means that it can be quickly executed without opening the IDE and then the source project.The Log file name will be preceded with "StandAlone_" when run as a stand-alone application.By default, log and CSV files will be created in the "\Config" folder, which is part of this project.The log file records all test steps performed as well as the success and fail status of assertion steps, which include steps that compare a value to a supplied expected value.The CSV file records only success and fail status steps, but none of the supporting steps surrounding those checks.Look at the Project_Setup.txt file for directions on running the stand-alone application as part of a batch file.		</p>
 		<p>
 The application covers most testing, including: Navigation, Form Population, Value checking, Value Persistence for use in upcoming test step comparisons or form populations, context menu access, iFrame access, switching  browser tabs, SQL Server Connectivity and Querying, anchor href and text property checking, image src and alt property checking, checking color contrast, conditional block to run tests only if a condition step passes, retrieving links and repeating one or more commands on all pages, and unique value generation so that form population tests can be run over and over using this value to ensure that entry is unique each time.		</p>
 		<p>
@@ -234,7 +242,7 @@ Additionally, it includes waiting a specific length of time, for document state 
 		<p>
 Creating a Configurable Automated test consists of creating one Configuration file and one or more Test files.This application can run any number of Test Files, which need to be configured in the Configuration file either individually or within a specified folder which can be filtered to select just targeted files.		</p>
 		<p>
-This application saves the test log, a CSV log, HAR file and Console log files.		</p>
+This application saves the test log file, a HAR file, a Console log file, and an optional CSV log file.		</p>
 		<p>
 * * * * * * * * * * [ IMPORTANT NOTES ]* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 		</p>
 		<p>
@@ -242,8 +250,11 @@ NOTE: Test Steps are numbered by File underscore then Test Step.	The F describes
 		<p>
 NOTE: The != operator is currently only supported for the following commands: Assert, Sql Server Query, Check Count.	There was no viable use case for implementing this functionality for other commands 	and the reason it is not supported in the JSON query is explained in the JSON Query section.		</p>
 		<p>
-NOTE: For most verifiable operations the success or failure output will be left aligned, regardless of the margin of the 	process it is reporting on.	This was done purposely so that the results are easy to find and always begin with Success or Failure.	Additionally, in the console, Successful results are displayed in green, while Failure results are displayed in Red.	Any item appear in the console in Red means that either the item failed or it was configured improperly or an important item	was not configured at all.	LOOK AT ALL ITEMS IN RED AND MAKE UPDATES ACCORDINGLY!!!</br>
+NOTE: For most verifiable operations the success or failure output will be left aligned, regardless of the margin of the 	process it is reporting on.	This was done purposely so that the results are easy to find and always begin with Success or Failure.	Additionally, in the console, Successful results are displayed in green, while Failure results are displayed in Red.	Any item appear in the console in Red means that either the item failed or it was configured improperly or an important item	was not configured at all.	LOOK AT ALL ITEMS IN RED AND MAKE UPDATES ACCORDINGLY!!!One test log file per test file is generated when running individual tests but when running entire site tests 	one log file per iteration is created based on the root log name followed by an increasing iteration number.	CSV files follow suit if the configuration entry is set to many.&lt;createCsvStatusFiles&gt;many&lt;/createCsvStatusFiles&gt;
+		</p>
+</br>
 <hr>
+		<p>
 		</p>
 <a name="helpfilesections" class="sectionTitle">HELP FILE SECTIONS</a>
 		<p>
@@ -261,7 +272,7 @@ This help file is broken up into 4 separate sections:		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="futurefunctionality" class="sectionTitle">FUTURE FUNCTIONALITY</a>
 		<p>
-Future functionality to be added to this application:	Greater Than and Less Than Operator.		-	This could be a good addition when used with Conditional Blocks.		-	Currently, only validatable(read actionType) commands can be used for the conditional statement such as an text, src, alt or				href assertion or element found.		</p>
+Future functionality to be added to this application:	Greater Than and Less Than Operator.		-	This could be a good addition when used with Conditional Blocks.		-	Currently, only validatable (read actionType) commands can be used for the conditional statement such as an text, 				src, alt or href assertion or element found.		</p>
 		<p>
 	Color Contrast code has been implemented to allow for color contrast checking using this page's formula.		-	https://www.w3.org/TR/AERT/#color-contrast		-	Currently reviewing and comparing pages to determine whether to implement color contrast using this page:		-	https://www.w3.org/TR/WCAG20-TECHS/G17.html		</p>
 		<p>
@@ -299,6 +310,8 @@ The following is an example of a configuration file which will be explained belo
 	&lt;createCsvStatusFiles&gt;none&lt;/createCsvStatusFiles&gt;
 	&lt;!-- showAdditionalGa4Parameters settings are "true" to see additional GA4 Parameters beyond those configured for 		the test or "false" to see only configured parameters. --&gt;
 	&lt;showAdditionalGa4Parameters&gt;false&lt;/showAdditionalGa4Parameters&gt;
+	&lt;!-- The following setting is the path to the ImageMagick compare executable 		moved here so that code doesn't have to be updated when a new version is downloaded --&gt;
+	&lt;imageMagickFilePath&gt;C:\Program Files\ImageMagick-7.1.1-Q16-HDRI&lt;/imageMagickFilePath&gt;
 	&lt;!-- Individual File Settings --&gt;
 	&lt;testFiles&gt;
 		&lt;!--&lt;testFileName1&gt;C:\ConfigurableAutomatedTester\Tests\SqlServerAccess-Test.xml&lt;/testFileName1&gt;
@@ -355,6 +368,12 @@ The &lt;showAdditionalGa4Parameters&gt;&lt;/showAdditionalGa4Parameters&gt; elem
 		When set to "false", only the supplied parameters are displayed for the matching tag. 		</p>
 		<p>
 		This setting was added here to apply to all GA4 Tags instead of on a tag by tag basis, if added to the test step. 		</p>
+		<p>
+The &lt;imageMagickFilePath&gt;&lt;/imageMagickFilePath&gt; element allows the path to the Image Magick compare executable to be set 		</p>
+		<p>
+	This will allow the user to update the path in the configuration file instead of going in to edit the code.		</p>
+		<p>
+		A hard coded version of the path exists in the code as a backup, in case this parameter is not populated, 		but it may be pointing to an older version than the one downloaded so be sure to update this to the correct path.		</p>
 		<p>
 The &lt;testFiles&gt;&lt;/testFiles&gt; element is a container element for the testFileName elements and has no textual content of its own.		</p>
 		<p>
@@ -520,11 +539,33 @@ The Entire Site Commands End command has no arguments.<pre>
 
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
-<a name="navigation" class="sectionTitle">NAVIGATION</a>
+<a name="navigate" class="sectionTitle">NAVIGATE</a>
 		<p>
-The Navigation command navigates the browser to the provided URL.All Navigation steps should be marked as crucial, as all subsequent checks require that navigation complete successfully!!!An assertion does not have to be part of navigation, but it probably should be!!!As some testers may like to separate test steps, this is not enforced by the application and since a tester could choose tonavigate to separate pages in one test script and make a subsequent "URL without Navigation checks" conditional, there are sound alternatives to the suggested approach.If Backend and Frontend timings are being tested, the URL must be tested, so the expected value must contain the URL if testing page timings.To navigate without checking the URL, remove the expectedValue node completely as displayed in the example below.For the Navigation command only, although the arguments should be in the order shown, if they are out of order the application will attempt to discern the order and rearrange them.The Navigation command has 4 possible arguments but only the first argument is required.The required first argument, &lt;arg1&gt;&lt;/arg1&gt;, contains the URL to be loaded.The optional second argument, &lt;arg2&gt;&lt;/arg2&gt;, contains the time in milliseconds to wait to allow the page to load.  -  The default is 10 seconds.The optional third argument, &lt;arg3&gt;&lt;/arg3&gt;, contains the dimensions for setting the browser window height and width.The optional fourth argument, &lt;arg4&gt;&lt;/arg4&gt;, contains the maximum time in seconds for the  Back-End and Front-End  to load. - This last optional argument actually performs a test based on the values entered and reports if the Back-End and Front-End load  - times were within the maximum allotted time provided. - Individual times are displayed in Green, when within the allotted time, and in Red, when outside the allotted time. - This check is not part of the Crucial or Conditional functionality and will only display results but never determine - subsequent functionality.		</p>
+The Navigate command navigates the browser to the provided URL.All Navigation steps should be marked as crucial, as all subsequent checks require that navigation complete successfully!!!An assertion does not have to be part of navigation, but it probably should be!!!As some testers may like to separate test steps, this is not enforced by the application and since a tester could choose tonavigate to separate pages in one test script and make a subsequent "URL without Navigation checks" conditional, there are sound alternatives to the suggested approach.If Backend and Frontend timings are being tested, the URL must be tested, so the expected value must contain the URL if testing page timings.To navigate without checking the URL, remove the expectedValue node completely as displayed in the example below.For the Navigation command only, although the arguments should be in the order shown, if they are out of order the application will attempt to discern the order and rearrange them.The Navigation command has 4 possible arguments but only the first argument is required.The required first argument, &lt;arg1&gt;&lt;/arg1&gt;, contains the URL to be loaded.The optional second argument, &lt;arg2&gt;&lt;/arg2&gt;, contains the time in milliseconds to wait to allow the page to load.  -  The default is 10 seconds.IMPORTANT: Named arguments require an equal sign as a delimiter and should contain no spaces in the argument unless the value is intended to have a space, otherwise, the formatting is name=value.		</p>
 		<p>
-To Navigate, without checking the URL to ensure that navigation occurred properly, to wait 4000 milli-seconds and to set the window dimensions to (800 x 800).Please note that making this crucial is irrelevant as no assertions will be made.<pre>
+The optional named arguments &lt;arg3&gt;&lt;/arg3&gt; - &lt;arg6&gt;&lt;/arg6&gt; are for the Browser dimensions and the time in seconds for the Back-End and Front-End load times.The order of these arguments do not matter, but the formatting of the argument does.		</p>
+		<p>
+The Browser Dimension arguments are for setting the height and width of the browser, which can be crucial when taking screenshots for image comparisons.		</p>
+		<p>
+	Browser height, uses h as the name &lt;arg3&gt;h=800&lt;/arg3&gt; - sets the browser height dimension to 800 pixels.		</p>
+		<p>
+	Browser width, uses w as the name &lt;arg3&gt;w=800&lt;/arg3&gt; - sets the browser width dimension to 800 pixels.		</p>
+		<p>
+The Page load timings arguments are for setting the maximum amount of time it should take for a page to load in the Back-End and the Front-End.		</p>
+		<p>
+These values can set to ensure that the pages are loading within a given time frame and allows users to see which portion of the page delivery is delaying the page load.	Timing Front-End uses fe as the name &lt;arg3&gt;fe=3.75&lt;/arg3&gt; - sets the Front-End max load time to 3.75 seconds.		</p>
+		<p>
+	Timing Back-End uses be as the name &lt;arg3&gt;be=.5&lt;/arg3&gt; - sets the Back-End max load time to .5 seconds.		</p>
+		<p>
+NOTE: It is possible to combine these named arguments, but all argument sets must be set individually or combined!		</p>
+		<p>
+	Combined Dimensions &lt;arg2&gt;w=1800 h=862&lt;/arg2&gt; set the width and height in one argument and requires that each argument have no space between the name, delimiter and value but a space is required to separate the different argument types.		</p>
+		<p>
+	Combined Page Load Timings &lt;arg2&gt;fe=3.75 be=.5&lt;/arg2&gt; set the Front-End and Back-End timing limits  in one argument and requires that each argument have no space between the name, delimiter and value, but a space is required to separate the different argument types.		</p>
+		<p>
+ - Individual times are displayed in Green, when within the allotted time, and in Red, when outside the allotted time. - This check is not part of the Crucial or Conditional functionality and will only display results but never determine  - subsequent functionality.		</p>
+		<p>
+To Navigate, without checking the URL to ensure that navigation occurred properly, to wait 4000 milli-seconds and to set the browser dimensions to (800 x 800).Please note that making this crucial is irrelevant as no assertions will be made.<pre>
 </br>&lt;step&gt;
 	&lt;!-- Command - ALWAYS REQUIRED!!! --&gt;
 	&lt;command&gt;navigate&lt;/command&gt;
@@ -536,14 +577,15 @@ To Navigate, without checking the URL to ensure that navigation occurred properl
 		&lt;!-- second argument optional - Time Delay - default is 4000 if not included but should be included if entering the third parameter --&gt;
 		&lt;arg2&gt;4000&lt;/arg2&gt;
 		&lt;!-- third argument, optional - Window Dimensions width then height separated by space --&gt;
-		&lt;arg3&gt;w=800 h=800&lt;/arg3&gt;
+		&lt;arg3&gt;w=800&lt;/arg3&gt;
+		&lt;arg4&gt;h=800&lt;/arg4&gt;
 	&lt;/arguments&gt;
 &lt;/step&gt;
 </br></pre>
 
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
-<a name="navigationwithsuccessfulnavigationconfirmation" class="sectionTitle">NAVIGATION WITH SUCCESSFUL NAVIGATION CONFIRMATION</a>
+<a name="navigatewithsuccessfulnavigationconfirmation" class="sectionTitle">NAVIGATE WITH SUCCESSFUL NAVIGATION CONFIRMATION</a>
 		<p>
 To Navigate, assert that the URL is what is in the expectedValue node and to wait 4 thousand milli-seconds before making the assertion toallow the page to load,and to check that the Back end loads under .5 seconds and that the Front end loads under 3.75 seconds.PLEASE NOTE: Asserting that the URL is correct does not mean that a server transfer didn't redirect the URL to a different page butleave the URL untouched. <pre>
 </br>&lt;step&gt;
@@ -554,9 +596,9 @@ To Navigate, assert that the URL is what is in the expectedValue node and to wai
 	&lt;arguments&gt;
 		&lt;arg1&gt;https://formy-project.herokuapp.com/form&lt;/arg1&gt;
 		&lt;arg2&gt;4000&lt;/arg2&gt;
-		&lt;arg3&gt;&lt;/arg3&gt;
-		&lt;!-- fourth argument, optional - Back End (BE) and Front End (FE) Page Max Load time in seconds --&gt;
-		&lt;arg4&gt;FE=3.75 BE=.5&lt;/arg4&gt;
+		&lt;!-- optional - Back End (BE) and Front End (FE) Page Max Load time in seconds --&gt;
+		&lt;arg3&gt;fe=3.75&lt;/arg3&gt;
+		&lt;arg4&gt;be=.5&lt;/arg4&gt;
 	&lt;/arguments&gt;
 &lt;/step&gt;
 </br></pre>
@@ -572,7 +614,8 @@ To Navigate, assert that the URL is as expected, add a time delay and set the br
 	&lt;arguments&gt;
 		&lt;arg1&gt;https://formy-project.herokuapp.com/form&lt;/arg1&gt;
 		&lt;arg2&gt;4000&lt;/arg2&gt;
-		&lt;arg3&gt;w=800 h=800&lt;/arg3&gt;
+		&lt;arg3&gt;w=800&lt;/arg3&gt;
+		&lt;arg3&gt;h=800&lt;/arg3&gt;
 	&lt;/arguments&gt;
 &lt;/step&gt;
 </br></pre>
@@ -588,15 +631,17 @@ To Navigate, assert that the URL is as expected, add a time delay, set the brows
 	&lt;arguments&gt;
 		&lt;arg1&gt;https://formy-project.herokuapp.com/form&lt;/arg1&gt;
 		&lt;arg2&gt;4000&lt;/arg2&gt;
-		&lt;arg3&gt;w=800 h=800&lt;/arg3&gt;
-		&lt;arg4&gt;FE=3.75 BE=.5&lt;/arg4&gt;
+		&lt;arg3&gt;w=800&lt;/arg3&gt;
+		&lt;arg4&gt;h=800&lt;/arg4&gt;
+		&lt;arg5&gt;FE=3.75&lt;/arg5&gt;
+		&lt;arg6&gt;BE=.5&lt;/arg6&gt;
 	&lt;/arguments&gt;
 &lt;/step&gt;
 </br></pre>
 
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
-<a name="navigationwithauthenticationwithandwithoutnavigationconfirmation" class="sectionTitle">NAVIGATION WITH AUTHENTICATION WITH AND WITHOUT NAVIGATION CONFIRMATION</a>
+<a name="navigatewithauthenticationwithandwithoutnavigationconfirmation" class="sectionTitle">NAVIGATE WITH AUTHENTICATION WITH AND WITHOUT NAVIGATION CONFIRMATION</a>
 		<p>
 The Navigate command can be used to authenticate while navigating.This is done by passing the username and password as part of the url delimited by a : and ending with the @ symbol.It should be mentioned that this does not work for all authentication which is why there are different authentication methods.Additionally, it should be mentioned that the Authentication and Login commands are not for form based authentication but rather for alert style login popups.For logging into a page that has two input text type form fields, use the send keys command coupled with the click command.To Navigate and Authenticate with username and password and assert that the URL is in the expectedValue node and to wait4 thousand milli-seconds before making the assertion to allow the page to load:<pre>
 </br>&lt;step&gt;
@@ -1317,7 +1362,15 @@ Alternate method of selecting an option from an HTML select element.<pre>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="takingscreenshots" class="sectionTitle">TAKING SCREENSHOTS</a>
 		<p>
-The ScreenShot command takes a screenshot of the current page.To take a screen shot/print screen, the browser will be resized automatically to capture all page content,if browser dimensions are not supplied; however, in the event that browser dimensions are supplied, the browserwill resize to the supplied dimensions.The ability to resize the browser to specific dimensions allows for image pixel comparison as images being comparedmust have the same width and height dimensions.This command allows for overriding the configured screenshot folder and dynamic filename creation and either saving the images with a specified name in the configured screenshot folder or saving the images to a file naame and path specified as &lt;arg1&gt;&lt;/arg1&gt; but if &lt;arg1&gt;&lt;/arg1&gt; is not provided a name is constructed and the file is saved in the configured folder.This command also allows for specifying the browser dimensions so that you get an image the exact size that you need.Specifying the browser dimensions is the same as when navigating, where w= identifies the width value and h= identifiesthe height value as shown here: &lt;arg2&gt;w=1400 h=1000&lt;/arg2&gt;.The ability to name the screenshot allows for executing subsequent Image Comparison steps and speficying the file namesbased on the screenshots being taken.In the following example, a default name will be provided for the  screenshot consisting of the browser used and the test stepwhere the command was called. (This is the default functionality.)<pre>
+The ScreenShot command takes a screenshot of the current page.  		</p>
+		<p>
+To take a screen shot/print screen, the browser will be resized automatically to capture all page content,if browser dimensions are not supplied; however, in the event that browser dimensions are supplied, the browserwill resize to the supplied dimensions. 		</p>
+		<p>
+The ability to resize the browser to specific dimensions allows for image pixel comparison as images being comparedmust have the same width and height dimensions. 		</p>
+		<p>
+This command allows for overriding the configured screenshot folder and dynamic filename creation and either saving the images with a specified name, in the configured screenshot folder, or saving the images to a file name and path specified as &lt;arg1&gt;&lt;/arg1&gt; but if &lt;arg1&gt;&lt;/arg1&gt; is not provided a name is constructed and the file is saved in the configured folder.  		</p>
+		<p>
+This command also allows for specifying the browser dimensions so that you get an image the exact size that you need.Specifying the browser dimensions is the same as when navigating, where w= identifies the width value and h= identifiesthe height value as shown here: &lt;arg2&gt;w=1400 h=1000&lt;/arg2&gt;.NOTE: The Navigation command can also take an optional height and width argument and it does not matter which is used as long as the two images being compared both use the same settings so that they have the same dimensions.The ability to name the screenshot allows for executing subsequent Image Comparison steps and specifying the file namesbased on the screenshots being taken.In the following example, a default name will be provided for the  screenshot consisting of the browser used and the test stepwhere the command was called. (This is the default functionality.)<pre>
 </br>&lt;step&gt;
 	&lt;command&gt;screenshot&lt;/command&gt;
 	&lt;actionType&gt;write&lt;/actionType&gt;
@@ -1347,6 +1400,58 @@ In the following example, the screenshot will be saved to the folder and file na
 	&lt;crucial&gt;false&lt;/crucial&gt;
 	&lt;arguments&gt;
 		&lt;arg1&gt;c:\myScreehShots\Actual\MyScreenShot.png&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
+		</p>
+		<p>
+In the following example, the screenshot will be set to specific width and height dimensions before being saved to the folder and file name provided. 		</p>
+		<p>
+Setting the screenshot dimensions is necessary to guarantee the image size for image comparisons.  		</p>
+		<p>
+IMPORTANT: Only images of the same dimensions can be compared using the Compare Images command. 		</p>
+		<p>
+Include dimension arguments &lt;arg2&gt; and &lt;arg3&gt; and remember that these are named arguments w= for width and h= for height but the order does not matter.		</p>
+		<p>
+IMPORTANT: The dimension setting consists of the name, equal sign and value with no additional spaces.		</p>
+		<p>
+This functionality allows for saving to the file for subsequent image comparisons.This is the preferred command structure when subsequently performing image comparisons.This structure allows for separation of images into separate folders for quickly referencing differences and lists the dimension arguments individually.<pre>
+</br>&lt;step&gt;
+	&lt;command&gt;screenshot&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;false&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;c:\myScreehShots\Actual\MyScreenShot.png&lt;/arg1&gt;
+		&lt;!-- include the image width and height dimensions argument to size the screenshot to those dimensions --&gt;
+		&lt;arg2&gt;w=1400&lt;/arg2&gt;
+		&lt;arg3&gt;h=1000&lt;/arg3&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
+		</p>
+		<p>
+This command is one of two where the dimensions can be set in individual arguments or  grouped together in one argument. 		</p>
+		<p>
+IMPORTANT: When grouping arguments together, the correct grouping is name=value space name=value.		</p>
+		<p>
+	ie. &lt;arg2&gt;w=1400 h=1000&lt;/arg2&gt;
+		</p>
+		<p>
+The following example, is the same as the previous example except with the arguments combined. 		</p>
+		<p>
+It is always best to supply dimensions so that image comparisons can be made later.		</p>
+<pre>
+</br>		<p>
+&lt;step&gt;
+	&lt;command&gt;screenshot&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;crucial&gt;false&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;c:\myScreehShots\Actual\MyScreenShot.png&lt;/arg1&gt;
+		&lt;!-- include the image width and height dimensions argument to size the screenshot to those dimensions --&gt;
+		&lt;arg2&gt;w=1400 h=1000&lt;/arg2&gt;
 	&lt;/arguments&gt;
 &lt;/step&gt;
 </br></pre>
@@ -2200,9 +2305,40 @@ The Check GA4 Tag command checks the configured values against a list of GTM GA4
 
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
+<a name="showallgoogleanalyticstags(uaandorga4)-showallgatags" class="sectionTitle">SHOW ALL GOOGLE ANALYTICS TAGS (UA AND OR GA4) - show all ga tags</a>
+		<p>
+The Show all Google Analytics tags command displays all tags fired during the test.		</p>
+		<p>
+This command can be configured to display all (both GA4 and UA tags), ga4(just Ga4 tags) or ua (just UA tags)		</p>
+		<p>
+Additionally, this command can be set to limit the number of GA4 parameters displayed because all GA4 parameters are captured.		</p>
+		<p>
+UA Tags by design were limited to just a specific set of fields, so all fields will be displayed.		</p>
+		<p>
+IMPORTANT: Only unique GA4 Tags are displayed so ensure that when limiting GA4 display parameters that one or more unique values are configured.		</p>
+		<p>
+	&lt;arg1&gt; - The first argument for this command is required and specifies the type of tags to display.		</p>
+		<p>
+		If not provided, the default of all will be used.		</p>
+		<p>
+	&lt;arg2&gt;This argument specifies the limited GA4 parameters to display.<pre>
+</br>&lt;step&gt;
+	&lt;command&gt;show all ga tags&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;arguments&gt;
+	&lt;!-- possible values for arg1 are: ua, ga4, all (default) --&gt;		&lt;arg1&gt;all&lt;/arg1&gt;
+		&lt;arg2&gt;limit ga4 tags=dl,tid,ep.gtm_settings,ep.site_section,ep.page_template,en,ep.gtm_tag_name,ep.product_name,ep.product_category&lt;/arg2&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
+		</p>
+<span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="saveconsolelogtofile" class="sectionTitle">SAVE CONSOLE LOG TO FILE</a>
 		<p>
 IMPORTANT: This command currently only works for the Chrome browser!!!		</p>
+		<p>
+Because the Console Logs are automatically saved prior to Page Navigation and in the Tear down method, it is strongly suggested that you not use this command unless it is absolutely necessary to capture the log at a specific point in time.Instead of using this command, use the default console log as using this command may cause the default to miss certain console log events. 		</p>
 		<p>
 The Save Console Log command saves the console log to a file, which can be specified by including the file name as the first argument &lt;arg1&gt;filename&lt;/arg1&gt;, or a default file name will be constructed based on the log file name.When testing a page, there may be several reasons that the console log may be necessary to see as an error could prevent other commands from working as expected, or a prior JavaScript command may be writing to the console so that more information can be retrieved from the page in addition to the expected vs actual values.		</p>
 		<p>
@@ -2230,7 +2366,7 @@ It is suggested that this command be issued prior to navigation to capture all l
 	&lt;actionType&gt;read&lt;/actionType&gt;
 	&lt;arguments&gt;
 		&lt;!-- File Name to save console log file --&gt;
-		&lt;arg1&gt;C:\Gary\Java Utilities\Console logs\console_log.txt&lt;/arg1&gt;
+		&lt;arg1&gt;C:\MyFiles\MyParentFolder\Console logs\console_log.txt&lt;/arg1&gt;
 		&lt;!-- type of log to include. Values include: info, warn, error, debug, all - all is default if not provided --&gt;
 		&lt;arg2&gt;Info&lt;/arg2&gt;
 		&lt;!-- true for message only else message and level Ie.. message - level.  Message - level is the default if not provided --&gt;
@@ -2253,7 +2389,11 @@ If the log file is not present, there was no console logging performed or a prio
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="combineconsolelogs" class="sectionTitle">COMBINE CONSOLE LOGS</a>
 		<p>
-For a simple test, only 1 console log file may be produced, but for multiple page testing or an Entire Site test, a new Console log file is generated for each page, by default with no command specified, so to see all logs in one place, it may be necessary to combine these into one file.IMPORTANT: For subsequent runs, the existing combined file will be deleted before creating the new combined file, with the same name.	If keeping multiple combined files for the same console logs is desired, use a different alternate file name, or rename them 	in the folder manually.		</p>
+For a simple test, only 1 console log file may be produced, but for multiple page testing or an Entire Site test, a new Console log file is generated for each page, by default with no command specified, so to see all logs in one place, it may be necessary to combine these into one file.IMPORTANT: #1 For subsequent runs, the existing combined file will be deleted before creating the new combined file, with the same name.	If keeping multiple combined files for the same console logs is desired, use a different alternate file name, or rename them 	in the folder manually.		</p>
+		<p>
+IMPORTANT: #2 When running multiple different tests, only one combine command can be run with a group of other tests.		</p>
+		<p>
+	To combine multiple different test runs, run the combines after the tests run and then use the root file name argument to combine the 	separate runs into the corresponding composite console logs.		</p>
 		<p>
 The Combine Console Logs command first, finds all files based on the root file name provided, then based on the command configuration either includes or excludes the log level, includes or excludes the console-api prefix, starts at a particular phrase, excludes a comma delimited list of phrases, removes headers based on the header end delimiter , can add a dashed line at the last header delimiter prior to the length break indicator value provided, and allows for an alternate more descriptive file name to be used in place of the default file name.It is suggested that you create a bare bones Combine Console Logs test with just the root file name to see the full log before adding the optional parameters that are intended to remove some log content.Doing so, will display issues that may be overlooked when consolidating with the optional parameters.As these are named arguments, the order of the arguments does not matter but the required parameters must be present.		</p>
 		<p>
@@ -2348,7 +2488,7 @@ If the href contains a domain, the domain is checked against the domain restrict
 	&lt;actionType&gt;read&lt;/actionType&gt;
 	&lt;arguments&gt;
 		&lt;!-- Required: file name where results are to be saved. --&gt;
-		&lt;arg1&gt;C:\Gary\Java Utilities\Spyder Files\MySite.txt&lt;/arg1&gt;
+		&lt;arg1&gt;C:\myFiles\MyFirstFolder\Spyder Files\MySite.txt&lt;/arg1&gt;
 		&lt;!-- Required: Domain restriction must end with forward slash (/). --&gt;
 		&lt;arg2&gt;https://www.mycoolsite.com/&lt;/arg2&gt;
 		&lt;!-- Required: The sitemap URL or leave empty --&gt;
@@ -2356,11 +2496,121 @@ If the href contains a domain, the domain is checked against the domain restrict
 		&lt;!-- Optional: additional pages to crawl for URLs --&gt;
 		&lt;arg4&gt;https://www.mycoolsite.com/products&lt;/arg4&gt;
 		&lt;arg5&gt;https://www.mycoolsite.com/recipes&lt;/arg5&gt;
-		&lt;arg5&gt;https://www.mycoolsite.com/articles&lt;/arg5&gt;
-		&lt;arg5&gt;https://www.mycoolsite.com/legal&lt;/arg5&gt;
+		&lt;arg6&gt;https://www.mycoolsite.com/articles&lt;/arg6&gt;
+		&lt;arg7&gt;https://www.mycoolsite.com/legal&lt;/arg7&gt;
 	&lt;/arguments&gt;
-<pre>
+&lt;/step&gt;
+</br></pre>
+
+		</p>
+<span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
+<a name="setcookie" class="sectionTitle">SET COOKIE</a>
+		<p>
+This command allows you to set one or more cookies. When testing a site, it is sometimes necessary to set a cookie to expose certain functionality. There may be actions that are required to create the cookie on the site, but instead of completing these actions to set the cookie, using this command allows for directly setting the cookies without creating a list of test steps to expose the desired results. 		</p>
+		<p>
+The cookie name, value, expires, path and domain values can all be set using this command. Each value is semi-colon delimited, and although value parameters may contain html encoded values containing a semi-colon that value will be decoded and those semi-colons will not be recognized by the application. Most values are fairly straightforward, with the exception of the expires value. 		</p>
+		<p>
+The expires value is an hourly multiplier, so if you set the expires to 1, the cookie will expire in 1 hour, setting it to 2 will set the cookie to expire in 2 hours etc... 		</p>
+		<p>
+For testing, it is not necessary to set this value too far into the future as it only needs to last as long as the test is running.  Any singular test running for over 3 hours will likely timeout, so for complex testing, splitting test steps up into separate files may be the best option to ensure success.  		</p>
+		<p>
+IMPORTANT NOTE: The domain must match the site being tested and cannot be for another site, or a domain mismatch error will occur.  		</p>
+		<p>
+Alternatively, the Check Javascript Value command can also be used to set a cookie but will require JavaScript knowledge to do so.		</p>
+		<p>
+If this command is set to be crucial, the cookie will be read after being set and compared to the set value and if the cookie contains the set value, it passes the assertion.		</p>
+		<p>
+	There is one required argument for this command, but any number of arguments can be added to create as many cookies as necessary.		</p>
+		<p>
+	&lt;arg1&gt;Cookie Parameters are delimited by a semi-colon and parameter names and values are separated by an equal ("=") sign.		</p>
+		<p>
+	The Cookie Name is first, followed by an equal sign ("=") and then the Cookie Value followed by a semi-colon (";").		</p>
+		<p>
+	Subsequent parameters follow the same format with the parameter name, followed by by an equal sign ("=") and then the parameter value.		</p>
+		<p>
+	To set a complex cookie with all parameters set, refer to &lt;arg1&gt; in the example below.		</p>
+		<p>
+	For a basic cookie with just a value set, refer to &lt;arg2&gt; in the example below.<pre>
 </br>&lt;step&gt;
+	&lt;command&gt;set cookie&lt;/command&gt;
+	&lt;actionType&gt;Write&lt;/actionType&gt;
+	&lt;crucial&gt;True&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;!-- Required: At least one cookie to be set --&gt;
+		&lt;arg1&gt;CookieName=CookieValue=0&amp;datestamp=Thu+Aug+31+2023+15%3A48%3A44+GMT-0400+(Eastern+Daylight+Time)&amp;version=12345.6.0;expires=2;path=/;domain=.mycoolsite.com;secure=true&lt;/arg1&gt;
+		&lt;!-- Optional any number of additional cookies:		 Simple cookie --&gt;
+		&lt;arg2&gt;OtherCookieName=2023-08-31T19:48:43.993Z&lt;/arg2&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
+		</p>
+<span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
+<a name="getallcookies" class="sectionTitle">GET ALL COOKIES</a>
+		<p>
+This command allows you to get all cookies for the current domain.  Using this command, will retrieve the cookie name, value, expiration, path, domain and if the cookie is secure or not. 		</p>
+		<p>
+At this time, only cookies from the current domain can be read because reading cookies from other domains requires saving the Network information and that can make the HAR file exponentially larger, for instance a HAR file without Network information that is approximately 300kb in size, would be 95MB with Network information and running this application that automatically saves HAR files could quickly deplete a computer's free space. 		</p>
+		<p>
+In the future, functionality will be added to iterate through the Network information and retrieve the cookie information for all domains.This command has two arguments with the first being required if providing the second.		</p>
+		<p>
+If the first argument is not provided, do not provide the second argument as that will cause the application to believe that the second argument is actually the first argument and an error will occur. 		</p>
+		<p>
+If the application is being used to retrieve cookies, it is assumed that the information needs to be available separately from the log to isolate this information for review.If there is no need to save this information to a separate file, use this command with NO ARGUMENTS or keep &lt;arg1&gt; empty.		</p>
+		<p>
+	&lt;arg1&gt;This is the file name where the Cookie information can be saved separately from the test log.		</p>
+		<p>
+	&lt;arg2&gt;This is the save type directive which can be overwrite, append or new and these settings depend upon the file name used.		</p>
+		<p>
+	If the file does not exist, the file will be created and the cookie information saved to the file.		</p>
+		<p>
+		Overwrite - overwrites the file if the file already exists.		</p>
+		<p>
+		Append - appends the current information to any existing information in an existing file or writes to a new file if the file does not exist.		</p>
+		<p>
+		New - Deletes the existing file and then writes the content to a new file with the same name.The following command saves the cookie information to a file, overwriting the existing file.		</p>
+<pre>
+</br>		<p>
+&lt;step&gt;
+	&lt;command&gt;get all cookies&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;True&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;c:\myfiles\myCookieInformation.txt&lt;/arg1&gt;
+		&lt;!-- overwrite, append, new --&gt;
+		&lt;arg2&gt;overwrite&lt;/arg2&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
+		</p>
+		<p>
+The following command does not save the cookie information to a separate file.		</p>
+<pre>
+</br>		<p>
+&lt;step&gt;
+	&lt;command&gt;get all cookies&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;True&lt;/crucial&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;&lt;/arg1&gt;
+		&lt;arg2&gt;&lt;/arg2&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
+		</p>
+		<p>
+The following command also does not save the cookie information to a separate file.		</p>
+<pre>
+</br>		<p>
+&lt;step&gt;
+	&lt;command&gt;get all cookies&lt;/command&gt;
+	&lt;actionType&gt;read&lt;/actionType&gt;
+	&lt;crucial&gt;True&lt;/crucial&gt;
+&lt;/step&gt;
+</br></pre>
+
 		</p>
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 		</div>
