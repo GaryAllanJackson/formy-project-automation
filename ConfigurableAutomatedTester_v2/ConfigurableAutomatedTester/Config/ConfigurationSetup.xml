@@ -5,8 +5,8 @@
 	<maxScreenShotsToTake>5</maxScreenShotsToTake>	
 	<!-- <browserType>edge</browserType> -->
 	<!-- <browserType>internet explorer</browserType> -->
-	<browserType>Chrome</browserType>
-	<!-- <browserType>Firefox</browserType> -->
+	<!-- <browserType>Chrome</browserType> -->
+	<browserType>Firefox</browserType>
 	<!-- <browserType>phantomjs</browserType> -->
 	<runHeadless>false</runHeadless>
 	<testAllBrowsers>false</testAllBrowsers>
@@ -20,7 +20,217 @@
 	
 	<!-- Individual File Settings -->
 	<testFiles>
+		<!-- alphabetical order -->	
+		<!-- RFP Tests -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Tests\Absorb-Tagging-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Users\gjackson\Desktop\Gary\Excel Programming\Read GTM.js Files\Absorb-gtm.js-test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\Spider-TKMaxx-Test.xml</testFileName1> -->
 		
+		<!-- MeowMix -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\MeowMix\MeowMix-Tests\MeowMix-EDL2.0-ArticleClicks-Test.xml</testFileName1> -->
+		
+		<!-- Dunkin -->
+		<testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Dunkin\Dunkin-Tests\Dunkin EDL 2.0 Product Clicks-Test.xml</testFileName1>
+		
+		<!-- Smuckers -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Smuckers\Smuckers-Tests\FolgersSmuckers EDL 2.0 GA4 Page View Tag-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Smuckers\Smuckers-Tests\Smuckers EDL 2.0 Article Clicks.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\Consolidate-Console-log-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Smuckers\Smuckers-Tests\Smuckers EDL 2.0 Article Social Share.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\Consolidate-Console-log-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Smuckers\Smuckers-Tests\Smuckers EDL 2.0 Buy Now Clicks.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\Consolidate-Console-log-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Smuckers\Smuckers-Tests\Smuckers EDL 2.0 Category View.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\Consolidate-Console-log-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Smuckers\Smuckers-Tests\Smuckers EDL 2.0 Consent Script and Form.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\Consolidate-Console-log-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Smuckers\Smuckers-Tests\Smuckers EDL 2.0 DataLayerReady.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\Consolidate-Console-log-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Smuckers\Smuckers-Tests\Smuckers EDL 2.0 Footer Clicks.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Smuckers\Smuckers-Tests\Smuckers EDL 2.0 Hero Carousel Click.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Smuckers\Smuckers-Tests\Smuckers EDL 2.0 Main Menu Click.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Smuckers\Smuckers-Tests\Smuckers EDL 2.0 Main Menu Expanded Click.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Smuckers\Smuckers-Tests\Smuckers EDL 2.0 Product Clicks.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\Consolidate-Console-log-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Smuckers\Smuckers-Tests\Smuckers EDL 2.0 Product View.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\Consolidate-Console-log-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Smuckers\Smuckers-Tests\Smuckers EDL 2.0 Recipe Clicks.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\Consolidate-Console-log-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Smuckers\Smuckers-Tests\Smuckers EDL 2.0 Recipe Social Share.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\Consolidate-Console-log-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Smuckers\Smuckers-Tests\Smuckers EDL 2.0 Recipe View.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\Consolidate-Console-log-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Smuckers\Smuckers-Tests\Smuckers EDL 2.0 Sign Up Field Data Attributes.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Smuckers\Smuckers-Tests\Smuckers EDL 2.0 WTB Form Submit.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Smuckers\Smuckers-Tests\Smuckers EDL 2.0 WTB Product Click.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Smuckers\Smuckers-Tests\Smuckers Privacy Links.xml</testFileName1> -->
+		
+		<!-- Uncrustables Tests -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Uncrustables\Uncrustables-Tests\Uncrustables EDL 2.0 Article Social Share.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Uncrustables\Uncrustables-Tests\Uncrustables EDL 2.0 Buy Now Clicks.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Uncrustables\Uncrustables-Tests\Uncrustables EDL 2.0 Consent Script and Form.xml</testFileName1> -->
+		<!-- <testFileName2>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Uncrustables\Uncrustables-Tests\Uncrustables EDL 2.0 DataLayerReady.xml</testFileName2> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Uncrustables\Uncrustables-Tests\Uncrustables EDL 2.0 Contact Us Field Data Attributes.xml</testFileName1> -->
+		<!-- <testFileName2>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Uncrustables\Uncrustables-Tests\Uncrustables EDL 2.0 Hero Carousel Click.xml</testFileName2> -->
+		<!-- <testFileName3>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Uncrustables\Uncrustables-Tests\Uncrustables EDL 2.0 Main Menu Click.xml</testFileName3> -->
+		<!-- <testFileName4>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Uncrustables\Uncrustables-Tests\Uncrustables EDL 2.0 Main Menu Expanded Click.xml</testFileName4> -->
+		<!-- <testFileName5>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Uncrustables\Uncrustables-Tests\Uncrustables EDL 2.0 Mobile Menu Clicks.xml</testFileName5> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Uncrustables\Uncrustables-Tests\Uncrustables EDL 2.0 PDP Social Share.xml</testFileName1> -->
+		<!-- <testFileName2>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Uncrustables\Uncrustables-Tests\Uncrustables EDL 2.0 Product Clicks.xml</testFileName2> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Uncrustables\Uncrustables-Tests\Uncrustables Privacy Links.xml</testFileName1> -->
+		<!-- <testFileName2>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Uncrustables\Uncrustables-Tests\Uncrustables EDL 2.0 Sign Up Field Data Attributes.xml</testFileName2> -->
+		<!-- <testFileName3>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Uncrustables\Uncrustables-Tests\Uncrustables EDL 2.0 WTB Form Submit.xml</testFileName3> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Uncrustables\Uncrustables-Tests\Uncrustables-EDL2.0-Contact Us General Questions Form Submit.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Uncrustables\Uncrustables-Tests\Uncrustables-EDL2.0-Contact Us Product Questions Form Submit.xml</testFileName1> -->
+		<!-- <testFileName4>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Uncrustables\Uncrustables-Tests\Uncrustables EDL 2.0 WTB Product Click.xml</testFileName4> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\OneTrust\OneTrust Tests\OneTrust-Consent-Cookie-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\Consolidate-Console-log-Test.xml</testFileName1> -->
+		<!-- GA4 Tag Testing -->
+		<!-- Folgers OP Testing -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Folgers\Folgers-Tests\Folgers EDL 2.0 OneTrust Consent Script and Form-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Folgers\Folgers-Tests\Folgers EDL 2.0 Privacy Links.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Folgers\Folgers-Tests\Folgers EDL 2.0 Mobile Menu Open and Close Clicks.txt</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Folgers\Folgers-Tests\Folgers EDL 2.0 Main Menu Click-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\Consolidate-Console-log-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Folgers\Folgers-Tests\Folgers EDL 2.0 Main Menu Expanded Click-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\Consolidate-Console-log-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Folgers\Folgers-Tests\Folgers EDL 2.0 Contact Us General Questions Form Submit-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\Consolidate-Console-log-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Folgers\Folgers-Tests\Folgers EDL 2.0 Contact Us Product Questions Form Submit-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\Consolidate-Console-log-Test.xml</testFileName1>		 -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Folgers\Folgers-Tests\Folgers EDL 2.0 Product Clicks-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\Consolidate-Console-log-Test.xml</testFileName1> -->
+		
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Folgers\Folgers-Tests\Folgers EDL 2.0 PDP Social Share-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\Consolidate-Console-log-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Folgers\Folgers-Tests\Folgers EDL 2.0 DataLayerReady-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\Consolidate-Console-log-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Folgers\Folgers-Tests\Folgers EDL 2.0 Buy Now Clicks-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\Consolidate-Console-log-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Folgers\Folgers-Tests\Create-Folgers-PLP-Page-Test.xml</testFileName1> -->
+		
+		<!-- Tests Created byt the Configurable Automated Test create_test_page_formatted command -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Folgers\Folgers-Tests\Create-Folgers-k-Cup-Black-Silk-PDP-Page-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Folgers\Folgers-Tests\Folgers-PDP-K-Cup-Black-Silk-Page-AutoCreated-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Folgers\Folgers-Tests\Folgers-PDP-K-Cup-Black-Silk-Page-AutoCreated-Test2.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Folgers\Folgers-Tests\Folgers-PDP-K-Cup-Black-Silk-Page-AutoCreated-Test-Fixed.xml</testFileName1> -->
+
+		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester_v2\Tests\GetAllCookies-Test.xml</testFileName1> -->
+		
+		
+		
+		
+		
+		<!-- <testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\Consolidate-Console-log-Alt-Test.xml</testFileName1> -->
+		
+		<!-- Folgers -->
+		
+		
+		
+		
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\Folgers\Folgers-Tests\Folgers EDL 2.0 Contact Us Field Data Attributes-Test.xml</testFileName1> -->
+		
+		
+		
+		<!-- JIF -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\New Test Files\JIF\JIF-UA-ProductClick-GTM-Tagging-Test.xml</testFileName1> -->
+		<!-- Smuckers -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\JMS Used for Example\Smuckers-GA4-Test.xml</testFileName1> -->
+		
+		<!-- CAB OP Testing -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\New Test Files\CAB\Compare-CAB-Homepage-Screenshots-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\New Test Files\CAB\Take-CAB-HomePage-Screenshots-Tests.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\CAB\CAB-Tests\CAB-EDL2.0-RLP Recipe Clicks-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\CAB\CAB-Tests\CAB-EDL2.0-Recipe View-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\CAB\CAB-Tests\CAB-EDL2.0-Recipe Clicks-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\CAB\CAB-Tests\CAB-EDL2.0-Read Reviews.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\CAB\CAB-Tests\CAB-EDL2.0-Product View + Detail-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\CAB\CAB-Tests\CAB-EDL2.0-Product Impressions-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\CAB\CAB-Tests\CAB-EDL2.0-Product Clicks + Ecomm-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\CAB\CAB-Tests\CAB-EDL2.0-Privacy Links-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\CAB\CAB-Tests\CAB-EDL2.0-PDP Social Share-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\CAB\CAB-Tests\CAB-EDL2.0-DataLayerReady-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\Excel Automated Test Writer\JavaScript Files\CAB\CAB-Tests\CAB-BuyNow-Click-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\GA4_Tests\Milkbone-BuyNow-Click-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\GA4_Tests\Spider-Milkbone-Alt-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\GA4_Tests\Spider-Milkbone-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\Consolidate-Console-log-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\Java Utilities\All Configurable Automated Tester Test Files\Example Test Files\Consolidate-Console-log-No-Parameter-Values-Test.xml</testFileName1> -->
+		
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\GA4_Tests\Milkbone-DataLayerReady-1 Page-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\GA4_Tests\Milkbone-DataLayerReady-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\GA4_Tests\Sahale-PLP-BuyNowClick-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\GA4_Tests\Entire-Site-Command-Template.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\GA4_Tests\Dunkin-New-PCP-Format-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\GA4_Tests\Smuckers-GA4-Test.xml</testFileName1> -->
+		<!-- Check A Href Testing -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\GA4_Tests\Smuckers-check_a_href-Test.xml</testFileName1> -->
+		
+		
+		<!-- Excel Automated Test Writer Testing -->
+		<!-- <testFileName1>C:\My Automated Test Files\test1.xml</testFileName1> -->
+		<!-- <testFileName1>C:\My Automated Test Files\Smuckers-PLP-ProductClick-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\My Automated Test Files\JIF-EDL2.0-Test1.xml</testFileName1> -->
+		<!-- <testFileName1>C:\My Automated Test Files\Milkbone-EDL2.0-Test1.xml</testFileName1> -->
+		<!-- <testFileName1>C:\My Automated Test Files\Milkbone-EDL2.0-ArticleClick-Test1.xml</testFileName1> -->
+		<!-- <testFileName1>C:\My Automated Test Files\Milkbone-EDL2.0-MainMenuExpandedClick-Test1.xml</testFileName1> -->
+		
+		<!-- JMS GTM Tag Testing -->
+		<!-- Test SCO PLP Page Product Clicks and Buy Now CTA Clicks -->
+		
+		<!-- JMS Redirect Tests -->
+		<!-- <testFileName1>C:\Gary\TestFiles\Smuckers-Redirects-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\TestTemplate-SCO-PLP-Page-ProductAndBuyNowClick-Test1.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\TestTemplate-SMK-PLP-Page-ProductAndBuyNowClick-Test1.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\TestTemplate-SCO-PLP-Page-ProductClick-Test3.xml</testFileName1> -->
+		<!-- Test SCO PLP Page Product Clicks -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\TestTemplate-SCO-PLP-Page-ProductClick-Test2.xml</testFileName1> -->
+		<!-- [ End of MS GTM Tag Testing ]-->
+		
+		<!-- JMS EPC PageView Testing -->
+		<!-- <testFileName1>C:\Gary\TestFiles\AllBrandSearchResults-DL-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\My Automated Test Files\RFPs\tkmaxx-UK-GetAllLinks-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\NutrishRedesign-Find-Videos.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\NutrishRedesign-Find-IDP-Featured-Prod-Art.xml</testFileName1> -->
+		
+		<!-- <testFileName1>C:\My Automated Test Files\Jif-RLP-Test1.xml</testFileName1> -->
+		<!-- <testFileName1>C:\My Automated Test Files\Smuckers-RLP-Test1.xml</testFileName1> -->
+		<!--<testFileName1>C:\My Automated Test Files\Dunkin-EDL2.0-ProductClick-Test1.xml</testFileName1>-->
+		<!-- <testFileName1>c:\My Automated Test Files\Dunkin-EDL2.0-Test1.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\1850-Staging-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\My Automated Test Files\Multi-Brand-BuyNow-Gtin-DataAttribute-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\My Automated Test Files\Smuckers-Automated-ProductClick-Test1.xml</testFileName1> -->
+		<!-- <testFileName1>C:\My Automated Test Files\Smuckers-Automated-Test1.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\CAB_AddToCartClick-Tests.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\Smuckers-Redirect-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\CAB_ProductClick-Tests.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\CAB-EComm-Product-Detail-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\ObservePoint-Verification-tests\SubmitReview-Test.xml</testFileName1>				    -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\CAB-ProductDetail-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\CAB-Product-Impressions-Test.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\Missing-Har-ProductIds-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-Pupperoni-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-Cafe-Bustelo-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-TruRoots-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-Sahale-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-RW-Knudsen-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-Smuckers-Uncrustables-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-Smuckers-Nav-Test-for-EPC-PromoId2.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-Smuckers-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-Nutrish-Nav-Test-for-EPC-PromoId2.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-Nutrish-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-Natures-Recipe-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-Milkbone-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-MeowMix-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-JIF-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-Folgers-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\JMS Test Files\JMS-Dunkin-at-Home-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
+		<!-- OLD JMS EPC PageView Testing -->
+		<!-- <testFileName1>C:\Gary\TestFiles\Nutrish-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\Folgers-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\Dunkin-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
+		<!-- <testFileName1>C:\Gary\TestFiles\CAB-Nav-Test-for-EPC-PromoId.xml</testFileName1> -->
+		<!-- [ End of JMS EPC testing ]-->
 		
 		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester_v2\Tests\Double-Tagging-Test1.xml</testFileName1> -->
 		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester_v2\ProductView-Name-Category-Test.xml</testFileName1> -->
@@ -45,7 +255,8 @@
 		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester_v2\Tests\CheckPageWithoutNavigation-Test.xml</testFileName1> -->
 			
 			
-		<!-- Group 3 - Single or Specific Element checks -->		
+		<!-- Group 3 - Single or Specific Element checks -->
+		
 		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester_v2\Tests\CheckSingleImageSrcWithSeparateNavigationStep-Test.xml</testFileName1> -->
 		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester_v2\Tests\CheckSpecificAnchorhref-Test.xml</testFileName1> -->
 		<!-- <testFileName1>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester_v2\Tests\CheckSpecificImageSource-Test.xml</testFileName1> -->

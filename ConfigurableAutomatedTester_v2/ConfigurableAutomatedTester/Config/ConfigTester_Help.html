@@ -217,6 +217,7 @@
 		<a href="#spidersiteorspydersite" class="tableOfContentsLink">SPIDER SITE or SPYDER SITE</a>
 		<a href="#setcookie" class="tableOfContentsLink">SET COOKIE</a>
 		<a href="#getallcookies" class="tableOfContentsLink">GET ALL COOKIES</a>
+		<a href="#deletecookies" class="tableOfContentsLink">DELETE COOKIES</a>
 		<span class="tableOfContentsSectionHeader">INCLUDED TEST FILES</span>
 		<a href="#testfilesdescribed" class="tableOfContentsLink">TEST FILES DESCRIBED</a>
 		<span class="tableOfContentsSectionHeader">Troubleshooting</span>
@@ -492,6 +493,8 @@ It is suggested to navigate to the sitemap page or another page where all site l
 		<p>
 All Actions that fall between the "Entire Site Commands Start", and the "Entire Site Commands End" commands  will be repeated for every URL retrieved from the current page, as well as URLs retrieved from the pages to scan,  which are arguments &lt;arg2&gt;&lt;/arg2&gt; - &lt;arg20&gt;&lt;/arg20&gt;,  when the start command executes.		</p>
 		<p>
+The first argument &lt;arg1&gt;&lt;/arg1&gt; is reserved for restricting the pages based on a domain or a partial page path. If the domain protocol is present, this will be used as a domain restriction to weed out links to outside domains. If only a page path is present, any links containing that page path will be used, which may include non-domain links. If this argument is not present, all links retrieved will be used so consider this if social or non-domain links may be present.		</p>
+		<p>
 This powerful functionality allows for reducing the test file length considerably, while performing the same tests on multiple pages.This command begins by retrieving all links from the current page and the pages to scan, then loops through pages starting with  current page executing all commands between the "Entire Site Commands Start" and "Entire Site Commands End" commands.  		</p>
 		<p>
 The Check Entire Site Start command CANNOT BE the first command of a test!!!  		</p>
@@ -518,7 +521,8 @@ Some examples: 		</p>
 	&lt;!-- Command - ALWAYS REQUIRED!!! --&gt;
 	&lt;command&gt;entire site commands start&lt;/command&gt;
 	&lt;arguments&gt;
-		&lt;!-- first argument expected by the command is the URL portion to limit execution --&gt;
+		&lt;!-- first argument expected by the command is the URL portion to limit execution, if empty, there will be no restriction and  --&gt;
+		&lt;!-- if part of a page path, any links that include that page path, may also be included --&gt;
 		&lt;arg1&gt;https://www.mycoolcite.com/&lt;/arg1&gt;
 		&lt;!-- remaining optional arguments for this command are additional pages beyond the current page to scan for URLs from Anchor tags(a) --&gt;
 		&lt;arg2&gt;https://www.mycoolsite.com/products&lt;/arg2&gt;
@@ -1636,7 +1640,13 @@ There are times when you may need to search for a portion of text but do not kno
 <span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
 <a name="createtestpagecommandtocreatepagetestsorforprovidingdatatohelpcreatetests" class="sectionTitle">CREATE TEST PAGE COMMAND TO CREATE PAGE TESTS OR FOR PROVIDING DATA TO HELP CREATE TESTS</a>
 		<p>
-IMPORTANT NOTE #1: ANY PARENT ELEMENT WILL CONTAIN THE TEXT OF IT'S CHILD ELEMENT(s) SO TO GET THE ELEMENT THAT ACTUALLY 			CONTAINS THE INFORMATION DESIRED, TRY TO ELIMINATE THE HIERARCHICAL ITEMS ABOVE THAT ARE NOT DESIRED, 			LIKE CONTAINER ELEMENTS.  Examples include (html,head,body,div,table)IMPORTANT NOTE #2: ENSURE THAT YOUR FILE PATH DOES NOT CONTAIN ANY KEYWORD USED FOR ANY OTHER ACTION, OR YOU WILL GET UNEXPECTED RESULTS!!!  A test file needs to be created and you would like to spare yourself the hassle of looking up elements, associated properties and attributes.  This may be especially helpful in the early stages of testing where with development and content updates, test step updates can occur but this  process can quickly get the initial test steps created.  To do this, create a test script, with a Navigate command, to Navigate to the page to be tested and then use the   create_test_page command or the create_test_page_formatted command.  The create_test_page command outputs key value information so that a determination can be made to as to whether an item should be tested and   it provides all of the information to create the test command but it is not formatted as a test command.  The create_test_page_formatted command outputs the element information in a test command format allowing for quick copy and paste to a test file.  Both files indicate if an element is visible, if an a tag is acting as an anchor or a link.  The Formatted File, will create tests for a tags that check text and href, for images that check src, for text fields it create tests that 	 compare text provided with the element text, for text input it creates a sendkeys, for buttons, checkboxes and radio buttons it creates	 a click, and for selects it creates a select command, allowing the user to enter one of the option values that is to be selected.  The create_test_page command and the create_test_page_formatted command take the following test parameters:   - arg1 is the Tag Type.  Use * for all tags, or div for just div tags etc...		 -    Element Type: A single element with * being all elements and the default if left empty.			 -   Elements Include but are not limited to: *, html, head, title, body, a, ol, ul, li, select, input etc...			 -   If omitted, this will be * for all elements.   - arg2 is the File where the Tags will be written.		 -    File Path and File Name: This is where the results will be written.			 -   If omitted, this will be written to the config folder. (/config/newTestFile.txt)   - arg3 is the comma delimited list of Tags to exclude.		 -    A comma delimited list of elements to skip when retrieving all element (*) information.			 -   These would usually be elements that do not have text themselves but contain elements that do have text.			 -   Do not include spaces between elements, just a comma as follows: html,head,title,body,div			 -   Skip elements are ONLY APPLIED WHEN RETRIEVING ALL ELEMENTS and IGNORED WHEN RETRIEVING A SPECIFIC TAG TYPE.  The following examples get all page elements except those container elements listed to skip, save them to a file,   and create test step XML files that can be used immediately.<pre>
+IMPORTANT NOTE #1: ANY PARENT ELEMENT WILL CONTAIN THE TEXT OF IT'S CHILD ELEMENT(s) SO TO GET THE ELEMENT THAT ACTUALLY 			CONTAINS THE INFORMATION DESIRED, TRY TO ELIMINATE THE HIERARCHICAL ITEMS ABOVE THAT ARE NOT DESIRED, 			LIKE CONTAINER ELEMENTS.  Examples include (html,head,body,div,table)IMPORTANT NOTE #2: ENSURE THAT YOUR FILE PATH DOES NOT CONTAIN ANY KEYWORD USED FOR ANY OTHER ACTION, OR YOU WILL GET UNEXPECTED RESULTS!!!  A test file needs to be created and you would like to spare yourself the hassle of looking up elements, associated properties and attributes.  This may be especially helpful in the early stages of testing where with development and content updates, test step updates can occur but this  process can quickly get the initial test steps created.  To do this, create a test script, with a Navigate command, to Navigate to the page to be tested and then use the   create_test_page command or the create_test_page_formatted command.  The create_test_page command outputs key value information so that a determination can be made to as to whether an item should be tested and   it provides all of the information to create the test command but it is not formatted as a test command.  The create_test_page_formatted command outputs the element information in a test command format allowing for quick copy and paste to a test file.  Both files indicate if an element is visible, if an "a" tag is acting as an anchor or a link.  The Formatted File, will create tests for a tags that check text and href, for images that check src, for text fields it create tests that 	 compare text provided with the element text, for text input it creates a sendkeys, for buttons, checkboxes and radio buttons it creates	 a click, and for selects it creates a select command, allowing the user to enter one of the option values that is to be selected.	 Additionally, the tests check for GA4 and UA tags that were fired and includes tag parameters for these to ensure that the correct 	 tag is identified.IMPORTANT NOTE #3: For all arguments that contain comma delimited lists, do not include spaces between words, but ensure that a comma does  separate the words to ensure that just the item specified is handled accordingly.		</p>
+		<p>
+			For UA Tagging, this includes the document location (dl), the tag event type (t), Event Category, (ec) 	 Event Action (ea), Event Label (el), Tracking Id (tid), and Cotent Group 1 (cg1)		</p>
+		<p>
+			For GA4 Tagging, this includes all parameters with the exception of the following: 			 ep.hit_timestamp,_p,cid,sr,sid,gcs,ir,uaa,uab,uafv1,ouamb,uap,uapv,uaw,_eu,_s,sct,seg,ep.user_agent,up.ga_client_id. 		</p>
+		<p>
+  The create_test_page command and the create_test_page_formatted command take the following test parameters:   - arg1 is the Tag Type.  Use * for all tags, or div for just div tags etc...		 -    Element Type: A single element with * being all elements and the default if left empty.			 -   Elements Include but are not limited to: *, html, head, title, body, a, ol, ul, li, select, input etc...			 -   If omitted, this will be * for all elements.   - arg2 is the File where the Tags will be written.		 -    File Path and File Name: This is where the results will be written.			 -   If omitted, this will be written to the config folder. (/config/newTestFile.txt)   - arg3 is the comma delimited list of Tags to exclude.		 -    A comma delimited list of elements to skip when retrieving all element (*) information.			 -   These would usually be elements that do not have text themselves but contain elements that do have text.			 -   Do not include spaces between elements, just a comma as follows: html,head,title,body,div			 -   Skip elements are ONLY APPLIED WHEN RETRIEVING ALL ELEMENTS and IGNORED WHEN RETRIEVING A SPECIFIC TAG TYPE.   - arg4 is the comma delimited list of GA4 Parameters to exclude.		 -    A comma delimited list of elements to skip all listed parameters which are session, browser size, or access time based 			 -  to ensure that those inconsistent transient values do not adversely affect test results.  The following examples get all page elements except those container elements listed to skip, save them to a file,   and create test step XML files that can be used immediately.<pre>
 </br>&lt;step&gt;
 	&lt;command&gt;create_test_page_formatted&lt;/command&gt;
 	&lt;actionType&gt;write&lt;/actionType&gt;
@@ -1645,6 +1655,7 @@ IMPORTANT NOTE #1: ANY PARENT ELEMENT WILL CONTAIN THE TEXT OF IT'S CHILD ELEMEN
 		&lt;arg1&gt;*&lt;/arg1&gt;
 		&lt;arg2&gt;C:\Tests\TestPages\Formy-Test.xml&lt;/arg2&gt;
 		&lt;arg3&gt;html,head,title,meta,script,body,style,nav,br,div,form&lt;/arg3&gt;
+		&lt;arg4&gt;exclude additioanl ga4 parameters=up.myCookie_id&lt;/arg4&gt;
 	&lt;/arguments&gt;
 &lt;/step&gt;
 </br></pre>
@@ -2608,6 +2619,36 @@ The following command also does not save the cookie information to a separate fi
 	&lt;command&gt;get all cookies&lt;/command&gt;
 	&lt;actionType&gt;read&lt;/actionType&gt;
 	&lt;crucial&gt;True&lt;/crucial&gt;
+&lt;/step&gt;
+</br></pre>
+
+		</p>
+<span class="topOfPage"><a href="#top" class="topOfPageLink">Top of Page</a></span>
+<a name="deletecookies" class="sectionTitle">DELETE COOKIES</a>
+		<p>
+This command allows you to delete all or just specified cookies.  The actionType for this command is write because values are being removed.		</p>
+		<p>
+For the Argument values, either enter one cookie name per argument or enter "all" to delete all cookies.There is no limit for the number of cookies to delete, so any number of arguments can be listed to include the name of each cookie that needs to be deleted.This allows multiple cookies to be deleted in a single test step instead of creating an individual test step for each cookie to be deleted.		</p>
+		<p>
+Currently, this command is not configured to pull a list of cookies after it has been issued to verify that the cookie has been deleted, but that will be a future update.The following example, deletes all cookies:<pre>
+</br>&lt;step&gt;
+	&lt;command&gt;delete cookies&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;all&lt;/arg1&gt;
+	&lt;/arguments&gt;
+&lt;/step&gt;
+</br></pre>
+
+		</p>
+		<p>
+The following example, deletes a single cookie with the name "mycookie":<pre>
+</br>&lt;step&gt;
+	&lt;command&gt;delete cookies&lt;/command&gt;
+	&lt;actionType&gt;write&lt;/actionType&gt;
+	&lt;arguments&gt;
+		&lt;arg1&gt;mycookie&lt;/arg1&gt;
+	&lt;/arguments&gt;
 &lt;/step&gt;
 </br></pre>
 

@@ -47,8 +47,12 @@ It should be something like:
 	C:\Program Files (x86)\ImageMagick-7.0.8-Q16-HDRI 		- This is 32 bit version and the preferred Windows version to use.
 	C:\Program Files\ImageMagick-7.0.8-Q16 					- This is the 64 bit version and had library registration issues at the time of this writing.
 	
-Copy this path and open the HelperUtilities Class and look in the CompareImagesWithImageMagick(...) method for the following line, and paste it over the path that appears in quotes:
-ProcessStarter.setGlobalSearchPath("C:\\Program Files (x86)\\ImageMagick-7.0.8-Q16-HDRI");
+Old method:
+	Copy this path and open the HelperUtilities Class and look in the CompareImagesWithImageMagick(...) method for the following line, and paste it over the path that appears in quotes:
+	ProcessStarter.setGlobalSearchPath("C:\\Program Files (x86)\\ImageMagick-7.0.8-Q16-HDRI");
+New Method:
+	Moved this path to the ConfigurationSetup.xml file so that when updating ImageMagick, the code doesn't need to be altered.
+Copy this path into the Configuration file here: <imageMagickFilePath>C:\Program Files\ImageMagick-7.1.1-Q16-HDRI</imageMagickFilePath>
 	
 
 OPENING THE PROJECT IN IntelliJ FOR THE FIRST TIME:
@@ -82,13 +86,13 @@ CONFIGURING THE APPLICATION TO ALLOW IT TO BUILD:
 		These methods will remain until the new functionality is confirmed to be working on another installation.
 		------------------------------------[ OLD INSTRUCTIONS FOR PREVIOUS SELENIUM VERSION ]--------------------
 		OLD SELENIUM INSTRUCTIONS NO LONGER RELEVANT BUT REMAIN JUST IN CASE DRIVER ISSUES PLAGUE AN INSTALLATION.
-		Next, download the same driver version as your current browser version.  
-		Don't download a version that is earlier or later because the application will not work!!!
-		It must be the same version number!!!
-		For FireFox - download the gecko driver.
-		For Chrome - download the ChromeDriver.
-		Download the latest PhantomJS driver.
-		It is suggested that you place all of the executables in one location for easier mapping and updating.
+			Next, download the same driver version as your current browser version.  
+			Don't download a version that is earlier or later because the application will not work!!!
+			It must be the same version number!!!
+			For FireFox - download the gecko driver.
+			For Chrome - download the ChromeDriver.
+			Download the latest PhantomJS driver.
+			It is suggested that you place all of the executables in one location for easier mapping and updating.
 		-----------------------------------------------------------------------------------------------------------
 	3.  It may be a good idea at this time to also create folders for the Test Files, and for saving Screenshots and JSON files.
 		This application will not create paths so mapping to a path that doesn't exist will throw an exception.
@@ -121,6 +125,8 @@ CONFIGURING THE APPLICATION TO ALLOW IT TO BUILD:
 		
 	8.  Download and install ImageMagick.   
 		Follow the directions in the above section entitled: DOWNLOADING and Installing ImageMagick.
+		Be sure to update the ConfigurationSetup.xml file with the ImageMagick path and ensure that you have restarted your computer after the 
+		installing ImageMagick.
 		
 	9. 	Build the project in one of the following ways.  
 		A. 	Either click on the green hammer.
