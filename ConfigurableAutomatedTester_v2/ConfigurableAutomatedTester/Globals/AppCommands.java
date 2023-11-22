@@ -44,6 +44,7 @@ public class AppCommands {
 
     public static final String ShowAllGATags = "show all ga tags";
 
+    public static final String DeleteCookies = "delete cookies";
     //endregion
 
     //region { Read Action Commands }
