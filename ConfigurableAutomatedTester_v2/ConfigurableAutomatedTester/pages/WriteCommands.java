@@ -11,6 +11,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -120,7 +121,7 @@ public class WriteCommands {
                 testCentral.CheckScreenShotArgumentOrder(ts);
                 String fileName = testCentral.GetArgumentValue(ts, 0, null);
                 String stringDimensions = testCentral.GetArgumentValue(ts, 1, null);
-                if (stringDimensions.indexOf("=") == stringDimensions.lastIndexOf("=")) {
+                if (stringDimensions != null && stringDimensions.indexOf("=") == stringDimensions.lastIndexOf("=")) {
                     String width = testCentral.GetSpecificArgumentValue(ts,"w","=", null);
                     String height = testCentral.GetSpecificArgumentValue(ts,"h","=", null);
                     if (width != null && height != null) {
@@ -169,10 +170,37 @@ public class WriteCommands {
                 SetCookieValue(ts, fileStepIndex);
             } else if (ts.get_command().toLowerCase().equals(AppCommands.ShowAllGATags)) {
                 ShowAllGATags(ts, fileStepIndex);
+            } else if (ts.get_command().toLowerCase().equals(AppCommands.DeleteCookies)) {
+                DeleteCookies(ts, fileStepIndex);
             }
         }
     }
 
+    private void DeleteCookies(TestStep ts, String fileStepIndex) {
+        ArrayList<String> cookieArguments = testCentral.GetAllArguments(ts);
+        String messageText = cookieArguments.size() == 1 ? "1 Cookie" :  cookieArguments.size() + " Cookies";
+
+
+        if (cookieArguments != null && cookieArguments.size() > 0) {
+            if (!cookieArguments.get(0).toLowerCase().equals("all")) {
+                testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_YELLOW_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Deleting " + messageText + " for Step " +  fileStepIndex + " ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+                for (int x = 0; x < cookieArguments.size(); x++) {
+                    driver.manage().deleteCookieNamed(cookieArguments.get(x));
+                    /*Set<Cookie> cookies = driver.manage().getCookies();
+                    for (Cookie cookie : cookies) {
+                        if (cookieArguments.get(x).equals()) {
+                            driver.manage().deleteCookie(cookie);
+                        }
+                    }*/
+                }
+            } else {
+                messageText = "All Cookies";
+                testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_YELLOW_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Deleting " + messageText + " for Step " +  fileStepIndex + " ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+                driver.manage().deleteAllCookies();
+            }
+            testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_YELLOW_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ " + messageText + " Deleted for Step " +  fileStepIndex + " ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+        }
+    }
 
 
     private void SetCookieValue(TestStep ts, String fileStepIndex) {
@@ -206,7 +234,14 @@ public class WriteCommands {
             cookieValue = cookieParts[0].substring(cookieParts[0].indexOf("=")+1);
             cookieExpiration = new Date();
             cookiePath = "";
-            cookieDomain = "";
+
+            try {
+                URI uri = new URI(driver.getCurrentUrl());
+                cookieDomain = uri.getHost();
+            } catch(Exception exception) {
+                cookieDomain = driver.getCurrentUrl().replace("http://", "").replace("https://","");
+                cookieDomain = cookieDomain.substring(0, cookieDomain.indexOf("/")-1);
+            }
             cookieSecure = false;
 
 
@@ -283,7 +318,7 @@ public class WriteCommands {
         testHelper.UpdateTestResults(AppConstants.indent5 + AppConstants.ANSI_YELLOW_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start View " + tagTypes + " Tags set for Step " + fileStepIndex + " ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
 
         if (tagTypes.equals("ga4") || tagTypes.equals("all")) {
-            if (GA4TagList.size() > 0) {
+            if (GA4TagList != null && GA4TagList.size() > 0) {
                 for (GA4Tag gaTag : GA4TagList) {
                     for (int x = 0; x < gaTag.getGA4Parameters().size(); x++) {
                         if (testHelper.IsNullOrEmpty(ga4TagLimitString)) {
@@ -310,7 +345,7 @@ public class WriteCommands {
         }
         if (tagTypes.equals("ua") || tagTypes.equals("all")) {
             outValue = "";  //reset this since ga4 tags have been written, if both are applicable
-            if (GtmTagList.size() > 0) {
+            if (GtmTagList != null && GtmTagList.size() > 0) {
                 for (GtmTag gaTag : GtmTagList) {
                     outValue += AppConstants.ANSI_YELLOW_BRIGHT + AppConstants.indent8 + "dl:" + gaTag.get_documentLocation() + "\r\n" +
                             AppConstants.indent8 + "t:" + gaTag.get_hitType() + "\r\n" +
@@ -965,6 +1000,8 @@ public class WriteCommands {
             testCentral.GA4TagList = GA4TagList;
             readCommands.GA4TagList = GA4TagList;
             testHelper.set_csvFileName(testCentral.testHelper.get_csvFileName());
+            //testHelper.DebugDisplay("WriteCommands GtmTagList.size() = " + GtmTagList.size());
+            //testHelper.DebugDisplay("WriteCommands GA4TagList.size() = " + GA4TagList.size());
 
             //testHelper.set_csvFileName(testCentral.testHelper.get_csvFileName());
             //testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End of Save Har File and Populate GTM Tags Object Event  ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);

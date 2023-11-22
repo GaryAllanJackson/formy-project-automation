@@ -137,6 +137,7 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "\t\tSPIDER SITE or SPYDER SITE \r\n");
             WriteToFile(get_helpFileName(), "\t\tSET COOKIE \r\n");
             WriteToFile(get_helpFileName(), "\t\tGET ALL COOKIES \r\n");
+            WriteToFile(get_helpFileName(), "\t\tDELETE COOKIES \r\n");
 
             WriteToFile(get_helpFileName(), AppConstants.indent5 + testHelper.PrePostPad("[ INCLUDED TEST FILES ]", "═", 9, 100));
             WriteToFile(get_helpFileName(), "\t\tTEST FILES DESCRIBED \r\n");
@@ -533,6 +534,10 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "All Actions that fall between the \"Entire Site Commands Start\", and the \"Entire Site Commands End\" commands ");
             WriteToFile(get_helpFileName(), " will be repeated for every URL retrieved from the current page, as well as URLs retrieved from the pages to scan, ");
             WriteToFile(get_helpFileName(), " which are arguments <arg2></arg2> - <arg20></arg20>,  when the start command executes.\n");
+            WriteToFile(get_helpFileName(), "The first argument <arg1></arg1> is reserved for restricting the pages based on a domain or a partial page path. ");
+            WriteToFile(get_helpFileName(), "If the domain protocol is present, this will be used as a domain restriction to weed out links to outside domains. ");
+            WriteToFile(get_helpFileName(), "If only a page path is present, any links containing that page path will be used, which may include non-domain links. ");
+            WriteToFile(get_helpFileName(), "If this argument is not present, all links retrieved will be used so consider this if social or non-domain links may be present.\r\n");
             WriteToFile(get_helpFileName(), "This powerful functionality allows for reducing the test file length considerably, while performing the same tests on multiple pages.");
             WriteToFile(get_helpFileName(), "This command begins by retrieving all links from the current page and the pages to scan, then loops through pages starting with ");
             WriteToFile(get_helpFileName(), " current page executing all commands between the \"Entire Site Commands Start\" and \"Entire Site Commands End\" commands.  \n");
@@ -555,7 +560,8 @@ public class HelpWriter {
                     "\t<!-- Command - ALWAYS REQUIRED!!! -->\r\n" +
                     "\t<command>entire site commands start</command>\r\n" +
                     "\t<arguments>\r\n" +
-                    "\t\t<!-- first argument expected by the command is the URL portion to limit execution -->\r\n" +
+                    "\t\t<!-- first argument expected by the command is the URL portion to limit execution, if empty, there will be no restriction and  -->\r\n" +
+                    "\t\t<!-- if part of a page path, any links that include that page path, may also be included -->\r\n" +
                     "\t\t<arg1>https://www.mycoolcite.com/</arg1>\r\n" +
                     "\t\t<!-- remaining optional arguments for this command are additional pages beyond the current page to scan for URLs from Anchor tags(a) -->\r\n" +
                     "\t\t<arg2>https://www.mycoolsite.com/products</arg2>\r\n" +
@@ -1679,10 +1685,19 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "  The create_test_page command outputs key value information so that a determination can be made to as to whether an item should be tested and ");
             WriteToFile(get_helpFileName(), "  it provides all of the information to create the test command but it is not formatted as a test command.");
             WriteToFile(get_helpFileName(), "  The create_test_page_formatted command outputs the element information in a test command format allowing for quick copy and paste to a test file.");
-            WriteToFile(get_helpFileName(), "  Both files indicate if an element is visible, if an a tag is acting as an anchor or a link.");
+            WriteToFile(get_helpFileName(), "  Both files indicate if an element is visible, if an \"a\" tag is acting as an anchor or a link.");
             WriteToFile(get_helpFileName(), "  The Formatted File, will create tests for a tags that check text and href, for images that check src, for text fields it create tests that ");
             WriteToFile(get_helpFileName(), "\t compare text provided with the element text, for text input it creates a sendkeys, for buttons, checkboxes and radio buttons it creates");
             WriteToFile(get_helpFileName(), "\t a click, and for selects it creates a select command, allowing the user to enter one of the option values that is to be selected.");
+            WriteToFile(get_helpFileName(), "\t Additionally, the tests check for GA4 and UA tags that were fired and includes tag parameters for these to ensure that the correct ");
+            WriteToFile(get_helpFileName(), "\t tag is identified.");
+            WriteToFile(get_helpFileName(), "IMPORTANT NOTE #3: For all arguments that contain comma delimited lists, do not include spaces between words, but ensure that a comma does ");
+            WriteToFile(get_helpFileName(), " separate the words to ensure that just the item specified is handled accordingly.");
+            WriteToFile(get_helpFileName(), "\r\n\t\t\tFor UA Tagging, this includes the document location (dl), the tag event type (t), Event Category, (ec) ");
+            WriteToFile(get_helpFileName(), "\t Event Action (ea), Event Label (el), Tracking Id (tid), and Cotent Group 1 (cg1)\r\n");
+            WriteToFile(get_helpFileName(), "\t\t\tFor GA4 Tagging, this includes all parameters with the exception of the following: ");
+            WriteToFile(get_helpFileName(), "\t\t\t ep.hit_timestamp,_p,cid,sr,sid,gcs,ir,uaa,uab,uafv1,ouamb,uap,uapv,uaw,_eu,_s,sct,seg,ep.user_agent,up.ga_client_id. \r\n");
+
             WriteToFile(get_helpFileName(), "  The create_test_page command and the create_test_page_formatted command take the following test parameters:");
             WriteToFile(get_helpFileName(), "   - arg1 is the Tag Type.  Use * for all tags, or div for just div tags etc...");
             WriteToFile(get_helpFileName(), "\t\t -    Element Type: A single element with * being all elements and the default if left empty.");
@@ -1696,6 +1711,9 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "\t\t\t -   These would usually be elements that do not have text themselves but contain elements that do have text.");
             WriteToFile(get_helpFileName(), "\t\t\t -   Do not include spaces between elements, just a comma as follows: html,head,title,body,div");
             WriteToFile(get_helpFileName(), "\t\t\t -   Skip elements are ONLY APPLIED WHEN RETRIEVING ALL ELEMENTS and IGNORED WHEN RETRIEVING A SPECIFIC TAG TYPE.");
+            WriteToFile(get_helpFileName(), "   - arg4 is the comma delimited list of GA4 Parameters to exclude.");
+            WriteToFile(get_helpFileName(), "\t\t -    A comma delimited list of elements to skip all listed parameters which are session, browser size, or access time based ");
+            WriteToFile(get_helpFileName(), "\t\t\t -  to ensure that those inconsistent transient values do not adversely affect test results.");
             WriteToFile(get_helpFileName(), "  The following examples get all page elements except those container elements listed to skip, save them to a file, ");
             WriteToFile(get_helpFileName(), "  and create test step XML files that can be used immediately.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
@@ -1706,6 +1724,7 @@ public class HelpWriter {
                     "\t\t<arg1>*</arg1>\r\n" +
                     "\t\t<arg2>C:\\Tests\\TestPages\\Formy-Test.xml</arg2>\r\n" +
                     "\t\t<arg3>html,head,title,meta,script,body,style,nav,br,div,form</arg3>\r\n" +
+                    "\t\t<arg4>exclude additioanl ga4 parameters=up.myCookie_id</arg4>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
@@ -2794,10 +2813,41 @@ public class HelpWriter {
                     "\t<actionType>read</actionType>\n" +
                     "\t<crucial>True</crucial>\n" +
                     "</step>\n");
-
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ DELETE COOKIES ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "This command allows you to delete all or just specified cookies.  ");
+            WriteToFile(get_helpFileName(), "The actionType for this command is write because values are being removed.\n");
+            WriteToFile(get_helpFileName(), "For the Argument values, either enter one cookie name per argument or enter \"all\" to ");
+            WriteToFile(get_helpFileName(), "delete all cookies.");
+            WriteToFile(get_helpFileName(), "There is no limit for the number of cookies to delete, so any number of arguments can be listed to ");
+            WriteToFile(get_helpFileName(), "include the name of each cookie that needs to be deleted.");
+            WriteToFile(get_helpFileName(), "This allows multiple cookies to be deleted in a single test step instead of creating an individual ");
+            WriteToFile(get_helpFileName(), "test step for each cookie to be deleted.\n");
+            WriteToFile(get_helpFileName(), "Currently, this command is not configured to pull a list of cookies after it has been issued ");
+            WriteToFile(get_helpFileName(), "to verify that the cookie has been deleted, but that will be a future update.");
+            WriteToFile(get_helpFileName(), "The following example, deletes all cookies:");
 
+            WriteToFile(get_helpFileName(), "<step>\n" +
+                    "\t<command>delete cookies</command>\n" +
+                    "\t<actionType>write</actionType>\n" +
+		            "\t<arguments>\n" +
+			        "\t\t<arg1>all</arg1>\n" +
+		            "\t</arguments>\n" +
+                    "</step>\n");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "The following example, deletes a single cookie with the name \"mycookie\":");
+
+            WriteToFile(get_helpFileName(), "<step>\n" +
+                    "\t<command>delete cookies</command>\n" +
+                    "\t<actionType>write</actionType>\n" +
+                    "\t<arguments>\n" +
+                    "\t\t<arg1>mycookie</arg1>\n" +
+                    "\t</arguments>\n" +
+                    "</step>\n");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");

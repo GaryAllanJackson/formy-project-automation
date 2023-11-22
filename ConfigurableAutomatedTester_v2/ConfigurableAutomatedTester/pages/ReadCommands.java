@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,6 +21,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 
 import static java.lang.Integer.parseInt;
 import static org.junit.jupiter.api.Assertions.*;
@@ -231,7 +233,7 @@ public class ReadCommands {
                         AppConstants.indent8 + (item.get_hitType().equals(listItem.get_hitType()) ? AppConstants.ANSI_GREEN : AppConstants.ANSI_RED) + "Expected: (t=" + item.get_hitType() + ")  Actual: (t=" + listItem.get_hitType() + ")\r\n" +
                         AppConstants.indent8 + (item.get_eventCategory().equals(listItem.get_eventCategory()) ? AppConstants.ANSI_GREEN : AppConstants.ANSI_RED) + "Expected: (ec=" + item.get_eventCategory() + ") Actual: (ec=" + listItem.get_eventCategory() + ")\r\n" +
                         AppConstants.indent8 + (item.get_eventAction().equals(listItem.get_eventAction()) ? AppConstants.ANSI_GREEN : AppConstants.ANSI_RED) + "Expected: (ea=" + item.get_eventAction() + ") Actual: (ea=" + listItem.get_eventAction() + ")\r\n" +
-                        AppConstants.indent8 + (item.get_eventLabel().equals(listItem.get_eventLabel()) ? AppConstants.ANSI_GREEN : AppConstants.ANSI_RED) + "Expected: (el=" + listItem.get_eventLabel() + ") Actual: (el=" + listItem.get_eventLabel() + ")\r\n" +
+                        AppConstants.indent8 + (item.get_eventLabel().equals(listItem.get_eventLabel()) ? AppConstants.ANSI_GREEN : AppConstants.ANSI_RED) + "Expected: (el=" + item.get_eventLabel() + ") Actual: (el=" + listItem.get_eventLabel() + ")\r\n" +
                         //(!testHelper.IsNullOrEmpty(item.get_contentGroup2()) ? AppConstants.indent8 + (item.get_contentGroup2().equals(listItem.get_contentGroup2()) ? AppConstants.ANSI_GREEN : AppConstants.ANSI_RED) + "Expected: (cg2" + beginsWith + item.get_contentGroup2() + ") Actual: (cg2" + beginsWith + listItem.get_contentGroup2() + ")\r\n" : "") +
                         (!testHelper.IsNullOrEmpty(item.get_contentGroup2()) ? AppConstants.indent8 + (item.get_contentGroup2().equals(listItem.get_contentGroup2()) || listItem.get_contentGroup2().indexOf(item.get_contentGroup2().replace("+","")) > -1 ? AppConstants.ANSI_GREEN : AppConstants.ANSI_RED) + "Expected: (cg2" + beginsWith + item.get_contentGroup2() + ") Actual: (cg2" + beginsWith + listItem.get_contentGroup2() + ")\r\n" : "") +
                         (!testHelper.IsNullOrEmpty(item.get_documentTitle()) ? AppConstants.indent8 + (item.get_documentTitle().equals(listItem.get_documentTitle()) ? AppConstants.ANSI_GREEN : AppConstants.ANSI_RED) + "Expected: (dt" + beginsWith + item.get_documentTitle() + ") Actual: (dt" + beginsWith + listItem.get_documentTitle() + ")\r\n" : "") +
@@ -347,25 +349,31 @@ public class ReadCommands {
     private GA4Tag GetMatchingGA4Tag(GA4Tag tsItem) {
         GA4Tag listItem = new GA4Tag();
         int tagParamCount=0, tsParamCount = tsItem.getGA4Parameters().size();
-        String tsName, tsValue;
+        String tsName, tsValue, tmpValue;
         String additionalFields;
+        String tempDebugOutput = "";
 
         for (int x = 0; x < GA4TagList.size(); x++) {
             listItem = GA4TagList.get(x);
             tagParamCount = 0;
             for (int tsIndex=0;tsIndex<tsItem.getGA4Parameters().size();tsIndex++) {
                 tsName = tsItem.getGA4Parameter(tsIndex).get_parameterName();
-                tsValue = tsItem.getGA4Parameter(tsIndex).get_parameterValue();
+                //tmpValue = tsItem.getGA4Parameter(tsIndex).get_parameterValue();
+                tsValue = testCentral.UrlDecode(tsItem.getGA4Parameter(tsIndex).get_parameterValue());
+                tempDebugOutput = "\r\ntsName = " + tsName + " - tsValue = " + tsValue + " Getting parameters";
+                //testHelper.DebugDisplay(tempDebugOutput);
                 for (int ga4Index = 0; ga4Index < listItem.getGA4Parameters().size(); ga4Index++) {
                     if (listItem.getGA4Parameters().get(ga4Index).get_parameterName().equals(tsName) &&
-                            listItem.getGA4Parameters().get(ga4Index).get_parameterValue().equals(tsValue)) {
+                            testCentral.UrlDecode(listItem.getGA4Parameters().get(ga4Index).get_parameterValue()).equals(tsValue)) {
+                        //testHelper.DebugDisplay("" + tempDebugOutput);
                         tagParamCount++;
                         if (tsParamCount == tagParamCount) {
                             return listItem;
                         }
                         break;
                     } else if (listItem.getGA4Parameters().get(ga4Index).get_parameterName().equals(tsName) &&
-                            !listItem.getGA4Parameters().get(ga4Index).get_parameterValue().equals(tsValue)) {
+                            !testCentral.UrlDecode(listItem.getGA4Parameters().get(ga4Index).get_parameterValue()).equals(tsValue)) {
+                            testHelper.DebugDisplay("Good tsName " + tsName + " - Bad Value " + tsValue + " vs " + testCentral.UrlDecode(listItem.getGA4Parameters().get(ga4Index).get_parameterValue()));
                         break;
                     }
                 }
@@ -480,10 +488,14 @@ public class ReadCommands {
      *******************************************************************************/
     private void CheckImageSrcAlt(TestStep ts, String fileStepIndex) {
         String actualValue="";
-        String srcAlt = testCentral.GetArgumentValue(ts, 0, "src");
+        //String srcAlt = testCentral.GetArgumentValue(ts, 0, "src");
+        String srcAlt = ts.get_command().indexOf("src") > -1 ? "src" : "alt";
         testHelper.UpdateTestResults(AppConstants.indent8 + "Checking Image " + srcAlt + " for " + ts.get_expectedValue() + " for step " + fileStepIndex, true);
 
-        actualValue = GetWebElementByAccessor(ts).getAttribute(srcAlt);
+        actualValue = GetWebElementByAccessor(ts) != null ? GetWebElementByAccessor(ts).getAttribute(srcAlt) : "";
+        if (actualValue == null || actualValue == "") {
+            actualValue = GetImageSrcUsingJavaScript(ts);
+        }
 
         if (ts.get_crucial()) {
             assertEquals(ts.get_expectedValue(), actualValue);
@@ -494,7 +506,7 @@ public class ReadCommands {
                 //do nothing, this just traps the assertion error so that processing can continue
             }
         }
-        if (ts.get_expectedValue().trim().equals(actualValue.trim())) {
+        if (ts.get_expectedValue() != null && actualValue != null && ts.get_expectedValue().trim().equals(actualValue.trim())) {
             testHelper.UpdateTestResults(AppConstants.indent8 + "Successful Image " + srcAlt + " Check.  Expected: (" + ts.get_expectedValue() + ") Actual: (" + actualValue + ") for step " + fileStepIndex, true);
             testCentral.conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : testCentral.conditionalSuccessful;
         } else {
@@ -502,6 +514,8 @@ public class ReadCommands {
             testCentral.conditionalSuccessful = false;
         }
     }
+
+
 
 
     /*******************************************************************************
@@ -513,25 +527,32 @@ public class ReadCommands {
      *******************************************************************************/
     private void CheckAnchorHref(TestStep ts, String fileStepIndex) {
         String actualValue="";
+        String expectedValue = "";
         //Not wired for checking text because text is already wired up through the default assert method
         String hrefTxt = "href";
-        actualValue = GetWebElementByAccessor(ts).getAttribute(hrefTxt);
+        actualValue = GetWebElementByAccessor(ts) != null ? GetWebElementByAccessor(ts).getAttribute(hrefTxt) : "";
+        try {
+            expectedValue = java.net.URLDecoder.decode(ts.get_expectedValue(), StandardCharsets.UTF_8.name());
+            expectedValue = expectedValue.replace("&amp;","&");
+        } catch(Exception ex) {
+            expectedValue = ts.get_expectedValue();
+        }
 
         if (ts.get_crucial()) {
-            assertEquals(ts.get_expectedValue(), actualValue);
+            assertEquals(expectedValue, actualValue);
         } else {
             try {
-                assertEquals(ts.get_expectedValue(), actualValue);
+                assertEquals(expectedValue, actualValue);
             } catch (AssertionError ae) {
                 //do nothing, this just traps the assertion error so that processing can continue
             }
         }
-        if (ts.get_expectedValue().trim().equals(actualValue.trim())) {
-            testHelper.UpdateTestResults(AppConstants.indent8 + "Successful Anchor " + hrefTxt + " Check.  Expected: (" + ts.get_expectedValue() + ") Actual: (" + actualValue + ") for step " + fileStepIndex, true);
+        if (expectedValue != null && actualValue != null && expectedValue.trim().equals(actualValue.trim())) {
+            testHelper.UpdateTestResults(AppConstants.indent8 + "Successful Anchor " + hrefTxt + " Check.  Expected: (" + expectedValue + ") Actual: (" + actualValue + ") for step " + fileStepIndex, true);
             //testCentral.conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) ? true : testCentral.conditionalSuccessful;
             testCentral.conditionalSuccessful = (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) || testCentral.conditionalSuccessful;
         } else {
-            testHelper.UpdateTestResults(AppConstants.indent8 + "Failed Anchor " + hrefTxt + " Check.  Expected: (" + ts.get_expectedValue() + ") Actual: (" + actualValue + ") for step " + fileStepIndex, true);
+            testHelper.UpdateTestResults(AppConstants.indent8 + "Failed Anchor " + hrefTxt + " Check.  Expected: (" + expectedValue + ") Actual: (" + actualValue + ") for step " + fileStepIndex, true);
             testCentral.conditionalSuccessful = false;
         }
     }
@@ -1459,11 +1480,11 @@ public class ReadCommands {
         try {
             String typeOfElement = GetWebElementByAccessor(ts).getAttribute("type");
             if (typeOfElement!= null && ((typeOfElement.contains("select-one") || typeOfElement.contains("select-many")))) {
-                Select select = new Select(GetWebElementByAccessor(ts));
-                WebElement option = select.getFirstSelectedOption();
-                actualValue = option.getText();
+                Select select = GetWebElementByAccessor(ts) != null ? new Select(GetWebElementByAccessor(ts)) : null;
+                WebElement option = select != null ? select.getFirstSelectedOption() : null;
+                actualValue = option != null ? option.getText() : "";
             } else {
-                boolean isVisible = GetWebElementByAccessor(ts).isDisplayed();
+                boolean isVisible = GetWebElementByAccessor(ts) != null ? GetWebElementByAccessor(ts).isDisplayed() : false;
                 if (isVisible) {
                     actualValue = GetWebElementByAccessor(ts).getText();
                 } else {
@@ -1505,13 +1526,81 @@ public class ReadCommands {
      *********************************************************************************************/
     WebElement GetWebElementByAccessor(TestStep ts) {
         String accessor = ts.get_accessor();
-        WebElement element = ts.get_accessorType().toLowerCase().equals(AppConstants.xpathCheckValue) ? this.driver.findElement(By.xpath(accessor)) :
-                ts.get_accessorType().toLowerCase().equals(AppConstants.cssSelectorCheckValue) ? this.driver.findElement(By.cssSelector(accessor)) :
-                        ts.get_accessorType().toLowerCase().equals(AppConstants.classNameCheckValue) ? this.driver.findElement(By.className(accessor)) :
-                                ts.get_accessorType().toLowerCase().equals(AppConstants.tagNameCheckValue) ? this.driver.findElement(By.tagName(accessor)) :
-                                        this.driver.findElement(By.id(accessor));
+        WebElement element = null;
+        if (ts.get_accessorType().toLowerCase().equals(AppConstants.xpathCheckValue)) {
+            accessor = "/" + accessor;
+        }
+        try {
+            element = ts.get_accessorType().toLowerCase().equals(AppConstants.xpathCheckValue) ? this.driver.findElement(By.xpath(accessor)) :
+                    ts.get_accessorType().toLowerCase().equals(AppConstants.cssSelectorCheckValue) ? this.driver.findElement(By.cssSelector(accessor)) :
+                            ts.get_accessorType().toLowerCase().equals(AppConstants.classNameCheckValue) ? this.driver.findElement(By.className(accessor)) :
+                                    ts.get_accessorType().toLowerCase().equals(AppConstants.tagNameCheckValue) ? this.driver.findElement(By.tagName(accessor)) :
+                                            this.driver.findElement(By.id(accessor));
+            if (element == null) {
+                element = GetElementUsingJavaScript(ts);
+            }
+        } catch(NoSuchElementException noSuchElementException) {
+            element = GetElementUsingJavaScript(ts);
+            //element = null;
+        }
 
         return element;
+    }
+
+    private WebElement GetElementUsingJavaScript(TestStep ts) {
+        //TODO: WORKING HERE
+        String accessor = ts.get_accessor();
+        String javaScriptCommand;
+        WebElement element = null;
+        String xPathCommand = "function getElementByXpath(path) {\n" +
+                "  return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;\n" +
+                "}\n";
+
+        //testHelper.DebugDisplay(ts.get_accessorType().toLowerCase() + " - " + ts.get_accessor());
+        if (ts.get_accessorType().toLowerCase().equals(AppConstants.xpathCheckValue)) {
+            if (accessor.startsWith("/html")) {
+                accessor = "/" + accessor;
+            }
+            javaScriptCommand = xPathCommand + "return getElementByXpath('" + accessor + "');";
+            //element = (WebElement) ((JavascriptExecutor) driver).executeScript(javaScriptCommand);
+        } else { //if (ts.get_accessorType().equals(AppConstants.cssSelectorCheckValue) || ts.get_accessorType().equals(AppConstants.idCheckValue) || ts.get_accessorType().equals(AppConstants.tagNameCheckValue)) {
+            javaScriptCommand = "return document.querySelector('" + accessor + "');";
+            //element = (WebElement) ((JavascriptExecutor) driver).executeScript(javaScriptCommand);
+        }
+        try {
+            //testHelper.DebugDisplay("javaScriptCommand = " + javaScriptCommand);
+            element = (WebElement) ((JavascriptExecutor) driver).executeScript(javaScriptCommand);
+        } catch(Exception ex) {
+            element = null;
+        }
+
+        return element;
+    }
+
+    private String GetImageSrcUsingJavaScript(TestStep ts) {
+        String accessor = ts.get_accessor();
+        String javaScriptCommand;
+        String imageSource = "";
+        String xPathCommand = "function getElementByXpath(path) {\n" +
+                "  return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;\n" +
+                "}\n";
+
+        //testHelper.DebugDisplay(ts.get_accessorType().toLowerCase() + " - " + ts.get_accessor());
+        if (ts.get_accessorType().toLowerCase().equals(AppConstants.xpathCheckValue)) {
+            if (accessor.startsWith("/html")) {
+                accessor = "/" + accessor;
+            }
+            javaScriptCommand = xPathCommand + "return getElementByXpath('" + accessor + "') != null ? getElementByXpath('" + accessor + "').getAttribute('src') : '';";
+        } else { //if (ts.get_accessorType().equals(AppConstants.cssSelectorCheckValue) || ts.get_accessorType().equals(AppConstants.idCheckValue) || ts.get_accessorType().equals(AppConstants.tagNameCheckValue)) {
+            javaScriptCommand = "return document.querySelector('" + accessor + "') != null ? document.querySelector('" + accessor + "').getAttribute('src') : '';";
+        }
+        try {
+            //testHelper.DebugDisplay("javaScriptCommand = " + javaScriptCommand);
+            imageSource = (String) ((JavascriptExecutor) driver).executeScript(javaScriptCommand);
+        } catch(Exception ex) {
+            imageSource = null;
+        }
+        return imageSource;
     }
 
     /*************************************************************
@@ -1874,7 +1963,7 @@ public class ReadCommands {
         String originalFileName = fileName;
         String fileInstructions = testCentral.GetArgumentValue(ts,1,null);
         boolean cookieSecure = false;
-        testHelper.DebugDisplay("fileName = " + fileName);
+        //testHelper.DebugDisplay("fileName = " + fileName);
         testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_CYAN_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Displaying Cookie Information for Step " +  fileStepIndex + " ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
         for (Cookie cookie :cookies) {
             cookieName = cookie.getName();

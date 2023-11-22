@@ -9,12 +9,16 @@ public class TestCreatorUtility {
 
     final TestCentral testCentral;
     final TestHelper testHelper;
+
+    ReadCommands readCommands;
+    WriteCommands writeCommands;
     WebDriver driver;
 
     public TestCreatorUtility(TestCentral testCentral, TestHelper testHelper) {
         this.testCentral = testCentral;
         this.testHelper = testHelper;
-
+        readCommands = testCentral.readCommands;
+        writeCommands = testCentral.writeCommands;
     }
 
     //region { Create Test Page Methods }
@@ -37,6 +41,30 @@ public class TestCreatorUtility {
         String tagsToSkip = testCentral.GetArgumentValue(ts, 2, null);
         String [] skipTags = tagsToSkip.split(",");
         boolean formatted = ts.get_command().toLowerCase().contains(AppCommands.Format) ? true : false;
+        String elementXPath = "";
+        String consentScript = "";
+
+        if (formatted) {
+            consentScript = "\t<step>\r\n" +
+                    "\t\t<command>check javascript value</command>\r\n" +
+                    "\t\t<actionType>read</actionType>\r\n" +
+                    "\t\t<expectedValue>Pass</expectedValue>\r\n" +
+                    "\t\t<crucial>False</crucial>\r\n" +
+                    "\t\t<arguments>\r\n" +
+                    "\t\t\t<arg1>\r\n" +
+                    "\t\t\t//close onetrust cookie consent form by accepting all cookies\r\n" +
+                    "\t\t\t\tif (document.querySelector(\"#onetrust-accept-btn-handler\")) {\r\n" +
+                    "\t\t\t\t\tdocument.querySelector(\"#onetrust-accept-btn-handler\").click();\r\n" +
+                    "\t\t\t\t\treturn \"Pass\";\n" +
+                    "\t\t\t\t}\r\n" +
+                    "\t\t\t\treturn \"Fail\";\r\n" +
+                    "\t\t\t</arg1>\r\n" +
+                    "\t\t\t<arg2>false</arg2>\n" +
+                    "\t\t</arguments>\n" +
+                    "\t</step>\r\n";
+
+        }
+
 
         //region { add feature - additional argument that allows existing file to be overwritten or kept and a new filename created if file exists }
         //String updateFileNameMessage;
@@ -58,14 +86,14 @@ public class TestCreatorUtility {
 
         //elements to skip if all elements used (*) - don't put this within the cssSelector assignment in case it is not provided
         testHelper.UpdateTestResults("Skipping Configured Tags To Skip: " + tagsToSkip, false);
-        testHelper.DebugDisplay("#1 cssSelector = " + cssSelector);
+        //testHelper.DebugDisplay("#1 cssSelector = " + cssSelector);
         try {
             //boolean wasFound = false;
             boolean canProceed;  // = true;
             List<WebElement> elements = driver.findElements(By.cssSelector(cssSelector));
             //List<String> foundElements = new ArrayList<>();
             String elementType;
-            String elementXPath;
+            //String elementXPath = "";
             String elementText;
             String elementHref;
             String elementSrc;
@@ -75,16 +103,17 @@ public class TestCreatorUtility {
             boolean isVisible = true;
             String script;
 
-            testHelper.DebugDisplay("formatted = " + formatted);
+            //testHelper.DebugDisplay("formatted = " + formatted);
             if (formatted) {
                 testHelper.WriteToFile(newFileName, CreateXmlFileStartAndEnd(true));
                 testHelper.WriteToFile(newFileName, CreateNavigationXmlTestStep(TestCentral.testPage, "TRUE"));
                 testHelper.WriteToFile(newFileName, CreateScreenShotTestStep("FALSE"));
+                testHelper.WriteToFile(newFileName, consentScript);
             } else {
                 testHelper.WriteToFile(newFileName, "URL being used: " + TestCentral.testPage);
             }
 
-            testHelper.DebugDisplay("elements.size() = " + elements.size());
+            //testHelper.DebugDisplay("elements.size() = " + elements.size());
             for (WebElement element : elements) {
                 try {
                     canProceed = true;
@@ -103,11 +132,14 @@ public class TestCreatorUtility {
                     }
 
                     if (canProceed) {
+
                         elementXPath = testCentral.GenerateXPath(element, "");
+                        //testHelper.DebugDisplay("#1 element " + elementXPath);
                         elementText = element.getText();
 
                         if (formatted) {
                             if (!elementType.equals("img")) {
+                                elementXPath = testCentral.GenerateXPath(element, "");
                                 if (isVisible) {
                                     if (elementText != null && !elementText.isEmpty()) {
                                         outputDescription = CreateReadActionXmlTestStep(elementXPath, elementText, "FALSE");
@@ -129,7 +161,7 @@ public class TestCreatorUtility {
                         }
 
                         if (elementType.equals("img")) {
-                            elementSrc = element.getAttribute("src");
+                            elementSrc = element.getAttribute("src") != null ? element.getAttribute("src").replace("&","&amp;") : "";
                             elementAltText = element.getAttribute("alt");
                             if (formatted) {
                                 outputDescription = CreateImageReadActionsXmlTestSteps(elementXPath, elementSrc, elementAltText, "FALSE");
@@ -137,7 +169,9 @@ public class TestCreatorUtility {
                                 outputDescription += " - Element Src: " + elementSrc;
                             }
                         } else if (elementType.equals("a")) {
-                            elementHref = element.getAttribute("href");
+                            //elementHref = element.getAttribute("href");
+                            //elementHref = java.net.URLEncoder.encode(element.getAttribute("href"), StandardCharsets.UTF_8.name());
+                            elementHref = element.getAttribute("href") != null ? element.getAttribute("href").replace("&","&amp;") : "";
                             if (formatted && !elementHref.isEmpty()) {  //make sure that this is not an anchor
                                 outputDescription += outputDescription.contains(">assert<") ? "\r\n" : "";
                                 outputDescription += CreateAHrefReadActionXmlTestStep(elementXPath, elementHref, "FALSE");
@@ -165,6 +199,7 @@ public class TestCreatorUtility {
                             testHelper.UpdateTestResults(outputDescription, true);
                             testHelper.WriteToFile(newFileName, outputDescription);
                         }
+
                     }
                 } catch (Exception fex) {
                     if (fex.getMessage().equals("stale element reference: element is not attached to the page document")) {
@@ -172,18 +207,133 @@ public class TestCreatorUtility {
                     }
                 }
             }
+            //testHelper.DebugDisplay("Just before Tag Checking!");
+            String tagInfo = GetTaggingChecks(ts);
+            if (!formatted) {
+                outputDescription = "Google Analytics Tags Checking...";
+                if (tagInfo != null && tagInfo.length() > 0) {
+                    if (tagInfo.indexOf("check ga4 tag") > 0 && tagInfo.indexOf("check gtm tag") > 0)
+                        outputDescription = "GA4 and UA Tags detected";
+                    else if (tagInfo.indexOf("check ga4 tag") > 0 && tagInfo.indexOf("check gtm tag") < 0) {
+                        outputDescription = "GA4 Tags detected";
+                    } else if (tagInfo.indexOf("check ga4 tag") < 0 && tagInfo.indexOf("check gtm tag") > 0) {
+                        outputDescription = "UA Tags detected";
+                    }
+
+                    testHelper.UpdateTestResults(outputDescription, true);
+                    testHelper.WriteToFile(newFileName, outputDescription);
+                }
+            } else if (tagInfo != null && tagInfo.length() > 0) {
+                testHelper.WriteToFile(newFileName, tagInfo);
+            }
+
             if (formatted) {
                 testHelper.WriteToFile(newFileName, CreateXmlFileStartAndEnd(false));
             }
             testHelper.WriteToFile(newFileName, "");
         } catch (Exception ex) {
             testHelper.UpdateTestResults("Error: " + ex.getMessage(), false);
+            testHelper.DebugDisplay("#2 element " + elementXPath);
+
             /*if (formatted) {
                 testHelper.WriteToFile(newFileName, CreateXmlFileStartAndEnd(false));
             }
             testHelper.WriteToFile(newFileName, "");*/
         }
         return newFileName;
+    }
+
+    private String GetTaggingChecks(TestStep ts) {
+        String returnValue = null;
+        String ga4ReturnValue = "";
+        String gaReturnValue = "";
+        int index = 1;
+        String ga4TagCommandTemplateStart, ga4TagCommandTemplateEnd;
+        String gaTagCommandTemplateStart, gaTagCommandTemplateEnd;
+        String additioanlGA4ExcludeParameters = testCentral.GetSpecificArgumentValue(ts, "exclude additioanl ga4 parameters","=","");
+        //get ga4 tag information
+        ga4TagCommandTemplateStart = "\t<step>\r\n\t\t<command>check ga4 tag</command>\r\n\t\t<actionType>read</actionType>\r\n" +
+                "\t\t<arguments>\r\n";
+        ga4TagCommandTemplateEnd = "\t\t</arguments>\r\n\t</step>\r\n";
+        //String invalidParameters = "ep.hit_timestamp,_p,cid,sr,sid,gcs,ir,uaa,uab,uafv1,ouamb,uap,uapv,uaw,_eu,_s,sct,seg,ep.user_agent,up.jmsa_id";
+        String invalidParameters = "ep.hit_timestamp,_p,cid,sr,sid,gcs,ir,uaa,uab,uafv1,ouamb,uap,uapv,uaw,_eu,_s,sct,seg,ep.user_agent,up.ga_client_id" ;
+        if (!testHelper.IsNullOrEmpty(additioanlGA4ExcludeParameters) && additioanlGA4ExcludeParameters.length() > 0) {
+            invalidParameters += "," + additioanlGA4ExcludeParameters;
+        }
+        String [] invalidParamsList = invalidParameters.split(",");
+        Boolean isInvalid = false;
+
+        try {
+            if (readCommands != null && readCommands.GA4TagList != null && readCommands.GA4TagList.size() > 0) {
+                //testHelper.DebugDisplay("In GetTaggingChecks() in GA4 If statement.");
+                for (GA4Tag gaTag : readCommands.GA4TagList) {
+                    index = 1;
+                    ga4ReturnValue += ga4TagCommandTemplateStart;
+                    for (int x=0; x < gaTag.getGA4Parameters().size(); x++) {
+                        isInvalid = false;
+                        for (int i = 0; i < invalidParamsList.length; i++) {
+                            //if this is not an invalid parameter, add it to the list of parameters to test
+                            if (gaTag.getGA4Parameter(x).get_parameterName().trim().equals(invalidParamsList[i].trim())) {
+                                isInvalid = true;
+                                break;
+                            }
+                        }
+                        if (!isInvalid) {
+                            ga4ReturnValue += GetKeyValuePair(gaTag.getGA4Parameter(x).get_parameterName(), gaTag.getGA4Parameter(x).get_parameterValue(), index);
+                            index++;
+                        }
+                    }
+                    ga4ReturnValue += ga4TagCommandTemplateEnd;
+                }
+            }
+        } catch (Exception exG4) {
+            testHelper.UpdateTestResults("Error " + exG4.getMessage() + " while attempting to create GA4 Tagging Test Steps.", true);
+        }
+
+        gaTagCommandTemplateStart = "\t<step>\r\n\t\t<command>check gtm tag</command>\r\n\t\t<actionType>read</actionType>\r\n" +
+                "\t\t<arguments>\r\n";
+        gaTagCommandTemplateEnd = "\t\t</arguments>\r\n\t</step>\r\n";
+
+        try {
+            if (readCommands != null && readCommands.GtmTagList != null && readCommands.GtmTagList.size() > 0) {
+                //testHelper.DebugDisplay("In GetTaggingChecks() in UA If statement.");
+                for (GtmTag gaTag : readCommands.GtmTagList) {
+                    index = 1;
+
+                    if (gaTag.get_eventCategory() != null && gaTag.get_eventAction() != null && gaTag.get_eventLabel() != null) {
+                        gaReturnValue += gaTagCommandTemplateStart +
+                                GetKeyValuePair("dl", gaTag.get_documentLocation(), index) +
+                                GetKeyValuePair("t", gaTag.get_hitType() != null ? gaTag.get_hitType() : "", index++) +
+                                GetKeyValuePair("ec", gaTag.get_eventCategory() != null ? gaTag.get_eventCategory() : "", index++) +
+                                GetKeyValuePair("ea", gaTag.get_eventAction() != null ? gaTag.get_eventAction() : "", index++) +
+                                GetKeyValuePair("el", gaTag.get_eventLabel() != null ? gaTag.get_eventLabel() : "", index++) +
+                                GetKeyValuePair("tid", gaTag.get_trackingId() != null ? gaTag.get_trackingId() : "", index++) +
+                                GetKeyValuePair("cg1", gaTag.get_contentGroup1() != null ? gaTag.get_contentGroup1() : "", index++) +
+                                gaTagCommandTemplateEnd;
+                    }
+
+                }
+            }
+        } catch (Exception exUA) {
+            testHelper.UpdateTestResults("Error " + exUA.getMessage() + " while attempting to create UA Tagging Test Steps.", true);
+        }
+        returnValue = ga4ReturnValue + gaReturnValue;
+        if (returnValue != null && returnValue.length() > 0) {
+            String saveHarFile = "\t<step>\r\n\t\t<command>save har file</command>\r\n" +
+                    "\t\t<actionType>write</actionType>\r\n" +
+                    "\t\t<crucial>True</crucial>\r\n" +
+                    "\t\t<arguments>\r\n" +
+                    "\t\t\t<arg1>MyCoolSite-Page-har-test.txt</arg1>\r\n" +
+                    "\t\t</arguments>\r\n" +
+                    "\t</step>\r\n";
+            returnValue = saveHarFile + returnValue;
+        }
+        return returnValue;
+    }
+
+    private String GetKeyValuePair(String key, String value, int index) {
+        //testHelper.DebugDisplay("In GetKeyValuePair key = " + key + " value = " + value);
+        return "\t\t\t<arg" + index + ">" + key + "=" + value + "</arg" + index + ">\r\n";
     }
 
 
@@ -393,6 +543,12 @@ public class TestCreatorUtility {
     private String CreateImageReadActionsXmlTestSteps(String elementXPath, String elementSrc, String elementAltText, String isCrucial) {
         String returnValue = "";
 
+        if (elementSrc.indexOf("&") > -1) {
+            if (elementSrc.indexOf("&amp;") < 0) {
+                elementSrc = elementSrc.replace("&", "&amp;");
+            }
+        }
+
         if (elementSrc != null && !elementSrc.isEmpty()) {
             returnValue = "\t<step>\r\n" +
                     "\t\t<command>check image src</command>\r\n" +
@@ -403,10 +559,10 @@ public class TestCreatorUtility {
                     "\t\t<expectedValue>" + elementSrc + "</expectedValue>\r\n" +
                     "\t</step>";
         }
-
+        testHelper.DebugDisplay("...new line added before <step>");
         if (elementAltText != null && !elementAltText.isEmpty()) {
-            returnValue += "\t<step>\r\n" +
-                    "\t\t<command>check image src</command>\r\n" +
+            returnValue += "\r\n\t<step>\r\n" +
+                    "\t\t<command>check image alt</command>\r\n" +
                     "\t\t<actionType>read</actionType>\r\n" +
                     "\t\t<crucial>" + isCrucial + "</crucial>\r\n" +
                     "\t\t<accessor>" + elementXPath + "</accessor>\r\n" +

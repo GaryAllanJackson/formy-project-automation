@@ -5,7 +5,6 @@ import net.lightbody.bmp.BrowserMobProxy;
 import net.lightbody.bmp.BrowserMobProxyServer;
 import net.lightbody.bmp.client.ClientUtil;
 import net.lightbody.bmp.core.har.Har;
-import net.lightbody.bmp.core.har.HarEntry;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -22,6 +21,7 @@ import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.logging.LoggingPreferences;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -47,13 +47,9 @@ import java.util.stream.Stream;
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-//import javax.swing.text.Document;
-//import java.security.Timestamp;
+import static org.openqa.selenium.phantomjs.PhantomJSDriverService.PHANTOMJS_CLI_ARGS;
 
 
-//import javax.swing.text.Document;
-//import java.security.Timestamp;
 enum BrowserTypes {
     Chrome, Firefox, PhantomJS, Internet_Explorer, Edge
 }
@@ -205,11 +201,12 @@ public class TestCentral {
                 configurationFile.substring(0, configurationFile.lastIndexOf("\\")) + "\\" + logFileFolder.replace("/","\\") + logFileRootFileName + logFileUniqueName + ".log" :
                 configurationFile.substring(0, configurationFile.lastIndexOf("/")) + "/" + logFileFolder + logFileRootFileName + logFileUniqueName + ".log";
         if (logFileName.equals(oldLogFileName)) {
-            int characterCode = 97;
+            logFileUniqueName = GetNewDateTimeStamp(logFileUniqueName);
+            /*int characterCode = 97;
             while (logFileName.equals(oldLogFileName)) {
                 logFileName = oldLogFileName.replace(".log", (char)(characterCode) + ".log");
                 characterCode ++;
-            }
+            }*/
         }
         testHelper.set_logFileName(logFileName);
         readCommands.testHelper.set_logFileName(logFileName);
@@ -226,8 +223,31 @@ public class TestCentral {
         return logFileName;
     }
 
+    private String GetNewDateTimeStamp(String logFileUniqueName) {
+        String[] timePortion = logFileUniqueName.split("-");
+        int hours = parseInt(timePortion[0]);
+        int minutes = parseInt(timePortion[1]);
+        int seconds = parseInt(timePortion[2]);
+        String logFileNewUniqueName = logFileUniqueName;
+
+        if (seconds < 59) {
+            seconds++;
+        } else if (minutes < 59) {
+            seconds = 0;
+            minutes++;
+        } else {
+            hours++;
+            minutes = 0;
+            seconds = 0;
+        }
+        logFileNewUniqueName = hours + "-" + minutes + "-" + seconds;
+
+
+        return logFileNewUniqueName;
+    }
+
     //region { WebDriver Browser Driver Configured Locations }
-    private final String phantomJsDriverPath = "/gary/java utilities/BrowserDrivers/phantomjs.exe";
+    private final String phantomJsDriverPath = "C:\\Gary\\Java Utilities\\BrowserDrivers\\phantomjs.exe"; //"/gary/java utilities/BrowserDrivers/phantomjs.exe";
     private final String internetExplorerDriverPath = "/gary/java utilities/BrowserDrivers/IEDriverServer.exe";
     //private String chromeDriverPath = "/gary/java utilities/BrowserDrivers/chromedriver.exe";
     //private String fireFoxDriverPath = "/gary/java utilities/BrowserDrivers/geckodriver.exe";
@@ -393,24 +413,27 @@ public class TestCentral {
     void WriteLogContent() {
         //use the following URL for testing
         //driver.get("https://testkru.com/TestUrls/TestConsoleLogs");
+        try {
+            LogEntries entry = driver.manage().logs().get(LogType.BROWSER);
+            // Retrieving all logs
+            List<LogEntry> logs = entry.getAll();
 
-        LogEntries entry = driver.manage().logs().get(LogType.BROWSER);
-        // Retrieving all logs
-        List<LogEntry> logs = entry.getAll();
-
-        if (logs.size() > 0) {
-            // Printing details separately
-            testHelper.UpdateTestResults("Writing console log information to file.", false);
-            for (LogEntry e : logs) {
-                testHelper.UpdateTestResults("Message: " + e.getMessage(),true);
-                testHelper.UpdateTestResults("Level: " + e.getLevel(),true);
+            if (logs.size() > 0) {
+                // Printing details separately
+                testHelper.UpdateTestResults("Writing console log information to file.", false);
+                for (LogEntry e : logs) {
+                    testHelper.UpdateTestResults("Message: " + e.getMessage(), true);
+                    testHelper.UpdateTestResults("Level: " + e.getLevel(), true);
+                }
+                SaveConsoleLogFile(consoleLogFileName, logs, "all", false);
+                testHelper.UpdateTestResults("Console log information written file.", false);
+            } else if (consoleLogEntries != null && consoleLogEntries.size() > 0) {
+                WriteLogContentAlt();
+            } else {
+                testHelper.UpdateTestResults("No console log information to write!", false);
             }
-            SaveConsoleLogFile(consoleLogFileName, logs, "all", false);
-            testHelper.UpdateTestResults("Console log information written file.", false);
-        } else if (consoleLogEntries != null && consoleLogEntries.size() > 0) {
-            WriteLogContentAlt();
-        } else {
-            testHelper.UpdateTestResults("No console log information to write!", false);
+        } catch (Exception ex) {
+            //do nothing if you cannot get logging to work for other browsers
         }
     }
 
@@ -462,9 +485,6 @@ public class TestCentral {
         //use the following URL for testing
         //driver.get("https://testkru.com/TestUrls/TestConsoleLogs");
 
-        //testHelper.DebugDisplay("In WriteLogContent(ts,fileStepIndex) Method!");
-        //String fileName = logFileName.substring(0, logFileName.lastIndexOf(".")-1) + "-Console-log.txt";
-
         //because by default the console log will be written using the default console log file name
         //a unique name must be used to write to the console log of a test step command
         if (!testHelper.IsNullOrEmpty(altFileName)) {
@@ -493,7 +513,6 @@ public class TestCentral {
         } else {
             testHelper.UpdateTestResults(AppConstants.indent5 + "No console log information to write! for step " + fileStepIndex , true);
         }
-        //testHelper.DebugDisplay("Logs object size after saving: " + logs.size());
     }
 
     /***********************************************************
@@ -554,8 +573,6 @@ public class TestCentral {
             // Printing details separately
             testHelper.WriteToFile(sFileName, "Page URL: " + driver.getCurrentUrl());
             for (String e : consoleLogEntries) {
-                //System.out.println("Message: " + e.substring(0,e.indexOf("-")));
-                //System.out.println("Level: " + e.substring(e.indexOf("-"),e.length() - e.indexOf("-")));
                 message = e.substring(0,e.indexOf("-"));
                 message = message.replace("\\", "");
                 message = message.replace("\"\"", "\"");
@@ -629,7 +646,7 @@ public class TestCentral {
                         while (logReader.hasNextLine()) {
                             lineContent = logReader.nextLine();
                             //remove level, if configured
-                            testHelper.DebugDisplay("Before Exclude level excludeLevel = " + excludeLevel);
+                            //testHelper.DebugDisplay("Before Exclude level excludeLevel = " + excludeLevel);
                             if (excludeLevel) {
                                 if (lineContent.indexOf("Level:INFO") > -1) {
                                     lineContent = lineContent.replace(";\" - Level:INFO", ";");
@@ -699,16 +716,14 @@ public class TestCentral {
         }
     }
 
-    //public static File GetLastModifiedFileName(String directoryFilePath)
+
     public String GetLastModifiedFileName(String directoryFilePath)
     {
         File directory = new File(directoryFilePath);
         File[] files = directory.listFiles(File::isFile);
         long lastModifiedTime = Long.MIN_VALUE;
         File chosenFile = null;
-
         String fileNamePrefix = "TestResults_";
-
 
         if (files != null)
         {
@@ -740,13 +755,18 @@ public class TestCentral {
     String GetSpecificArgumentValue(TestStep ts, String searchPhrase, String valueDelimiter, String defaultValue) {
         String temp;
         String returnValue = defaultValue;
-
+        //testHelper.DebugDisplay("searchPhrase = " + searchPhrase + "  valueDelimiter = " + valueDelimiter + " defaultValue = " + defaultValue);
         for (int x=0;x<ts.ArgumentList.size();x++) {
             temp = GetArgumentValue(ts, x, null);
+            //testHelper.DebugDisplay("temp = " + temp);
             if (!testHelper.IsNullOrEmpty(temp)) {
                 if (temp.indexOf(searchPhrase) > -1) {
                     if (testHelper.IsNullOrEmpty(valueDelimiter)) {
                         returnValue = temp;
+                        //returnValue = defaultValue;
+                        break;
+                    } else if (temp.indexOf(valueDelimiter) < 0) {
+                        returnValue = defaultValue;
                         break;
                     } else {
                         returnValue = temp.substring(temp.indexOf(valueDelimiter) + 1);
@@ -769,9 +789,20 @@ public class TestCentral {
         return maxFiles;
     }
 
+    /********************************************************************
+     * Description: Gets the number of files in the folder that match the
+     *              rootFileName passed in and ignores all other files.
+     * @param folderName - folder to search
+     * @param rootFileName - root file name that must be included in the
+     *                     fileName to be counted.
+     * @return - Returns the number of files that match the criteria.
+     *********************************************************************/
     long GetNumberOfFilesInFolder(String folderName, String rootFileName) {
         long maxFiles = 10000;
         String fileRoot = rootFileName.substring(0,rootFileName.lastIndexOf(".")-1);
+        if (fileRoot.length() <= 0) {
+            return GetNumberOfFilesInFolder(folderName);
+        }
 
         File directory = new File(folderName);
         if (!(directory.exists() && directory.isDirectory()))
@@ -803,10 +834,12 @@ public class TestCentral {
 
         try {
             Har har = proxy.getHar();
-            SaveHarFile(har, testPage);
             testHelper.UpdateTestResults("Start Writing HAR file for end of test!", true);
-            List<HarEntry> entries = proxy.getHar().getLog().getEntries();
+            SaveHarFile(har, testPage);
+
             /*
+            List<HarEntry> entries = proxy.getHar().getLog().getEntries();
+
             for (HarEntry entry : entries) {
                 //System.out.println(entry.getRequest().getUrl());
                 //testHelper.UpdateTestResults(entry.getRequest().getUrl(), false);
@@ -886,7 +919,11 @@ public class TestCentral {
 
         if (!testAllBrowsers) {
             if (get_selectedBrowserType() == BrowserTypes.PhantomJS) {
-                SetPhantomJsDriver();
+                try {
+                    SetPhantomJsDriver();
+                } catch(Exception e) {
+                    testHelper.DebugDisplay(e.getCause() + " " + e.getMessage());
+                }
             } else if (get_selectedBrowserType() == BrowserTypes.Chrome) {
                 SetChromeDriver();
             } else if (get_selectedBrowserType() == BrowserTypes.Firefox) {
@@ -934,7 +971,6 @@ public class TestCentral {
             set_imageMagicFilePath(configSettings.get_imageMagickPath());
             readCommands.set_testPage(testPage);
             readCommands.set_showAdditionalGa4Parameters(get_showAdditionalGA4Parameters());
-
 
             if (testFiles.size() > 1) {
                 this.testFileName = testFiles.get(0);
@@ -984,7 +1020,8 @@ public class TestCentral {
             testSteps = testHelper.ReadTestSettingsXmlFile(testSteps, testFileName);
             //for individual log files when running multiple tests, but need a configuration setting for this
             if (fileIndex > 0) {
-                if (testFiles.size() >= (fileIndex + 2)) {
+                //if (testFiles.size() >= (fileIndex + 2)) {
+                if (testFiles.size() > 1) {
                     WriteLogContent();  //write log content before changing log file names
                     GetNewLogFileNames();
                     if (createCSVStatusFiles.equals("many")) {
@@ -1051,7 +1088,6 @@ public class TestCentral {
                         revertToParent = true;
                     }
 
-                    //testHelper.DebugDisplay("Command:" + ts.get_command() + " Action Type:" + ts.get_actionType().toLowerCase());
                     if (ts.get_actionType() != null && ts.get_actionType().toLowerCase().equals("write")) {
                         writeCommands.PerformWriteActions(ts, fileStepIndex);
                     } else {
@@ -1068,21 +1104,10 @@ public class TestCentral {
             }
             testHelper.CreateSectionHeader("[ End of Test Script ]", AppConstants.FRAMED + AppConstants.ANSI_PURPLE_BACKGROUND + AppConstants.ANSI_BOLD, AppConstants.ANSI_YELLOW_BRIGHT, false, true, true);
             testHelper.DebugDisplay("testFiles.size() = " + testFiles.size() + " and fileIndex = " + fileIndex);
-
-            //for individual log files when running multiple tests, but need a configuration setting for this
-            /*if (testFiles.size() >= (fileIndex + 2)) {
-                GetNewLogFileNames();
-                if (createCSVStatusFiles.equals("many")) {
-                    SetCSVFileName(logFileName);
-                }
-            }*/
         }
         WriteLogContent();
         if (is_executedFromMain()) {
             TearDown();
-//            driver.close();
-//            driver.quit();
-//            PerformCleanup();
         }
     }
 
@@ -1103,96 +1128,104 @@ public class TestCentral {
         boolean isConditionalBlock = false;
         int waitTime = 1000;
         Boolean isCrucial = tsInput.get_crucial() != null ? tsInput.get_crucial() : false;
+        String oldUrl = "";
 
         //get the domain or page path to restrict the testing
         domainRestriction = GetArgumentValue(tsInput, 0, null);
         //get the pages that should also be scanned for additional hrefs
         ArrayList<String> scanPages = GetScanPages(tsInput);
         //if domain restriction is a domain URL, add that to the pages to scan
-        if (!testHelper.IsNullOrEmpty(domainRestriction) && domainRestriction.indexOf("http") > 0) {
-            scanPages.add(domainRestriction);
+        if (!testHelper.IsNullOrEmpty(domainRestriction) && domainRestriction.indexOf("http") > -1) {
+            //scanPages.add(domainRestriction);
+            scanPages.add(0,domainRestriction);
         }
 
         //Get Page links from all pages configured for scanning
         testHelper.UpdateTestResults( AppConstants.indent8 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start Adding Links from Pages configured for scan ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
-        ArrayList<String> links = GetPageLinks(scanPages, fileIndex,0,0, isCrucial);
+        ArrayList<String> links = GetPageLinks(scanPages, fileIndex,0,0, isCrucial, domainRestriction);
         testHelper.UpdateTestResults( AppConstants.indent8 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End Adding Links from Pages configured for scan ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
 
         //start with the first command in the list
         for (int pageIndex=0;pageIndex<links.size();pageIndex++) {
-            href = links.get(pageIndex);
-            isCrucial = tsInput.get_crucial() != null ? tsInput.get_crucial() : false;
-            //skip non-domain and in page links
-            if (href.indexOf(domainRestriction) > -1 && (href.indexOf("#") <= -1)) {
-                testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.iFrameSectionTopLeft + testHelper.PrePostPad("[ Entire Site Check checking URL: " + href + "]", "═", 9, 157) + AppConstants.iFrameSectionBottomRight + AppConstants.ANSI_RESET, false);
-                CreateNavigateTestStepAndNavigate(href, fileIndex, pageIndex, pageIndex, isCrucial, waitTime);
-
-                //links = GetPageLinks(links, scanPages);  //can you increase the size of the array while traversing it?
-                for (int x = xStart + 1; x < xEnd; x++) {
-                    if (revertToParent) {
-                        driver.switchTo().defaultContent();
-                        testHelper.UpdateTestResults(AppConstants.ANSI_CYAN + AppConstants.iFrameSectionBottomLeft + testHelper.PrePostPad("[ End Switch to IFrame - Reverting to defaultContent ]", "═", 9, 157) + AppConstants.iFrameSectionBottomRight + AppConstants.ANSI_RESET, false);
-                        revertToParent = false;
-                    }
-                    TestStep ts = testSteps.get(x);
-                    String fileStepIndex = "F" + fileIndex + "_S" + x + "_Iteration:" + pageIndex;
-                    if (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) {
-                        isConditionalBlock = ts.get_isConditionalBlock();
-                        testHelper.UpdateTestResults(AppConstants.ANSI_YELLOW_BRIGHT + AppConstants.iFrameSectionTopLeft + testHelper.PrePostPad("[ Start of Conditional Block ]", "═", 9, 157) + AppConstants.iFrameSectionTopRight + AppConstants.ANSI_RESET, false);
-                    } else if (ts.get_command().toLowerCase().equals(AppCommands.End_Conditional)) {
-                        isConditionalBlock = false;
-                        conditionalSuccessful = false;
-                        testHelper.UpdateTestResults(AppConstants.ANSI_YELLOW_BRIGHT + AppConstants.iFrameSectionBottomLeft + testHelper.PrePostPad("[ End of Conditional Block ]", "═", 9, 157) + AppConstants.iFrameSectionBottomRight + AppConstants.ANSI_RESET, false);
-                    }
-
-                    if ((isConditionalBlock && (conditionalSuccessful || (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()))) || (!isConditionalBlock && !conditionalSuccessful))
-                    {
-                        if (ts.get_command().toLowerCase().contains(AppCommands.Switch_To_IFrame)) {
-                            CheckiFrameArgumentOrder(ts);
-                            String frameName = GetArgumentValue(ts, 0, null);
-                            testHelper.UpdateTestResults(AppConstants.ANSI_CYAN + AppConstants.iFrameSectionTopLeft + testHelper.PrePostPad("[ Switching to iFrame: " + frameName + " for step " + fileStepIndex + " ]", "═", 9, 157) + AppConstants.iFrameSectionTopRight + AppConstants.ANSI_RESET, false);
-                            if (frameName != null && !frameName.isEmpty()) {
-                                driver.switchTo().frame(frameName);
-                            }
-                            revertToParent = true;
-                        }
-
-                        //testHelper.DebugDisplay("Command:" + ts.get_command() + " Action Type:" + ts.get_actionType().toLowerCase());
-                        if (ts.get_actionType() != null && ts.get_actionType().toLowerCase().equals("write")) {
-                            writeCommands.PerformWriteActions(ts, fileStepIndex);
-                        } else {
-                            readCommands.PerformReadActions(ts, fileStepIndex);
-                        }
+            href = links.get(pageIndex).trim();
+            //testHelper.DebugDisplay("href = " + href + "\r\noldUrl = " + oldUrl);
+            if (href != oldUrl) {
+                //testHelper.DebugDisplay("In the if href = " + href + "\r\noldUrl = " + oldUrl);
+                oldUrl = href;
+                isCrucial = tsInput.get_crucial() != null ? tsInput.get_crucial() : false;
+                //skip non-domain and in page links
+                if (href.indexOf(domainRestriction) > -1 && (href.indexOf("#") <= -1)) {
+                    testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.iFrameSectionTopLeft + testHelper.PrePostPad("[ Entire Site Check checking URL: " + href + "]", "═", 9, 157) + AppConstants.iFrameSectionTopRight + AppConstants.ANSI_RESET, false);
+                    CreateNavigateTestStepAndNavigate(href, fileIndex, pageIndex, pageIndex, isCrucial, waitTime);
+                    //links = GetPageLinks(links, scanPages);  //you can increase the size of the array while traversing it?
+                    for (int x = xStart + 1; x < xEnd; x++) {
                         if (revertToParent) {
                             driver.switchTo().defaultContent();
                             testHelper.UpdateTestResults(AppConstants.ANSI_CYAN + AppConstants.iFrameSectionBottomLeft + testHelper.PrePostPad("[ End Switch to IFrame - Reverting to defaultContent ]", "═", 9, 157) + AppConstants.iFrameSectionBottomRight + AppConstants.ANSI_RESET, false);
                             revertToParent = false;
                         }
-                    } else {
-                        testHelper.UpdateTestResults("Conditional Failed!!!  Skipping Command: " + ts.get_command() + " for Step: " + fileStepIndex, true);
+                        TestStep ts = testSteps.get(x);
+                        String fileStepIndex = "F" + fileIndex + "_S" + x + "_Iteration:" + pageIndex;
+                        if (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()) {
+                            isConditionalBlock = ts.get_isConditionalBlock();
+                            testHelper.UpdateTestResults(AppConstants.ANSI_YELLOW_BRIGHT + AppConstants.iFrameSectionTopLeft + testHelper.PrePostPad("[ Start of Conditional Block ]", "═", 9, 157) + AppConstants.iFrameSectionTopRight + AppConstants.ANSI_RESET, false);
+                        } else if (ts.get_command().toLowerCase().equals(AppCommands.End_Conditional)) {
+                            isConditionalBlock = false;
+                            conditionalSuccessful = false;
+                            testHelper.UpdateTestResults(AppConstants.ANSI_YELLOW_BRIGHT + AppConstants.iFrameSectionBottomLeft + testHelper.PrePostPad("[ End of Conditional Block ]", "═", 9, 157) + AppConstants.iFrameSectionBottomRight + AppConstants.ANSI_RESET, false);
+                        }
+
+                        if ((isConditionalBlock && (conditionalSuccessful || (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()))) || (!isConditionalBlock && !conditionalSuccessful)) {
+                            if (ts.get_command().toLowerCase().contains(AppCommands.Switch_To_IFrame)) {
+                                CheckiFrameArgumentOrder(ts);
+                                String frameName = GetArgumentValue(ts, 0, null);
+                                testHelper.UpdateTestResults(AppConstants.ANSI_CYAN + AppConstants.iFrameSectionTopLeft + testHelper.PrePostPad("[ Switching to iFrame: " + frameName + " for step " + fileStepIndex + " ]", "═", 9, 157) + AppConstants.iFrameSectionTopRight + AppConstants.ANSI_RESET, false);
+                                if (frameName != null && !frameName.isEmpty()) {
+                                    driver.switchTo().frame(frameName);
+                                }
+                                revertToParent = true;
+                            }
+
+                            //testHelper.DebugDisplay("Command:" + ts.get_command() + " Action Type:" + ts.get_actionType().toLowerCase());
+                            if (ts.get_actionType() != null && ts.get_actionType().toLowerCase().equals("write")) {
+                                writeCommands.PerformWriteActions(ts, fileStepIndex);
+                            } else {
+                                readCommands.PerformReadActions(ts, fileStepIndex);
+                            }
+                            if (revertToParent) {
+                                driver.switchTo().defaultContent();
+                                testHelper.UpdateTestResults(AppConstants.ANSI_CYAN + AppConstants.iFrameSectionBottomLeft + testHelper.PrePostPad("[ End Switch to IFrame - Reverting to defaultContent ]", "═", 9, 157) + AppConstants.iFrameSectionBottomRight + AppConstants.ANSI_RESET, false);
+                                revertToParent = false;
+                            }
+                        } else {
+                            testHelper.UpdateTestResults("Conditional Failed!!!  Skipping Command: " + ts.get_command() + " for Step: " + fileStepIndex, true);
+                        }
                     }
+                    testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.iFrameSectionBottomLeft + testHelper.PrePostPad("[ End Entire Site Check checking URL:" + href + "]", "═", 9, 157) + AppConstants.iFrameSectionBottomRight + AppConstants.ANSI_RESET, false);
+                } else {
+                    testHelper.UpdateTestResults(AppConstants.indent8 + AppConstants.ANSI_BLUE_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Domain ((" + domainRestriction + ") restriction exception: " + href + "]", "═", 9, 157) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, false);
                 }
-                testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.iFrameSectionBottomLeft + testHelper.PrePostPad("[ End Entire Site Check checking URL:" + href + "]", "═", 9, 157) + AppConstants.iFrameSectionBottomRight + AppConstants.ANSI_RESET, false);
-            } else {
-                testHelper.UpdateTestResults( AppConstants.indent8 + AppConstants.ANSI_BLUE_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Domain ((" + domainRestriction + ") restriction exception: " + href + "]", "═", 9, 157) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, false);
             }
-            //WriteLogContent();
         }
     }
 
+    /*********************************************************************
+     * Description: Spiders the site retrieving a list of Page URLs from all
+     *              anchor tags.
+     * @param ts    - Test Step Object
+     * @param fileStepIndex - File Step Index
+     **********************************************************************/
     public void SpiderSite(TestStep ts, String fileStepIndex) {
         String fileName = GetArgumentValue(ts, 0, null);
         //get the domain or page path to restrict the testing
         String domainRestriction = GetArgumentValue(ts, 1, null);
         //get the sitemap page or page with most links
         String siteMapPage = GetArgumentValue(ts, 2, null);
-        String additionalLinkPage;
         String htmlPage;
         String filteredPages = "";
         int fileIndex;
         ArrayList<String> links = null;
         TestStep tsTmp;
-        int linkSize;
         int start = 0, end = 0, hrefStart = 0, hrefEnd = 0;
         String link;
         Boolean isFound;
@@ -1220,7 +1253,6 @@ public class TestCentral {
                 links = GetUrlDecodedScanPages(ts, links, domainRestriction, 3);
 
                 if (links != null && links.size() > 0) {
-                    //linkSize = links.size();
                     for (int x = 0; x < links.size(); x++) {
                         fileIndex = fileIndex + 1;
                         tsTmp = new TestStep();
@@ -1253,13 +1285,11 @@ public class TestCentral {
                                     if (hrefEnd > hrefStart) {
                                         link = GetFullyFormedAnchorLink(htmlPage, hrefStart, hrefEnd, domainRestriction);
                                         if (link.length() > 0) {
-                                            //testHelper.DebugDisplay("3 link = (" + link + ")");
                                             //ensure link is unique and not a duplicate
                                             isFound = CheckLinkIsUnique(links, link, domainRestriction);
                                             isValid = CheckLinkIsValid(link, invalidLinkList);
                                             //ensure domain restriction for any potential links
                                             if (!isFound && isValid && link.length() > 0) {
-                                                //testHelper.DebugDisplay("#4 Adding link to links = (" + link + ")");
                                                 links.add(link.trim());
                                             }
                                         }
@@ -1303,6 +1333,16 @@ public class TestCentral {
         testHelper.UpdateTestResults(AppConstants.indent8 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End Spidering Site ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
     }
 
+    /*************************************************************************************
+     * Description: Gets a list of links, decodes them, checks to ensure that each is
+     *              unique and calls another method to ensure that the page complies with
+     *              the domain or Page Path restriction based on the test file.
+     * @param ts
+     * @param links
+     * @param domainRestriction
+     * @param startIndex
+     * @return
+     **************************************************************************************/
     private ArrayList<String> GetUrlDecodedScanPages(TestStep ts,  ArrayList<String> links, String domainRestriction, int startIndex) {
         String additionalLinkPage;
         Boolean isFound;
@@ -1310,10 +1350,12 @@ public class TestCentral {
         for (int i = startIndex; i < ts.ArgumentList.size(); i++) {
             additionalLinkPage = GetArgumentValue(ts, i, null);
             try {
-                additionalLinkPage = java.net.URLDecoder.decode(additionalLinkPage, StandardCharsets.UTF_8.name());
-            } catch (UnsupportedEncodingException unsupportedEncodingException) {
+                //additionalLinkPage = java.net.URLDecoder.decode(additionalLinkPage, StandardCharsets.UTF_8.name());
+                additionalLinkPage = UrlDecode(additionalLinkPage);
+            } catch (Exception ex) {
                 additionalLinkPage = additionalLinkPage.replace("&amp;","&");
             }
+
             isFound = CheckLinkIsUnique(links, additionalLinkPage, domainRestriction);
             if (!isFound) {
                 links.add(additionalLinkPage);
@@ -1322,7 +1364,14 @@ public class TestCentral {
         return links;
     }
 
-
+    /*******************************************************************
+     * Description: Checks that the link is valid by comparing the link
+     *              against a list of imvalid links basically ensuring
+     *              that non-page links are eliminated.
+     * @param link
+     * @param invalidLinkList
+     * @return
+     *******************************************************************/
     private Boolean CheckLinkIsValid(String link, String[] invalidLinkList) {
         //checks to ensure that no non-page links are listed
         Boolean isValid = true;
@@ -1335,6 +1384,27 @@ public class TestCentral {
         return isValid;
     }
 
+    /***********************************************************
+     * Description: URL Decodes the value passed in and returns
+     *              the decoded value to the calling method.
+     *              In the event of an Unsupported Exception, it
+     *              replaces the encoded ampersand (&amp;) with
+     *              the unencoded ampersand (&)
+     * @param urlValue
+     * @return
+     ***************************************************************/
+    String UrlDecode(String urlValue) {
+       String returnValue = urlValue;
+       try {
+           returnValue = java.net.URLDecoder.decode(urlValue, StandardCharsets.UTF_8.name());
+       } catch (UnsupportedEncodingException unsupportedEncodingException) {
+           returnValue  = returnValue.replace("&amp;","&");
+       } catch (Exception ex) {
+           returnValue = urlValue;
+       }
+       return returnValue;
+    }
+
     private Boolean CheckLinkIsUnique(ArrayList<String> links, String link, String domainRestriction) {
         //checks to ensure that all links are unique
         Boolean isFound = false;
@@ -1345,7 +1415,6 @@ public class TestCentral {
             if (links.size() > 0) {
                 for (int i = 0; i < links.size(); i++) {
                     if (links.get(i).trim().equals(link.trim())) {
-                        //testHelper.DebugDisplay("Found: " + link.trim() + " - clearing link variable.");
                         isFound = true;
                         break;
                     }
@@ -1361,7 +1430,6 @@ public class TestCentral {
         link = link.replace("\"","");
         //testHelper.DebugDisplay("#1 link = " + link);
         if (link.indexOf("http") < 0) {
-            //testHelper.DebugDisplay("link does not contain http");
             if (link.length() > 0) {
                 if (link.startsWith("/")) {
                     link = (domainRestriction + link.substring(1)).trim();
@@ -1372,7 +1440,6 @@ public class TestCentral {
         } else if (!link.startsWith(domainRestriction)) {
             link = "";
         }
-        //testHelper.DebugDisplay("#1b link = " + link);
         return link;
     }
 
@@ -1454,15 +1521,13 @@ public class TestCentral {
     private ArrayList<String> GetScanPages(TestStep tsInput) {
         ArrayList<String> scanPages = new ArrayList<>();
         String pageUrl = "";
-        //testHelper.DebugDisplay("Retrieving Scan Pages");
         testHelper.UpdateTestResults( AppConstants.indent8 + AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start Retrieving Scan Pages ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
 
         for (int x=1;x<tsInput.ArgumentList.size();x++) {
             pageUrl = GetArgumentValue(tsInput, x, null);
-            //testHelper.DebugDisplay("#1 Scan Page Url: " + pageUrl);
+
             if (!testHelper.IsNullOrEmpty(pageUrl)) {
                 scanPages.add(pageUrl);
-                //testHelper.DebugDisplay("#2 Scan Page Url: " + pageUrl);
             } else {
                 break;
             }
@@ -1477,24 +1542,29 @@ public class TestCentral {
      *    method.
      *
      **************************************************************************** */
-    private ArrayList GetPageLinks(ArrayList<String> scanPages, int fileIndex, int pageIndex, int altIndex, Boolean isCrucial) {
-        List<WebElement> anchorTags; // = driver.findElements(By.cssSelector("a"));
+
+    private ArrayList GetPageLinks(ArrayList<String> scanPages, int fileIndex, int pageIndex, int altIndex, Boolean isCrucial, String domainRestriction) {
+        List<WebElement> anchorTags;
         ArrayList<String> links = new ArrayList<>();
         Boolean isFound = false;
         String currentUrl = driver.getCurrentUrl();
         scanPages.add(0,currentUrl);
         int waitTime = 1000;
+        Boolean isValid = false;
+        String anchorURL = "";
+
         for (int z=0;z<scanPages.size();z++) {
-            //testHelper.DebugDisplay("Getting Page links from: " + scanPages.get(z));
             if (!scanPages.get(z).equals(driver.getCurrentUrl())) {
                 CreateNavigateTestStepAndNavigate(scanPages.get(z), fileIndex, pageIndex, altIndex, isCrucial,waitTime);
             }
             anchorTags = driver.findElements(By.cssSelector("a"));
             for (int x = 0; x < anchorTags.size(); x++) {
                 isFound = false;
-                if (anchorTags.get(x).getAttribute("href").indexOf("#") < 0) {
+                isValid = false;
+                anchorURL = anchorTags.get(x).getAttribute("href");
+                if (!testHelper.IsNullOrEmpty(anchorURL) &&  anchorURL.indexOf("#") < 0) {
                     for (int y = 0; y < links.size(); y++) {
-                        if (links.get(y).equals(anchorTags.get(x).getAttribute("href"))) {
+                        if (links.get(y).equals(anchorURL)) {
                             isFound = true;
                             break;
                         }
@@ -1502,9 +1572,23 @@ public class TestCentral {
                 } else {
                     isFound = true;
                 }
-                if (!isFound) {
+                if (!testHelper.IsNullOrEmpty(anchorURL) && domainRestriction.length() > 0) {
+                    if (domainRestriction.startsWith("http")) {
+                        if (anchorURL.startsWith(domainRestriction)) {
+                            isValid = true;
+                        }
+                    } else {
+                        if (anchorURL.indexOf(domainRestriction) > -1) {
+                            isValid = true;
+                        }
+                    }
+                } else if (!testHelper.IsNullOrEmpty(anchorURL)) {
+                    //if there is no domain restriction all links are valid
+                    isValid = true;
+                }
+
+                if (!isFound && isValid) {
                     links.add(anchorTags.get(x).getAttribute("href"));
-                    //testHelper.UpdateTestResults ("Adding Link: " + anchorTags.get(x).getAttribute("href"),true);
                 }
             }
         }
@@ -1512,7 +1596,14 @@ public class TestCentral {
     }
 
 
-
+    /******************************************************************************************
+     * Description: Retrieves all href values on the page with the exception of the
+     *              invalidLinks list items to eliminate image links.
+     * @param pages - Array of Pages where href values will be retrieved.
+     * @param domainRestriction - a string that limits the href values to just those that contain
+     *                            the value passed in.
+     * @return - returns a list of href values (Links)
+     *****************************************************************************************/
     private ArrayList<String> GetPageLinks(ArrayList<String> pages, String domainRestriction) {
         List<WebElement> anchorTags = driver.findElements(By.cssSelector("a"));
         Boolean isFound = false;
@@ -1620,7 +1711,6 @@ public class TestCentral {
             }
             if (!isFound) {
                 links.add(anchorTags.get(x).getAttribute("href"));
-                //testHelper.DebugDisplay("#2 Adding Link: " + anchorTags.get(x).getAttribute("href"));
             }
         }
         //compare against list already retrieved
@@ -1634,10 +1724,8 @@ public class TestCentral {
             }
             if (!isFound) {
                 pages.add(links.get(x));
-                //testHelper.DebugDisplay("Adding Additional Links: " + anchorTags.get(x).getAttribute("href"));
             }
         }
-        //return links;
         return pages;
     }
 
@@ -1826,7 +1914,7 @@ public class TestCentral {
      * @param fileStepIndex - the file index and the step index.
      ************************************************************ */
     void PerformExplicitNavigation(TestStep ts, String fileStepIndex) throws Exception {
-        if (!AreArgumentsAreCombined(ts,2)) {
+        if (!AreArgumentsCombined(ts,2)) {
             PerformExplicitNavigationNew(ts, fileStepIndex);
             return;
         }
@@ -1935,8 +2023,15 @@ public class TestCentral {
         testHelper.UpdateTestResults( indentMargin + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End Explicit Navigation Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
     }
 
+    /********************************************************************************
+     * Description: Performs Explicit Navigation Test Step reading the arguments as
+     *              named arguments.
+     * @param ts - test step Object
+     * @param fileStepIndex - File Step index
+     * @throws Exception
+     ********************************************************************************/
     void PerformExplicitNavigationNew(TestStep ts, String fileStepIndex) throws Exception {
-        if (AreArgumentsAreCombined(ts,2)) {
+        if (AreArgumentsCombined(ts,2)) {
             PerformExplicitNavigationNew(ts, fileStepIndex);
             return;
         }
@@ -1964,14 +2059,14 @@ public class TestCentral {
                 delayMilliSeconds = parseInt(delayTime.trim());
             }
             if (windowDimensionHeight != null && windowDimensionWidth != null) {
-
+                //testHelper.DebugDisplay("windowDimensionHeight = " + windowDimensionHeight + " and windowDimensionWidth = " + windowDimensionWidth);
                 int width = parseInt(windowDimensionWidth);
                 int height = parseInt(windowDimensionHeight);
 
                 testHelper.UpdateTestResults(subIndent + "Setting browser dimensions to (Width=" + width + " Height=" + height + ")", true);
                 testHelper.SetWindowContentDimensions(driver, width, height);
             }
-            testHelper.DebugDisplay("pageTimingFE = " + pageTimingFE + " - pageTimingBE = " + pageTimingBE);
+            //testHelper.DebugDisplay("pageTimingFE = " + pageTimingFE + " - pageTimingBE = " + pageTimingBE);
             if (pageTimingFE != null && pageTimingBE != null) {
                 backEndTiming = parseDouble(pageTimingBE);
                 frontEndTiming =  parseDouble(pageTimingFE);
@@ -2016,7 +2111,14 @@ public class TestCentral {
         testHelper.UpdateTestResults( indentMargin + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End Explicit Navigation Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
     }
 
-     Boolean AreArgumentsAreCombined(TestStep ts, int startIndex) {
+    /***************************************************************************
+     * Description: Checks if arguments that can be combined are combined or
+     *              if they are listed individually.
+     * @param ts    - Test Step Object
+     * @param startIndex - Argument Start index to begin checking
+     * @return - boolean value (True, if Combined, else False)
+     ***************************************************************************/
+     Boolean AreArgumentsCombined(TestStep ts, int startIndex) {
         String testValue;
         int firstOccurrence;
         int secondOccurrence;
@@ -2273,8 +2375,13 @@ public class TestCentral {
         }
     }
 
+    /***********************************************************
+     * Description: Saves the HAR file to the fileName passed in.
+     * @param har - the HAR content
+     * @param sFileName - the fileName where the HAR content is
+     *                  to be saved.
+     ***********************************************************/
     private void SaveHarFile(Har har, String sFileName) {
-
         sFileName = sFileName.replace("/","_").replace(":","_");
         sFileName = harFolder + sFileName + ".txt";
         sFileName = testHelper.GetUnusedFileName(sFileName);
@@ -2315,13 +2422,38 @@ public class TestCentral {
 
 
     //region { Set Driver Methods }
+    private void SetPhantomJsDriver_test() {
+        DesiredCapabilities caps = new DesiredCapabilities();
+        caps.setJavascriptEnabled(true);
+        caps.setCapability("takesScreenshot", true);
+        File src = new File(phantomJsDriverPath);
+        caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, src.getAbsolutePath());
+        /*
+        ((DesiredCapabilities) caps).setJavascriptEnabled(true);
+        ((DesiredCapabilities) caps).setCapability("takesScreenshot", true);
+        ((DesiredCapabilities) caps).setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, "C:\\Utility\\phantomjs-2.1.1-windows\\bin\\phantomjs.exe");
+        caps.setJavascriptEnabled(true);
+         */
+        String [] phantomJsArgs = {"--web-security=no", "--ignore-ssl-errors=yes"};
+        caps.setCapability(PHANTOMJS_CLI_ARGS, phantomJsArgs);
+        driver = new PhantomJSDriver(caps);
+    }
+
+
     /****************************************************************************
      *  DESCRIPTION:
      *  Sets the WebDriver to the PhantomJs Driver
      **************************************************************************** */
-    private void SetPhantomJsDriver() {
+    private void SetPhantomJsDriver() throws Exception {
         testHelper.UpdateTestResults( AppConstants.indent5 + "[" + AppConstants.ANSI_GREEN + "Setting " + AppConstants.ANSI_RESET + "PhantomJSDriver]" + AppConstants.ANSI_RESET , true);
+        //BrowserMobProxyServer bm = new BrowserMobProxyServer(); //added 11/20/2023 testing
+        //bm.start(0);
+        //seleniumProxy = ClientUtil.createSeleniumProxy(bm);
+        seleniumProxy = getSeleniumProxy(getProxyServer());
+
+        //TODO: WORKING HERE
         File src = new File(phantomJsDriverPath);
+        testHelper.DebugDisplay("#1 working here! src.getAbsolutePath() = " + src.getAbsolutePath());
         System.setProperty("phantomjs.binary.path", src.getAbsolutePath());
         //WebDriverManager.phantomjs().setup();  //for some reason after maven update this no longer works!
 
@@ -2335,10 +2467,22 @@ public class TestCentral {
 
          */
         /************************************************************/
-
+        DesiredCapabilities capabilities = new DesiredCapabilities();       //added 11/20/2023 testing
+        //seleniumProxy = getSeleniumProxy(getProxyServer());               //added 11/20/2023 testing
+        capabilities.setCapability(CapabilityType.PROXY, seleniumProxy);    //added 11/20/2023 testing
+        capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, src.getAbsolutePath());
+        //capabilities.setAcceptInsecureCerts(true);
+        /*capabilities.setCapability("web-security",false);
+        capabilities.setCapability("ssl-protocol","any");
+        capabilities.setCapability("ignore-ssl-errors",true);*/
+        /*capabilities.setCapability(PHANTOMJS_CLI_ARGS,
+               String[]("--web-security=no",
+                "--ssl-protocol=any",
+                "--ignore-ssl-errors=yes"));*/
         driver = new PhantomJSDriver();
         driver.manage().window().maximize(); //added 8-14-2019
         testHelper.set_is_Maximized(true);
+
     }
 
     /****************************************************************************
@@ -2346,18 +2490,24 @@ public class TestCentral {
      *  Sets the WebDriver to the PhantomJs Driver
      **************************************************************************** */
     private void SetPhantomJsDriver_old() {
-        /*
-        testHelper.UpdateTestResults( AppConstants.indent5 + "[" + AppConstants.ANSI_GREEN + "Setting " + AppConstants.ANSI_RESET + "PhantomJSDriver]" + AppConstants.ANSI_RESET , true);
-        File src = new File(phantomJsDriverPath);
-        DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, src.getAbsolutePath());
-        //IMPORTANT: for phantomJS you may need to add a user agent for automation testing as the default user agent is old
-        // and may not be supported by the website.
-        capabilities.setCapability("phantomjs.page.settings.userAgent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36");
-        System.setProperty("phantomjs.binary.path", src.getAbsolutePath());
-        this.driver = new PhantomJSDriver(capabilities);
-        driver.manage().window().maximize(); //added 8-14-2019
-        testHelper.set_is_Maximized(true); */
+
+        try {
+            testHelper.UpdateTestResults(AppConstants.indent5 + "[" + AppConstants.ANSI_GREEN + "Setting " + AppConstants.ANSI_RESET + "PhantomJSDriver]" + AppConstants.ANSI_RESET, true);
+            File src = new File(phantomJsDriverPath);
+            DesiredCapabilities capabilities = new DesiredCapabilities();
+            capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, src.getAbsolutePath());
+            testHelper.DebugDisplay("#1 OK so far!");
+            //IMPORTANT: for phantomJS you may need to add a user agent for automation testing as the default user agent is old
+            // and may not be supported by the website.
+            // debugging capabilities.setCapability("phantomjs.page.settings.userAgent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36");
+            System.setProperty("phantomjs.binary.path", src.getAbsolutePath());
+            testHelper.DebugDisplay("#2 OK so far!");
+            this.driver = new PhantomJSDriver(capabilities);
+            driver.manage().window().maximize(); //added 8-14-2019
+            testHelper.set_is_Maximized(true);
+        } catch(Exception e) {
+            testHelper.DebugDisplay(e.getMessage() + " \r\n" + e.getCause() + " \r\n" + e.getStackTrace());
+        }
     }
 
     public BrowserMobProxy getProxyServer() {
@@ -2404,13 +2554,12 @@ public class TestCentral {
         }
     }*/
 
+    /*
     private void SetChromeDriver_bareMinimum() {
         System.setProperty("webdriver.chrome.driver", "C:\\Gary\\Java Utilities\\BrowserDrivers\\chromedriver.exe");
         //ChromeOptions chromeOptions = new ChromeOptions();
         driver= new ChromeDriver();
-
-
-    }
+    }*/
 
 
     /****************************************************************************
@@ -2433,9 +2582,12 @@ public class TestCentral {
             DesiredCapabilities capabilities = new DesiredCapabilities();
             seleniumProxy = getSeleniumProxy(getProxyServer());
             capabilities.setCapability(CapabilityType.PROXY, seleniumProxy);
-            //the line below adds network traffic to the HAR file and increases the site of the file exponentially.
+            //TODO: Create a configuration that allows the network traffic to be saved when configured
+            //IMPORTANT: the line below adds network traffic to the HAR file and increases the size of the file exponentially.
             //a 280K-320K file will be about 95Megs!!!
+            //if (CaptureNetworkRequests) {
             //proxy.enableHarCaptureTypes(CaptureType.REQUEST_CONTENT, CaptureType.RESPONSE_CONTENT);
+            //}
 
             /***********[ Attempting to get log information here ]*******/
             LoggingPreferences logPrefs = new LoggingPreferences();
@@ -2444,8 +2596,6 @@ public class TestCentral {
             options.setCapability("goog:loggingPrefs",logPrefs);  //this is the magic line
             /************************************************************/
             WebDriverManager.chromedriver().setup();
-
-
 
             if (runHeadless) {
                 //ChromeOptions options = new ChromeOptions();
@@ -2494,10 +2644,13 @@ public class TestCentral {
         logPrefs.enable(LogType.BROWSER, Level.ALL);
         testHelper.DebugDisplay("logPrefs.getEnabledLogTypes() = " + logPrefs.getEnabledLogTypes());
 
+
         FirefoxOptions options = new FirefoxOptions();
         //options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
         options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
-
+        options.setCapability(CapabilityType.PROXY, seleniumProxy);     //added 11/21/2023
+        options.setAcceptInsecureCerts(true);                           //added 11/21/2023
+        options.setCapability("moz:firefoxOptions",logPrefs);
         /************************************************************/
 
         if (runHeadless) {
@@ -2566,11 +2719,12 @@ public class TestCentral {
         if (runHeadless) {
             testHelper.UpdateTestResults("The Internet Explorer Browser does not support headless execution.  Running with Graphical User Interface.", true);
         }
-//        if (runHeadless) {
-//            DesiredCapabilities capab = DesiredCapabilities.internetExplorer();
-//            capab.setCapability("headless", true);
-//
-//        }
+        /*
+        if (runHeadless) {
+            DesiredCapabilities capab = DesiredCapabilities.internetExplorer();
+            capab.setCapability("headless", true);
+
+        } */
         driver = new InternetExplorerDriver();
         driver.manage().window().maximize();
     }
@@ -2719,6 +2873,15 @@ public class TestCentral {
      * @return - xPath of the childElement passed in
      **********************************************************************/
     String GenerateXPath(WebElement childElement, String current) {
+        String xPathId;
+        if (childElement != null ) {
+            if (childElement.getAttribute("id") != null && childElement.getAttribute("id").length() > 0) {
+                xPathId = GenerateIdXPath(childElement, current);
+                if (xPathId != null) {
+                    return GenerateIdXPath(childElement, current);
+                }
+            }
+        }
         String childTag = childElement.getTagName();
         if(childTag.equals("html")) {
             return "/html[1]"+current;
@@ -2735,6 +2898,17 @@ public class TestCentral {
             if(childElement.equals(childrenElement)) {
                 return GenerateXPath(parentElement, "/" + childTag + "[" + count + "]"+current);
             }
+        }
+        return null;
+    }
+
+    String GenerateIdXPath(WebElement childElement, String current) {
+        String tagName = childElement.getTagName().toLowerCase();
+        current = current == null ? "" : current;
+        List<WebElement> elements = driver.findElements(By.xpath("//" + tagName + "[@id=\"" + childElement.getAttribute("id") + "\"] " + current));
+        if (elements.size() == 1) {
+            return "//" + tagName + "[@id=\"" + childElement.getAttribute("id") + "\"] " + current;
+            //return "//*[@id=\"" + childElement.getAttribute("id") + "\"]";
         }
         return null;
     }
@@ -2759,6 +2933,15 @@ public class TestCentral {
         }
     }
 
+    /*************************************************************
+     * Description: Creates a GTM tag object based on the
+     *              Test file arguments.
+     * @param ts - Test Step Object
+     * @param defaultValue - (not currently in use) intended to
+     *                     be used as the field values in the event
+     *                     that the actual value is not present.
+     * @return - Returns a GTM tag object
+     ***************************************************************/
     GtmTag GetGtmArguments(TestStep ts, String defaultValue) {
         GtmTag item = new GtmTag();
         String argument;
@@ -2796,6 +2979,14 @@ public class TestCentral {
         return item;
     }
 
+    /********************************************************************
+     * Description: Creates a GA4 Tag object based on the Test Step Arguments.
+     * @param ts - Test Step Object
+     * @param defaultValue - (not currently in use) intended to
+     *                           be used as the field values in the event
+     *                           that the actual value is not present.
+     * @return - Returns a GA4 Tag object
+     ********************************************************************/
     GA4Tag GetGa4Arguments(TestStep ts, String defaultValue) {
         GA4Tag item = new GA4Tag();
         String argument;
@@ -2844,6 +3035,25 @@ public class TestCentral {
         item.set_GA4Parameters(ga4Parameters);
         return item;
     }
+
+    /***********************************************************
+     * Description: Gets all Test Step arguments and returns
+     *              them as an array.
+     * @param ts    - Test Step Object
+     * @return      - An Array of Test Step arguments
+     ***********************************************************/
+    public ArrayList<String> GetAllArguments(TestStep ts) {
+        //String [] returnArguments = new String[];
+        ArrayList<String> returnArguments = new ArrayList<String>();
+
+        for(int x=0;x< ts.ArgumentList.size();x++) {
+            if (!testHelper.IsNullOrEmpty(ts.ArgumentList.get(x).get_parameter())) {
+                returnArguments.add(ts.ArgumentList.get(x).get_parameter());
+            }
+        }
+        return returnArguments;
+    }
+
 
     /****************************************************************
      * Description: This method gets the ArgumentList Parameter String
@@ -3247,6 +3457,7 @@ public class TestCentral {
 
         testHelper.UpdateTestResults( AppConstants.indent8 + AppConstants.ANSI_RED + defaultCheckValuesOverridden + AppConstants.ANSI_RESET, true);
     }
+
 
 
 
