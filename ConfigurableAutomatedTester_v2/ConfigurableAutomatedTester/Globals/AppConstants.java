@@ -145,6 +145,41 @@ public class AppConstants {
 
     public static final String DefaultContrastBrightnessSetting = "125";
     public static final String DefaultContrastDifferenceSetting = "500";
+
+    public static final String PersistCheckValue = "persist";
+    public static final String PersistStringCheckValue = "persiststring";
 //    public static final String RequiredMinimumColorContrastRatio = "7:1";
+
+    //argument constants
+    public static final String UrlArg = "url";
+    public static final String DelayArg = "delay";
+    public static final String HeightArg = "h";
+    public static final String WidthArg = "w";
+    public static final String IFrameNameArg = "iframename";
+    public static final String ElementArg = "element";
+    public static final String SearchTypeArg = "searchtype";
+    public static final String MathOperatorArg = "mathoperator";
+    public static final String FeTimingArg = "fe";
+    public static final String BeTimingArg = "be";
+    public static final String OptionalArg = "optional";
+    public static final String SrcArg = "src";
+    public static final String AltArg = "alt";
+    public static final String BaseLineImageArg = "baselineimage";
+    public static final String ActualImageArg = "actualimage";
+    public static final String DifferenceImageArg = "differenceimage";
+    public static final String GlobalDifferenceImageArg = "globaldifferenceimage";
+    public static final String AcceptableDifference = "acceptabledifference";
+    public static final String FileNameArg = "filename";
+    public static final String SaveTypeArg = "savetype";
+    public static final String BrightnessArg = "b";
+    public static final String DifferenceArg = "d";
+    public static final String EqualDelimiterArg = "=";
+    public static final String FirstNumberIndexArg = "0";
+    public static final String SecondNumberIndexArg = "2";
+    public static final String OperatorIndexArg = "2";
+    public static final String FormFieldIndexArg = "2";
+    public static final String DomainRestrictionArg = "domainrestriction";
+    public static final String SiteMapPageArg = "sitemappage";
+
 
 }
