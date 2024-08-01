@@ -75,6 +75,11 @@ public class TestCentral {
      *      configurationFolder,
      *      logFileName,
      *      chromeDriverPath, (No longer necessary but add Chrome.exe (not chromedriver.exe) folder to the path variable)
+     *      When replacing ChromeDriver get the 32 bit version and place it in a version folder in this folder:
+     *          C:\Users\gjackson\.cache\selenium\chromedriver\win32\114.0.5735.90 because this is the latest version on
+     *          the driver download site, which is now outdated but this is the version that Driver Manager will compare against
+     *          to pull the latest.
+     *          (C:\Users\gjackson\.cache\selenium\chromedriver\win32)
      *      fireFoxDriverPath, (No longer necessary but add FireFox.exe folder to the path variable)
      *      phantomJsDriverPath, (Required)
      *      internetExplorerDriverPath,  (Required)
@@ -192,7 +197,18 @@ public class TestCentral {
     public List<GtmTag> GtmTagList;
     public List<GA4Tag> GA4TagList;
     public String get_testFileName() {return testFileName;}
+    int lastIndex;
 
+    /**************************************************************
+     * DESCRIPTION: Creates a new Log File name using a new
+     *  logFileUniqueName, that is composed of the now date and time,
+     *  to ensure that the new fileName is unique.
+     *  Previously, this file also looped in case two tests ran
+     *  within the same time but that seemed unnecessary so it
+     *  has been commented out.
+     *
+     * @return
+     **********************************************************/
     public String GetNewLogFileNames() {
         String oldLogFileName = logFileName;
         testHelper.DebugDisplay("Previous Logfile Name: " + logFileName);
@@ -249,7 +265,7 @@ public class TestCentral {
     //region { WebDriver Browser Driver Configured Locations }
     private final String phantomJsDriverPath = "C:\\Gary\\Java Utilities\\BrowserDrivers\\phantomjs.exe"; //"/gary/java utilities/BrowserDrivers/phantomjs.exe";
     private final String internetExplorerDriverPath = "/gary/java utilities/BrowserDrivers/IEDriverServer.exe";
-    //private String chromeDriverPath = "/gary/java utilities/BrowserDrivers/chromedriver.exe";
+    private String chromeDriverPath = "/gary/java utilities/BrowserDrivers/chromedriver.exe";
     //private String fireFoxDriverPath = "/gary/java utilities/BrowserDrivers/geckodriver.exe";
     //private String edgeDriverPath = "/gary/java utilities/BrowserDrivers/msedgedriver.exe";
     //endregion
@@ -321,10 +337,15 @@ public class TestCentral {
      *                  throw exception.
      ***************************************************************/
     public TestCentral() {
+
+
         //make these objects all reference this object instance
         readCommands = new ReadCommands(this);
         writeCommands = new WriteCommands(this);
         testHelper = new TestHelper(this);
+
+        //Check the ChromeDriver version
+        CheckCromeDriverLastModifiedDate();
 
         //throws Exception {
 //        ColorUtility();  // This method displays colors for use in the application
@@ -333,10 +354,38 @@ public class TestCentral {
         // not in the proper location, the correct path can be specified as input.
     }
 
+    /**************************************************************
+     * DESCRIPTION: This method was created to check the chromedriver
+     * last modified date and compare it against the chromeDriver
+     * in the normal download folder and if the download file is
+     * last modified the download file is copied over the app file.
+     * ***********************************************************/
+    private void CheckCromeDriverLastModifiedDate() {
+        String appChromePath = "C:\\Users\\gjackson\\.cache\\selenium\\chromedriver\\win32\\114.0.5735.90\\chromedriver.exe";
+        FileVersionInfo fileVersionInfo = new FileVersionInfo();
+        try {
+            long appChromeLastModified, downloadChromeLastModified;
+            appChromeLastModified = fileVersionInfo.GetLastModifiedDate(appChromePath);
+            downloadChromeLastModified = fileVersionInfo.GetLastModifiedDate(chromeDriverPath);
+            if (downloadChromeLastModified > appChromeLastModified) {
+                File newFile = new File(chromeDriverPath);
+                File oldFile = new File(appChromePath);
+                Files.copy(newFile.toPath(), oldFile.toPath());
+                System.out.println(AppConstants.ANSI_YELLOW_BRIGHT + "Overwriting Application ChromeDriver with downloaded version!" + AppConstants.ANSI_RESET);
+            } else {
+                System.out.println(AppConstants.ANSI_GREEN_BRIGHT + "Application ChromeDriver matches downloaded ChromeDriver Last Modified By Date!" + AppConstants.ANSI_RESET);
+            }
+        } catch(IOException io) {
+            //if there is an error, wait to see what error it is
+            System.out.println(AppConstants.ANSI_RED_BRIGHT + "Error: " + io.getMessage().toString() + AppConstants.ANSI_RESET);
+        }
+    }
+
+
 
 
     /****************************************************************************
-     *  DESCRIPTION: Runs all of the tests read in from the test settings file.
+     *  DESCRIPTION: Runs all tests read in from the test settings file.
      *
      **************************************************************************** */
     @Test
@@ -362,7 +411,6 @@ public class TestCentral {
                     case 4:
                         SetEdgeDriver();
                         break;
-
                     default:
                         SetPhantomJsDriver();
                         break;
@@ -387,7 +435,6 @@ public class TestCentral {
     @AfterAll
     void TearDown() throws Exception {
         try {
-
             WriteHarContent();
 
             driver.close();
@@ -413,6 +460,7 @@ public class TestCentral {
     void WriteLogContent() {
         //use the following URL for testing
         //driver.get("https://testkru.com/TestUrls/TestConsoleLogs");
+        testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start Write Logs to File Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
         try {
             LogEntries entry = driver.manage().logs().get(LogType.BROWSER);
             // Retrieving all logs
@@ -435,6 +483,7 @@ public class TestCentral {
         } catch (Exception ex) {
             //do nothing if you cannot get logging to work for other browsers
         }
+        testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End Write Logs to File Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
     }
 
     /****************************************************************
@@ -591,10 +640,11 @@ public class TestCentral {
     public void CombineLogContent(TestStep ts, String fileStepIndex) {
         String rootFileName = !testHelper.IsNullOrEmpty(GetSpecificArgumentValue(ts, "root file name", "=",null)) ?
                 GetSpecificArgumentValue(ts, "root file name", "=",null) : GetLastModifiedFileName(consoleLogFolder);
-        if ( rootFileName.indexOf("log.txt") < 0) {
+        /*if ( rootFileName.indexOf("log.txt") < 0) {
             rootFileName = rootFileName.substring(0, rootFileName.indexOf("log") + 3) + rootFileName.substring(rootFileName.indexOf(".txt"));
-        }
-        String combinedFileName = rootFileName.replace("log.txt", "log-combined.txt");
+        }*/
+        //String combinedFileName = rootFileName.replace("log.txt", "log-combined.txt");
+        String combinedFileName = rootFileName.replace(".txt", "-combined.txt");
         Boolean excludeLevel = false;
         Boolean excludeConsoleApi = false;
         String excludePhrases = "";
@@ -632,12 +682,19 @@ public class TestCentral {
             //next, find the max file number to append
             maxFiles = GetNumberOfFilesInFolder(consoleLogFolder, rootFileName);
             testHelper.UpdateTestResults(AppConstants.ANSI_CYAN + AppConstants.indent5 + AppConstants.subsectionArrowLeft + " [ Combining " + maxFiles + " Console log files using root name (" + rootFileName  + ") \n" + AppConstants.indent8 + "into (" + tempFileName + ") for step " + fileStepIndex + " ] "+ AppConstants.subsectionArrowRight, true);
+
+            testHelper.DebugDisplay("excludeLevel = " + excludeLevel + "\r\n excludeConsoleApi = " + excludeConsoleApi + "\r\n" +
+                    " excludePhrases = " + excludePhrases + "\r\n includePhrase = " + includePhrase + "\r\n removeAdditionalHeaders = " +
+                            removeAdditionalHeaders + "\r\n lengthIndicator = " + lengthIndicator + "\r\n alternateFileName = " +
+                            alternateFileName + "\r\n tempFileName = " + tempFileName);
             //read all files in the folder
             for (int x = 0; x <= maxFiles; x++) {
                 if (x == 0) {
                     fileName = rootFileName;
                 } else {
-                    fileName = rootFileName.replace("log.txt", "log" + x + ".txt");
+                    //fileName = rootFileName.replace("log.txt", "log" + x + ".txt");
+                    fileName = rootFileName.replace(".txt",  x + ".txt");
+                    testHelper.DebugDisplay("Starting fileName = " + fileName);
                 }
                 try {
                     logFile = new File(configFullPath + fileName);
@@ -646,11 +703,11 @@ public class TestCentral {
                         while (logReader.hasNextLine()) {
                             lineContent = logReader.nextLine();
                             //remove level, if configured
-                            //testHelper.DebugDisplay("Before Exclude level excludeLevel = " + excludeLevel);
                             if (excludeLevel) {
-                                if (lineContent.indexOf("Level:INFO") > -1) {
-                                    lineContent = lineContent.replace(";\" - Level:INFO", ";");
+                                if (lineContent.contains("Level:INFO") || lineContent.contains("Level:Info")) {
+                                    //lineContent = lineContent.replace(";\" - Level:INFO", ";");
                                     lineContent = lineContent.replace("\" - Level:INFO", ";");
+                                    lineContent = lineContent.replace("\" - Level:Info", ";");
                                 } else if (lineContent.indexOf("Level:WARN") > -1) {
                                     lineContent = lineContent.replace(";\" - Level:WARN", ";");
                                     lineContent = lineContent.replace("\" - Level:WARN", ";");
@@ -743,6 +800,29 @@ public class TestCentral {
         }
     }
 
+    /// <summary>
+    /// Gets the Name of the Last Modified File in the folder so that it can be used as the root
+    /// FileName for Combining log files.
+    /// </summary>
+    /// <param name="directoryFilePath"></param>
+    /// <returns></returns>
+    /// Changed the accessor from private to internal and added the canReturnConsoleLogFileName variable for
+    /// more generic use 7/18/2024
+    public String GetLastModifiedFileName(String directoryFilePath, boolean canReturnConsoleLogFileName) {
+        String chosenFile = GetLastModifiedFileName(directoryFilePath);
+        //updated this to account for the default functionality which is the canReturnConsoleLogFileName = true path
+        //to make this reusable for getting the last file in any folder
+        if (chosenFile != null) {
+            return chosenFile;
+        } else {
+            if (canReturnConsoleLogFileName) {
+                return consoleLogFileName;
+            } else {
+                return null;
+            }
+        }
+    }
+
     /*****************************************************************
      * Description: Gets Named arguments from Test Steps, if value present
      *              else, returns default value passed in.
@@ -755,12 +835,13 @@ public class TestCentral {
     String GetSpecificArgumentValue(TestStep ts, String searchPhrase, String valueDelimiter, String defaultValue) {
         String temp;
         String returnValue = defaultValue;
-        //testHelper.DebugDisplay("searchPhrase = " + searchPhrase + "  valueDelimiter = " + valueDelimiter + " defaultValue = " + defaultValue);
+        int searchPhraseIndex, valueDelimiterIndex;
         for (int x=0;x<ts.ArgumentList.size();x++) {
             temp = GetArgumentValue(ts, x, null);
-            //testHelper.DebugDisplay("temp = " + temp);
             if (!testHelper.IsNullOrEmpty(temp)) {
-                if (temp.indexOf(searchPhrase) > -1) {
+                if (temp.toLowerCase().contains(searchPhrase.toLowerCase())) {
+                    searchPhraseIndex = temp.indexOf(searchPhrase.toLowerCase());
+                    valueDelimiterIndex = temp.indexOf(valueDelimiter);
                     if (testHelper.IsNullOrEmpty(valueDelimiter)) {
                         returnValue = temp;
                         //returnValue = defaultValue;
@@ -769,10 +850,100 @@ public class TestCentral {
                         returnValue = defaultValue;
                         break;
                     } else {
-                        returnValue = temp.substring(temp.indexOf(valueDelimiter) + 1);
+                        if (valueDelimiterIndex > searchPhraseIndex) {
+                            returnValue = temp.substring(temp.indexOf(valueDelimiter) + 1);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return returnValue;
+    }
+
+
+    /*****************************************************************
+     * Description: This method gets the specific argument based on the argument name provided
+     * @param ts
+     * @param searchPhrase
+     * @param valueDelimiter
+     * @param defaultValue
+     * @param containsSpaces
+     * @return
+     *****************************************************************/
+    String GetSpecificArgumentValue(TestStep ts, String searchPhrase, String valueDelimiter, String defaultValue, Boolean containsSpaces)
+    {
+        String temp;
+        String returnValue = defaultValue;
+        Boolean wasFound = false;
+        searchPhrase = searchPhrase.toLowerCase();
+        char qt = '"';
+        int spacePosition, delimiterPosition;
+
+
+        for (int x = 0; x < ts.ArgumentList.size(); x++)
+        {
+            temp = GetArgumentValue(ts, x, null).trim();
+            spacePosition = temp.indexOf(" ");
+            delimiterPosition = temp.indexOf(valueDelimiter);
+
+            if (!temp.contains(" ") || temp.contains(qt + " " + qt) || spacePosition < delimiterPosition)
+            {
+                String[] values = temp.split(valueDelimiter);
+                if (values[0].toLowerCase().equals(searchPhrase)) {
+                    if (values.length > 1) {
+                        returnValue = values[1];
+                        break;
+                    } else if (values.length == 1) {
+                        return null;
+                    }
+                }
+            }
+            else
+            {
+                String[] entries = !containsSpaces ? temp.split(" ") : temp.split("^");
+                for (int y = 0; y < entries.length; y++)
+                {
+                    String[] values = entries[y].split(valueDelimiter);
+                    if (values[0].toLowerCase().equals(searchPhrase))
+                    {
+                        returnValue = values[1];
+                        wasFound = true;
+                        break;
+                    }
+
+                    if (wasFound)
+                    {
                         break;
                     }
                 }
+            }
+        }
+        return returnValue;
+    }
+
+    /// <summary>
+    /// This method gets the specific
+    /// </summary>
+    /// <param name="ts"></param>
+    /// <param name="searchPhrase"></param>
+    /// <param name="valueDelimiter"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    public String GetSpecificArgumentValueContainingDelimiter(TestStep ts, String searchPhrase, String valueDelimiter, String defaultValue)
+    {
+        String temp;
+        String returnValue = defaultValue;
+        boolean wasFound = false;
+        searchPhrase = searchPhrase.toLowerCase();
+        char qt = '"';
+        int start = 0;
+        for (int x = 0; x < ts.ArgumentList.size(); x++)
+        {
+            if (ts.ArgumentList.get(x).get_parameter().toLowerCase().contains(searchPhrase.toLowerCase() + valueDelimiter))
+            {
+                start = ts.ArgumentList.get(x).get_parameter().indexOf(valueDelimiter) + 1;
+                returnValue = ts.ArgumentList.get(x).get_parameter().substring(start);
             }
         }
         return returnValue;
@@ -1079,8 +1250,8 @@ public class TestCentral {
                 if ((isConditionalBlock && (conditionalSuccessful || (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()))) || (!isConditionalBlock && !conditionalSuccessful))
                 {
                     if (ts.get_command().toLowerCase().contains(AppCommands.Switch_To_IFrame)) {
-                        CheckiFrameArgumentOrder(ts);
-                        String frameName = GetArgumentValue(ts, 0, null);
+                        //CheckiFrameArgumentOrder(ts);
+                        String frameName = GetSpecificArgumentValue(ts,"iframename","=",null);     //GetArgumentValue(ts, 0, null);
                         testHelper.UpdateTestResults(AppConstants.ANSI_CYAN + AppConstants.iFrameSectionTopLeft + testHelper.PrePostPad("[ Switching to iFrame: " + frameName + " for step " + fileStepIndex + " ]", "═", 9, 157) + AppConstants.iFrameSectionTopRight + AppConstants.ANSI_RESET, false);
                         if (frameName != null && !frameName.isEmpty()) {
                             driver.switchTo().frame(frameName);
@@ -1103,7 +1274,7 @@ public class TestCentral {
                 }
             }
             testHelper.CreateSectionHeader("[ End of Test Script ]", AppConstants.FRAMED + AppConstants.ANSI_PURPLE_BACKGROUND + AppConstants.ANSI_BOLD, AppConstants.ANSI_YELLOW_BRIGHT, false, true, true);
-            testHelper.DebugDisplay("testFiles.size() = " + testFiles.size() + " and fileIndex = " + fileIndex);
+            //testHelper.DebugDisplay("testFiles.size() = " + testFiles.size() + " and fileIndex = " + fileIndex);
         }
         WriteLogContent();
         if (is_executedFromMain()) {
@@ -1129,15 +1300,20 @@ public class TestCentral {
         int waitTime = 1000;
         Boolean isCrucial = tsInput.get_crucial() != null ? tsInput.get_crucial() : false;
         String oldUrl = "";
+        String siteMapUrl = null;
 
         //get the domain or page path to restrict the testing
-        domainRestriction = GetArgumentValue(tsInput, 0, null);
+        domainRestriction = GetSpecificArgumentValue(tsInput,AppConstants.DomainRestrictionArg,"=",null);  //GetArgumentValue(tsInput, 0, null);
+        siteMapUrl = GetSpecificArgumentValue(tsInput,AppConstants.SiteMapPageArg,"=",null);
         //get the pages that should also be scanned for additional hrefs
         ArrayList<String> scanPages = GetScanPages(tsInput);
         //if domain restriction is a domain URL, add that to the pages to scan
         if (!testHelper.IsNullOrEmpty(domainRestriction) && domainRestriction.indexOf("http") > -1) {
-            //scanPages.add(domainRestriction);
             scanPages.add(0,domainRestriction);
+        }
+        //if the siteMapUrl is provided add that to the scan pages
+        if (!testHelper.IsNullOrEmpty(siteMapUrl) && siteMapUrl.indexOf("http") > -1) {
+            scanPages.add(1,siteMapUrl);
         }
 
         //Get Page links from all pages configured for scanning
@@ -1148,16 +1324,14 @@ public class TestCentral {
         //start with the first command in the list
         for (int pageIndex=0;pageIndex<links.size();pageIndex++) {
             href = links.get(pageIndex).trim();
-            //testHelper.DebugDisplay("href = " + href + "\r\noldUrl = " + oldUrl);
             if (href != oldUrl) {
-                //testHelper.DebugDisplay("In the if href = " + href + "\r\noldUrl = " + oldUrl);
                 oldUrl = href;
                 isCrucial = tsInput.get_crucial() != null ? tsInput.get_crucial() : false;
                 //skip non-domain and in page links
                 if (href.indexOf(domainRestriction) > -1 && (href.indexOf("#") <= -1)) {
-                    testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.iFrameSectionTopLeft + testHelper.PrePostPad("[ Entire Site Check checking URL: " + href + "]", "═", 9, 157) + AppConstants.iFrameSectionTopRight + AppConstants.ANSI_RESET, false);
+                    testHelper.UpdateTestResults(AppConstants.ANSI_BLUE_BRIGHT + AppConstants.iFrameSectionTopLeft + testHelper.PrePostPad("[ Entire Site Check checking URL: " + href + "]", "═", 9, 175) + AppConstants.iFrameSectionTopRight + AppConstants.ANSI_RESET, false);
                     CreateNavigateTestStepAndNavigate(href, fileIndex, pageIndex, pageIndex, isCrucial, waitTime);
-                    //links = GetPageLinks(links, scanPages);  //you can increase the size of the array while traversing it?
+                    //links = GetPageLinks(links, scanPages);  //you can increase the size of the array while traversing it? (This takes too long and times the app out)
                     for (int x = xStart + 1; x < xEnd; x++) {
                         if (revertToParent) {
                             driver.switchTo().defaultContent();
@@ -1177,7 +1351,7 @@ public class TestCentral {
 
                         if ((isConditionalBlock && (conditionalSuccessful || (ts.get_isConditionalBlock() != null && ts.get_isConditionalBlock()))) || (!isConditionalBlock && !conditionalSuccessful)) {
                             if (ts.get_command().toLowerCase().contains(AppCommands.Switch_To_IFrame)) {
-                                CheckiFrameArgumentOrder(ts);
+                                //CheckiFrameArgumentOrder(ts);
                                 String frameName = GetArgumentValue(ts, 0, null);
                                 testHelper.UpdateTestResults(AppConstants.ANSI_CYAN + AppConstants.iFrameSectionTopLeft + testHelper.PrePostPad("[ Switching to iFrame: " + frameName + " for step " + fileStepIndex + " ]", "═", 9, 157) + AppConstants.iFrameSectionTopRight + AppConstants.ANSI_RESET, false);
                                 if (frameName != null && !frameName.isEmpty()) {
@@ -1216,11 +1390,11 @@ public class TestCentral {
      * @param fileStepIndex - File Step Index
      **********************************************************************/
     public void SpiderSite(TestStep ts, String fileStepIndex) {
-        String fileName = GetArgumentValue(ts, 0, null);
+        String fileName = GetSpecificArgumentValue(ts, AppConstants.FileNameArg, "=", null);  //GetArgumentValue(ts, 0, null);
         //get the domain or page path to restrict the testing
-        String domainRestriction = GetArgumentValue(ts, 1, null);
+        String domainRestriction = GetSpecificArgumentValue(ts, AppConstants.DomainRestrictionArg, "=", null);  //GetArgumentValue(ts, 1, null);
         //get the sitemap page or page with most links
-        String siteMapPage = GetArgumentValue(ts, 2, null);
+        String siteMapPage =  GetSpecificArgumentValue(ts, AppConstants.SiteMapPageArg, "=", null); //GetArgumentValue(ts, 2, null);
         String htmlPage;
         String filteredPages = "";
         int fileIndex;
@@ -1238,11 +1412,15 @@ public class TestCentral {
         //testHelper.DebugDisplay("domainRestriction = " + domainRestriction);
         testHelper.UpdateTestResults(AppConstants.indent8 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start Spidering Site ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
         testHelper.DeleteFile(fileName);
+        //testHelper.DebugDisplay("#2 fileName = " + fileName);
         if (!testHelper.IsNullOrEmpty(fileName)) {
             try {
+                links = GetUrlDecodedScanPages(ts, links, domainRestriction, 3);
                 fileIndex = parseInt(fileStepIndex.substring(1, fileStepIndex.indexOf("_")));
                 CreateNavigateTestStepAndNavigate(domainRestriction, fileIndex, 0, 0, ts.get_crucial(), waitTime);
+                //String size = String.valueOf(links.size());
                 links = GetPageLinks(links, domainRestriction);
+
                 if (!testHelper.IsNullOrEmpty(siteMapPage)) {
                     isFound = CheckLinkIsUnique(links, siteMapPage, domainRestriction);
                     if (!isFound) {
@@ -1250,7 +1428,7 @@ public class TestCentral {
                     }
                 }
 
-                links = GetUrlDecodedScanPages(ts, links, domainRestriction, 3);
+                //links = GetUrlDecodedScanPages(ts, links, domainRestriction, 3);
 
                 if (links != null && links.size() > 0) {
                     for (int x = 0; x < links.size(); x++) {
@@ -1327,7 +1505,7 @@ public class TestCentral {
                 testHelper.UpdateTestResults("Successful Spider Crawl! " + urlCount +  " URLs saved to " + fileName + " for step " + fileStepIndex, true );
             } catch (Exception e) {
                 testHelper.DebugDisplay("Error: " + e.getMessage() + " - " + e.fillInStackTrace());
-                testHelper.UpdateTestResults("Failure, Spider Crawl error " + e.getMessage() + " for step " + fileStepIndex, true );
+                testHelper.UpdateTestResults("Failure, Spider Crawl error " + e.getMessage() + " " + e.getStackTrace().toString() + " for step " + fileStepIndex, true );
             }
         }
         testHelper.UpdateTestResults(AppConstants.indent8 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End Spidering Site ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
@@ -1349,6 +1527,7 @@ public class TestCentral {
 
         for (int i = startIndex; i < ts.ArgumentList.size(); i++) {
             additionalLinkPage = GetArgumentValue(ts, i, null);
+            testHelper.DebugDisplay("additionalLinkPage = " + additionalLinkPage);
             try {
                 //additionalLinkPage = java.net.URLDecoder.decode(additionalLinkPage, StandardCharsets.UTF_8.name());
                 additionalLinkPage = UrlDecode(additionalLinkPage);
@@ -1356,10 +1535,18 @@ public class TestCentral {
                 additionalLinkPage = additionalLinkPage.replace("&amp;","&");
             }
 
-            isFound = CheckLinkIsUnique(links, additionalLinkPage, domainRestriction);
-            if (!isFound) {
+            if (links != null) {
+                isFound = CheckLinkIsUnique(links, additionalLinkPage, domainRestriction);
+                //testHelper.DebugDisplay("isFound = " + isFound);
+                if (!isFound) {
+                    links.add(additionalLinkPage);
+                }
+            } else {
+                //testHelper.DebugDisplay("#2 No links exist yet, populating");
+                links = new ArrayList<>();
                 links.add(additionalLinkPage);
             }
+
         }
         return links;
     }
@@ -1428,7 +1615,7 @@ public class TestCentral {
         String link;
         link = htmlPage.substring(hrefStart, hrefEnd).trim();
         link = link.replace("\"","");
-        //testHelper.DebugDisplay("#1 link = " + link);
+
         if (link.indexOf("http") < 0) {
             if (link.length() > 0) {
                 if (link.startsWith("/")) {
@@ -1443,74 +1630,7 @@ public class TestCentral {
         return link;
     }
 
-    public void SpiderSite_old(TestStep ts, String fileStepIndex) {
-        //get the output file name
-        String fileName = GetArgumentValue(ts, 0, null);
-        //get the domain or page path to restrict the testing
-        String domainRestriction = GetArgumentValue(ts, 1, null);
-        //get the sitemap page or page with most links
-        String siteMapPage = GetArgumentValue(ts, 2, null);
-        int fileIndex;
-        int waitTime = 100;
-        String filteredPages = "";
 
-        testHelper.DeleteFile(fileName);
-        if (!testHelper.IsNullOrEmpty(fileName)) {
-
-            try {
-                fileIndex = parseInt(fileStepIndex.substring(1, fileStepIndex.indexOf("_")));
-
-                domainRestriction = GetArgumentValue(ts, 1, null);
-                //get the pages that should also be scanned for additional hrefs including the domain restriction
-                //ArrayList<String> scanPages = GetScanPages(ts);
-
-                String href;
-                ArrayList<String> newLinks;
-
-                testHelper.UpdateTestResults(AppConstants.indent8 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start Spidering Site ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
-                //go to the domain restriction page configured
-                CreateNavigateTestStepAndNavigate(domainRestriction, fileIndex, 0, 0, ts.get_crucial(), waitTime);
-                //get initial list of links
-                ArrayList<String> links = null;
-                links = GetPageLinks(links, domainRestriction);
-                int oldSize = links.size();
-                int diff;
-                int linkSize = links.size();
-                //testHelper.DebugDisplay("#1 Links retrieved = " + links.size());
-                CreateNavigateTestStepAndNavigate(siteMapPage, fileIndex, 0, 0, ts.get_crucial(), waitTime);
-                links = GetPageLinks(links, domainRestriction);
-                //testHelper.DebugDisplay("#2 Links retrieved = " + links.size());
-                //for (int pageIndex=0;pageIndex<links.size();pageIndex++) {
-                for (int pageIndex = 0; pageIndex < linkSize; pageIndex++) {
-                    href = links.get(pageIndex);
-                    if (href.indexOf(domainRestriction) > -1) {
-                        CreateNavigateTestStepAndNavigate(href, fileIndex, pageIndex, pageIndex, ts.get_crucial(), waitTime);
-                        links = GetPageLinks(links, domainRestriction);  //can you increase the size of the array while traversing it?
-                        diff = oldSize > links.size() ? oldSize - links.size() : links.size() - oldSize;
-                        //testHelper.DebugDisplay("#" + pageIndex + 3 + " Links retrieved = " + diff);
-                        oldSize = diff;
-                    }
-                }
-
-                for (String link : links) {
-                    if (!testHelper.IsNullOrEmpty(domainRestriction) && !testHelper.IsNullOrEmpty(link) && link.indexOf(domainRestriction) > -1) {
-                        filteredPages += link + "\r\n";
-                    } else if (testHelper.IsNullOrEmpty(domainRestriction)) {
-                        filteredPages += link + "\r\n";
-                    }
-                }
-                testHelper.WriteToFile(fileName, filteredPages);
-                filteredPages = "-------------------------------------";
-            } catch(Exception e) {
-                testHelper.DebugDisplay("Error: " + e.getMessage() + " - " + e.fillInStackTrace());
-            } finally {
-                testHelper.DeleteFile(fileName);
-                testHelper.WriteToFile(fileName, filteredPages);
-                testHelper.UpdateTestResults(AppConstants.indent8 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End Spidering Site ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
-            }
-        }
-
-    }
 
     /****************************************************************************
      *  DESCRIPTION:
@@ -1522,9 +1642,11 @@ public class TestCentral {
         ArrayList<String> scanPages = new ArrayList<>();
         String pageUrl = "";
         testHelper.UpdateTestResults( AppConstants.indent8 + AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start Retrieving Scan Pages ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
-
+        lastIndex = 0;
         for (int x=1;x<tsInput.ArgumentList.size();x++) {
-            pageUrl = GetArgumentValue(tsInput, x, null);
+            //pageUrl = GetArgumentValue(tsInput, x, null);
+            //pageUrl = GetArgumentValueNotContaining(tsInput, "domainrestriction,siteMapUrl", x, lastIndex, null);
+            pageUrl = GetArgumentValueNotContaining(tsInput, "domainrestriction,siteMapUrl", x, null);
 
             if (!testHelper.IsNullOrEmpty(pageUrl)) {
                 scanPages.add(pageUrl);
@@ -1611,27 +1733,35 @@ public class TestCentral {
         String[] invalidLinkList = invalidLinks.split(",");
         Boolean isValid;
 
-        if (pages != null) {
+        /*
+        testHelper.DebugDisplay("pages = " + String.valueOf(pages.size()));
+        testHelper.DebugDisplay("anchorTags = " + String.valueOf(anchorTags.size()));
+        testHelper.DebugDisplay("domainRestriction = " + domainRestriction);
+            */
+        if (pages != null && anchorTags != null) {
             //check that each link is not already in the arraylist passed in
             for (int x = 0; x < anchorTags.size(); x++) {
-                isFound = CheckLinkIsUnique(pages,anchorTags.get(x).getAttribute("href"),domainRestriction);
-                isValid = CheckLinkIsValid(anchorTags.get(x).getAttribute("href"),invalidLinkList);
-                if (!isFound && isValid) {
-                    pages.add(anchorTags.get(x).getAttribute("href"));
+                if (anchorTags.get(x).getAttribute("href") != null) {
+                    isFound = CheckLinkIsUnique(pages, anchorTags.get(x).getAttribute("href"), domainRestriction);
+                    isValid = CheckLinkIsValid(anchorTags.get(x).getAttribute("href"), invalidLinkList);
+                    if (!isFound && isValid) {
+                        pages.add(anchorTags.get(x).getAttribute("href"));
+                    }
                 }
             }
-            return pages;
-        } else {
+        } else if (anchorTags != null) {
             pages = new ArrayList<>();
             for (int x = 0; x < anchorTags.size(); x++) {
-                isValid = CheckLinkIsValid(anchorTags.get(x).getAttribute("href"),invalidLinkList);
-                isFound = CheckLinkIsUnique(pages,anchorTags.get(x).getAttribute("href"),domainRestriction);
-                if (isValid && !isFound && anchorTags.get(x).getAttribute("href").indexOf(domainRestriction) > -1) {
-                    pages.add(anchorTags.get(x).getAttribute("href"));
+                if (anchorTags.get(x).getAttribute("href") != null) {
+                    isValid = CheckLinkIsValid(anchorTags.get(x).getAttribute("href"), invalidLinkList);
+                    isFound = CheckLinkIsUnique(pages, anchorTags.get(x).getAttribute("href"), domainRestriction);
+                    if (isValid && !isFound && anchorTags.get(x).getAttribute("href").indexOf(domainRestriction) > -1) {
+                        pages.add(anchorTags.get(x).getAttribute("href"));
+                    }
                 }
             }
-            return pages;
         }
+        return pages;
     }
 
     /****************************************************************************
@@ -1762,7 +1892,7 @@ public class TestCentral {
             /*for (int x=0;x<argumentList.size();x++) {
                 testHelper.DebugDisplay("argumentList.get(" + x + ").get_parameter() = " + argumentList.get(x).get_parameter());
             }*/
-            testHelper.UpdateTestResults("Performing Site Navigation to " + href + " for step " + fileStepIndex,true);
+            testHelper.UpdateTestResults(AppConstants.indent8 + "Performing Site Navigation to " + href + " for step " + fileStepIndex,true);
             PerformExplicitNavigation(navStep, fileStepIndex);
         } catch(Exception e) {
             testHelper.UpdateTestResults("Failed Site Navigation for href = " + href + " for step " + fileStepIndex,true);
@@ -1919,79 +2049,58 @@ public class TestCentral {
             return;
         }
         WriteLogContent();
-        String navigateUrl = GetArgumentValue(ts, 0, null);
-        String delayTime = GetArgumentValue(ts, 1, null);
-        String windowDimensions = GetArgumentValue(ts, 2, null);
+        String navigateUrl = GetSpecificArgumentValue(ts,"url", "=",null) != null ? GetSpecificArgumentValue(ts,"url", "=",null) :
+                GetArgumentValue(ts, 0, null);
+        String delayTime = GetSpecificArgumentValue(ts,"delay", "=",null) != null ? GetSpecificArgumentValue(ts,"delay", "=",null)
+                :GetArgumentValue(ts, 1, null);
+        //String windowDimensions = GetSpecificArgumentValue(ts,"delay", "=",null) != null ? GetArgumentValue(ts, 2, null);
+        String heightDimension = GetSpecificArgumentValue(ts,"h", "=",null,false) != null ? GetSpecificArgumentValue(ts,"h", "=",null,false) :
+                GetArgumentValue(ts, 2, null);
+        String widthDimension = GetSpecificArgumentValue(ts,"w", "=",null,false) != null ? GetSpecificArgumentValue(ts,"w", "=",null, false) :
+                GetArgumentValue(ts, 2, null);
+        double frontEndTiming = GetSpecificArgumentValue(ts, "fe", "=", null) != null ? parseDouble(GetSpecificArgumentValue(ts, "fe", "=", "0")) : 0;   //0;
+        double backEndTiming =  GetSpecificArgumentValue(ts, "be", "=", null) != null ? parseDouble(GetSpecificArgumentValue(ts, "be", "=", "0")) : 0;   //0;
         String indentMargin = ts.get_command().toLowerCase().equals(AppCommands.Navigate) ? AppConstants.indent5 : AppConstants.indent8;
         String subIndent = indentMargin.equals(AppConstants.indent5) ? AppConstants.indent8 : AppConstants.indent5 + AppConstants.indent8;
         //TODO: ADDING TIMING CHECK FOR FRONT END AND BACK END PAGE LOAD TIMINGS
         String pageTimings = GetArgumentValue(ts, 3, null);
-        double frontEndTiming = 0;
-        double backEndTiming = 0;
 
-        if (!testHelper.CheckIsUrl(navigateUrl) || (delayTime != null && TestHelper.tryParse(delayTime) == null) || (windowDimensions != null && !windowDimensions.toLowerCase().contains("w=")) ||
-                (pageTimings != null && !pageTimings.contains("be"))) {
-            SortNavigationArguments(ts, navigateUrl, delayTime, windowDimensions, pageTimings, "navigate");
-            navigateUrl =  GetArgumentValue(ts, 0, null);
-            delayTime = GetArgumentValue(ts, 1, null);
-            windowDimensions = GetArgumentValue(ts, 2, null);
-            pageTimings = GetArgumentValue(ts, 3, null);
-        }
 
         String expectedUrl = null;
         int delayMilliSeconds = 0;
-
-        if (navigateUrl != null && !navigateUrl.isEmpty()) {
             testHelper.UpdateTestResults( indentMargin + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start Explicit Navigation Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
             expectedUrl = ts.get_expectedValue() != null ? ts.get_expectedValue().trim() : null;
 
             if (delayTime != null && !delayTime.isEmpty()) {
                 delayMilliSeconds = parseInt(delayTime.trim());
             }
-            if (windowDimensions != null && !windowDimensions.isEmpty()) {
-                String dimensions = windowDimensions.trim();
-                int wStart;
-                int hStart;
-                int width;
-                int height;
-                if (dimensions.toLowerCase().contains("w=") && dimensions.toLowerCase().contains("h=")) {
-                    wStart = dimensions.toLowerCase().indexOf("w=");
-                    hStart = dimensions.toLowerCase().indexOf("h=");
-                    if (wStart < hStart) {
-                        width = parseInt(dimensions.substring(dimensions.indexOf("w=") + 2, dimensions.indexOf("h=")).trim());
-                        height = parseInt(dimensions.substring(dimensions.indexOf("h=") + 2).trim());
-                    } else {
-                        height= parseInt(dimensions.substring(dimensions.indexOf("h=") + 2, dimensions.indexOf("w=")).trim());
-                        width = parseInt(dimensions.substring(dimensions.indexOf("w=") + 2).trim());
-                    }
-                    testHelper.UpdateTestResults(subIndent + "Setting browser dimensions to (Width=" + width + " Height=" + height + ")", true);
-                    testHelper.SetWindowContentDimensions(driver, width, height);
-                }
+
+            if (!testHelper.IsNullOrEmpty(widthDimension) && !testHelper.IsNullOrEmpty(heightDimension))
+            {
+                int width = parseInt(widthDimension);
+                int height = parseInt(heightDimension);
+                testHelper.UpdateTestResults(subIndent + "Setting browser dimensions to (Width=" + width + " Height=" + height + ")", true);
+                testHelper.SetWindowContentDimensions(driver, width, height);
             }
-            if (pageTimings != null && !pageTimings.isEmpty()) {
+            if (pageTimings != null && !pageTimings.isEmpty() && frontEndTiming == 0 && backEndTiming == 0) {
                 //first find out if BE or FE is first
-                if (pageTimings.toLowerCase().contains("be=") && pageTimings.toLowerCase().contains("fe=")) {
-                    if (pageTimings.toLowerCase().indexOf("be=") < pageTimings.toLowerCase().indexOf("fe=")) {
-                        frontEndTiming = parseDouble(pageTimings.substring(pageTimings.toLowerCase().indexOf("fe=") + 3));
-                        backEndTiming =  parseDouble(pageTimings.substring(pageTimings.toLowerCase().indexOf("be=") + 3, pageTimings.toLowerCase().indexOf("fe=") - 1));
-                    } else {
-                        backEndTiming = parseDouble(pageTimings.substring(pageTimings.toLowerCase().indexOf("be=") + 3));
-                        frontEndTiming =  parseDouble(pageTimings.substring(pageTimings.toLowerCase().indexOf("fe=") + 3, pageTimings.toLowerCase().indexOf("be=") - 1));
-                    }
-                }
+                String[] timings = pageTimings.toLowerCase().split(" ");
+                int pos1, pos2;
+
+                pos1 = timings[0].indexOf("=") + 1;
+                pos2 = timings[1].indexOf("=") + 1;
+                frontEndTiming = (timings[0].contains("fe")) ? parseDouble(timings[0].substring(pos1, timings[0].length() - pos1)) : parseDouble(timings[1].substring(pos2, timings[1].length() - pos2));
+                backEndTiming = (timings[0].contains("be")) ? parseDouble(timings[0].substring(pos1, timings[0].length() - pos1)) : parseDouble(timings[1].substring(pos2, timings[1].length() - pos2));
+
             }
-        }
+
         testPage = navigateUrl;
         //Explicit Navigation Event
         testHelper.UpdateTestResults(subIndent + "Navigating to " + navigateUrl + " for step " + fileStepIndex, true);
         testHelper.set_fileStepIndex(fileStepIndex);
-        //testHelper.DebugDisplay("Calling CheckPageURL(" + delayMilliSeconds + ")");
         String actualUrl = CheckPageUrl(delayMilliSeconds);
         String timingMessage = "";
         if (expectedUrl != null && expectedUrl.trim().length() > 0) {
-            //testHelper.DebugDisplay("expectedUrl != null and length > 0 " + expectedUrl);
-            //testHelper.DebugDisplay("actualUrl = " + actualUrl);
-            //testHelper.DebugDisplay("ts.get_crucial() = " + ts.get_crucial());
             if (ts.get_crucial()) {
                 assertEquals(expectedUrl, actualUrl);
             } else {
@@ -2002,7 +2111,7 @@ public class TestCentral {
                     //do nothing, this just traps the assertion error so that processing can continue
                 }
             }
-            //testHelper.DebugDisplay("#2 actualUrl = " + actualUrl);
+
             if (expectedUrl.trim().equals(actualUrl.trim())) {
                 if (frontEndTiming > 0 && backEndTiming > 0) {
                     timingMessage = GetTimingMessage(frontEndTiming, backEndTiming, subIndent);
@@ -2036,8 +2145,8 @@ public class TestCentral {
             return;
         }
         WriteLogContent();
-        String navigateUrl = GetArgumentValue(ts, 0, null);
-        String delayTime = GetArgumentValue(ts, 1, null);
+        String navigateUrl = GetSpecificArgumentValue(ts,"url","=",null) != null ?  GetSpecificArgumentValue(ts,"url","=",null) :  GetArgumentValue(ts, 0, null);
+        String delayTime = GetSpecificArgumentValue(ts,"delay","=",null) != null ?  GetSpecificArgumentValue(ts,"delay","=",null) :GetArgumentValue(ts, 1, null);
         String windowDimensionHeight = GetSpecificArgumentValue(ts, "h","=",null);
         String windowDimensionWidth = GetSpecificArgumentValue(ts, "w","=",null);
         String pageTimingFE = GetSpecificArgumentValue(ts, "fe","=",null);
@@ -2045,7 +2154,12 @@ public class TestCentral {
         String indentMargin = ts.get_command().toLowerCase().equals(AppCommands.Navigate) ? AppConstants.indent5 : AppConstants.indent8;
         String subIndent = indentMargin.equals(AppConstants.indent5) ? AppConstants.indent8 : AppConstants.indent5 + AppConstants.indent8;
 
-        //String pageTimings = GetArgumentValue(ts, 3, null);
+        //testHelper.DebugDisplay("navigateUrl = " + navigateUrl);
+        //testHelper.DebugDisplay("delayTime = " + delayTime);
+        //testHelper.DebugDisplay("windowDimensionHeight = " + windowDimensionHeight);
+        //testHelper.DebugDisplay("windowDimensionWidth = " + windowDimensionWidth);
+        //testHelper.DebugDisplay("pageTimingFE = " + pageTimingFE);
+        //testHelper.DebugDisplay("pageTimingBE = " + pageTimingBE);
         double frontEndTiming = 0;
         double backEndTiming = 0;
         String expectedUrl = null;
@@ -2059,14 +2173,12 @@ public class TestCentral {
                 delayMilliSeconds = parseInt(delayTime.trim());
             }
             if (windowDimensionHeight != null && windowDimensionWidth != null) {
-                //testHelper.DebugDisplay("windowDimensionHeight = " + windowDimensionHeight + " and windowDimensionWidth = " + windowDimensionWidth);
                 int width = parseInt(windowDimensionWidth);
                 int height = parseInt(windowDimensionHeight);
-
                 testHelper.UpdateTestResults(subIndent + "Setting browser dimensions to (Width=" + width + " Height=" + height + ")", true);
                 testHelper.SetWindowContentDimensions(driver, width, height);
             }
-            //testHelper.DebugDisplay("pageTimingFE = " + pageTimingFE + " - pageTimingBE = " + pageTimingBE);
+
             if (pageTimingFE != null && pageTimingBE != null) {
                 backEndTiming = parseDouble(pageTimingBE);
                 frontEndTiming =  parseDouble(pageTimingFE);
@@ -2076,7 +2188,7 @@ public class TestCentral {
         //Explicit Navigation Event
         testHelper.UpdateTestResults(subIndent + "Navigating to " + navigateUrl + " for step " + fileStepIndex, true);
         testHelper.set_fileStepIndex(fileStepIndex);
-        //testHelper.DebugDisplay("Calling CheckPageURL(" + delayMilliSeconds + ")");
+
         String actualUrl = CheckPageUrl(delayMilliSeconds);
         String timingMessage = "";
         if (expectedUrl != null && expectedUrl.trim().length() > 0) {
@@ -2172,12 +2284,13 @@ public class TestCentral {
     /*********************************************************************
      * DESCRIPTION: Logs into a Page that uses a Popup Alert style login.
      * @param url - URl of the page to navigate to, if blank use current page.
-     * @param email - userid or email address used to login
+     * @param userId - userid or (email) address used to login
+     *               Changed this parameter name from email to userId (3/21/2024)
      * @param password - password used to login
      * @param fileStepIndex - the file index and the step index.
      *                      (Do not remove this parameter will implement when method is fixed!!!)
      ******************************************************************** */
-    public void Login(String url, String email, String password, String fileStepIndex) {
+    public void Login(String url, String userId, String password, String fileStepIndex) {
         testHelper.UpdateTestResults("Login method reached start before any code.", false);
         boolean urlIsNA = url.toLowerCase().trim().equals("n/a") ? true : false;
 
@@ -2191,7 +2304,7 @@ public class TestCentral {
             //#1 attempt to access the alert window and send the username, tab to next input, then password
             testHelper.UpdateTestResults("Switched to Alert first login method", false);
             //driver.switchTo().alert();
-            driver.switchTo().alert().sendKeys(email + Keys.TAB + password + Keys.RETURN);
+            driver.switchTo().alert().sendKeys(userId + Keys.TAB + password + Keys.RETURN);
             testHelper.UpdateTestResults("Switched to Alert first login method - after", false);
         } catch (Exception ex) {
             try {
@@ -2202,10 +2315,10 @@ public class TestCentral {
                 //switch to the alert window, find the username field and send the username
                 driver.switchTo().alert();
                 testHelper.UpdateTestResults("Switched to Alert second login method", false);
-                driver.findElement(By.id("username")).sendKeys(email);
+                driver.findElement(By.id("username")).sendKeys(userId);
                 //find the password field and send the password
                 driver.findElement(By.id("password")).sendKeys(password);
-                testHelper.UpdateTestResults("Sent Credentials email: " + email + " Password: " + password, false);
+                testHelper.UpdateTestResults("Sent Credentials email: " + userId + " Password: " + password, false);
                 //press the ok button
                 driver.switchTo().alert().accept();
                 testHelper.UpdateTestResults("Switched to Alert second login method - after", false);
@@ -2222,7 +2335,7 @@ public class TestCentral {
                 }
                 testHelper.UpdateTestResults("Switched to Alert third login method", false);
                 //place the username and password into the URL
-                String newUrl = url.replace("://", "://" + email + ":" + password + "@");
+                String newUrl = url.replace("://", "://" + userId + ":" + password + "@");
                 //navgate to the credential encoded url to authenticate
                 driver.get(newUrl);
                 testHelper.UpdateTestResults("Switched to Alert third login method - after", false);
@@ -2273,7 +2386,8 @@ public class TestCentral {
      * @param fileStepIndex - the file index and the step index.
      *************************************************************************************/
     void SwitchToTab(TestStep ts, String fileStepIndex) {
-        int tab = GetArgumentNumericValue(ts, 0, 0);
+        //int tab = GetArgumentNumericValue(ts, 0, 0);
+        int tab = parseInt(GetSpecificArgumentValue(ts,"tabindex","=","0"));
         ArrayList<String> tabs = new ArrayList<>(driver.getWindowHandles());
         int tabsSize = tabs.size();
         if (tabsSize > tab) {
@@ -2365,6 +2479,8 @@ public class TestCentral {
     String CheckPageUrl(int delayMilliSeconds) throws Exception {
         //proxy.newHar(testPage);
         testHelper.NavigateToPage(this.driver, testPage, delayMilliSeconds);
+        
+        //readCommands.CheckJavaScriptReturnValue("driver.execute_cdp_cmd('Page.addScriptToEvaluateOnNewDocument', {'source': 'alert(\"Hooray! I did it!\")'})");
         //Har har = proxy.getHar();
         //SaveHarFile(har, testPage);
 
@@ -2582,6 +2698,7 @@ public class TestCentral {
             DesiredCapabilities capabilities = new DesiredCapabilities();
             seleniumProxy = getSeleniumProxy(getProxyServer());
             capabilities.setCapability(CapabilityType.PROXY, seleniumProxy);
+
             //TODO: Create a configuration that allows the network traffic to be saved when configured
             //IMPORTANT: the line below adds network traffic to the HAR file and increases the size of the file exponentially.
             //a 280K-320K file will be about 95Megs!!!
@@ -2592,7 +2709,7 @@ public class TestCentral {
             /***********[ Attempting to get log information here ]*******/
             LoggingPreferences logPrefs = new LoggingPreferences();
             logPrefs.enable(LogType.BROWSER, Level.ALL);
-            testHelper.DebugDisplay("logPrefs.getEnabledLogTypes() = " + logPrefs.getEnabledLogTypes());
+            //testHelper.DebugDisplay("logPrefs.getEnabledLogTypes() = " + logPrefs.getEnabledLogTypes());
             options.setCapability("goog:loggingPrefs",logPrefs);  //this is the magic line
             /************************************************************/
             WebDriverManager.chromedriver().setup();
@@ -2613,6 +2730,7 @@ public class TestCentral {
                 //ChromeOptions options = new ChromeOptions();
                 options.setCapability(CapabilityType.PROXY, seleniumProxy);
                 options.setAcceptInsecureCerts(true);
+                options.setPageLoadStrategy(PageLoadStrategy.NONE);
                 //options.setCapability(CapabilityType.PROXY, proxy);
                 driver = new ChromeDriver(options);
                 //driver = WebDriverManager.chromedriver().create(); //alternate attempt to create the driver
@@ -2759,20 +2877,21 @@ public class TestCentral {
     /**************************************************************
      * DESCRIPTION: Looks up the element type based on the last tag
      *              found in the xPath parameter.
-     * @param xPath - an xPath value for the selected element
+     * @param accessor - an accessor value for the selected element
+     *                 - changed from (xPath) on 3/21/2024
      * @return - the type of HTML element
      **************************************************************/
-    String ElementTypeLookup(String xPath, String accessorType) {
+    String ElementTypeLookup(String accessor, String accessorType) {
         //NOTE: When checking string equality in Java you must use the "".Equals("") method.
         // Using the == operator checks the memory address not the value
         String elementTag = null;
         if (accessorType.equals(AppConstants.xpathCheckValue)) {
-            elementTag = xPath.substring(xPath.lastIndexOf("/") + 1).trim();
+            elementTag = accessor.substring(accessor.lastIndexOf("/") + 1).trim();
         } else if (accessorType.equals(AppConstants.tagNameCheckValue)) {
-            elementTag = xPath;
+            elementTag = accessor;
         } else if (accessorType.equals(AppConstants.cssSelectorCheckValue)) {
-            int index = xPath.lastIndexOf(" ") > xPath.lastIndexOf(">") ? xPath.lastIndexOf(" ") : xPath.lastIndexOf(">");
-            elementTag = xPath.substring(index + 1).trim();
+            int index = accessor.lastIndexOf(" ") > accessor.lastIndexOf(">") ? accessor.lastIndexOf(" ") : accessor.lastIndexOf(">");
+            elementTag = accessor.substring(index + 1).trim();
         } else {
             return "Indeterminate";
         }
@@ -2932,6 +3051,64 @@ public class TestCentral {
             return defaultValue;
         }
     }
+
+    /// <summary>
+    /// Cycles through all Arguments, skipping arguments that contain specified phrases as well
+    /// as the the argument at the prior index to ensure that a new argument is selected each time.
+    /// </summary>
+    /// <param name="ts"></param>
+    /// <param name="searchPhrases"></param>
+    /// <param name="priorIndex"></param>
+    /// <param name="lastIndex"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    //public String GetArgumentValueNotContaining(TestStep ts, String searchPhrases, int priorIndex, int lastIndex, String defaultValue)
+    public String GetArgumentValueNotContaining(TestStep ts, String searchPhrases, int priorIndex, String defaultValue)
+    {
+        String temp = "";
+        String returnValue = defaultValue;
+        String[] arPhrases = searchPhrases.split(",");
+        boolean isFound = false;
+        lastIndex = priorIndex;
+
+        for (int x = 0; x < ts.ArgumentList.size(); x++)
+        {
+            temp = GetArgumentValue(ts, x, null);
+            if (x != lastIndex && x > lastIndex)
+            {
+                for (int index = 0; index < arPhrases.length; index++)
+                {
+                    if (temp.toLowerCase().contains(arPhrases[index].toLowerCase()))
+                    {
+                        isFound = true;
+                    }
+                    else
+                    {
+                        //set this each time so that it will return the last index found
+                        lastIndex = x;
+                        isFound = false;
+                    }
+                }
+            }
+            //if the lastIndex has changed, a safe value has been found, exit loop
+            if (lastIndex != priorIndex)
+            {
+                break;
+            }
+        }
+        if (!isFound)
+        {
+            returnValue = temp;
+        }
+        else
+        {
+            this.lastIndex = priorIndex;
+            returnValue = null;
+        }
+        return returnValue;
+    }
+
+
 
     /*************************************************************
      * Description: Creates a GTM tag object based on the
@@ -3193,7 +3370,7 @@ public class TestCentral {
         List<Argument> remainingItems;
         remainingItems = ts.ArgumentList;
 
-        //find the name of the iframe, move it to the first argument, and  but keep all other arguments in the existing order after the name
+        //find the name of the iframe, move it to the first argument, but keep all other arguments in the existing order after the name
         int nameIndex = FindInArgumentList(ts.ArgumentList, "IFrameName");
         if (nameIndex != 0) {
             ArgumentOrderErrorMessage(ts, ts.get_command());
@@ -3226,7 +3403,7 @@ public class TestCentral {
     private int FindInArgumentList(List<Argument> argumentList, String searchString) {
         int returnValue = 0;
 
-        if (searchString != null && searchString.toLowerCase().equals("iframename")) {
+        if (searchString != null && searchString.equalsIgnoreCase("iframename")) {
             for (int x = 0; x < argumentList.size(); x++) {
                 if (!argumentList.get(x).get_parameter().contains(AppCommands.Keys) && !argumentList.get(x).get_parameter().contains(AppCommands.Click)) {
                     returnValue = x;
@@ -3458,9 +3635,75 @@ public class TestCentral {
         testHelper.UpdateTestResults( AppConstants.indent8 + AppConstants.ANSI_RED + defaultCheckValuesOverridden + AppConstants.ANSI_RESET, true);
     }
 
-
-
-
     //endregion
 
+    //region { Old code to be removed}
+    public void SpiderSite_old(TestStep ts, String fileStepIndex) {
+        //get the output file name
+        String fileName = GetArgumentValue(ts, 0, null);
+        //get the domain or page path to restrict the testing
+        String domainRestriction = GetArgumentValue(ts, 1, null);
+        //get the sitemap page or page with most links
+        String siteMapPage = GetArgumentValue(ts, 2, null);
+        int fileIndex;
+        int waitTime = 100;
+        String filteredPages = "";
+
+        testHelper.DeleteFile(fileName);
+        if (!testHelper.IsNullOrEmpty(fileName)) {
+
+            try {
+                fileIndex = parseInt(fileStepIndex.substring(1, fileStepIndex.indexOf("_")));
+
+                domainRestriction = GetArgumentValue(ts, 1, null);
+                //get the pages that should also be scanned for additional hrefs including the domain restriction
+                //ArrayList<String> scanPages = GetScanPages(ts);
+
+                String href;
+                ArrayList<String> newLinks;
+
+                testHelper.UpdateTestResults(AppConstants.indent8 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start Spidering Site ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+                //go to the domain restriction page configured
+                CreateNavigateTestStepAndNavigate(domainRestriction, fileIndex, 0, 0, ts.get_crucial(), waitTime);
+                //get initial list of links
+                ArrayList<String> links = null;
+                links = GetPageLinks(links, domainRestriction);
+                int oldSize = links.size();
+                int diff;
+                int linkSize = links.size();
+                //testHelper.DebugDisplay("#1 Links retrieved = " + links.size());
+                CreateNavigateTestStepAndNavigate(siteMapPage, fileIndex, 0, 0, ts.get_crucial(), waitTime);
+                links = GetPageLinks(links, domainRestriction);
+                //testHelper.DebugDisplay("#2 Links retrieved = " + links.size());
+                for (int pageIndex = 0; pageIndex < linkSize; pageIndex++) {
+                    href = links.get(pageIndex);
+                    if (href.indexOf(domainRestriction) > -1) {
+                        CreateNavigateTestStepAndNavigate(href, fileIndex, pageIndex, pageIndex, ts.get_crucial(), waitTime);
+                        links = GetPageLinks(links, domainRestriction);  //can you increase the size of the array while traversing it?
+                        diff = oldSize > links.size() ? oldSize - links.size() : links.size() - oldSize;
+                        //testHelper.DebugDisplay("#" + pageIndex + 3 + " Links retrieved = " + diff);
+                        oldSize = diff;
+                    }
+                }
+
+                for (String link : links) {
+                    if (!testHelper.IsNullOrEmpty(domainRestriction) && !testHelper.IsNullOrEmpty(link) && link.indexOf(domainRestriction) > -1) {
+                        filteredPages += link + "\r\n";
+                    } else if (testHelper.IsNullOrEmpty(domainRestriction)) {
+                        filteredPages += link + "\r\n";
+                    }
+                }
+                testHelper.WriteToFile(fileName, filteredPages);
+                filteredPages = "-------------------------------------";
+            } catch(Exception e) {
+                testHelper.DebugDisplay("Error: " + e.getMessage() + " - " + e.fillInStackTrace());
+            } finally {
+                testHelper.DeleteFile(fileName);
+                testHelper.WriteToFile(fileName, filteredPages);
+                testHelper.UpdateTestResults(AppConstants.indent8 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End Spidering Site ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+            }
+        }
+    }
+//endregion
 }
+

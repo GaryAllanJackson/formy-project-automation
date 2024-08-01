@@ -1,5 +1,6 @@
 import net.lightbody.bmp.core.har.Har;
 import net.lightbody.bmp.core.har.HarEntry;
+import org.apache.commons.lang3.time.DateUtils;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
@@ -12,13 +13,15 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static java.lang.Boolean.parseBoolean;
 import static java.lang.Integer.parseInt;
+import static java.lang.Math.abs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WriteCommands {
@@ -35,6 +38,7 @@ public class WriteCommands {
     public List<GtmTag> GtmTagList;
     public List<GA4Tag> GA4TagList;
     public List<GA4Parameter> GA4ParameterList;
+
 
     private String _testFileName;
     void set_testFileName(String _testFileName) {
@@ -70,8 +74,9 @@ public class WriteCommands {
      ******************************************************************/
     void PerformWriteActions(TestStep ts, String fileStepIndex) throws Exception {
         //Perform all non read actions below that use an accessor
-        String command = ts.get_command().toLowerCase().equals(AppCommands.Switch_To_IFrame) ? testCentral.GetArgumentValue(ts, 1, null) : null;
-
+        //String command = ts.get_command().toLowerCase().equals(AppCommands.Switch_To_IFrame) ? testCentral.GetArgumentValue(ts, 1, null) : null;
+        String command = ts.get_command().toLowerCase().equals(AppCommands.Switch_To_IFrame) ? testCentral.GetArgumentValueNotContaining(ts, "iframename", 0,  null) : null;
+        //testHelper.DebugDisplay("PerformWriteActions command = " + command);
         if (ts.get_accessorType() != null && (((ts.get_accessorType().toLowerCase().contains(AppConstants.xpathCheckValue)) || (ts.get_accessorType().toLowerCase().contains(AppConstants.cssSelectorCheckValue)) ||
                 (ts.get_accessorType().toLowerCase().contains(AppConstants.tagNameCheckValue)) || (ts.get_accessorType().toLowerCase().contains(AppConstants.idCheckValue)) ||
                 (ts.get_accessorType().toLowerCase().contains(AppConstants.classNameCheckValue)))
@@ -85,7 +90,7 @@ public class WriteCommands {
             //wait for a speficic element to load
             WaitForElement(ts, fileStepIndex);
         } else if (ts.get_command().toLowerCase().equals(AppCommands.Connect_To_Database)) {
-            String databaseType = testCentral.GetArgumentValue(ts, 0, null);
+            String databaseType = testCentral.GetSpecificArgumentValue(ts,"databasetype","=",null);    //testCentral.GetArgumentValue(ts, 0, null);
             if (databaseType.toLowerCase().equals(AppCommands.MongoDb) || databaseType.toLowerCase().contains(AppCommands.Mongo)) {
                 //connect to mongo db or close an open mongo db connection
                 readCommands.SetMongoClient(ts, fileStepIndex);
@@ -112,27 +117,24 @@ public class WriteCommands {
             //perform all non-read actions below that do not use an accessor
             if (ts.get_command().toLowerCase().contains(AppCommands.Navigate)) {
                 testCentral.PerformExplicitNavigation(ts, fileStepIndex);
-            } else if (ts.get_command().toLowerCase().equals(AppCommands.Wait) || ts.get_command().toLowerCase().equals(AppCommands.Delay)) {
-                int delayMilliSeconds = testCentral.GetArgumentNumericValue(ts, 0, 0);
+            } else if (ts.get_command().equalsIgnoreCase(AppCommands.Wait) || ts.get_command().toLowerCase().equals(AppCommands.Delay)) {
+                //int delayMilliSeconds = testCentral.GetSpecificArgumentValue(ts, "delay", "=", null) != null ? parseInt(testCentral.GetSpecificArgumentValue(ts, "delay", "=", "0")) : testCentral.GetArgumentNumericValue(ts, 0, 0);
+                int delayMilliSeconds = parseInt(testCentral.GetSpecificArgumentValue(ts, "delay", "=", "0"));
                 testCentral.DelayCheck(delayMilliSeconds, fileStepIndex);
             } else if (ts.get_command().toLowerCase().contains(AppCommands.ScreenShot)) {
                 //scheduled screenshot capture action
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Taking Screenshot for step " + fileStepIndex, false);
-                testCentral.CheckScreenShotArgumentOrder(ts);
-                String fileName = testCentral.GetArgumentValue(ts, 0, null);
-                String stringDimensions = testCentral.GetArgumentValue(ts, 1, null);
-                if (stringDimensions != null && stringDimensions.indexOf("=") == stringDimensions.lastIndexOf("=")) {
-                    String width = testCentral.GetSpecificArgumentValue(ts,"w","=", null);
-                    String height = testCentral.GetSpecificArgumentValue(ts,"h","=", null);
-                    if (width != null && height != null) {
-                        stringDimensions = "w=" + width + " h=" + height;
-                    }
-                }
+                //testCentral.CheckScreenShotArgumentOrder(ts);
+                String fileName = testCentral.GetSpecificArgumentValue(ts,"filename","=",null);    //testCentral.GetArgumentValue(ts, 0, null);
+                String width = testCentral.GetSpecificArgumentValue(ts,"w","=", null, false);
+                String height = testCentral.GetSpecificArgumentValue(ts,"h","=", null, false);
+                String stringDimensions = (width != null && height != null) ? "w=" + width + " h=" + height : testCentral.GetArgumentValue(ts, 1, null);
+                //testHelper.DebugDisplay("stringDimensions = " + stringDimensions);
+
                 if (stringDimensions != null) {
                     SetScreenShotDimensions(stringDimensions);
                 }
                 if (fileName == null) {
-                    //PerformScreenShotCapture(GetBrowserUsed() + "_" + ts.get_expectedValue() + "_" + fileStepIndex + "_", fileStepIndex);
                     PerformScreenShotCapture(testCentral.GetBrowserUsed() + "_" + ts.get_command() + "_" + fileStepIndex + "_", fileStepIndex);
                 }else {
                     PerformScreenShotCapture(fileName, fileStepIndex);
@@ -145,9 +147,9 @@ public class WriteCommands {
                 testCentral.SwitchToTab(ts, fileStepIndex);
             } else if (ts.get_command().toLowerCase().contains(AppCommands.Login)) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Performing login for step " + fileStepIndex, true);
-                String userId = testCentral.GetArgumentValue(ts, 0, null);
-                String password = testCentral.GetArgumentValue(ts, 1, null);
-                String url = testCentral.GetArgumentValue(ts, 2, testCentral.GetCurrentPageUrl());
+                String userId = testCentral.GetSpecificArgumentValue(ts,"id","=",null);     //testCentral.GetArgumentValue(ts, 0, null);
+                String password = testCentral.GetSpecificArgumentValue(ts,"pwd","=",null);  //testCentral.GetArgumentValue(ts, 1, null);
+                String url = testCentral.GetSpecificArgumentValue(ts,"url","=",null);       //testCentral.GetArgumentValue(ts, 2, testCentral.GetCurrentPageUrl());
                 if (testHelper.CheckIsUrl(url)) {
                     testCentral.Login(url, userId, password, fileStepIndex);
                     testHelper.UpdateTestResults(AppConstants.indent5 + "Login complete for step " + fileStepIndex, true);
@@ -172,7 +174,78 @@ public class WriteCommands {
                 ShowAllGATags(ts, fileStepIndex);
             } else if (ts.get_command().toLowerCase().equals(AppCommands.DeleteCookies)) {
                 DeleteCookies(ts, fileStepIndex);
+            } else if (ts.get_command().toLowerCase().equals(AppCommands.RenameFile)) {
+                RenameFile(ts, fileStepIndex);
             }
+        }
+    }
+
+    /// <summary>
+    /// This method Renames a file from:
+    /// 1. The existingFileName to the newFileName, if both values are provided.
+    /// 2. The existingFileName to the newFileFolder and PersistedString if the existingFileName is provided,
+    ///     the newFileName is set to PersistedString and the newFileFolder is provided.
+    /// 3. The existingFileFolder and last modified file to the newFileName if the existingFileFolder is provided,
+    ///     no existingFileName is provided and a newFileName is provided.
+    /// 4. The existingFileFolder and last modified file to the newFileFolder and PersistedString if the existingFileName is not provided,
+    ///     and the existingFileFolder is provided.
+    /// 5. If renameIfExisting is true, will update newFileName to be unique if file with same name exists,
+    ///     if false will delete existing file before renaming file.
+    /// </summary>
+    /// <param name="ts"></param>
+    /// <param name="fileStepIndex"></param>
+    private void RenameFile(TestStep ts, String fileStepIndex) throws Exception {
+        try {
+            String existingFileName = testCentral.UrlDecode(testCentral.GetSpecificArgumentValue(ts, "existingFileName", "=", null, true));
+            String newFileName = testCentral.UrlDecode(testCentral.GetSpecificArgumentValue(ts, "newFileName", "=", null, true));
+            String existingFileFolder = testCentral.GetSpecificArgumentValue(ts, "existingFileFolder", "=", null, true);
+            String newFileFolder = testCentral.GetSpecificArgumentValue(ts, "newFileFolder", "=", null, true);
+            boolean renameIfExisting = parseBoolean(testCentral.GetSpecificArgumentValue(ts, "renameIfExisting", "=", "true"));
+
+            //get the last modified file if filename is missing but folder is provided
+            if (testHelper.IsNullOrEmpty(existingFileName) && !testHelper.IsNullOrEmpty(existingFileFolder)) {
+                existingFileName = testHelper.CombinePaths(existingFileFolder, testCentral.GetLastModifiedFileName(existingFileFolder, false));
+            }
+
+            if (!testHelper.IsNullOrEmpty(newFileFolder)) {
+                if (newFileName.equalsIgnoreCase(AppConstants.persistedStringCheckValue)) {
+                    if (!testHelper.IsNullOrEmpty(testCentral.persistedString)) {
+                        newFileName = testHelper.CombinePaths(newFileFolder, testCentral.persistedString);
+                    } else {
+                        String tempName = existingFileName.substring(existingFileName.lastIndexOf("\\"));
+                        newFileName = testHelper.CombinePaths(newFileFolder, tempName);
+                    }
+                }
+            }
+            File existingFileNameFile = new File(existingFileName);
+            File newFileNameFile = new File(newFileName);
+
+            if (!testHelper.IsNullOrEmpty(existingFileName) && !testHelper.IsNullOrEmpty(newFileName)) {
+                testHelper.UpdateTestResults(AppConstants.ANSI_CYAN + AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Renaming File for Step " + fileStepIndex + " ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+                if (existingFileNameFile.exists()) {
+                    if (newFileNameFile.exists()) {
+                        if (renameIfExisting) {
+                            newFileName = testHelper.GetUnusedFileName(newFileName);
+                            newFileNameFile = new File(newFileName);
+                        } else {
+                            newFileNameFile.delete();
+                        }
+                    }
+
+                    existingFileNameFile.renameTo(newFileNameFile);
+                    if (newFileNameFile.exists()) {
+                        testHelper.UpdateTestResults("Successful Renaming:   (" + existingFileName + ") to (" + newFileName + ") for step " + fileStepIndex, true);
+                    } else {
+                        testHelper.UpdateTestResults("Failed Renaming:   (" + existingFileName + ") to (" + newFileName + ") for step " + fileStepIndex, true);
+                        if (ts.get_crucial()) {
+                            testCentral.TearDown();
+                        }
+                    }
+                }
+                testHelper.UpdateTestResults(AppConstants.ANSI_CYAN + AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End Renamed File for Step " + fileStepIndex + " ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
+            }
+        }catch (Exception e) {
+            testHelper.DebugDisplay("Error! " + e.getMessage() + " - " + e.getStackTrace().toString());
         }
     }
 
@@ -180,18 +253,11 @@ public class WriteCommands {
         ArrayList<String> cookieArguments = testCentral.GetAllArguments(ts);
         String messageText = cookieArguments.size() == 1 ? "1 Cookie" :  cookieArguments.size() + " Cookies";
 
-
         if (cookieArguments != null && cookieArguments.size() > 0) {
             if (!cookieArguments.get(0).toLowerCase().equals("all")) {
                 testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_YELLOW_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Deleting " + messageText + " for Step " +  fileStepIndex + " ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
                 for (int x = 0; x < cookieArguments.size(); x++) {
                     driver.manage().deleteCookieNamed(cookieArguments.get(x));
-                    /*Set<Cookie> cookies = driver.manage().getCookies();
-                    for (Cookie cookie : cookies) {
-                        if (cookieArguments.get(x).equals()) {
-                            driver.manage().deleteCookie(cookie);
-                        }
-                    }*/
                 }
             } else {
                 messageText = "All Cookies";
@@ -208,23 +274,26 @@ public class WriteCommands {
         int cookieCount = 0;
         int validCookieCount = 0;
         String singularOrPlural = "Cookie";
-        //DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        //SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         LocalDateTime nowDateTime = LocalDateTime.now();
         String cookieKey;
         boolean isCrucial = ts.get_crucial() != null ? ts.get_crucial() : false;
         String [] cookieParts;
         String cookieName, cookieValue, cookiePath, cookieDomain;
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
         Date cookieExpiration = new Date();
         Boolean cookieSecure;
         int cookieExpirationMultiplier = 1;
         Boolean inValidDomain = false;
         String invalidCookieName = "", invalidCookieDomain = "";
+        //Boolean httpOnly = false;
+        //String sameSite = "None";
 
         if (ts.ArgumentList.size() > 1) {
             singularOrPlural = "Cookies";
         }
-        //testHelper.DebugDisplay("Now time is:" + nowDateTime);
+
         testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_YELLOW_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Setting " + ts.ArgumentList.size() + " " + singularOrPlural + " at " + nowDateTime +  " for Step " +  fileStepIndex + " ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
         testHelper.UpdateTestResults(AppConstants.indent8 + AppConstants.ANSI_YELLOW_BRIGHT + "Only cookies with valid domains will be set and validated.  Invalid cookies will be ignored." + AppConstants.ANSI_RESET, true);
         for (int x=0;x<ts.ArgumentList.size();x++) {
@@ -233,29 +302,44 @@ public class WriteCommands {
             cookieName = cookieParts[0].substring(0, cookieParts[0].indexOf("="));
             cookieValue = cookieParts[0].substring(cookieParts[0].indexOf("=")+1);
             cookieExpiration = new Date();
-            cookiePath = "";
 
+            cookiePath = "";
+            //httpOnly = false;
+            //sameSite = "None";
+            testHelper.UpdateTestResults(AppConstants.indent8 + AppConstants.ANSI_YELLOW_BRIGHT + "Attempting to set Cookie: " + cookieName + AppConstants.ANSI_RESET, true);
             try {
                 URI uri = new URI(driver.getCurrentUrl());
                 cookieDomain = uri.getHost();
+                testHelper.UpdateTestResults(AppConstants.indent8 + AppConstants.ANSI_YELLOW_BRIGHT + "Set Cookie: " + cookieName + AppConstants.ANSI_RESET, true);
             } catch(Exception exception) {
                 cookieDomain = driver.getCurrentUrl().replace("http://", "").replace("https://","");
                 cookieDomain = cookieDomain.substring(0, cookieDomain.indexOf("/")-1);
+                testHelper.UpdateTestResults(AppConstants.indent8 + AppConstants.ANSI_YELLOW_BRIGHT + "Not Set Cookie: " + cookieName + AppConstants.ANSI_RESET, true);
             }
             cookieSecure = false;
-
-
             for (int i=1;i<cookieParts.length;i++) {
                 if (cookieParts[i].indexOf("expires=") > -1) {
-                    cookieExpirationMultiplier = parseInt(cookieParts[i].substring(cookieParts[i].indexOf("=")+1));
-                    cookieExpiration = new Date(new Date().getTime() + (cookieExpirationMultiplier *3600*1000));
-                } else if (cookieParts[i].indexOf("path=") > -1) {
-                    cookiePath = cookieParts[i].substring(cookieParts[i].indexOf("=")+1);
-                } else if (cookieParts[i].indexOf("domain=") > -1) {
-                    cookieDomain = cookieParts[i].substring(cookieParts[i].indexOf("=")+1);
-                } else if (cookieParts[i].indexOf("secure=") > -1) {
-                    cookieSecure = Boolean.parseBoolean(cookieParts[i].substring(cookieParts[i].indexOf("=")+1));
+                    cookieExpirationMultiplier = abs(parseInt(cookieParts[i].substring(cookieParts[i].indexOf("=")+1)));
+                    long lcalc = (cookieExpirationMultiplier *3600*1000);
+                    int calc;
+                    int cycle = 1;
+                    if (lcalc > 2147483647) {
+                        while (lcalc > 2147483647) {
+                            cookieExpiration = DateUtils.addMinutes(cookieExpiration, 2147483647);
+                            lcalc -= 2147483647;
+                            testHelper.DebugDisplay("Iteration: " + cycle + " updated cookieExpiration = " + cookieExpiration);
+                            cycle++;
+                        }
+                    } else {
+                        calc = abs((cookieExpirationMultiplier *3600)*1000);
+                        cookieExpiration = DateUtils.addMinutes(cookieExpiration, calc);
+                    }
                 }
+                cookiePath = (cookieParts[i].indexOf("path=") > -1) ? cookieParts[i].substring(cookieParts[i].indexOf("=")+1) : cookiePath;
+                cookieDomain = (cookieParts[i].indexOf("domain=") > -1) ? cookieParts[i].substring(cookieParts[i].indexOf("=")+1) : cookieDomain;
+                cookieSecure = (cookieParts[i].indexOf("secure=") > -1) ? parseBoolean(cookieParts[i].substring(cookieParts[i].indexOf("=")+1)) : cookieSecure;
+                //httpOnly = cookieParts[i].toLowerCase().indexOf("httponly=") > -1 ? parseBoolean(cookieParts[i].substring(cookieParts[i].indexOf("=") + 1)) : httpOnly;
+                //sameSite = cookieParts[i].toLowerCase().indexOf("samesite=") > -1 ? cookieParts[i].substring(cookieParts[i].indexOf("=") + 1) : sameSite;
             }
             try {
                 //testHelper.DebugDisplay("Name:" + cookieName + "\n - Value:" + cookieValue + "\nDomain:" + cookieDomain + "\nPath:" + cookiePath + "\nExpires:" + cookieExpiration + "\nSecure:" + cookieSecure);
@@ -277,10 +361,11 @@ public class WriteCommands {
                     cookieParts = argumentValue.split(";");
                     cookieKey = cookieParts[0].substring(0,argumentValue.indexOf("="));
                     cookieValue = cookieParts[0].substring(cookieParts[0].indexOf("=")+1);
+                    //testHelper.DebugDisplay("cookieKey = " + cookieKey);
+                    //testHelper.DebugDisplay("cookieValue = " + cookieValue);
                     try {
                         if (driver.manage().getCookieNamed(cookieKey).toString().indexOf(cookieValue) > -1) {
                             validCookieCount++;
-                            //testHelper.DebugDisplay("Valid Cookie: " + cookieKey + " = " + cookieValue);
                         }
                     } catch(Exception ex) {
                         if (inValidDomain) {
@@ -385,10 +470,25 @@ public class WriteCommands {
             status = PerformAction(ts, null, fileStepIndex);
         } else {
             //subAction can either be the expected value or a command to perform like click
-            if (ts.get_command() != null && ts.get_command().toLowerCase().contains(AppCommands.Switch_To_IFrame)) {
+            /*if (ts.get_command() != null && ts.get_command().toLowerCase().contains(AppCommands.Switch_To_IFrame)) {
                 subAction = testCentral.GetArgumentValue(ts, 1, null);
             }
             status = PerformAction(ts, subAction, fileStepIndex);
+             */
+            int priorIndex = -1;
+            testCentral.lastIndex = -2;
+            for (int x = 0; x < ts.ArgumentList.size(); x++)
+            {
+                subAction = testCentral.GetArgumentValueNotContaining(ts, "iframename,optional", priorIndex, null);
+                //testHelper.DebugDisplay("subAction = " + subAction);
+                //testHelper.DebugDisplay("testCentral.lastIndex = " + testCentral.lastIndex + " - priorIndex = " + priorIndex);
+                if (testCentral.lastIndex != priorIndex)
+                {
+                    status = PerformAction(ts, subAction, fileStepIndex);
+                }
+                priorIndex = testCentral.lastIndex;
+                //subAction = FrmTestCentral.GetArgumentValueContaining(ts,"keys",null,true, false);
+            }
         }
 
         //if not a right click context command
@@ -398,8 +498,10 @@ public class WriteCommands {
             String expectedUrl = ts.get_expectedValue();
 
             if (ts.ArgumentList != null && ts.ArgumentList.size() > 1) {
-                delayMilliSeconds = testCentral.GetArgumentNumericValue(ts, 0, AppConstants.DefaultTimeDelay);
+                //delayMilliSeconds = testCentral.GetArgumentNumericValue(ts, 0, AppConstants.DefaultTimeDelay);
+                delayMilliSeconds = parseInt(testCentral.GetSpecificArgumentValue(ts,"delay","=", String.valueOf(AppConstants.DefaultTimeDelay)));
                 testCentral.DelayCheck(delayMilliSeconds, fileStepIndex);
+                testHelper.DebugDisplay("delayMilliSeconds= " + delayMilliSeconds);
                 expectedUrl = ts.get_expectedValue();
             }
 
@@ -480,12 +582,14 @@ public class WriteCommands {
         Boolean pageLoadComplete = false;
         String accessorType = ts.get_accessorType() != null ? ts.get_accessorType().toLowerCase().trim() : null;
         String accessor = ts.get_accessor()!= null ? ts.get_accessor().trim() : null;
-        testCentral.CheckWaitArgumentOrder(ts);
+        //testCentral.CheckWaitArgumentOrder(ts);
         String elementIdentifier = ts.get_command().toLowerCase().trim().contains(AppCommands.Page) ? testCentral.GetArgumentValue(ts, 0, "n/a") : testCentral.GetArgumentValue(ts, 0, null);
-        int maxTimeInSeconds = testCentral.GetArgumentNumericValue(ts, 1, AppConstants.DefaultElementWaitTimeInSeconds);
+        int maxTimeInSeconds = testCentral.GetSpecificArgumentValue(ts, AppConstants.DelayArg, "=", null) != null ? parseInt(testCentral.GetSpecificArgumentValue(ts, AppConstants.DelayArg, "=", String.valueOf(AppConstants.DefaultElementWaitTimeInSeconds))) : testCentral.GetArgumentNumericValue(ts, 1, AppConstants.DefaultElementWaitTimeInSeconds);
+        String url = testCentral.GetSpecificArgumentValue(ts, AppConstants.UrlArg, "=", null) != null ? testCentral.GetSpecificArgumentValue(ts, AppConstants.UrlArg, "=", null) : testCentral.GetArgumentValue(ts, 0, null);
+
 
         //check that this argument is present
-        if ((elementIdentifier == null || elementIdentifier.isEmpty()) && (accessorType == null || accessorType.isEmpty())) {
+        if (testHelper.IsNullOrEmpty(accessor) && testHelper.IsNullOrEmpty(accessorType) && ts.get_command().toLowerCase().indexOf("page") < 0) {
             testHelper.UpdateTestResults(AppConstants.ANSI_RED + AppConstants.indent5 + "Improperly formatted test step.  Skipping step " + fileStepIndex, true);
             return;
         }
@@ -497,7 +601,7 @@ public class WriteCommands {
             testHelper.UpdateTestResults(AppConstants.indent5 + "Waiting a maximum of " + maxTimeInSeconds + " seconds for presence of element " + accessor + " at step " + fileStepIndex, true);
         }
 
-        if (accessorType == null || elementIdentifier == null || accessor == null ) {
+        if (accessorType == null || elementIdentifier == null || (accessor == null && accessorType != "page")) {
             return;
         }
 
@@ -506,17 +610,14 @@ public class WriteCommands {
         try {
             if (!accessorType.equals("page")) {
                 element = readCommands.GetWebElementByAccessor(ts);
-                //WebDriverWait wait = new WebDriverWait(driver, maxTimeInSeconds);
                 Wait<WebDriver> wait = new WebDriverWait(driver, maxTimeInSeconds);
                 WebElement finalElement = element;
                 wait.until(d -> finalElement.isDisplayed());
-
-                //element = new WebDriverWait(driver, maxTimeInSeconds).until(ExpectedConditions.presenceOfElementLocated((By) readCommands.GetWebElementByAccessor(ts)));
-                //element = new WebDriverWait(driver, maxTimeInSeconds).until(ExpectedConditions.presenceOfElementLocated(By)); readCommands.GetWebElementByAccessor(ts)));
+                //TODO: NEED TO ADD MESSAGE IF ELEMENT LOADS
             } else {
                 if (!elementIdentifier.toLowerCase().trim().contains("n/a")) {
                     try {
-                        testHelper.NavigateToPage(driver, elementIdentifier);
+                        testHelper.NavigateToPage(driver, url);
                     } catch (Exception ex) {
                         testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed to navigate error: " + ex.getMessage() + " for step " + fileStepIndex, true);
                     }
@@ -527,20 +628,19 @@ public class WriteCommands {
 
             if (!ts.get_command().toLowerCase().trim().contains(AppCommands.Page)) {
                 if (element != null) {
-                    testHelper.UpdateTestResults("Successful load of element " + accessor + " within max time setting of " + maxTimeInSeconds + " for step " + fileStepIndex, true);
+                    testHelper.UpdateTestResults("Successful load of element " + accessor + " within max time setting of " + maxTimeInSeconds + " seconds for step " + fileStepIndex, true);
                 }
             } else {
                 if (pageLoadComplete) {
-                    testHelper.UpdateTestResults("Successful load of page " + testCentral.GetCurrentPageUrl() + " within max time setting of " + maxTimeInSeconds + " for step " + fileStepIndex, true);
+                    testHelper.UpdateTestResults("Successful load of page " + testCentral.GetCurrentPageUrl() + " within max time setting of " + maxTimeInSeconds + " seconds for step " + fileStepIndex, true);
                 }
             }
         } catch (TimeoutException ae) {
             if (ts.get_command().toLowerCase().trim().contains(AppCommands.Page)) {
                 //TODO: INVESTIGATE WHY YOU ADDED AL+ IN THE INITIAL MESSAGE
-                //testHelper.UpdateTestResults("Failed to find the element " + GetCurrentPageUrl() + " within the set max time of " + maxTimeInSeconds + " for step " + fileStepIndex + " AL+", true);
-                testHelper.UpdateTestResults("Failed to find the element " + testCentral.GetCurrentPageUrl() + " within the set max time of " + maxTimeInSeconds + " for step " + fileStepIndex, true);
+                testHelper.UpdateTestResults("Failed to find the element " + testCentral.GetCurrentPageUrl() + " within the set max time of " + maxTimeInSeconds + " seconds for step " + fileStepIndex, true);
             } else {
-                testHelper.UpdateTestResults("Failed to load element " + accessor + " within max time setting of " + maxTimeInSeconds + " at step " + fileStepIndex, true);
+                testHelper.UpdateTestResults("Failed to load element " + accessor + " within max time setting of " + maxTimeInSeconds + " seconds for step " + fileStepIndex, true);
             }
             if (ts.get_crucial()){
                 throw (ae);
@@ -559,6 +659,7 @@ public class WriteCommands {
      *                         with the dimension identifier.
      ***********************************************************************/
     private void SetScreenShotDimensions(String stringDimensions) {
+        testHelper.DebugDisplay("stringDimensions = " + stringDimensions);
         int wStart = stringDimensions.toLowerCase().indexOf("w=");
         int hStart = stringDimensions.toLowerCase().indexOf("h=");
         int width;
@@ -607,7 +708,7 @@ public class WriteCommands {
         String expectedUrl = ts.get_expectedValue();
 
         if (ts.ArgumentList != null && ts.ArgumentList.size() > 0) {
-            int delayMilliSeconds = testCentral.GetArgumentNumericValue(ts, 0, AppConstants.DefaultTimeDelay);
+            int delayMilliSeconds = !testHelper.IsNullOrEmpty(testCentral.GetSpecificArgumentValue(ts, "delay", "=", null)) ? parseInt(testCentral.GetSpecificArgumentValue(ts, "delay", "=", String.valueOf(AppConstants.DefaultTimeDelay))) : AppConstants.DefaultTimeDelay;    //testCentral.GetArgumentNumericValue(ts, 0, AppConstants.DefaultTimeDelay);
             testCentral.DelayCheck(delayMilliSeconds, fileStepIndex);
         }
         String actualUrl = testCentral.GetCurrentPageUrl();
@@ -642,7 +743,7 @@ public class WriteCommands {
         String command = ts.get_command().toLowerCase().contains(AppCommands.Switch_To_IFrame) ? subAction : ts.get_command();
 
         //if this is a click event, click it
-        if ((command.toLowerCase().contains(AppCommands.Click)) && !command.contains(AppCommands.SendKeys) && !command.contains(AppCommands.Send_Keys)) {
+        if ((command.toLowerCase().contains("command=") && ts.get_command().contains(AppCommands.Switch_To_IFrame)) || ( command.toLowerCase().contains(AppCommands.Click)) && !command.contains(AppCommands.SendKeys) && !command.contains(AppCommands.Send_Keys)) {
             if (command.toLowerCase().contains(AppCommands.DoubleClick)) {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Performing double click on " + ts.get_accessor() + " using " + ts.get_accessorType() + " for step " + fileStepIndex, true);
             } else if (command.toLowerCase().contains(AppCommands.Right_Click)) {
@@ -699,7 +800,7 @@ public class WriteCommands {
                 status = false;
                 testHelper.UpdateTestResults("Error clicking element: " + e.getMessage() + " for step " + fileStepIndex, true);
             }
-        } else if (command.toLowerCase().contains("screenshot")) {
+        } else if (command.toLowerCase().contains("command=") && command.toLowerCase().contains("screenshot")) {
             try {
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Taking Screenshot for step " + fileStepIndex, true);
                 subAction = testCentral.GetArgumentValue(ts, 0, subAction);
@@ -852,11 +953,18 @@ public class WriteCommands {
      * @throws Exception - May throw uncaught ImageMagick or File System Errors.
      *******************************************************************************************/
     private void CompareImagesController(TestStep ts, String fileStepIndex) throws Exception {
-        String baseLineImage = testCentral.GetArgumentValue(ts,0, null);
+        /*String baseLineImage = testCentral.GetArgumentValue(ts,0, null);
         String actualImage = testCentral.GetArgumentValue(ts, 1, null);
         String differenceImage = testCentral.GetArgumentValue(ts, 2, null);
         String globalDifferenceImage = testCentral.GetArgumentValue(ts, 3, null);
         double acceptableDifference = testCentral.GetArgumentNumericDoubleValue(ts, 4, 0);
+         */
+        String baseLineImage = testCentral.GetSpecificArgumentValue(ts,AppConstants.BaseLineImageArg,"=",null) != null ? testCentral.GetSpecificArgumentValue(ts, AppConstants.BaseLineImageArg, "=", null) : testCentral.GetArgumentValue(ts, 0, null);
+        String actualImage = testCentral.GetSpecificArgumentValue(ts, AppConstants.ActualImageArg, "=", null) != null ? testCentral.GetSpecificArgumentValue(ts, AppConstants.ActualImageArg, "=", null) : testCentral.GetArgumentValue(ts, 1, null);
+        String differenceImage = testCentral.GetSpecificArgumentValue(ts, AppConstants.DifferenceImageArg, "=", null) != null ? testCentral.GetSpecificArgumentValue(ts, AppConstants.DifferenceImageArg, "=", null) : testCentral.GetArgumentValue(ts, 2, null);
+        String globalDifferenceImage = testCentral.GetSpecificArgumentValue(ts, AppConstants.GlobalDifferenceImageArg, "=", null) != null ? testCentral.GetSpecificArgumentValue(ts, AppConstants.GlobalDifferenceImageArg, "=", null) : testCentral.GetArgumentValue(ts, 3, null);
+        double acceptableDifference = testCentral.GetSpecificArgumentValue(ts, AppConstants.AcceptableDifference, "=", null) != null ? Double.parseDouble(testCentral.GetSpecificArgumentValue(ts, AppConstants.AcceptableDifference, "=", "0")) : testCentral.GetArgumentNumericDoubleValue(ts, 4, 0);
+
 
         if (!testHelper.IsNullOrEmpty(baseLineImage) && !testHelper.IsNullOrEmpty(actualImage) && !testHelper.IsNullOrEmpty(differenceImage)) {
             helperUtilities.testHelper = testHelper;
@@ -900,9 +1008,9 @@ public class WriteCommands {
             String comment = null;
             Boolean uaTagStarted = false;
 
-            String fileName = testHelper.GetUnusedFileName(testCentral.GetArgumentValue(ts, 0, TestCentral.testPage));
+            //String fileName = testHelper.GetUnusedFileName(testCentral.GetArgumentValue(ts, 0, TestCentral.testPage));
+            String fileName = testHelper.GetUnusedFileName(testCentral.GetSpecificArgumentValue(ts,AppConstants.FileNameArg,"=",TestCentral.testPage));
             testHelper.CreateSectionHeader("[ Start Save Har File and Populate GTM Tags Object Event ]", "", AppConstants.ANSI_BLUE_BRIGHT, true, false, true);
-            //testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start Save Har File and Populate GTM Tags Object Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
             testHelper.UpdateTestResults(AppConstants.indent5 + "Writing HAR file, based on supplied file name (" + fileName + "), for step " + fileStepIndex, true);
             String sFileName = SaveHarFile(har, fileName);
             testHelper.UpdateTestResults(AppConstants.indent5 + "HAR file saved as (" + sFileName + ") based on supplied and existing file names for step " + fileStepIndex, true);
@@ -910,7 +1018,6 @@ public class WriteCommands {
             testHelper.UpdateTestResults(AppConstants.indent5 + "Populating GTM Tags Object from HAR for step " + fileStepIndex, true);
             for (HarEntry entry : entries) {
                 int size = entry.getRequest().getQueryString().size();
-                //testHelper.DebugDisplay("URL = " + entry.getRequest().getUrl());
                 for (int x=0;x<size;x++) {
                     //if (entry.getRequest().getQueryString().get(x).getValue().indexOf("collect?v=1") > -1) {
                     if (entry.getRequest().getUrl() .indexOf("collect?v=1") > -1) {
@@ -982,6 +1089,7 @@ public class WriteCommands {
                                 ga4Parameter = SetGA4Parameter(entry.getRequest().getQueryString().get(x).getName(), entry.getRequest().getQueryString().get(x).getValue());
                                 ga4ParameterList.add(ga4Parameter);
                                 ga4ParamName += entry.getRequest().getQueryString().get(x).getName() + ",";
+                                //testHelper.DebugDisplay("GA4ParameterName = " + ga4Parameter.get_parameterName() + " - GA4 ParameterValue = " + ga4Parameter.get_parameterValue());
                             }
                         }
                     }
@@ -1006,6 +1114,11 @@ public class WriteCommands {
             //testHelper.set_csvFileName(testCentral.testHelper.get_csvFileName());
             //testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End of Save Har File and Populate GTM Tags Object Event  ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
 
+            /*for (int x=0;x<GA4TagList.size();x++) {
+                for (int y=0;y<GA4TagList.get(x).getGA4Parameters().size();y++) {
+                    testHelper.DebugDisplay("Stored GA4 Tag: " + GA4TagList.get(x).getGA4Parameters().get(y).get_parameterName() + " = " + GA4TagList.get(x).getGA4Parameters().get(y).get_parameterValue());
+                }
+            }*/
             //debugging
             /*for (int x=0;x<GtmTagList.size();x++) {
                 testHelper.UpdateTestResults("pageRef=" + GtmTagList.get(x).get_pageRef() + "\r\n" +

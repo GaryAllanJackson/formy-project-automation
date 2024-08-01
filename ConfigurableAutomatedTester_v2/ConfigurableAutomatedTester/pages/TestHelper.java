@@ -118,6 +118,12 @@ public class TestHelper{
         set_executedFromMain(testCentral.is_executedFromMain());
     }
 
+
+
+
+
+
+
     /**************************************************************************************************
      * Description: This method reads the XML based Configuration file, populates the ConfigSettings
      *              object with the values from the file and returns that ConfigSettings object to the
@@ -1294,5 +1300,28 @@ public class TestHelper{
         return status;
     }
 
+    /***************************************************************************
+     * Description: This method combines two parts of a file path into a properly
+     *              formatted file path, by ensuring that the path delimiter is
+     *              between the parts of the path passed in.
+     * @param existingFileFolder
+     * @param lastModifiedFileName
+     * @return
+     *****************************************************************************/
+    public String CombinePaths(String existingFileFolder, String lastModifiedFileName) {
+        String folderDelimiter = "\\";
+        String existingFileFolderEndChar = existingFileFolder.substring(existingFileFolder.length() - 1);
+        String lastModifiedFileNameEndChar = lastModifiedFileName.substring(0,1);
+        if (HelperUtilities.isMac()) {
+            folderDelimiter = "/";
+        }
+
+        if (!existingFileFolderEndChar.equals(folderDelimiter) && !lastModifiedFileNameEndChar.equals(folderDelimiter)) {
+            existingFileFolder = existingFileFolder + folderDelimiter;
+        } else if (existingFileFolderEndChar.equals(folderDelimiter) && lastModifiedFileNameEndChar.equals(folderDelimiter)) {
+            lastModifiedFileName = lastModifiedFileName.substring(1);
+        }
+        return existingFileFolder + lastModifiedFileName;
+    }
 }
 

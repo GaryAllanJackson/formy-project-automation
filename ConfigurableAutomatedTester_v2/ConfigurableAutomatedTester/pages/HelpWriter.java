@@ -83,6 +83,7 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "\t\tLOGIN WITH NAVIGATION");
             WriteToFile(get_helpFileName(), "\t\tALERT POPUP LOGIN");
             WriteToFile(get_helpFileName(), "\t\tCHECK URL WITHOUT NAVIGATION");
+            WriteToFile(get_helpFileName(), "\t\tASSERT (EQUAL AND NOT EQUAL)");
             WriteToFile(get_helpFileName(), "\t\tCHECK GET REQUEST STATUS WITHOUT NAVIGATION");
             WriteToFile(get_helpFileName(), "\t\tCHECK POST REQUEST STATUS WITHOUT NAVIGATION");
             WriteToFile(get_helpFileName(), "\t\tCHECK DOCUMENT READY STATE COMPLETE WITHOUT NAVIGATION AS A POST NAVIGATION STEP");
@@ -92,7 +93,9 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "\t\tCHECK AN ANCHOR HREF");
             WriteToFile(get_helpFileName(), "\t\tCHECK ALL PAGE LINKS USING URL");
             WriteToFile(get_helpFileName(), "\t\tCHECK ALL PAGE LINKS WITHOUT USING URL");
-            WriteToFile(get_helpFileName(), "\t\tCHECK THE COUNT OF A SPECIFIC ELEMENT ON A PAGE");
+            WriteToFile(get_helpFileName(), "\t\tCHECK THE COUNT OF A SPECIFIC ELEMENT ON A PAGE (EQUAL AND NOT EQUAL)");
+            WriteToFile(get_helpFileName(), "\t\tCHECK AN IMAGE SRC TAG WITH SEPARATE NAVIGATION STEP");
+            WriteToFile(get_helpFileName(), "\t\tCHECK AN IMAGE ALT TAG WITH SEPARATE NAVIGATION STEP");
             WriteToFile(get_helpFileName(), "\t\tCHECK ALL PAGE IMAGE SRC TAGS WITH SEPARATE NAVIGATION STEP");
             WriteToFile(get_helpFileName(), "\t\tCHECK ALL PAGE IMAGE SRC TAGS WITH NO SEPARATE NAVIGATION STEP");
             WriteToFile(get_helpFileName(), "\t\tCHECK ALL PAGE IMAGE ALT TAGS WITH SEPARATE NAVIGATION STEP");
@@ -105,13 +108,13 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "\t\tFILLING IN TEXT FIELDS");
             WriteToFile(get_helpFileName(), "\t\tCLICK AN ELEMENT");
             WriteToFile(get_helpFileName(), "\t\tDOUBLE CLICK AN ELEMENT");
-            WriteToFile(get_helpFileName(), "\t\tRIGHT CLICK AN ELEMENT");
+            WriteToFile(get_helpFileName(), "\t\tRIGHT CLICK AND SEND KEYSTROKES (CONTEXT MENU OPEN NEW TAB)");
             WriteToFile(get_helpFileName(), "\t\tCLICK AN ELEMENT IN AN IFRAME");
             WriteToFile(get_helpFileName(), "\t\tSELECT AN OPTION FROM AN HTML SELECT ELEMENT");
             WriteToFile(get_helpFileName(), "\t\tTAKING SCREENSHOTS");
             WriteToFile(get_helpFileName(), "\t\tSWITCHING BROWSER TABS");
             WriteToFile(get_helpFileName(), "\t\tCLOSE ONE OR ALL OPEN TABS");
-            WriteToFile(get_helpFileName(), "\t\tFIND ELEMENTS THAT HAVE SPECIFIC TEXT");
+            WriteToFile(get_helpFileName(), "\t\tFIND ELEMENTS THAT HAVE SPECIFIC TEXT AT VARIOUS CONTAINER HIERARCHIES");
             WriteToFile(get_helpFileName(), "\t\tFIND ELEMENTS THAT CONTAIN TEXT");
             WriteToFile(get_helpFileName(), "\t\tCREATE TEST PAGE COMMAND TO CREATE PAGE TESTS OR FOR PROVIDING DATA TO HELP CREATE TESTS");
             WriteToFile(get_helpFileName(), "\t\tCONNECT TO SQL SERVER DATABASE AND CLOSE THE CONNECTION");
@@ -528,45 +531,50 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "");
             //CHECK ENTIRE SITE
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CHECK ENTIRE SITE ]", "═", 9, 151));
-            WriteToFile(get_helpFileName(), "The Check Entire Site command is a two part command and requires that a page is loaded prior to using this command.  \n");
-            WriteToFile(get_helpFileName(), "A Navigation step prior to the \"Entire Site Commands Start\" suits this purpose well.  \n");
-            WriteToFile(get_helpFileName(), "It is suggested to navigate to the sitemap page or another page where all site links are contained.  \n");
+            WriteToFile(get_helpFileName(), "The Check Entire Site command is a two part command and requires that a page is loaded prior to using this command. \r\n");
+            WriteToFile(get_helpFileName(), "A Navigation step prior to the \"Entire Site Commands Start\" suits this purpose well.  \r\n");
+            WriteToFile(get_helpFileName(), "This command has two named arguments, the domainrestriction and the sitemapurl, and it is suggested that you include these arguments first.");
+            WriteToFile(get_helpFileName(), "1. The domainRestriction argument limits the scope of testing to pages starting with the supplied domain.\r\n");
+            WriteToFile(get_helpFileName(), "2. The siteMapUrl argument lists the sitemap page specifically, which should contain a majority of links to different sections of the site.\r\n");
+
             WriteToFile(get_helpFileName(), "All Actions that fall between the \"Entire Site Commands Start\", and the \"Entire Site Commands End\" commands ");
             WriteToFile(get_helpFileName(), " will be repeated for every URL retrieved from the current page, as well as URLs retrieved from the pages to scan, ");
-            WriteToFile(get_helpFileName(), " which are arguments <arg2></arg2> - <arg20></arg20>,  when the start command executes.\n");
-            WriteToFile(get_helpFileName(), "The first argument <arg1></arg1> is reserved for restricting the pages based on a domain or a partial page path. ");
-            WriteToFile(get_helpFileName(), "If the domain protocol is present, this will be used as a domain restriction to weed out links to outside domains. ");
-            WriteToFile(get_helpFileName(), "If only a page path is present, any links containing that page path will be used, which may include non-domain links. ");
+            WriteToFile(get_helpFileName(), " which are arguments <arg3></arg3> - <arg20></arg20>, when the start command executes.\n");
+            WriteToFile(get_helpFileName(), "The first argument <arg1>domainRestriction=</arg1> is reserved for restricting the pages based on a domain or a partial page path. \r\n");
+            WriteToFile(get_helpFileName(), "If the domain protocol is present, this will be used as a domain restriction to weed out links to outside domains. \r\n");
+            WriteToFile(get_helpFileName(), "If only a page path is present, any links containing that page path will be used, which may include non-domain links. \r\n");
             WriteToFile(get_helpFileName(), "If this argument is not present, all links retrieved will be used so consider this if social or non-domain links may be present.\r\n");
-            WriteToFile(get_helpFileName(), "This powerful functionality allows for reducing the test file length considerably, while performing the same tests on multiple pages.");
+            WriteToFile(get_helpFileName(), "This powerful functionality allows for reducing the test file length considerably, while performing the same tests on multiple pages. \r\n");
             WriteToFile(get_helpFileName(), "This command begins by retrieving all links from the current page and the pages to scan, then loops through pages starting with ");
             WriteToFile(get_helpFileName(), " current page executing all commands between the \"Entire Site Commands Start\" and \"Entire Site Commands End\" commands.  \n");
             WriteToFile(get_helpFileName(), "The Check Entire Site Start command CANNOT BE the first command of a test!!!  \n");
-            WriteToFile(get_helpFileName(), "The Entire Site Commands Start command's first argument <arg1></arg1>, which is required, is to limit the scope ");
-            WriteToFile(get_helpFileName(), " of the tests to the domain or URL path to be tested.  \n");
+            WriteToFile(get_helpFileName(), "The Entire Site Commands Start command's domain restriction argument is required, to limit the scope ");
+            WriteToFile(get_helpFileName(), " of the tests to the domain or URL path to be tested and ideally this should be the first argument. .  \n");
             WriteToFile(get_helpFileName(), "This functionality looks for an included URL portion so the domain can be used or a partial or full page path. \n");
             WriteToFile(get_helpFileName(), "This argument prevents the application from testing off site pages like social links added for sharing to social platforms.\n");
             WriteToFile(get_helpFileName(), "The subsequent optional arguments, <arg2></arg2> - <arg20></arg20>, allow for retrieving URLs from those pages to ");
             WriteToFile(get_helpFileName(), " increase the number of pages tested, as the initial page may not have a complete list of links necessary to test.\n");
-            WriteToFile(get_helpFileName(), "Some examples: ");
-            WriteToFile(get_helpFileName(), "\n\n\t\t /products/ to limit tests to links containing /products/ in the URL.");
-            WriteToFile(get_helpFileName(), "\n\n\t\thttps://www.mycoolcite.com/ to limit checks to a site's domain.");
-            WriteToFile(get_helpFileName(), "\n\n\t\thttps://www.mycoolcite.com/products/ to limit checks to a site domain's URL with a page path starting with /products/.");
-            WriteToFile(get_helpFileName(),"<!-- The entire site command will skip URLs that have # to avoid in page links \n" +
-                            "\t\targ1 - domain restriction\n" +
-                            "\t\t<arg2></arg2> through <arg20></arg20> - Alternate pages to scan for links to traverse the site\n" +
-                            "\t-->\n");
+            WriteToFile(get_helpFileName(), "Some examples: \r\n");
+            WriteToFile(get_helpFileName(), "1. /products/ to limit tests to links containing /products/ in the URL.\r\n");
+            WriteToFile(get_helpFileName(), "2. https://www.fake_helpfile_example_site.com/ to limit checks to a site's domain.\r\n");
+            WriteToFile(get_helpFileName(), "3. https://www.fake_helpfile_example_site.com/products/ to limit checks to a site domain's URL with a page path starting with /products/.\r\n");
+            WriteToFile(get_helpFileName(),"<!-- The entire site command will skip URLs that have # to avoid in-page links \r\n" +
+                            "\t\targ1 - domain restriction\r\n" +
+                            "\t\targ2 - sitemap url\r\n" +
+                            "\t\t<arg3></arg3> through <arg20></arg20> - Alternate pages to scan for links to traverse the site\r\n" +
+                            "\t-->\r\n");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<!-- Command - ALWAYS REQUIRED!!! -->\r\n" +
                     "\t<command>entire site commands start</command>\r\n" +
                     "\t<arguments>\r\n" +
                     "\t\t<!-- first argument expected by the command is the URL portion to limit execution, if empty, there will be no restriction and  -->\r\n" +
                     "\t\t<!-- if part of a page path, any links that include that page path, may also be included -->\r\n" +
-                    "\t\t<arg1>https://www.mycoolcite.com/</arg1>\r\n" +
+                    "\t\t<arg1>domainRestriction=https://www.fake_helpfile_example_site.com/</arg1>\r\n" +
                     "\t\t<!-- remaining optional arguments for this command are additional pages beyond the current page to scan for URLs from Anchor tags(a) -->\r\n" +
-                    "\t\t<arg2>https://www.mycoolsite.com/products</arg2>\r\n" +
-                    "\t\t<arg3>https://www.mycoolsite.com/recipes</arg3>\r\n" +
-                    "\t\t<arg4>https://www.mycoolsite.com/articles</arg4>\r\n" +
+                    "\t\t<arg2>siteMapUrl=https://www.fake_helpfile_example_site.com/sitemap</arg2>\r\n" +
+                    "\t\t<arg3>https://www.fake_helpfile_example_site.com/products</arg3>\r\n" +
+                    "\t\t<arg4>https://www.fake_helpfile_example_site.com/recipes</arg4>\r\n" +
+                    "\t\t<arg5>https://www.fake_helpfile_example_site.com/articles</arg5>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>\r\n");
 
@@ -592,8 +600,8 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "The required first argument, <arg1></arg1>, contains the URL to be loaded.");
             WriteToFile(get_helpFileName(), "The optional second argument, <arg2></arg2>, contains the time in milliseconds to wait to allow the page to load. ");
             WriteToFile(get_helpFileName(), " -  The default is 10 seconds.");
-            WriteToFile(get_helpFileName(), "IMPORTANT: Named arguments require an equal sign as a delimiter and should contain no spaces in the argument unless ");
-            WriteToFile(get_helpFileName(), "the value is intended to have a space, otherwise, the formatting is name=value.\n");
+            WriteToFile(get_helpFileName(), "IMPORTANT: Named arguments require an equal sign as a delimiter and should contain no spaces in the argument unless " +
+                                        "the value is intended to have a space, otherwise, the formatting is name=value.\n");
             WriteToFile(get_helpFileName(), "The optional named arguments <arg3></arg3> - <arg6></arg6> are for the Browser dimensions and the time in seconds ");
             WriteToFile(get_helpFileName(), "for the Back-End and Front-End load times.");
 
@@ -618,13 +626,6 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "but a space is required to separate the different argument types.\n");
 
 
-
-           /* WriteToFile(get_helpFileName(), "The optional third argument, <arg3></arg3>, contains the dimensions for setting the browser window height and width.");
-            WriteToFile(get_helpFileName(), "The optional fourth argument, <arg4></arg4>, contains the maximum time in seconds for the  Back-End and Front-End  to load.");
-            WriteToFile(get_helpFileName(), "The optional third argument, <arg5></arg5>, contains the dimensions for setting the browser window height and width.");
-            WriteToFile(get_helpFileName(), "The optional fourth argument, <arg6></arg6>, contains the maximum time in seconds for the  Back-End and Front-End  to load.");
-            WriteToFile(get_helpFileName(), " - This last optional argument actually performs a test based on the values entered and reports if the Back-End and Front-End load ");
-            WriteToFile(get_helpFileName(), " - times were within the maximum allotted time provided.");*/
             WriteToFile(get_helpFileName(), " - Individual times are displayed in Green, when within the allotted time, and in Red, when outside the allotted time.");
             WriteToFile(get_helpFileName(), " - This check is not part of the Crucial or Conditional functionality and will only display results but never determine ");
             WriteToFile(get_helpFileName(), " - subsequent functionality.");
@@ -639,9 +640,9 @@ public class HelpWriter {
                     "\t<crucial>TRUE</crucial>\r\n" +
                     "\t<arguments>\r\n" +
                     "\t\t<!-- first argument expected by the command - The URL is required -->\r\n" +
-                    "\t\t<arg1>https://formy-project.herokuapp.com/form</arg1>\r\n" +
+                    "\t\t<arg1>url=https://www.fake_helpfile_example_site.com/form</arg1>\r\n" +
                     "\t\t<!-- second argument optional - Time Delay - default is 4000 if not included but should be included if entering the third parameter -->\r\n" +
-                    "\t\t<arg2>4000</arg2>\r\n" +
+                    "\t\t<arg2>delay=4000</arg2>\r\n" +
                     "\t\t<!-- third argument, optional - Window Dimensions width then height separated by space -->\r\n" +
                     "\t\t<arg3>w=800</arg3>\r\n" +
                     "\t\t<arg4>h=800</arg4>\r\n" +
@@ -655,11 +656,11 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "PLEASE NOTE: Asserting that the URL is correct does not mean that a server transfer didn't redirect the URL to a different page but");
             WriteToFile(get_helpFileName(), "leave the URL untouched. ");
             WriteToFile(get_helpFileName(), "<step>\r\n\t<command>navigate</command>\r\n\t<actionType>write</actionType>\r\n" +
-                    "\t<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>\r\n" +
+                    "\t<expectedValue>https://www.fake_helpfile_example_site.com/form</expectedValue>\r\n" +
                     "\t<crucial>TRUE</crucial>\r\n" +
                     "\t<arguments>\r\n" +
-                    "\t\t<arg1>https://formy-project.herokuapp.com/form</arg1>\r\n" +
-                    "\t\t<arg2>4000</arg2>\r\n" +
+                    "\t\t<arg1>url=https://www.fake_helpfile_example_site.com/form</arg1>\r\n" +
+                    "\t\t<arg2>delay=4000</arg2>\r\n" +
                     "\t\t<!-- optional - Back End (BE) and Front End (FE) Page Max Load time in seconds -->\r\n" +
                     "\t\t<arg3>fe=3.75</arg3>\r\n" +
                     "\t\t<arg4>be=.5</arg4>\r\n" +
@@ -668,10 +669,10 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "To Navigate, assert that the URL is as expected, add a time delay and set the browser dimensions to 800 width by 800 height:");
             WriteToFile(get_helpFileName(), "<step>\r\n\t<command>navigate</command>\r\n\t<actionType>write</actionType>\r\n" +
-                    "\t<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>\r\n" +
+                    "\t<expectedValue>https://www.fake_helpfile_example_site.com/form</expectedValue>\r\n" +
                     "\t<crucial>TRUE</crucial>\r\n\t<arguments>\r\n" +
-                    "\t\t<arg1>https://formy-project.herokuapp.com/form</arg1>\r\n" +
-                    "\t\t<arg2>4000</arg2>\r\n" +
+                    "\t\t<arg1>url=https://www.fake_helpfile_example_site.com/form</arg1>\r\n" +
+                    "\t\t<arg2>delay=4000</arg2>\r\n" +
                     "\t\t<arg3>w=800</arg3>\n" +
                     "\t\t<arg3>h=800</arg3>\n" +
                     "\t</arguments>\r\n" +
@@ -680,10 +681,10 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "To Navigate, assert that the URL is as expected, add a time delay, set the browser dimensions to 800 width by 800 height and");
             WriteToFile(get_helpFileName(), "set the expected Frontend page load time to 3.75 seconds and Backend page load time to .5 seconds:");
             WriteToFile(get_helpFileName(), "<step>\r\n\t<command>navigate</command>\r\n\t<actionType>write</actionType>\r\n" +
-                    "\t<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>\r\n" +
+                    "\t<expectedValue>https://www.fake_helpfile_example_site.com/form</expectedValue>\r\n" +
                     "\t<crucial>TRUE</crucial>\r\n\t<arguments>\r\n" +
-                    "\t\t<arg1>https://formy-project.herokuapp.com/form</arg1>\r\n" +
-                    "\t\t<arg2>4000</arg2>\r\n" +
+                    "\t\t<arg1>url=https://www.fake_helpfile_example_site.com/form</arg1>\r\n" +
+                    "\t\t<arg2>delay=4000</arg2>\r\n" +
                     "\t\t<arg3>w=800</arg3>\n" +
                     "\t\t<arg4>h=800</arg4>\n" +
                     "\t\t<arg5>FE=3.75</arg5>\r\n" +
@@ -702,17 +703,17 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "4 thousand milli-seconds ");
             WriteToFile(get_helpFileName(), "before making the assertion to allow the page to load:");
             WriteToFile(get_helpFileName(), "<step>\r\n\t<command>navigate</command>\r\n\t<actionType>write</actionType>\r\n" +
-                    "\t<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>\r\n" +
+                    "\t<expectedValue>https://www.fake_helpfile_example_site.com/form</expectedValue>\r\n" +
                     "\t<crucial>TRUE</crucial>\r\n\t<arguments>\r\n" +
-                    "\t\t<arg1>https://username:password@formy-project.herokuapp.com/form</arg1>\r\n" +
-                    "\t\t<arg2>4000</arg2>\r\n\t</arguments>\r\n" +
+                    "\t\t<arg1>url=https://username:password@fake_helpfile_example_site.com/form</arg1>\r\n" +
+                    "\t\t<arg2>delay=4000</arg2>\r\n\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "To Navigate and Authenticate with username and password:");
             WriteToFile(get_helpFileName(), "<step>\r\n\t<command>navigate</command>\r\n\t<actionType>write</actionType>\r\n" +
                     "\t<crucial>TRUE</crucial>\r\n\t<arguments>\r\n" +
-                    "\t\t<arg1>https://username:password@formy-project.herokuapp.com/form</arg1>\r\n" +
-                    "\t\t<arg2>4000</arg2>\r\n\t</arguments>\r\n" +
+                    "\t\t<arg1>url=https://username:password@fake_helpfile_example_site.com/form</arg1>\r\n" +
+                    "\t\t<arg2>delay=4000</arg2>\r\n\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
 
@@ -728,33 +729,33 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "Please note this is for normal passwords which cannot contain spaces or characters that require escaping.");
             WriteToFile(get_helpFileName(), "<step>\r\n\t<command>login</command>\r\n\t<actionType>write</actionType>\r\n" +
                     "\t<crucial>TRUE</crucial>\r\n\t<arguments>\r\n" +
-                    "\t\t<arg1>username</arg1>\r\n" +
-                    "\t\t<arg2>password</arg2>\r\n" +
-                    "\t\t<arg3>http://www.myCoolPage.com</arg3>\r\n" +
+                    "\t\t<arg1>id=username</arg1>\r\n" +
+                    "\t\t<arg2>pwd=password</arg2>\r\n" +
+                    "\t\t<arg3>url=https://www.fake_helpfile_example_site.com/</arg3>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ ALERT POPUP LOGIN ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The following Login command does not include the navigation step.");
-            WriteToFile(get_helpFileName(), "As mentioned earlier, there may be isseus with logging in related to the operating system or alert type.");
+            WriteToFile(get_helpFileName(), "As mentioned earlier, there may be issues with logging in related to the operating system or alert type.");
             WriteToFile(get_helpFileName(), "Try different methods if failures happen as one approach may work best for a specific scenario.");
             WriteToFile(get_helpFileName(), "To login when presented with an alert style popup, which could happen upon landing on the site or after the site redirects you, \r\nand to make this crucial.");
             WriteToFile(get_helpFileName(), "Please note this is for normal passwords which cannot contain spaces or characters that require escaping.");
             WriteToFile(get_helpFileName(), "<step>\r\n\t<command>login</command>\r\n\t<actionType>write</actionType>\r\n" +
                     "\t<crucial>TRUE</crucial>\r\n\t<arguments>\r\n" +
-                    "\t\t<arg1>username</arg1>\r\n" +
-                    "\t\t<arg2>password</arg2>\r\n\t</arguments>\r\n" +
+                    "\t\t<arg1>id=username</arg1>\r\n" +
+                    "\t\t<arg2>pwd=password</arg2>\r\n\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CHECK URL WITHOUT NAVIGATION ]", "═", 9, 151));
-            WriteToFile(get_helpFileName(), "The Check URL command allows for checking the current page's URL without the need to navigate.");
-            WriteToFile(get_helpFileName(), "When an command, like a button or link click occurs that navigates to a new page, there is no need to");
-            WriteToFile(get_helpFileName(), "perform a navigation command but there is a need to check that the page is where expected before further testing.");
-            WriteToFile(get_helpFileName(), "NOTE: The <actionType></actionType> for this command is write, not a read.");
-            WriteToFile(get_helpFileName(), "This command is designed to work with event navigation to ensure that the navigation has occurred prior to subsequent testing.");
+            WriteToFile(get_helpFileName(), "The Check URL command allows for checking the current page's URL without the need to navigate.  ");
+            WriteToFile(get_helpFileName(), "When an command, like a button or link click occurs that navigates to a new page, there is no need to ");
+            WriteToFile(get_helpFileName(), "perform a navigation command but there is a need to check that the page is where expected before further testing.  ");
+            WriteToFile(get_helpFileName(), "NOTE: The <actionType></actionType> for this command is write, not a read.  ");
+            WriteToFile(get_helpFileName(), "This command is designed to work with event navigation to ensure that the navigation has occurred prior to subsequent testing.  ");
             WriteToFile(get_helpFileName(), "To check a URL without navigating and to make it crucial.\r\nTo make it non-crucial change the crucial element to false. <crucial>false</crucial>.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>check url</command>\r\n" +
@@ -762,6 +763,79 @@ public class HelpWriter {
                     "\t<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>\r\n" +
                     "\t<crucial>TRUE</crucial>\r\n" +
                     "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("═", "═", 1, 151));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ ASSERT (EQUAL AND NOT EQUAL) ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "The Assert command checks the text value of an element.");
+            WriteToFile(get_helpFileName(), "This command can be used to validate text on a page element and is especially helpful " +
+                    "for Single Page Applications where text changes depending upon a user's actions. ");
+            WriteToFile(get_helpFileName(), "This command can also be used to validate that text does not equal a value, which is " +
+                    "also helpful for pages where text changes depending on user actions as well as single page applicatons.");
+            WriteToFile(get_helpFileName(), "To check the text value of a page element, the element must be on the current page.");
+            WriteToFile(get_helpFileName(), "After navigating to the page, where the element resides use the following command.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>assert</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<expectedValue>Complete Web Form</expectedValue>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "\t<accessor>/html/body/div/h1</accessor>\r\n" +
+                    "\t<accessorType>xPath</accessorType>\r\n" +
+                    "</step>");
+                    WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To check that the text value of a page element does NOT equal a value, on the current page:");
+            WriteToFile(get_helpFileName(), "After navigating to the page, where the element resides use the following command.");
+            WriteToFile(get_helpFileName(), "Notice that the Arguments section is required and the only argument is the Not Equal (!=) operator.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>assert</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<expectedValue>Complete Web Form</expectedValue>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "\t<accessor>/html/body/div/h1</accessor>\r\n" +
+                    "\t<accessorType>xPath</accessorType>\r\n" +
+                    "\t<arguments>\n" +
+                            "\t\t<arg1>mathoperator=!=</arg1>\n" +
+                            "\t</arguments>\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "To check that the text value of a page element equals the Persisted value:");
+            WriteToFile(get_helpFileName(), "After navigating to the page, where the element resides use the following command.");
+            WriteToFile(get_helpFileName(), "To check that the value is NOT equal to the persisted value include the Arguments section " +
+                    "and the Not Equal (!=) operator argument.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>assert</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<expectedValue>PersistedString</expectedValue>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "\t<accessor>/html/body/div/h1</accessor>\r\n" +
+                    "\t<accessorType>xPath</accessorType>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "To check that the text value of a page element equals the Persisted value and the Unique Identifier:");
+            WriteToFile(get_helpFileName(), "After navigating to the page, where the element resides use the following command.");
+            WriteToFile(get_helpFileName(), "To check that the value is NOT equal to the persisted value include the Arguments section " +
+                    "and the Not Equal (!=) operator argument.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>assert</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<expectedValue>PersistedString**_uid_**</expectedValue>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "\t<accessor>/html/body/div/h1</accessor>\r\n" +
+                    "\t<accessorType>xPath</accessorType>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "To check that the text value of a page element equals the Unique Identifier:");
+            WriteToFile(get_helpFileName(), "After navigating to the page, where the element resides use the following command.");
+            WriteToFile(get_helpFileName(), "To check that the value is NOT equal to the persisted value include the Arguments section " +
+                    "and the Not Equal (!=) operator argument.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>assert</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<expectedValue>**_uid_**</expectedValue>\r\n" +
+                    "\t<crucial>TRUE</crucial>\r\n" +
+                    "\t<accessor>/html/body/div/h1</accessor>\r\n" +
+                    "\t<accessorType>xPath</accessorType>\r\n" +
+                    "</step>");
+
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
@@ -776,7 +850,7 @@ public class HelpWriter {
                     "\t<expectedValue>200</expectedValue>\r\n" +
                     "\t<crucial>TRUE</crucial>\r\n" +
                     "\t<arguments>\r\n" +
-                    "\t\t<arg1>https://www.swtestacademy.com/about-software-test-academy/ </arg1>\r\n" +
+                    "\t\t<arg1>url=https://www.fake_helpfile_example_site.com/</arg1>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
@@ -787,7 +861,7 @@ public class HelpWriter {
                     "\t<expectedValue>200</expectedValue>\r\n" +
                     "\t<crucial>FALSE</crucial>\r\n" +
                     "\t<arguments>\r\n" +
-                    "\t\t<arg1>https://www.swtestacademy.com/about-software-test-academy/ </arg1>\r\n" +
+                    "\t\t<arg1>url=https://www.fake_helpfile_example_site.com/</arg1>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
@@ -805,7 +879,7 @@ public class HelpWriter {
                     "\t<expectedValue>200</expectedValue>\r\n" +
                     "\t<crucial>true</crucial>\r\n" +
                     "\t<arguments>\r\n" +
-                    "\t\t<arg1>https://www.swtestacademy.com/about-software-test-academy/ </arg1>\r\n" +
+                    "\t\t<arg1>url=https://www.fake_helpfile_example_site.com/</arg1>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
@@ -816,7 +890,7 @@ public class HelpWriter {
                     "\t<expectedValue>200</expectedValue>\r\n" +
                     "\t<crucial>FALSE</crucial>\r\n" +
                     "\t<arguments>\r\n" +
-                    "\t\t<arg1>https://www.swtestacademy.com/about-software-test-academy/ </arg1>\r\n" +
+                    "\t\t<arg1>url=https://www.fake_helpfile_example_site.com/</arg1>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
@@ -838,7 +912,7 @@ public class HelpWriter {
                     "\t<crucial>TRUE</crucial>\r\n" +
                     "\t<arguments>\r\n" +
                     "\t\t<arg1>n/a</arg1>\r\n" +
-                    "\t\t<arg2>30</arg2>\r\n" +
+                    "\t\t<arg2>delay=30</arg2>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
@@ -853,8 +927,8 @@ public class HelpWriter {
                     "\t<actionType>write</actionType>\r\n" +
                     "\t<crucial>TRUE</crucial>\r\n" +
                     "\t<arguments>\r\n" +
-                    "\t\t<arg1>https://formy-project.herokuapp.com/form</arg1>\r\n" +
-                    "\t\t<arg2>30</arg2>\r\n" +
+                    "\t\t<arg1>url=https://www.fake_helpfile_example_site.com/</arg1>\r\n" +
+                    "\t\t<arg2>delay=30</arg2>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
@@ -863,9 +937,9 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "");
             //SWITCH TO IFRAME"
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ SWITCH TO IFRAME ]", "═", 9, 151));
-            WriteToFile(get_helpFileName(), "IMPORTANT: EACH TIME A SWITCH TO IFRAME COMMAND IS ISSUED, THE CONTEXT IS REVERTED TO THE MAIN WINDOW");
-            WriteToFile(get_helpFileName(), "ONCE THAT COMMAND COMPLETES EXECUTION, SO IF SUBSEQUENT TESTS NEED TO ACCESS THE IFRAME, THEY MUST BE");
-            WriteToFile(get_helpFileName(), "ENCAPSULATED WITHIN SWITCH TO IFRAME COMMANDS.\n");
+            WriteToFile(get_helpFileName(), "IMPORTANT: EACH TIME A SWITCH TO IFRAME COMMAND IS ISSUED, THE CONTEXT IS REVERTED TO THE MAIN WINDOW " +
+                    "ONCE THAT COMMAND COMPLETES EXECUTION, SO IF SUBSEQUENT TESTS NEED TO ACCESS THE IFRAME, THEY MUST BE " +
+                     "ENCAPSULATED WITHIN SWITCH TO IFRAME COMMANDS.\n");
             WriteToFile(get_helpFileName(), "The Switch to iFrame command temporarily switches the current context to the iFrame mentioned in the firs argument.\n");
             WriteToFile(get_helpFileName(), "Since only the command and first argument are needed to switch to the iFrame, the remaining test step elements ");
             WriteToFile(get_helpFileName(), "can be used to perform the desired action within the iFrame. \n");
@@ -873,11 +947,15 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "value provided, so the assert command need not be used, but any other commands should be placed into <arg2></arg2>.");
             WriteToFile(get_helpFileName(), "Commands that can be used in the iFrame are assert, sendkeys, click, right click, double click, persist values and check against persisted values.\n");
             WriteToFile(get_helpFileName(), "A navigation event cannot be directed to take place in an iFrame.\n");
-            WriteToFile(get_helpFileName(), "If the arguments are not in the proper order, depending upon the command being performed in the iFrame, an attempt to reorder ");
+            WriteToFile(get_helpFileName(), "Although the iframename is a named argument, it should ALWAYS come first.\r\n");
+
+            /*WriteToFile(get_helpFileName(), "If the arguments are not in the proper order, depending upon the command being performed in the iFrame, an attempt to reorder ");
             WriteToFile(get_helpFileName(), "the arguments will be made.  Unfortunately, some commands can be quite complex and interpreting arguments for reordering can be ");
             WriteToFile(get_helpFileName(), "even more complex, therefore, a message will be displayed indicating that the arguments are out of order so that they can be corrected ");
-            WriteToFile(get_helpFileName(), "by the tester in the test steps file.\n");
+            WriteToFile(get_helpFileName(), "by the tester in the test steps file.\n");*/
             WriteToFile(get_helpFileName(), "Failing to do so for complex commands may yield unexpected results.\n");
+            WriteToFile(get_helpFileName(), "To perform actions such as Click, Double Click, Right Click or ScreenShot, the command= keyword must be used to " +
+                    "distinguish this action from the default sendkeys action which is meant to send keystroks to populate a control such as a text input.");
             WriteToFile(get_helpFileName(), "The following example is an example of switching to an iFrame, specified in <arg1></arg1> and performing an assert ");
             WriteToFile(get_helpFileName(), "to check the element text pointed to by the <accessor></accessor> and <accessorType></accessorType> against the ");
             WriteToFile(get_helpFileName(), "expected value provided in the <expectedValue></expectedValue> element and since <crucial></crucial> is false ");
@@ -891,12 +969,12 @@ public class HelpWriter {
                     "\t<accessor>//button[contains(@id,'menu1')]</accessor>\r\n" +
                     "\t<accessorType>xPath</accessorType>\r\n" +
                     "\t<arguments>\r\n" +
-                    "\t\t<arg1>iframeResult</arg1>\r\n" +
+                    "\t\t<arg1>iframename=iframeResult</arg1>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "To switch to an iFrame and perform a click, refer to the following example.\n");
-            WriteToFile(get_helpFileName(), "Note that you have to specify the command in <arg2></arg2> as click is not the default action.");
+            WriteToFile(get_helpFileName(), "Note that you have to specify the key of  command= in <arg2></arg2> to distinguish this as an action to perform and not keys to send.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>Switch to iFrame</command>\r\n" +
                     "\t<actionType>write</actionType>\r\n" +
@@ -904,7 +982,22 @@ public class HelpWriter {
                     "\t<accessor>//button[contains(@id,'menu1')]</accessor>\r\n" +
                     "\t<accessorType>xPath</accessorType>\r\n" +
                     "\t<arguments>\r\n" +
-                    "\t\t<arg1>iframeResult</arg1>\r\n" +
+                    "\t\t<arg1>iframename=iframeResult</arg1>\r\n" +
+                    "\t\t<arg2>command=click</arg2>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To switch to an iFrame and send the phrase click, to the configured element, refer to the following example.\n");
+            WriteToFile(get_helpFileName(), "Note that you enter any values that you want to send in <arg2></arg2> to send those keystrokes to the configured element WITHOUT the command= keyword.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>Switch to iFrame</command>\r\n" +
+                    "\t<actionType>write</actionType>\r\n" +
+                    "\t<crucial>false</crucial>\r\n" +
+                    "\t<accessor>//button[contains(@id,'menu1')]</accessor>\r\n" +
+                    "\t<accessorType>xPath</accessorType>\r\n" +
+                    "\t<arguments>\r\n" +
+                    "\t\t<arg1>iframename=iframeResult</arg1>\r\n" +
                     "\t\t<arg2>click</arg2>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
@@ -986,12 +1079,16 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "To make it crucial change the last parameter to true.");
             WriteToFile(get_helpFileName(), "This will check for a status code of 200 for all links on the page, based on the URL in the arg1 node, ");
             WriteToFile(get_helpFileName(), "but will report the status code for all links.");
+            WriteToFile(get_helpFileName(), "By default, a 3 second delay is triggered if this all in one command is used to allow for the page to load.");
+            WriteToFile(get_helpFileName(), "Optionally, a delay argument can be added to allow slower pages to load, as a long page load may adversely affect accessing the " +
+                    "anchor tags on the page.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>check links</command>\r\n" +
                     "\t<actionType>read</actionType>\r\n" +
                     "\t<crucial>FALSE</crucial>\r\n" +
                     "\t<arguments>\r\n" +
                     "\t\t<arg1>https://nutrish.com/</arg1>\r\n" +
+                    "\t\t<arg2>delay=5000</arg2>\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
@@ -1006,7 +1103,7 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CHECK THE COUNT OF A SPECIFIC ELEMENT ON A PAGE ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CHECK THE COUNT OF A SPECIFIC ELEMENT ON A PAGE (EQUAL AND NOT EQUAL) ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Check Count command checks the number of occurrences of a particular element.");
             WriteToFile(get_helpFileName(), "To check the count of a specific element on a page and to make it non-crucial.");
             WriteToFile(get_helpFileName(), "To make it crucial change the last parameter to true.");
@@ -1024,14 +1121,70 @@ public class HelpWriter {
                     "\t</arguments>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "To check if the count is not equal to the expected value, use the != operator, as shown below.");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<command>check count</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<expectedValue>18</expectedValue>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n"  +
+                    "\t<arguments>\r\n"  +
+                    "\t\t<arg1>a</arg1>\r\n" +
+                    "\t\t<arg1>!=</arg1>\r\n" +
+                    "\t</arguments>\r\n" +
+                    "</step>");
+            WriteToFile(get_helpFileName(), "");
+
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CHECK AN IMAGE SRC TAG WITH SEPARATE NAVIGATION STEP ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "The check_img_src command checks the src of an image tag against the expected value provided.\r\n");
+            WriteToFile(get_helpFileName(), "This command is part of the dual command, check_img, and requires an argument to indicate whether the src or alt is being checked.\n");
+            WriteToFile(get_helpFileName(), "When checking the image's src, the src argument must be supplied as <arg1>src</arg1> as shown below.\n");
+            WriteToFile(get_helpFileName(), "To check an Image's Src property, on the current page, use the following:\n");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<<command>Check_image_src</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<expectedValue>https://www.w3schools.com/images/colorpicker2000.png</expectedValue>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<accessor>//*[@id=\"services_list\"]/div[3]/div[21]/a/div/p/img</accessor>\r\n" +
+                    "\t<accessorType>xPath</accessorType>\r\n" +
+                    "\t<arguments>\n" +
+                    "\t\t<arg1>src</arg1>\n" +
+                    "\t\t</arguments>\n" +
+                    "</step>");
+
+
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("═", "═", 1, 151));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CHECK AN IMAGE ALT TAG WITH SEPARATE NAVIGATION STEP ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "The check_img_alt command checks the alt of an image tag against the expected value provided.\r\n");
+            WriteToFile(get_helpFileName(), "This command is part of the dual command, check_img, and requires an argument to indicate whether the src or alt is being checked.\n");
+            WriteToFile(get_helpFileName(), "When checking the image's alt, the alt argument must be supplied as <arg1>alt</arg1> as shown below.\n");
+            WriteToFile(get_helpFileName(), "To check an Image's Alt property, on the current page, use the following:\n");
+            WriteToFile(get_helpFileName(), "<step>\r\n" +
+                    "\t<<command>Check_image_src</command>\r\n" +
+                    "\t<actionType>read</actionType>\r\n" +
+                    "\t<expectedValue>color picker image</expectedValue>\r\n" +
+                    "\t<crucial>FALSE</crucial>\r\n" +
+                    "\t<accessor>//*[@id=\"services_list\"]/div[3]/div[21]/a/div/p/img</accessor>\r\n" +
+                    "\t<accessorType>xPath</accessorType>\r\n" +
+                    "\t<arguments>\n" +
+                    "\t\t<arg1>alt</arg1>\n" +
+                    "\t\t</arguments>\n" +
+                    "</step>");
+
+
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("═", "═", 1, 151));
+            WriteToFile(get_helpFileName(), "");
+            WriteToFile(get_helpFileName(), "");
+
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CHECK ALL PAGE IMAGE SRC TAGS WITH SEPARATE NAVIGATION STEP ]", "═", 9, 151));
-            WriteToFile(get_helpFileName(), "The Check Img Src command checks the src of all image tags.\r\n");
+            WriteToFile(get_helpFileName(), "The Check Images Src command checks the src of all image tags.\r\n");
             WriteToFile(get_helpFileName(), "To check all page image src tags, on the current page, to ensure a source exists and to make it non-crucial, use the example below.");
             WriteToFile(get_helpFileName(), "To make it crucial change the last parameter to true.\n");
-            WriteToFile(get_helpFileName(), "The src tag will be checked to see if it exists and if it returns a status code of 200 for all image sources ");
+            WriteToFile(get_helpFileName(), "The src parameter will be checked to see if it exists and if it returns a status code of 200 for all image sources ");
             WriteToFile(get_helpFileName(), "but will report the status of all image sources.");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>check images src</command>\r\n" +
@@ -1042,6 +1195,7 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
+
 
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ CHECK ALL PAGE IMAGE SRC TAGS WITH NO SEPARATE NAVIGATION STEP ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "To check all page image src tags, on the page specified in the arg1 node, to ensure a source exists and to make it non-crucial.\n");
@@ -1329,9 +1483,12 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("═", "═", 1, 151));
             //RIGHT CLICK AN ELEMENT
-            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ RIGHT CLICK AN ELEMENT ]", "═", 9, 151));
-            WriteToFile(get_helpFileName(), "The RIGHTClick command right clicks on the specified element, as long as it is not in an iFrame.");
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ RIGHT CLICK AND SEND KEYSTROKES (CONTEXT MENU OPEN NEW TAB) ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), "The right click command right clicks on the specified element, as long as it is not in an iFrame.\n");
             WriteToFile(get_helpFileName(), "This is not a common event and is most likely used to bring up the context menu.");
+            WriteToFile(get_helpFileName(), "This command takes arguments so that it can send keystrokes to the exposed menu opened by the right click.\n");
+            WriteToFile(get_helpFileName(), "Grouping these commands allows the steps to be done together.");
+            WriteToFile(get_helpFileName(), "There is no limit to the amount of arguments that can be configured to select the correct menu item.");
             WriteToFile(get_helpFileName(), "To right click an element by ID, use the following:");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>right click</command>\r\n" +
@@ -1398,35 +1555,35 @@ public class HelpWriter {
 
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ TAKING SCREENSHOTS ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The ScreenShot command takes a screenshot of the current page.  \n");
-            WriteToFile(get_helpFileName(), "To take a screen shot/print screen, the browser will be resized automatically to capture all page content,");
-            WriteToFile(get_helpFileName(), "if browser dimensions are not supplied; however, in the event that browser dimensions are supplied, the browser");
+            WriteToFile(get_helpFileName(), "To take a screen shot/print screen, the browser will be resized automatically to capture all page content, ");
+            WriteToFile(get_helpFileName(), "if browser dimensions are not supplied; however, in the event that browser dimensions are supplied, the browser ");
             WriteToFile(get_helpFileName(), "will resize to the supplied dimensions. \n");
-            WriteToFile(get_helpFileName(), "The ability to resize the browser to specific dimensions allows for image pixel comparison as images being compared");
-            WriteToFile(get_helpFileName(), "must have the same width and height dimensions. \n");
-            WriteToFile(get_helpFileName(), "This command allows for overriding the configured screenshot folder and dynamic filename creation and either saving ");
+            WriteToFile(get_helpFileName(), "<ul><li>The ability to resize the browser to specific dimensions allows for image pixel comparison as images being compared ");
+            WriteToFile(get_helpFileName(), "must have the same width and height dimensions. </li>");
+            WriteToFile(get_helpFileName(), "<li>This command allows for overriding the configured screenshot folder and dynamic filename creation and either saving ");
             WriteToFile(get_helpFileName(), "the images with a specified name, in the configured screenshot folder, or saving the images to a file name and path ");
             WriteToFile(get_helpFileName(), "specified as <arg1></arg1> but if <arg1></arg1> is not provided a name is constructed and the file is saved in the ");
-            WriteToFile(get_helpFileName(), "configured folder.  \n");
-            WriteToFile(get_helpFileName(), "This command also allows for specifying the browser dimensions so that you get an image the exact size that you need.");
-            WriteToFile(get_helpFileName(), "Specifying the browser dimensions is the same as when navigating, where w= identifies the width value and h= identifies");
-            WriteToFile(get_helpFileName(), "the height value as shown here: <arg2>w=1400 h=1000</arg2>.");
-            WriteToFile(get_helpFileName(), "NOTE: The Navigation command can also take an optional height and width argument and it does not matter which is used ");
-            WriteToFile(get_helpFileName(), "as long as the two images being compared both use the same settings so that they have the same dimensions.");
-            WriteToFile(get_helpFileName(), "The ability to name the screenshot allows for executing subsequent Image Comparison steps and specifying the file names");
-            WriteToFile(get_helpFileName(), "based on the screenshots being taken.");
-            WriteToFile(get_helpFileName(), "In the following example, a default name will be provided for the  screenshot consisting of the browser used and the test step");
-            WriteToFile(get_helpFileName(), "where the command was called. (This is the default functionality.)");
+            WriteToFile(get_helpFileName(), "configured folder.  </li>");
+            WriteToFile(get_helpFileName(), "<li>This command also allows for specifying the browser dimensions so that you get an image the exact size that you need. ");
+            WriteToFile(get_helpFileName(), "Specifying the browser dimensions is the same as when navigating, where w= identifies the width value and h= identifies ");
+            WriteToFile(get_helpFileName(), "the height value as shown here: <arg2>w=1400 h=1000</arg2>.</li>");
+            WriteToFile(get_helpFileName(), "<li>NOTE: The Navigation command can also take an optional height and width argument and it does not matter which is used ");
+            WriteToFile(get_helpFileName(), "as long as the two images being compared both use the same settings so that they have the same dimensions. </li>");
+            WriteToFile(get_helpFileName(), "<li>The ability to name the screenshot allows for executing subsequent Image Comparison steps and specifying the file names ");
+            WriteToFile(get_helpFileName(), "based on the screenshots being taken.</li>");
+            WriteToFile(get_helpFileName(), "<li>In the following example, a default name will be provided for the  screenshot consisting of the browser used and the test step ");
+            WriteToFile(get_helpFileName(), "where the command was called. (This is the default functionality.)</li></ul>");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>screenshot</command>\r\n" +
                     "\t<actionType>write</actionType>\r\n" +
                     "\t<crucial>false</crucial>\r\n" +
                     "</step>");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), "Alternatively, including the filename as an argument will allow you to save the Screenshot with the name of your choosing.");
-            WriteToFile(get_helpFileName(), "If a full path is included with the file name, and the folder structure exists, the screenshot will be saved to the location");
-            WriteToFile(get_helpFileName(), "provided, otherwise the screenshot will be saved to the configured screenshots folder with the file name provided.");
-            WriteToFile(get_helpFileName(), "In the following example, the screenshot will be saved to the configured screenshots folder with the file name provided.");
-            WriteToFile(get_helpFileName(), "This functionality allows for pointing to the file for subsequent image comparison.");
+            WriteToFile(get_helpFileName(), "<ul><li>Alternatively, including the filename as an argument will allow you to save the Screenshot with the name of your choosing.</li>");
+            WriteToFile(get_helpFileName(), "<li>If a full path is included with the file name, and the folder structure exists, the screenshot will be saved to the location");
+            WriteToFile(get_helpFileName(), "provided, otherwise the screenshot will be saved to the configured screenshots folder with the file name provided.</li>");
+            WriteToFile(get_helpFileName(), "<li>In the following example, the screenshot will be saved to the configured screenshots folder with the file name provided.</li>");
+            WriteToFile(get_helpFileName(), "<li>This functionality allows for pointing to the file for subsequent image comparison.</li></ul>");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>screenshot</command>\r\n" +
                     "\t<actionType>write</actionType>\r\n" +
@@ -1437,9 +1594,9 @@ public class HelpWriter {
                     "</step>");
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "In the following example, the screenshot will be saved to the folder and file name provided.");
-            WriteToFile(get_helpFileName(), "This functionality allows for pointing to the file for subsequent image comparisons.");
-            WriteToFile(get_helpFileName(), "This is the preferred command structure when subsequently performing image comparisons.");
-            WriteToFile(get_helpFileName(), "This structure allows for separation of images into separate folders for quickly referencing differences.");
+            WriteToFile(get_helpFileName(), "<ul><li>This functionality allows for pointing to the file for subsequent image comparisons.</li>");
+            WriteToFile(get_helpFileName(), "<li>This is the preferred command structure when subsequently performing image comparisons.</li>");
+            WriteToFile(get_helpFileName(), "<li>This structure allows for separation of images into separate folders for quickly referencing differences.</li></ul>");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>screenshot</command>\r\n" +
                     "\t<actionType>write</actionType>\r\n" +
@@ -1451,15 +1608,15 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "In the following example, the screenshot will be set to specific width and height ");
             WriteToFile(get_helpFileName(), "dimensions before being saved to the folder and file name provided. \n");
-            WriteToFile(get_helpFileName(), "Setting the screenshot dimensions is necessary to guarantee the image size for image comparisons.  \n");
-            WriteToFile(get_helpFileName(), "IMPORTANT: Only images of the same dimensions can be compared using the Compare Images command. \n");
-            WriteToFile(get_helpFileName(), "Include dimension arguments <arg2> and <arg3> and remember that these are named arguments ");
-            WriteToFile(get_helpFileName(), "w= for width and h= for height but the order does not matter.\n");
-            WriteToFile(get_helpFileName(), "IMPORTANT: The dimension setting consists of the name, equal sign and value with no additional spaces.\n");
-            WriteToFile(get_helpFileName(), "This functionality allows for saving to the file for subsequent image comparisons.");
-            WriteToFile(get_helpFileName(), "This is the preferred command structure when subsequently performing image comparisons.");
-            WriteToFile(get_helpFileName(), "This structure allows for separation of images into separate folders for quickly referencing differences ");
-            WriteToFile(get_helpFileName(), "and lists the dimension arguments individually.");
+            WriteToFile(get_helpFileName(), "<ul><li>Setting the screenshot dimensions is necessary to guarantee the image size for image comparisons.  </li>");
+            WriteToFile(get_helpFileName(), "<li>IMPORTANT: Only images of the same dimensions can be compared using the Compare Images command. </li>");
+            WriteToFile(get_helpFileName(), "<li>Include dimension arguments <arg2> and <arg3> and remember that these are named arguments ");
+            WriteToFile(get_helpFileName(), "w= for width and h= for height but the order does not matter.</li>");
+            WriteToFile(get_helpFileName(), "<li>IMPORTANT: The dimension setting consists of the name, equal sign and value with no additional spaces.</li>");
+            WriteToFile(get_helpFileName(), "<li>This functionality allows for saving to the file for subsequent image comparisons.</li>");
+            WriteToFile(get_helpFileName(), "<li>This is the preferred command structure when subsequently performing image comparisons.</li>");
+            WriteToFile(get_helpFileName(), "<li>This structure allows for separation of images into separate folders for quickly referencing differences ");
+            WriteToFile(get_helpFileName(), "and lists the dimension arguments individually.</li></ul>");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
                     "\t<command>screenshot</command>\r\n" +
                     "\t<actionType>write</actionType>\r\n" +
@@ -1474,8 +1631,8 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "This command is one of two where the dimensions can be set in individual arguments or  " +
                     "grouped together in one argument. \n");
-            WriteToFile(get_helpFileName(), "IMPORTANT: When grouping arguments together, the correct grouping is name=value space name=value.\n");
-            WriteToFile(get_helpFileName(), "\tie. <arg2>w=1400 h=1000</arg2>\n");
+            WriteToFile(get_helpFileName(), "<ul><li>IMPORTANT: When grouping arguments together, the correct grouping is name=value space name=value.\n");
+            WriteToFile(get_helpFileName(), "\tie. <arg2>w=1400 h=1000</arg2></li></ul>");
             WriteToFile(get_helpFileName(), "The following example, is the same as the previous example except with the arguments combined. \n");
             WriteToFile(get_helpFileName(), "It is always best to supply dimensions so that image comparisons can be made later.\n");
             WriteToFile(get_helpFileName(), "<step>\r\n" +
@@ -1488,6 +1645,7 @@ public class HelpWriter {
                     "\t\t<arg2>w=1400 h=1000</arg2>\r\n" +
                     "\t</arguments>\r\n" +
                     "</step>");
+            WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
 
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("═", "═", 1, 151));
@@ -1611,10 +1769,10 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), testHelper.PrePostPad("═", "═", 1, 151));
             WriteToFile(get_helpFileName(), "");
             WriteToFile(get_helpFileName(), "");
-            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ FIND ELEMENTS THAT HAVE SPECIFIC TEXT ]", "═", 9, 151));
+            WriteToFile(get_helpFileName(), testHelper.PrePostPad("[ FIND ELEMENTS THAT HAVE SPECIFIC TEXT AT VARIOUS CONTAINER HIERARCHIES ]", "═", 9, 151));
             WriteToFile(get_helpFileName(), "The Find command finds elements that have the supplied text.");
             WriteToFile(get_helpFileName(), "There are times when you may need to search for text but do not know the accessor necessary to find that text.");
-            WriteToFile(get_helpFileName(), "The Find functionality allows you search all elements regardless of type or just all tags of a specific type for a phrase.");
+            WriteToFile(get_helpFileName(), "The Find functionality allows you search all elements, regardless of type, or just all tags of a specific type for a phrase.");
             WriteToFile(get_helpFileName(), "Additionally, the Find functionality returns the xPath of all elements where the text is found, but when searching ");
             WriteToFile(get_helpFileName(), "for text without specifying a tag, only the actual tag containing the text is returned, not elements in the upper ");
             WriteToFile(get_helpFileName(), "hierarchy; however, when using a specific tag, if a child tag of that tag contains the text, the searched tag will be returned ");
@@ -2436,10 +2594,15 @@ public class HelpWriter {
             WriteToFile(get_helpFileName(), "Depending upon the complexity of the JavaScript, it can get long so to suppress this in the output, a ");
             WriteToFile(get_helpFileName(), "second argument has been added to just list this as a JavaScript test step.");
             WriteToFile(get_helpFileName(), "\tThe arguments for this command are as follows:");
-            WriteToFile(get_helpFileName(), "\t<arg1>This argument specifies the JavaScript command to execute. \n\tMake sure it returns a value from the Execution that can be tested.");
-            WriteToFile(get_helpFileName(), "\t<arg1>This optional argument specifies whether to display the JavaScript or not.");
-            WriteToFile(get_helpFileName(), "\t\tSet to \"false\" to replace the actual JavaScript displayed in the output with \"{{JavaScript Command}}\"");
+            WriteToFile(get_helpFileName(), "\t<arg1>This argument specifies the JavaScript command to execute and MUST be the first argument.\r\n");
+            WriteToFile(get_helpFileName(), "\tThis argument does not use a name to signify the script, so it simply must be contained in <arg1></arg1>\r\n");
+            WriteToFile(get_helpFileName(), "\tIf an Expected value is supplied, make sure it returns a value from the Execution that can be tested.\n");
+            WriteToFile(get_helpFileName(),"The remaining optional arguments can be placed in any order because they are named arguments.");
+            WriteToFile(get_helpFileName(), "\t<arg2>showScript=true</arg2> This optional argument specifies whether to display the JavaScript or not each time the script executes.");
+            WriteToFile(get_helpFileName(), "\t\tSet to \"false\" to replace the actual JavaScript displayed in the output with the text: \"{{JavaScript Command}}\"");
             WriteToFile(get_helpFileName(), "\t\tIf this argument is not supplied, it will default to true and display the JavaScript test step as entered.");
+            WriteToFile(get_helpFileName(), "\t<arg3>optional=persist</arg3> This optional argument specifies that the value should be persisted in memory for later use.");
+            WriteToFile(get_helpFileName(), "\t<arg3>mathoperator=!=</arg3> This optional argument specifies that the value returned should not equal the expected value.\r\n");
             WriteToFile(get_helpFileName(), "<step>\n" +
                     "\t<command>check javascript value</command>\n" +
                     "\t<actionType>read</actionType>\n" +
@@ -2448,9 +2611,10 @@ public class HelpWriter {
                     "\t<arguments>\n" +
                     "\t\t<!-- JavaScript to execute and value to return -->\n" +
                     "\t\t<arg1>return dataLayer[0].page.category.pageTemplate; </arg1>\n" +
-                    "\t\t<arg2>false</arg2>\n" +
+                    "\t\t<!-- the showScript values are True to see the script every execution, or false to see the placeholder \"{{JavaScript Command}}\") -->\n" +
+                    "\t\t<arg2>showScript=true</arg2>\n" +
                     "\t</arguments>\r\n" +
-                    "</step>\n");
+                    "</step>\n") ;
 
             WriteToFile(get_helpFileName(), "");
 
@@ -3083,7 +3247,7 @@ public class HelpWriter {
 
     public void WriteHtmlHelpFile() {
         String htmlHelpFile = get_helpFileName();
-        String helpFileContents = CreateHtlHelpFile();
+        String helpFileContents = CreateHtmlHelpFile();
         if (!testHelper.IsNullOrEmpty(htmlHelpFile)) {
             htmlHelpFile = htmlHelpFile.replace(".txt", ".html");
             File helpFile = new File(htmlHelpFile);
@@ -3094,7 +3258,7 @@ public class HelpWriter {
         }
     }
 
-    public String CreateHtlHelpFile()
+    public String CreateHtmlHelpFile()
     {
         StringBuilder sb = new StringBuilder();
         sb.append(GetHeader());
@@ -3307,8 +3471,9 @@ public class HelpWriter {
 
         for (String line: lines)
             {
-
-                line = line.replace("<", "&lt;").replace(">", "&gt;");
+                if (line.indexOf("ul>") < 0 && line.indexOf("li>") < 0) {
+                    line = line.replace("<", "&lt;").replace(">", "&gt;");
+                }
                 if (!testHelper.IsNullOrEmpty(line.trim()))
                 {
                     //if (line.endsWith("***") || line.StartsWith("***"))

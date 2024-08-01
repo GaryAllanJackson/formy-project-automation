@@ -10,6 +10,7 @@ import org.openqa.selenium.support.Color;
 import org.openqa.selenium.support.ui.Select;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -107,6 +108,7 @@ public class ReadCommands {
             }  else if (ts.get_command().toLowerCase().equals(AppCommands.ParseAndCalculateLong)) {
                 ParseAndCalculateLongController(ts, fileStepIndex);
             } else {
+                //Assert command
                 CheckElementText(ts, fileStepIndex);
             }
         } else {
@@ -115,11 +117,13 @@ public class ReadCommands {
                 //refactored and moved to separate method
                 CheckGetPostStatus(ts, fileStepIndex);
             } else if (ts.get_command().toLowerCase().contains(AppCommands.Check) && ts.get_command().toLowerCase().contains(AppCommands.Links)) {
-                String url = testCentral.GetArgumentValue(ts, 0, get_testPage());
+                //String url = testCentral.GetArgumentValue(ts, 0, get_testPage());
+                String url = testCentral.GetSpecificArgumentValue(ts,"url","=",get_testPage());
                 testHelper.UpdateTestResults(AppConstants.indent5 + "Checking page links for " + url, false);
                 CheckBrokenLinks(ts, url, fileStepIndex);
             } else if (ts.get_command().toLowerCase().contains(AppCommands.Check) && ts.get_command().toLowerCase().contains(AppCommands.Image))  {
-                String url = testCentral.GetArgumentValue(ts, 0, null);
+                //String url = testCentral.GetArgumentValue(ts, 0, null);
+                String url = testCentral.GetSpecificArgumentValue(ts, "url","=", null);
                 if (ts.get_command().toLowerCase().contains(AppCommands.Alt)) {
                     CheckADAImages(ts, url, AppCommands.Alt, fileStepIndex);
                 } else if (ts.get_command().toLowerCase().contains(AppCommands.Src)) {
@@ -292,7 +296,9 @@ public class ReadCommands {
                 tsName = tsItem.getGA4Parameter(tsIndex).get_parameterName();
                 tsValue = tsItem.getGA4Parameter(tsIndex).get_parameterValue();
                 testParams += AppConstants.indent8 + "(" + tsName + "=" + tsValue + ")\r\n";
+                //testHelper.DebugDisplay("Searching for tsName = " + tsName + " and tsValue = " + tsValue);
             }
+
             GA4Tag ga4Tag = GetMatchingGA4Tag(tsItem);
             if (ga4Tag != null) {
                 testMessage = AppConstants.indent5 + "Successful GA4 GTM Tag found matching specified criteria: \r\n";
@@ -352,6 +358,7 @@ public class ReadCommands {
         String tsName, tsValue, tmpValue;
         String additionalFields;
         String tempDebugOutput = "";
+        String notFoundMessage = "";
 
         for (int x = 0; x < GA4TagList.size(); x++) {
             listItem = GA4TagList.get(x);
@@ -364,20 +371,32 @@ public class ReadCommands {
                 //testHelper.DebugDisplay(tempDebugOutput);
                 for (int ga4Index = 0; ga4Index < listItem.getGA4Parameters().size(); ga4Index++) {
                     if (listItem.getGA4Parameters().get(ga4Index).get_parameterName().equals(tsName) &&
-                            testCentral.UrlDecode(listItem.getGA4Parameters().get(ga4Index).get_parameterValue()).equals(tsValue)) {
+                            testCentral.UrlDecode(listItem.getGA4Parameters().get(ga4Index).get_parameterValue()).equals(tsValue))  {
                         //testHelper.DebugDisplay("" + tempDebugOutput);
                         tagParamCount++;
                         if (tsParamCount == tagParamCount) {
                             return listItem;
                         }
                         break;
-                    } else if (listItem.getGA4Parameters().get(ga4Index).get_parameterName().equals(tsName) &&
+                    } else if (tsName.equals("dl")) {
+                        if (tsItem.get_documentLocation().equals(tsValue)) {
+                            tagParamCount++;
+                            if (tsParamCount == tagParamCount) {
+                                return listItem;
+                            }
+                        }
+                    }
+                    else if (listItem.getGA4Parameters().get(ga4Index).get_parameterName().equals(tsName) &&
                             !testCentral.UrlDecode(listItem.getGA4Parameters().get(ga4Index).get_parameterValue()).equals(tsValue)) {
-                            testHelper.DebugDisplay("Good tsName " + tsName + " - Bad Value " + tsValue + " vs " + testCentral.UrlDecode(listItem.getGA4Parameters().get(ga4Index).get_parameterValue()));
-                        break;
+                            //testHelper.DebugDisplay("Good tsName " + tsName + " - Bad Value " + tsValue + " vs " + testCentral.UrlDecode(listItem.getGA4Parameters().get(ga4Index).get_parameterValue()));
+                        notFoundMessage = "Good tsName " + tsName + " - Bad Value " + tsValue + " vs " + testCentral.UrlDecode(listItem.getGA4Parameters().get(ga4Index).get_parameterValue());
+                        //break;
                     }
                 }
             }
+        }
+        if (notFoundMessage.length() > 0) {
+            testHelper.DebugDisplay(notFoundMessage);
         }
         return null;
     }
@@ -488,9 +507,29 @@ public class ReadCommands {
      *******************************************************************************/
     private void CheckImageSrcAlt(TestStep ts, String fileStepIndex) {
         String actualValue="";
-        //String srcAlt = testCentral.GetArgumentValue(ts, 0, "src");
-        String srcAlt = ts.get_command().indexOf("src") > -1 ? "src" : "alt";
+        String srcAlt = ts.get_command().indexOf(AppConstants.SrcArg) > -1 ? AppConstants.SrcArg : AppConstants.AltArg;
+        String url = testCentral.GetSpecificArgumentValue(ts,AppConstants.UrlArg,"=",null);
+        if (url != null && !url.isEmpty() && !url.toLowerCase().trim().equals("n/a")) {
+            testHelper.UpdateTestResults("Navigating to: " + url + " for step " + fileStepIndex,true);
+            driver.get(url);
+            try
+            {
+                int defaultDelay;
+                defaultDelay = parseInt(testCentral.GetSpecificArgumentValue(ts, "delay", "=", "3000"));
+                testHelper.DebugDisplay("Waiting " + defaultDelay + " second for page load.");
+                testCentral.DelayCheck(defaultDelay, fileStepIndex);
+            }
+            catch (Exception e)
+            {
+                testHelper.DebugDisplay("Waiting failure.");
+            }
+        }
+
         testHelper.UpdateTestResults(AppConstants.indent8 + "Checking Image " + srcAlt + " for " + ts.get_expectedValue() + " for step " + fileStepIndex, true);
+
+
+
+
 
         actualValue = GetWebElementByAccessor(ts) != null ? GetWebElementByAccessor(ts).getAttribute(srcAlt) : "";
         if (actualValue == null || actualValue == "") {
@@ -586,7 +625,7 @@ public class ReadCommands {
      * @throws Exception - May throw exception if JSON retrieval fails.
      *************************************************************************/
     private void JsonController(TestStep ts, String fileStepIndex) throws Exception {
-        if (ts.get_command().toLowerCase().equals(AppCommands.Get_JSON)) {
+        if (ts.get_command().equalsIgnoreCase(AppCommands.Get_JSON)) {
             testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_PURPLE_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start JSON Retrieval and Persistence Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
             testCentral.jsonContent = GetHttpResponse(ts, fileStepIndex);
             if (testCentral.jsonContent != null && !testCentral.jsonContent.isEmpty()) {
@@ -652,12 +691,16 @@ public class ReadCommands {
         String delimiter, operator;
         String accessorPersist;
         String [] equation;
-        delimiter = testCentral.GetArgumentValue(ts, 0, " ");
-        firstIndex = testCentral.GetArgumentNumericValue(ts, 1, 0);
-        secondIndex= testCentral.GetArgumentNumericValue(ts, 2, 2);
-        operatorIndex = testCentral.GetArgumentNumericValue(ts, 3, 1);
-        accessorPersist = testCentral.GetArgumentValue(ts, 4, "persist");
+        String operation, operationMessage;
+        delimiter = testCentral.GetSpecificArgumentValue(ts," ", AppConstants.EqualDelimiterArg," ");  //testCentral.GetArgumentValue(ts, 0, " ");
+        firstIndex = parseInt(testCentral.GetSpecificArgumentValue(ts,AppConstants.FirstNumberIndexArg,"=","0"));   //testCentral.GetArgumentNumericValue(ts, 1, 0);
+        secondIndex= parseInt(testCentral.GetSpecificArgumentValue(ts,AppConstants.SecondNumberIndexArg,"=","2"));    //testCentral.GetArgumentNumericValue(ts, 2, 2);
+        operatorIndex = parseInt(testCentral.GetSpecificArgumentValue(ts,AppConstants.OperatorIndexArg,"=","1"));  //testCentral.GetArgumentNumericValue(ts, 3, 1);
+        accessorPersist = testCentral.GetSpecificArgumentValue(ts,AppConstants.FormFieldIndexArg,"=","persist");  //testCentral.GetArgumentValue(ts, 4, "persist");
+        operation = testCentral.GetSpecificArgumentValueContainingDelimiter(ts, AppConstants.MathOperatorArg, "=", "=");   //!= null ? FrmTestCentral.GetSpecificArgumentValue(ts, "mathoperator", "=", "=") : FrmTestCentral.GetArgumentValue(ts, 4, "=");
+        operationMessage = operation == "!=" ? " Not Equal " : " ";
 
+        testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_CYAN_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start Parse and Calculate Double Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
         String actual = GetElementText(ts, fileStepIndex);
         if (actual != null && actual.contains(delimiter)) {
             equation = actual.split(delimiter);
@@ -673,20 +716,32 @@ public class ReadCommands {
             } else if (operator.equals("/")) {
                 resultNumber = firstNumber / secondNumber;
             }
-            testHelper.UpdateTestResults("Solving equation: " + firstNumber + " " + operator + " " + secondNumber + " = " + resultNumber + " for step " + fileStepIndex, true);
+            testHelper.UpdateTestResults(AppConstants.indent8 + "Solving equation: " + firstNumber + " " + operator + " " + secondNumber + " = " + resultNumber + " for step " + fileStepIndex, true);
 
             if (ts.get_expectedValue() != null) {
+                if (ts.get_expectedValue().toLowerCase().equals("persistedstring"))
+                {
+                    if (!testHelper.IsNullOrEmpty(testCentral.persistedString))
+                    {
+                        ts.set_expectedValue(testCentral.persistedString);
+                    }
+                    else
+                    {
+                        ts.set_expectedValue("0");
+                    }
+                }
+
                 double expected = Double.parseDouble(ts.get_expectedValue());
                 if (resultNumber == expected) {
-                    testHelper.UpdateTestResults("Successful Parse and Calculate Double Expected: (" + expected + ") Actual: (" + resultNumber + ") for step " + fileStepIndex, true);
+                    testHelper.UpdateTestResults(AppConstants.indent8 + "Successful Parse and Calculate Double Expected: (" + expected + ")" + operationMessage + "Actual: (" + resultNumber + ") for step " + fileStepIndex, true);
                 } else {
-                    testHelper.UpdateTestResults("Failed Parse and Calculate Double Expected: (" + expected + ") Actual: (" + resultNumber + ") for step " + fileStepIndex, true);
+                    testHelper.UpdateTestResults(AppConstants.indent8 + "Failed Parse and Calculate Double Expected: (" + expected + ")" + operationMessage + "Actual: (" + resultNumber + ") for step " + fileStepIndex, true);
                 }
             }
 
-            if (accessorPersist.toLowerCase().equals("persist")) {
+            if (accessorPersist.equalsIgnoreCase("persist")) {
                 testHelper.CreateSectionHeader(AppConstants.indent5 + "[ Start Persisting Calculated Value ]", "", AppConstants.ANSI_CYAN, true, false, true);
-                testHelper.UpdateTestResults("Persisting Calculated value: (" + resultNumber +  ")", true);
+                testHelper.UpdateTestResults(AppConstants.indent8 + "Persisting Calculated value: (" + resultNumber +  ")", true);
                 testCentral.persistedString = String.valueOf(resultNumber);
                 testHelper.CreateSectionHeader(AppConstants.indent5 + "[ End Persisting Calculated Value, but value persisted and usable until end of test file ]", "", AppConstants.ANSI_CYAN, false, false, true);
             } else {
@@ -702,12 +757,10 @@ public class ReadCommands {
                 List<Argument> arguments = new ArrayList<>();
                 arguments.add(argument);
                 testStep.ArgumentList = arguments;
-                //TODO: FIGURE OUT WHERE BEST TO KEEP THIS METHOD AND THEN UPDATE THE CALL BELOW
-//                testHelper.DebugDisplay("resultNumber = " + resultNumber);
-//                testHelper.DebugDisplay("fileStepIndex = " + fileStepIndex);
                 writeCommands.PerformAction(testStep, String.valueOf(resultNumber), fileStepIndex);
             }
         }
+        testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_CYAN_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End Parse and Calculate Double Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
     }
 
 
@@ -728,14 +781,18 @@ public class ReadCommands {
         long resultNumber = 0;
         String delimiter, operator;
         String accessorPersist;
+        String operation, operationMessage;
         //https://timesofindia.indiatimes.com/poll.cms
         String [] equation;
-        delimiter = testCentral.GetArgumentValue(ts, 0, " ");
-        firstIndex = testCentral.GetArgumentNumericValue(ts, 1, 0);
-        secondIndex= testCentral.GetArgumentNumericValue(ts, 2, 2);
-        operatorIndex = testCentral.GetArgumentNumericValue(ts, 3, 1);
-        accessorPersist = testCentral.GetArgumentValue(ts, 4, "persist");
+        delimiter = testCentral.GetSpecificArgumentValue(ts," ", AppConstants.EqualDelimiterArg," ");  //testCentral.GetArgumentValue(ts, 0, " ");
+        firstIndex = parseInt(testCentral.GetSpecificArgumentValue(ts,AppConstants.FirstNumberIndexArg,"=","0"));   //testCentral.GetArgumentNumericValue(ts, 1, 0);
+        secondIndex= parseInt(testCentral.GetSpecificArgumentValue(ts,AppConstants.SecondNumberIndexArg,"=","2"));    //testCentral.GetArgumentNumericValue(ts, 2, 2);
+        operatorIndex = parseInt(testCentral.GetSpecificArgumentValue(ts,AppConstants.OperatorIndexArg,"=","1"));  //testCentral.GetArgumentNumericValue(ts, 3, 1);
+        accessorPersist = testCentral.GetSpecificArgumentValue(ts,AppConstants.FormFieldIndexArg,"=","persist");  //testCentral.GetArgumentValue(ts, 4, "persist");
+        operation = testCentral.GetSpecificArgumentValueContainingDelimiter(ts, AppConstants.MathOperatorArg, "=", "=");   //!= null ? FrmTestCentral.GetSpecificArgumentValue(ts, "mathoperator", "=", "=") : FrmTestCentral.GetArgumentValue(ts, 4, "=");
+        operationMessage = operation == "!=" ? " Not Equal " : " ";
 
+        testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_CYAN_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start Parse and Calculate Long Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
         String actual = GetElementText(ts, fileStepIndex);
         if (actual != null && actual.contains(delimiter)) {
             equation = actual.split(delimiter);
@@ -752,14 +809,26 @@ public class ReadCommands {
             } else if (operator.equals("/")) {
                 resultNumber = firstNumber / secondNumber;
             }
-            testHelper.UpdateTestResults("Solving equation: " + firstNumber + " " + operator + " " + secondNumber + " = " + resultNumber + " for step " + fileStepIndex, true);
+            testHelper.UpdateTestResults(AppConstants.indent8 + "Solving equation: " + firstNumber + " " + operator + " " + secondNumber + " = " + resultNumber + " for step " + fileStepIndex, true);
 
             if (ts.get_expectedValue() != null) {
-                double expected = Double.parseDouble(ts.get_expectedValue());
-                if (resultNumber == expected) {
-                    testHelper.UpdateTestResults("Successful Parse and Calculate Long Expected: (" + expected + ") Actual: (" + resultNumber + ") for step " + fileStepIndex, true);
+                if (ts.get_expectedValue().toLowerCase().equals("persistedstring"))
+                {
+                    if (!testHelper.IsNullOrEmpty(testCentral.persistedString))
+                    {
+                        ts.set_expectedValue(testCentral.persistedString);
+                    }
+                    else
+                    {
+                        ts.set_expectedValue("0");
+                    }
+                }
+
+                long expected = Long.parseLong(ts.get_expectedValue());
+                if ((resultNumber == expected && operation.equals("=")) || (resultNumber != expected && operation.equals("!="))) {
+                    testHelper.UpdateTestResults(AppConstants.indent8 + "Successful Parse and Calculate Long Expected: (" + expected + ")" + operationMessage + "Actual: (" + resultNumber + ") for step " + fileStepIndex, true);
                 } else {
-                    testHelper.UpdateTestResults("Failed Parse and Calculate Long Expected: (" + expected + ") Actual: (" + resultNumber + ") for step " + fileStepIndex, true);
+                    testHelper.UpdateTestResults(AppConstants.indent8 + "Failed Parse and Calculate Long Expected: (" + expected + ")" + operationMessage + "Actual: (" + resultNumber + ") for step " + fileStepIndex, true);
                 }
             }
 
@@ -784,6 +853,7 @@ public class ReadCommands {
                 writeCommands.PerformAction(testStep, String.valueOf(resultNumber), fileStepIndex);
             }
         }
+        testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_CYAN_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End Parse and Calculate Long Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
     }
 
 
@@ -804,20 +874,34 @@ public class ReadCommands {
         boolean notEqual = false;
         final String elementTypeCheckedAtStep = "Element type being checked at step ";
         String expected = ts.get_expectedValue();
+        String persistString = testCentral.GetSpecificArgumentValue(ts, AppConstants.OptionalArg, "=", null);
+        boolean persistValue = !testHelper.IsNullOrEmpty(persistString) && persistString.toLowerCase().contains("persist") ? true : false;
 
         testHelper.UpdateTestResults(AppConstants.indent5 + elementTypeCheckedAtStep + fileStepIndex + " by " + ts.get_accessorType() + " " + ts.get_accessor(), true);
         actual = CheckElementWithAccessor(ts, fileStepIndex);
-        //testHelper.DebugDisplay("testHelper.is_executedFromMain() = " + testHelper.is_executedFromMain());
 
-        String arg = testCentral.GetArgumentValue(ts, 0, null);
+        if (persistValue) {
+            testHelper.UpdateTestResults(AppConstants.ANSI_GREEN + AppConstants.indent5 + "Persisting value " + actual + " for step " + fileStepIndex + AppConstants.ANSI_RESET,true);
+            testCentral.persistedString = actual;
+        }
+        String arg = testCentral.GetSpecificArgumentValueContainingDelimiter(ts, AppConstants.MathOperatorArg, "=", "=");
         if (arg != null && arg.equals("!=")) {
             notEqual = true;
         }
 
-        if (ts.get_expectedValue() != null && ts.get_expectedValue().toLowerCase().contains(AppConstants.persistedStringCheckValue)) {
-            if (testCentral.persistedString != null) {
-                testHelper.UpdateTestResults(AppConstants.indent5 + "Grabbing " + AppConstants.ANSI_CYAN + "persisted" + AppConstants.ANSI_RESET + " value: (" + testCentral.persistedString + ") for comparison.", true);
-                expected = testCentral.persistedString;
+        if (ts.get_expectedValue() != null && (ts.get_expectedValue().toLowerCase().contains(AppConstants.persistedStringCheckValue) || ts.get_expectedValue().toLowerCase().contains(AppConstants.uidReplacementChars))) {
+            if (testCentral.persistedString != null && ts.get_expectedValue().toLowerCase().contains(AppConstants.persistedStringCheckValue)) {
+                if (ts.get_expectedValue().toLowerCase().contains(AppConstants.uidReplacementChars)) {
+                    String persistedUid = ts.get_expectedValue().toLowerCase().replace(AppConstants.persistedStringCheckValue, testCentral.persistedString).replace(AppConstants.uidReplacementChars, testCentral.uniqueId);
+                    expected = persistedUid;
+                } else {
+                    testHelper.UpdateTestResults(AppConstants.indent5 + "Grabbing " + AppConstants.ANSI_CYAN + "persisted" + AppConstants.ANSI_RESET + " value: (" + testCentral.persistedString + ") for comparison.", true);
+                    expected = testCentral.persistedString;
+                }
+            } else if (!ts.get_expectedValue().toLowerCase().contains(AppConstants.persistedStringCheckValue) && ts.get_expectedValue().toLowerCase().contains(AppConstants.uidReplacementChars)) {
+                String persistedAndUid = ts.get_expectedValue().toLowerCase().replace(AppConstants.uidReplacementChars, testCentral.uniqueId);
+                testHelper.UpdateTestResults(AppConstants.indent5 + "Grabbing " + "unique id" + " value: (" + persistedAndUid + ") for comparison.", true);
+                expected = persistedAndUid;
             } else {
                 testHelper.UpdateTestResults("", false);
                 testHelper.CreateSectionHeader(AppConstants.indent5 +"[ Start of Persistence Usage Error ]", "", AppConstants.ANSI_RED, true, false, true);
@@ -895,7 +979,7 @@ public class ReadCommands {
     private void CheckGetPostStatus(TestStep ts, String fileStepIndex) {
         int expectedStatus = ts.get_expectedValue() != null ? parseInt(ts.get_expectedValue()) : 200;   //GetArgumentNumericValue(ts, 0, 200);
         int actualStatus;
-        String url = testCentral.GetArgumentValue(ts, 0, null);
+        String url = testCentral.GetSpecificArgumentValue(ts,"url","=",null);   testCentral.GetArgumentValue(ts, 0, null);
         String getPost = "Get";
 
         if (url != null) {
@@ -943,12 +1027,21 @@ public class ReadCommands {
     void CheckBrokenLinks(TestStep ts, String url, String fileStepIndex) {
         if (url != null && !driver.getCurrentUrl().equals(url)) {
             driver.get(url);
+            //testHelper.DebugDisplay("Navigating to " + url);
+            try {
+                int defaultDelay;
+                defaultDelay = parseInt(testCentral.GetSpecificArgumentValue(ts,"delay","=","3000"));
+                //testHelper.DebugDisplay("Waiting " + defaultDelay + " second for page load.");
+                testCentral.DelayCheck(defaultDelay, fileStepIndex);
+            } catch (Exception e) {
+                testHelper.DebugDisplay("Waiting failure.");
+            }
         }
         int linkCount = 0;
 
         //Get all the links on the page
         List<WebElement> links = driver.findElements(By.cssSelector("a"));
-
+        testHelper.DebugDisplay("Found " + links.size() + " a elements");
         String href;
         String text;
 
@@ -996,7 +1089,19 @@ public class ReadCommands {
      ************************************************************ */
     void CheckADAImages(TestStep ts, String url, String checkType, String fileStepIndex) {
         if (url != null && !url.isEmpty() && !url.toLowerCase().trim().equals("n/a")) {
+            testHelper.UpdateTestResults("Navigating to: " + url + " for step " + fileStepIndex,true);
             driver.get(url);
+            try
+            {
+                int defaultDelay;
+                defaultDelay = parseInt(testCentral.GetSpecificArgumentValue(ts, "delay", "=", "3000"));
+                //testHelper.DebugDisplay("Waiting " + defaultDelay + " second for page load.");
+                testCentral.DelayCheck(defaultDelay, fileStepIndex);
+            }
+            catch (Exception e)
+            {
+                testHelper.DebugDisplay("Waiting failure.");
+            }
         }
         List<WebElement> images = driver.findElements(By.cssSelector("img"));
         String altTag;
@@ -1055,8 +1160,8 @@ public class ReadCommands {
      * @param fileStepIndex - the file index and the step index.
      ******************************************************************************/
     private void CheckElementCountController(TestStep ts, String fileStepIndex) {
-        String checkItem = testCentral.GetArgumentValue(ts, 0, null);
-        String url = testCentral.GetArgumentValue(ts,1,null);
+        String checkItem = testCentral.GetSpecificArgumentValue(ts,"element","=",null);    //testCentral.GetArgumentValue(ts, 0, null);
+        String url = testCentral.GetSpecificArgumentValue(ts,AppConstants.UrlArg,"=",null);     //testCentral.GetArgumentValue(ts,1,null);
         url = (url != null && url.contains("!=")) ? null:
                 (url != null && url.contains("=")) ? null : url;
         String page = (url == null || url.equals("!=") || url.equals("=")) ? driver.getCurrentUrl() : url;
@@ -1087,13 +1192,13 @@ public class ReadCommands {
      *  @param fileStepIndex - the file index and the step index.
      ****************************************************************************** */
     private void ColorContrastController(TestStep ts, String fileStepIndex) {
-        testCentral.CheckColorContrastArgumentOrder(ts);
+        //testCentral.CheckColorContrastArgumentOrder(ts);
         //region { Debugging - Looping to see all arguments }
 //        for(int x=0; x < ts.ArgumentList.size();x++) {
 //            testHelper.DebugDisplay("For loop ts.ArgumentList.get(" + x + ").get_parameter() = " + ts.ArgumentList.get(x).get_parameter());
 //        }
         //endregion
-        String tagType =  testCentral.GetArgumentValue(ts, 0, null);
+        String tagType = testCentral.GetSpecificArgumentValue(ts,AppConstants.ElementArg,"=",null);  //testCentral.GetArgumentValue(ts, 0, null);
 
         testHelper.UpdateTestResults(AppConstants.indent5 + "Checking color contrast of " + tagType + " on page " + TestCentral.testPage + " for step " + fileStepIndex, false);
         CheckColorContrast(ts, fileStepIndex);
@@ -1142,13 +1247,14 @@ public class ReadCommands {
      * @param fileStepIndex - the file index and the step index.
      ******************************************************************************/
     private void FindPhraseController(TestStep ts, String fileStepIndex) {
-        String cssSelector = testCentral.GetArgumentValue(ts, 0, "*");
+        String cssSelector = testCentral.GetSpecificArgumentValue(ts,"element","=","*");    //testCentral.GetArgumentValue(ts, 0, "*");
         String phrase = ts.get_expectedValue();
         String message;
-        String containsOrEquals = testCentral.GetArgumentValue(ts, 1, "equals");
+        //String containsOrEquals = testCentral.GetArgumentValue(ts, 1, "equals");
+        String containsOrEquals = testCentral.GetSpecificArgumentValueContainingDelimiter(ts,AppConstants.MathOperatorArg,"=","equals");
 
         if (cssSelector != null && !cssSelector.trim().isEmpty() ) {
-            if (!containsOrEquals.toLowerCase().equals("contains")) {
+            if (!containsOrEquals.equalsIgnoreCase("contains")) {
                 message = "Performing find searching all '" + cssSelector.trim() + "' elements for '" + phrase.trim() + "'";
             } else {
                 message = "Performing find searching all '" + cssSelector.trim() + "' elements containing '" + phrase.trim() + "'";
@@ -1199,7 +1305,7 @@ public class ReadCommands {
      *                      from API endpoint
      * *******************************************************************************/
     public String GetHttpResponse(TestStep ts, String fileStepIndex) throws Exception {
-        String url = testCentral.GetArgumentValue(ts, 0, testCentral.GetCurrentPageUrl());
+        String url = testCentral.GetSpecificArgumentValue(ts,AppConstants.UrlArg,"=",testCentral.GetCurrentPageUrl());  //testCentral.GetArgumentValue(ts, 0, testCentral.GetCurrentPageUrl());
         StringBuffer response = new StringBuffer();
 
         if (url != null && !url.isEmpty()) {
@@ -1297,9 +1403,9 @@ public class ReadCommands {
      * @param fileStepIndex - the file index and the step index.
      *****************************************************************************/
     private void SaveJsonToFile(TestStep ts, String fileStepIndex) {
-        String fileName = testCentral.GetArgumentValue(ts, 0, null);
-        String overWriteExisting = testCentral.GetArgumentValue(ts, 1, "false");
-        boolean overwriteExistingFile = (overWriteExisting.toLowerCase().equals("true") || overWriteExisting.toLowerCase().equals("overwrite")) ? true : false;
+        String fileName = testCentral.GetSpecificArgumentValue(ts,AppConstants.FileNameArg,"=", null);   //testCentral.GetArgumentValue(ts, 0, null);
+        String overWriteExisting = testCentral.GetSpecificArgumentValue(ts,AppConstants.SaveTypeArg,"=","false");   //testCentral.GetArgumentValue(ts, 1, "false");
+        boolean overwriteExistingFile = (overWriteExisting.equalsIgnoreCase("true") || overWriteExisting.equalsIgnoreCase("overwrite")) ? true : false;
         String originalFileName = fileName;
         String updateFileNameMessage = "";
 
@@ -1403,8 +1509,8 @@ public class ReadCommands {
      * @param fileStepIndex - the file index and the step index.
      *****************************************************************************/
     private void SaveXmlToFile(TestStep ts, String fileStepIndex) {
-        String fileName = testCentral.GetArgumentValue(ts, 0, null);
-        String overWriteExisting =  testCentral.GetArgumentValue(ts, 1, "false");
+        String fileName = testCentral.GetSpecificArgumentValue(ts,AppConstants.FileNameArg,"=", null);   //String fileName = testCentral.GetArgumentValue(ts, 0, null);
+        String overWriteExisting = testCentral.GetSpecificArgumentValue(ts,AppConstants.SaveTypeArg,"=","false");   //String overWriteExisting =  testCentral.GetArgumentValue(ts, 1, "false");
         boolean overwriteExistingFile = (overWriteExisting.toLowerCase().equals("true") || overWriteExisting.toLowerCase().equals("overwrite")) ? true : false;
         String originalFileName = fileName;
         String updateFileNameMessage = "";
@@ -1503,7 +1609,7 @@ public class ReadCommands {
 
             //TODO: REWRITE THE CALL TO ELEMENTTYPELOOKUP SO THAT IT ONLY LOOKS UP ELEMENTS THAT ARE SEARCHED FOR BY TAGNAME, XPATH OR CSSSELECTOR AND SKIPS CLASSNAME AND ID
             if (!ts.get_command().toLowerCase().contains(AppConstants.persistStringCheckValue) && (command == null || !command.toLowerCase().contains(AppConstants.persistStringCheckValue))) {
-                testHelper.UpdateTestResults(AppConstants.indent5 + "Checking element by " + ts.get_accessorType() + ":"  + testCentral.ElementTypeLookup(accessor, accessorType) + " for script " + fileStepIndex + " Actual Value: \"" + actualValue + "\"", true);
+                testHelper.UpdateTestResults(AppConstants.indent8 + "Checking element by " + ts.get_accessorType() + ":"  + testCentral.ElementTypeLookup(accessor, accessorType) + " for script " + fileStepIndex + " Actual Value: \"" + actualValue + "\"", true);
             } else {
                 testHelper.UpdateTestResults(AppConstants.indent8 + "Retrieving element text by " + ts.get_accessorType() + ":"  + testCentral.ElementTypeLookup(accessor, accessorType) + " for script " + fileStepIndex + " Actual Value: \"" + actualValue + "\"", true);
             }
@@ -1654,7 +1760,8 @@ public class ReadCommands {
         if (url != null && !url.isEmpty() && !url.toLowerCase().trim().equals("n/a")) {
             driver.get(url);
         }
-        String comparisonType = CheckComparisonOperator(testCentral.GetArgumentValue(ts, ts.ArgumentList.size()-1, "="));
+        //String comparisonType = CheckComparisonOperator(testCentral.GetArgumentValue(ts, ts.ArgumentList.size()-1, "="));
+        String comparisonType = CheckComparisonOperator(testCentral.GetSpecificArgumentValue(ts,"mathoperator","=","="));
 
         List<WebElement> elements = driver.findElements(By.cssSelector(checkElement));
         actualCount = elements.size();
@@ -1717,8 +1824,8 @@ public class ReadCommands {
      * @param fileStepIndex - the file index and the step index.
      ********************************************************************** */
     private void FindPhrase(TestStep ts, String fileStepIndex) {
-        String cssSelector = testCentral.GetArgumentValue(ts, 0, "*");
-        String searchType = testCentral.GetArgumentValue(ts, 1, "equals");
+        String cssSelector = testCentral.GetSpecificArgumentValue(ts,AppConstants.ElementArg,"=","*");    //testCentral.GetArgumentValue(ts, 0, "*");
+        String searchType = testCentral.GetSpecificArgumentValue(ts,AppConstants.SearchTypeArg,"=","equals");   //testCentral.GetArgumentValue(ts, 1, "equals");
         boolean wasFound = false;
 
         List<WebElement> elements = driver.findElements(By.cssSelector(cssSelector));
@@ -1730,7 +1837,7 @@ public class ReadCommands {
         // if a child or grandchild contains the text, eliminate the element as containing the text
         //endregion
 
-        if (searchType.toLowerCase().equals("contains")) {
+        if (searchType.equalsIgnoreCase("contains")) {
             for (WebElement element : elements) {
                 try {
                     if (element != null && element.getText().trim().contains(ts.get_expectedValue().trim())) {
@@ -1790,10 +1897,17 @@ public class ReadCommands {
 
     void CheckJavaScriptReturnValue(TestStep ts, String fileStepIndex) {
         String javaScriptText = testCentral.GetArgumentValue(ts, 0, null);
-        boolean showJavascriptCommand = Boolean.parseBoolean(testCentral.GetArgumentValue(ts, 1, "true"));
+        boolean showJavascriptCommand = testCentral.GetSpecificArgumentValue(ts,"showscript","=",null) != null ?  Boolean.parseBoolean(testCentral.GetSpecificArgumentValue(ts, "showscript", "=", "true")) :  Boolean.parseBoolean(testCentral.GetArgumentValue(ts, 1, "true"));
         String actualValue = null;
-        String comparisonType = CheckComparisonOperator(testCentral.GetArgumentValue(ts, ts.ArgumentList.size()-1, "="));
+        String comparisonType = testCentral.GetSpecificArgumentValueContainingDelimiter(ts, "mathoperator", "=", "=");
+        String persistValue = testCentral.GetSpecificArgumentValue(ts, "optional", "=", null) != null ? testCentral.GetSpecificArgumentValue(ts, "optional", "=", null) : testCentral.GetArgumentValue(ts, 2, null);
+
         if (javaScriptText != null) {
+            if (!testHelper.IsNullOrEmpty(ts.get_expectedValue()) && ts.get_expectedValue().toLowerCase().equals("persistedstring") && !testHelper.IsNullOrEmpty(testCentral.persistedString))
+            {
+                testHelper.UpdateTestResults(AppConstants.indent8 + "Using Persisted value for Expected value for step " + fileStepIndex, true);
+                ts.set_expectedValue(testCentral.persistedString);
+            }
             testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Start JavaScript Execution Event ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
             if (showJavascriptCommand == true) {
                 testHelper.UpdateTestResults(AppConstants.indent8 + "Executing Javascript command: " + javaScriptText + " for step " + fileStepIndex, true);
@@ -1801,25 +1915,36 @@ public class ReadCommands {
                 testHelper.UpdateTestResults(AppConstants.indent8 + "Executing Javascript command: {{JavaScript Command}} for step " + fileStepIndex, true);
             }
             actualValue = (String) ((JavascriptExecutor) driver).executeScript(javaScriptText);
-            //testHelper.DebugDisplay("actualValue = " + actualValue);
-            if (ts.get_crucial()) {
-                if ("=".equals(comparisonType)) {
-                    assertEquals(ts.get_expectedValue(), actualValue);
-                } else {
-                    assertNotEquals(ts.get_expectedValue(), actualValue);
-                }
+            if (!testHelper.IsNullOrEmpty(persistValue) &&  (persistValue.toLowerCase().equals(AppConstants.PersistCheckValue) || persistValue.toLowerCase().equals(AppConstants.PersistStringCheckValue)))
+            {
+                testHelper.UpdateTestResults(AppConstants.indent8 + "Persisting Javascript return value for step " + fileStepIndex, true);
+                testCentral.persistedString = actualValue;
+                testHelper.UpdateTestResults(AppConstants.indent8 + "Persisted Javascript return value for step " + fileStepIndex, true);
+            }
+            if (testHelper.IsNullOrEmpty(ts.get_expectedValue())) {
+                testHelper.UpdateTestResults(AppConstants.indent8 + "No Expected value supplied for Javascript command, just executed script for step " + fileStepIndex, true);
+                testHelper.UpdateTestResults(AppConstants.indent8 + "Actual Value: " + actualValue + " " + fileStepIndex, true);
             } else {
-                if ("=".equals(comparisonType)) {
-                    if (!testHelper.IsNullOrEmpty(actualValue) && actualValue.equals(ts.get_expectedValue())) {
-                        testHelper.UpdateTestResults(AppConstants.indent8 + "Successful JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual: (" + actualValue + ")" + " for step " + fileStepIndex, true);
+                //testHelper.DebugDisplay("actualValue = " + actualValue);
+                if (ts.get_crucial()) {
+                    if ("=".equals(comparisonType)) {
+                        assertEquals(ts.get_expectedValue(), actualValue);
                     } else {
-                        testHelper.UpdateTestResults(AppConstants.indent8 + "Failed JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual: (" + actualValue + ")" + " for step " + fileStepIndex, true);
+                        assertNotEquals(ts.get_expectedValue(), actualValue);
                     }
                 } else {
-                    if (!testHelper.IsNullOrEmpty(actualValue) && !actualValue.equals(ts.get_expectedValue())) {
-                        testHelper.UpdateTestResults(AppConstants.indent8 + "Successful JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual: (" + actualValue + ")" + " for step " + fileStepIndex, true);
+                    if ("=".equals(comparisonType)) {
+                        if (!testHelper.IsNullOrEmpty(actualValue) && actualValue.equals(ts.get_expectedValue())) {
+                            testHelper.UpdateTestResults(AppConstants.indent8 + "Successful JavaScript Value - Expected (" + ts.get_expectedValue() + ") =  Actual: (" + actualValue + ")" + " for step " + fileStepIndex, true);
+                        } else {
+                            testHelper.UpdateTestResults(AppConstants.indent8 + "Failed JavaScript Value - Expected (" + ts.get_expectedValue() + ") = Actual: (" + actualValue + ")" + " for step " + fileStepIndex, true);
+                        }
                     } else {
-                        testHelper.UpdateTestResults(AppConstants.indent8 + "Failed JavaScript Value - Expected (" + ts.get_expectedValue() + ") Actual: (" + actualValue + ")" + " for step " + fileStepIndex, true);
+                        if (!testHelper.IsNullOrEmpty(actualValue) && !actualValue.equals(ts.get_expectedValue())) {
+                            testHelper.UpdateTestResults(AppConstants.indent8 + "Successful JavaScript Value - Expected (" + ts.get_expectedValue() + ") != Actual: (" + actualValue + ")" + " for step " + fileStepIndex, true);
+                        } else {
+                            testHelper.UpdateTestResults(AppConstants.indent8 + "Failed JavaScript Value - Expected (" + ts.get_expectedValue() + ") != Actual: (" + actualValue + ")" + " for step " + fileStepIndex, true);
+                        }
                     }
                 }
             }
@@ -1848,16 +1973,15 @@ public class ReadCommands {
      * @param fileStepIndex - the file index and the step index.
      ******************************************************************************************/
     void CheckColorContrast(TestStep ts, String fileStepIndex) {
-        String tagType = testCentral.GetArgumentValue(ts, 0, null);
-        String bContrast = testCentral.GetArgumentValue(ts, 1, AppConstants.DefaultContrastBrightnessSetting );
-        String dContrast = testCentral.GetArgumentValue(ts, 2, AppConstants.DefaultContrastDifferenceSetting);
+        String tagType = testCentral.GetSpecificArgumentValue(ts,AppConstants.ElementArg,"=", null);   //testCentral.GetArgumentValue(ts, 0, null);
+        String bContrast = testCentral.GetSpecificArgumentValue(ts,AppConstants.BrightnessArg,"=", AppConstants.DefaultContrastBrightnessSetting ); //testCentral.GetArgumentValue(ts, 1, AppConstants.DefaultContrastBrightnessSetting );
+        String dContrast = testCentral.GetSpecificArgumentValue(ts,AppConstants.DifferenceArg,"=", AppConstants.DefaultContrastDifferenceSetting); //testCentral.GetArgumentValue(ts, 2, AppConstants.DefaultContrastDifferenceSetting);
         bContrast = bContrast.contains("=") ? bContrast.substring(bContrast.indexOf("=") + 1).trim() : bContrast;
         dContrast = dContrast.contains("=") ? dContrast.substring(dContrast.indexOf("=") + 1).trim() : dContrast;
         int treeClimb;  // = 0;
         String color;
         String backColor;
-//        String color_hex[];
-//        String backColor_hex[];
+
         String cHex, bHex;
         int brightnessStandard = bContrast.equals("125") ? 125 : parseInt(bContrast);
         int contrastStandard = dContrast.equals("500") ? 500 : parseInt(dContrast);
@@ -1873,7 +1997,6 @@ public class ReadCommands {
             treeClimb = 0;
             color = element.getCssValue("color").trim();
             backColor = element.getCssValue("background-color").trim();
-
 
             cHex = Color.fromString(color).asHex();
             bHex = Color.fromString(backColor).asHex();
@@ -1956,12 +2079,14 @@ public class ReadCommands {
      ***************************************************************/
     public void GetAllCookies(TestStep ts, String fileStepIndex) {
         Set<Cookie> cookies = driver.manage().getCookies();
-        System.out.println(cookies);
+        /*if (cookies.size() > 0) {
+            System.out.println(cookies);
+        }*/
         String cookieName, cookieValue, cookieExpiration, cookiePath,cookieDomain;
         String fileContents = "URL: " + driver.getCurrentUrl() + "\n\n";
-        String fileName = testCentral.GetArgumentValue(ts,0,null);
-        String originalFileName = fileName;
-        String fileInstructions = testCentral.GetArgumentValue(ts,1,null);
+        String fileName = testCentral.GetSpecificArgumentValue(ts,AppConstants.FileNameArg,"=",null);   //testCentral.GetArgumentValue(ts,0,null);
+        //String originalFileName = fileName;
+        String fileInstructions = testCentral.GetSpecificArgumentValue(ts, AppConstants.SaveTypeArg,"=", null);  //testCentral.GetArgumentValue(ts,1,null);
         boolean cookieSecure = false;
         //testHelper.DebugDisplay("fileName = " + fileName);
         testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_CYAN_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ Displaying Cookie Information for Step " +  fileStepIndex + " ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
@@ -1988,7 +2113,10 @@ public class ReadCommands {
                 fileName = testHelper.GetUnusedFileName(fileName);
             }
             testHelper.WriteToFile(fileName, fileContents);
-            testHelper.UpdateTestResults( AppConstants.indent8 + "Cookies saved to file: " + fileName + " for step " + fileStepIndex, true);
+            File fileToTest = new File(fileName);
+            if (fileToTest.exists()) {
+                testHelper.UpdateTestResults(AppConstants.indent8 + "Cookies saved to file: " + fileName + " for step " + fileStepIndex, true);
+            }
         }
         testHelper.UpdateTestResults( AppConstants.indent5 + AppConstants.ANSI_CYAN_BRIGHT + AppConstants.subsectionArrowLeft + testHelper.PrePostPad("[ End of Display Cookie Information ]", "═", 9, 80) + AppConstants.subsectionArrowRight + AppConstants.ANSI_RESET, true);
     }
@@ -2003,10 +2131,10 @@ public class ReadCommands {
      * @param fileStepIndex - the file index and the step index.
      **************************************************************************/
     void SetSqlServerClient(TestStep ts, String fileStepIndex) {
-        String sqlDatabaseName = testCentral.GetArgumentValue(ts, 1, null);
-        String sqlUserId = testCentral.GetArgumentValue(ts, 2, null);
-        String sqlPassword = testCentral.GetArgumentValue(ts, 3, null);
-        String sqlConnectionString = sqlDatabaseName.contains("jdbc:sqlserver") ? sqlDatabaseName : null;
+        String sqlDatabaseName = testCentral.GetSpecificArgumentValue(ts, "datasource", "=", null); //  testCentral.GetArgumentValue(ts, 1, null);
+        String sqlUserId = testCentral.GetSpecificArgumentValue(ts, "userid", "=", null);      //testCentral.GetArgumentValue(ts, 2, null);
+        String sqlPassword = testCentral.GetSpecificArgumentValue(ts, "pwd", "=", null);   //testCentral.GetArgumentValue(ts, 3, null);
+        String sqlConnectionString = !testHelper.IsNullOrEmpty(sqlDatabaseName) && sqlDatabaseName.contains("jdbc:sqlserver") ? sqlDatabaseName : null;
 
         if (sqlDatabaseName != null && sqlUserId != null && sqlPassword != null && sqlConnectionString == null) {
             sqlConnectionString = sqlConnectionString == null ? "database=" + sqlDatabaseName + ";user=" + sqlUserId + ";password=" + sqlPassword + ";" : sqlConnectionString;
@@ -2015,7 +2143,7 @@ public class ReadCommands {
                 sqlConnectionString = "jdbc:sqlserver://localhost:1433;" + sqlConnectionString + "encrypt=false;trustServerCertificate=true;loginTimeout=30;";
             }
         }
-
+        testHelper.DebugDisplay("sqlConnectionString = " + sqlConnectionString);
         try {
             if (sqlConnectionString != null) {
                 testCentral.sqlConnection = DriverManager.getConnection(sqlConnectionString);
@@ -2038,19 +2166,26 @@ public class ReadCommands {
      * @throws SQLException - SQL Server Exception
      ******************************************************************************************/
     private void RunSqlServerQuery(TestStep ts, String fileStepIndex) throws SQLException {
-        String sqlTable = testCentral.GetArgumentValue(ts, 0, null);
+        /*String sqlTable = testCentral.GetArgumentValue(ts, 0, null);
         String sqlField = testCentral.GetArgumentValue(ts, 1, null);
         String whereClause = testCentral.GetArgumentValue(ts, 2, null);
         String sqlStatement = sqlTable.toLowerCase().contains("select") ? sqlTable : null;
+                 */
+        String sqlTable = testCentral.GetSpecificArgumentValueContainingDelimiter(ts, "table", "=", null);   //FrmTestCentral.GetArgumentValue(ts, 0, null);
+        String sqlField = testCentral.GetSpecificArgumentValue(ts, "queryfield", "=", null);   //FrmTestCentral.GetArgumentValue(ts, 1, null);
+        String whereClause = testCentral.GetSpecificArgumentValueContainingDelimiter(ts, "whereclause", "=", null);   //FrmTestCentral.GetArgumentValue(ts, 2, null);
+        String sqlQuery = testCentral.GetSpecificArgumentValueContainingDelimiter(ts, "querystatement", "=", null);   //
+        String sqlStatement = !testHelper.IsNullOrEmpty(sqlQuery) ? sqlQuery : !testHelper.IsNullOrEmpty(sqlTable) && sqlTable.toLowerCase().contains("select") ? sqlTable : null;
         String actual = null;
-        String comparisonType = CheckComparisonOperator(testCentral.GetArgumentValue(ts, ts.ArgumentList.size()-1, "="));
+        String comparisonType = CheckComparisonOperator(testCentral.GetSpecificArgumentValue(ts, AppConstants.MathOperatorArg, "=","="));
 
-        if (sqlTable.toLowerCase().startsWith("where ") || (sqlField != null &&  sqlField.toLowerCase().contains("where "))) {
+        testHelper.DebugDisplay("sqlStatement = " + sqlStatement);
+        if (!testHelper.IsNullOrEmpty(sqlTable) &&  (sqlTable.toLowerCase().startsWith("where ") || (sqlField != null &&  sqlField.toLowerCase().contains("where ")))) {
             testCentral.ArgumentOrderErrorMessage(ts, "sql server query");
             return;
         }
 
-        if (testCentral.sqlConnection == null) {
+        if ( testCentral.sqlConnection == null) {
             testHelper.UpdateTestResults(AppConstants.ANSI_RED + "Failed to find active Sql Server connection to the SQL Server for step " + fileStepIndex + AppConstants.ANSI_RESET, true);
             testCentral.conditionalSuccessful = false;
         }
@@ -2059,7 +2194,7 @@ public class ReadCommands {
         ResultSet resultSet;
 
         try {
-            if (sqlStatement == null || sqlStatement.isEmpty()) {
+            if (testHelper.IsNullOrEmpty(sqlStatement)) {
                 sqlStatement = "Select " + sqlField + " from " + sqlTable + " " + whereClause;
             }
 

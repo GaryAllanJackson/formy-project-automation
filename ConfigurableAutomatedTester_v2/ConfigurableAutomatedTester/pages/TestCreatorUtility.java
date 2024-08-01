@@ -36,9 +36,9 @@ public class TestCreatorUtility {
     //private String CreateTestPage(TestStep ts, String fileStepIndex) {
     String CreateTestPage(TestStep ts) {
         driver = testCentral.driver;
-        String cssSelector = testCentral.GetArgumentValue(ts, 0, "*");
-        String newFileName =  testCentral.GetArgumentValue(ts, 1, "/config/newTestFile.txt");
-        String tagsToSkip = testCentral.GetArgumentValue(ts, 2, null);
+        String cssSelector = testCentral.GetSpecificArgumentValue(ts,"includeelements","=","*");     //testCentral.GetArgumentValue(ts, 0, "*");
+        String newFileName = testCentral.GetSpecificArgumentValue(ts,"filename","=","/config/newTestFile.txt");   //testCentral.GetArgumentValue(ts, 1, "/config/newTestFile.txt");
+        String tagsToSkip = testCentral.GetSpecificArgumentValue(ts,"excludeElements","=",null);    //testCentral.GetArgumentValue(ts, 2, null);
         String [] skipTags = tagsToSkip.split(",");
         boolean formatted = ts.get_command().toLowerCase().contains(AppCommands.Format) ? true : false;
         String elementXPath = "";
@@ -59,7 +59,7 @@ public class TestCreatorUtility {
                     "\t\t\t\t}\r\n" +
                     "\t\t\t\treturn \"Fail\";\r\n" +
                     "\t\t\t</arg1>\r\n" +
-                    "\t\t\t<arg2>false</arg2>\n" +
+                    "\t\t\t<arg2>showscript=false</arg2>\n" +
                     "\t\t</arguments>\n" +
                     "\t</step>\r\n";
 
@@ -323,7 +323,7 @@ public class TestCreatorUtility {
                     "\t\t<actionType>write</actionType>\r\n" +
                     "\t\t<crucial>True</crucial>\r\n" +
                     "\t\t<arguments>\r\n" +
-                    "\t\t\t<arg1>MyCoolSite-Page-har-test.txt</arg1>\r\n" +
+                    "\t\t\t<arg1>filename=MyCoolSite-Page-har-test.txt</arg1>\r\n" +
                     "\t\t</arguments>\r\n" +
                     "\t</step>\r\n";
             returnValue = saveHarFile + returnValue;
@@ -377,9 +377,9 @@ public class TestCreatorUtility {
                     "\t\t<crucial>" + isCrucial + "</crucial>\r\n" +
                     "\t\t<arguments>\r\n" +
                     "\t\t\t<!-- first argument expected by the command - A URL is expected for this command; It is also Required!!! -->\r\n" +
-                    "\t\t\t<arg1>" + testPage + "</arg1>\r\n" +
+                    "\t\t\t<arg1>url=" + testPage + "</arg1>\r\n" +
                     "\t\t\t<!-- second argument, can be optional. For this command it is the time in milliseconds to wait before the assertion is made. -->\n" +
-                    "\t\t\t<arg2>1000</arg2> \n" +
+                    "\t\t\t<arg2>delay=1000</arg2> \n" +
                     "\t\t\t<!-- third argument is optional and is for the window dimensions. Add them like this if desired. (w=800 h=800) -->\n" +
                     "\t\t\t<arg3></arg3> \n" +
                     "\t\t</arguments>\n" +
@@ -437,7 +437,7 @@ public class TestCreatorUtility {
                     "\t\t\t<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->\r\n" +
                     "\t\t\t<arg1>" + selectedItem + "</arg1>\r\n" +
                     "\t\t\t<!-- Last argument is the override time delay between sending keystrokes and is not required -->\r\n" +
-                    "\t\t\t<arg4>500</arg4>\r\n" +
+                    "\t\t\t<arg4>delay=500</arg4>\r\n" +
                     "\t\t</arguments>\r\n" +
                     "\t</step>";
         }
