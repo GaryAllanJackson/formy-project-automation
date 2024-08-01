@@ -58,9 +58,10 @@
         <dependency>
              <groupId>io.github.bonigarcia</groupId>
              <artifactId>webdrivermanager</artifactId>
-             <version>5.5.2</version>
+            <!-- <version>5.7.0</version>-->
+            <version>5.5.2</version>
              <scope>test</scope>
-         </dependency>
+        </dependency>
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
