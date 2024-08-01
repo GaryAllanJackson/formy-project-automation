@@ -18,7 +18,7 @@
 		<arg2>1000</arg2>-->
 		
 			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
-			<arg1>https://formy-project.herokuapp.com/form</arg1>
+			<arg1>url=https://formy-project.herokuapp.com/form</arg1>
 			<!-- second argument, can be optional but required when including window dimension argument. 
 				For this example we send 1000ms as the time to wait before continuing. -->
 			
@@ -30,6 +30,7 @@
 		<command>assert</command>
 		<conditional>true</conditional>
 		<actionType>read</actionType>
+		<!-- Testing: Change the expected value to force the conditional to fail and skip conditional commands -->
 		<expectedValue>FORMY</expectedValue>
 		<crucial>FALSE</crucial>
 		<accessor>/html[1]/body[1]/div[1]/nav[1]/a[1]</accessor>

@@ -25,9 +25,10 @@
          <command>screenshot</command>
 		<actionType>write</actionType>
 		<crucial>false</crucial>
-		<arguments>
-			<arg2>h=1000 w=1400</arg2>
-			<arg1>filename=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Mashup\Baseline\MyScreenShot.png</arg1>
+		<arguments>			
+			<arg2>h=1000</arg2>	
+			<arg1>filename=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Mashup\Baseline\MyScreenShot.png</arg1>			
+			<arg3>w=1400</arg3>
 		</arguments>
 	</step>
 	<step>
@@ -63,7 +64,7 @@
 		<actionType>write</actionType>
 		<crucial>false</crucial>
 		<arguments>
-			<arg1>filename=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Mashup\Actual\MyScreenShot.png</arg1>
+			<arg1>C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Mashup\Actual\MyScreenShot.png</arg1>
 			<arg2>w=1400 h=1000</arg2>
 		</arguments>
 	</step><!---->
@@ -74,37 +75,51 @@
 		<actionType>write</actionType>
 		<crucial>TRUE</crucial>
 		<arguments>
-			<arg1>delay=5000</arg1>
+			<arg1>5000</arg1>
 		</arguments>
 	</step>
 	<step>
-		<!-- compares two images and allows for a 1% difference (which is not a good thing!) -->
+		<!-- compares two images -->
 		<command>compare images</command>
 		<actionType>write</actionType>
 		<crucial>FALSE</crucial>
 		<arguments>
 			<!-- first argument is the comp image filename. It is Required!!! -->
-			<arg1>baseLineImage=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Mashup\Baseline\MyScreenShot.png</arg1>
+			<arg1>baselineimage=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Mashup\Baseline\MyScreenShot.png</arg1>
 			<!-- second argument, is the actual image filename.   It is Required!!! -->
-			<arg2>ActualImage=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Mashup\Actual\MyScreenShot.png</arg2> 
+			<arg2>actualimage=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Mashup\Actual\MyScreenShot.png</arg2> 
 			<!-- third argument the name of the Difference filename. It is Required!!!   -->
-			<arg3>differenceImage=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Mashup\Difference\MyScreenShot-DifferenceImage.png</arg3> 
-			<arg4>GlobalDifferenceImage=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Mashup\Difference\MyScreenShot-DifferenceImage1.png</arg4> 
-			<arg5>acceptableDifference=1.0</arg5>
+			<arg3>differenceimage=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Mashup\Difference\MyScreenShot-DifferenceImage.png</arg3> 
+			<arg4>globaldifferenceimage=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Mashup\Difference\MyScreenShot-DifferenceImage1.png</arg4> 
 		</arguments>
 	</step>
+	
 	<step>
-		<!-- compares two images and allows for a 0% difference (This is the way to find all differences) -->
+		<!-- compares two images -->
 		<command>compare images</command>
 		<actionType>write</actionType>
 		<crucial>FALSE</crucial>
 		<arguments>
 			<!-- first argument is the comp image filename. It is Required!!! -->
-			<arg1>baseLineImage=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Gerrett\Baseline\BaseLineImage.png</arg1>
+			<arg1>baselineimage=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Gerrett\Baseline\BaseLineImage.png</arg1>
 			<!-- second argument, is the actual image filename.   It is Required!!! -->
-			<arg2>actualImage=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Gerrett\Actual\ActualImage.png</arg2> 
+			<arg2>actualimage=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Gerrett\Actual\ActualImage.png</arg2> 
 			<!-- third argument the name of the Difference filename. It is Required!!!   -->
-			<arg3>differenceImage=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Gerrett\Difference\DifferenceImage.png</arg3> 
+			<arg3>differenceimage=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Gerrett\Difference\DifferenceImage.png</arg3> 
+		</arguments>
+	</step>
+	<step>
+		<!-- compares two images -->
+		<command>compare images</command>
+		<actionType>write</actionType>
+		<crucial>FALSE</crucial>
+		<arguments>
+			<!-- first argument is the comp image filename. It is Required!!! -->
+			<arg1>baselineimage=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Gerrett\Baseline\BaseLineImage.png</arg1>
+			<!-- second argument, is the actual image filename.   It is Required!!! -->
+			<arg2>actualimage=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Gerrett\Actual\BaseLineImage.png</arg2> 
+			<!-- third argument the name of the Difference filename. It is Required!!!   -->
+			<arg3>differenceimage=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Gerrett\Difference\DifferenceImage2.png</arg3> 
 		</arguments>
 	</step>
 </testSteps>

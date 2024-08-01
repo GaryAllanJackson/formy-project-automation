@@ -9,34 +9,45 @@
 		<actionType>write</actionType>
 
 		<!-- Expected value - required only when we want to validate something as part of our step. For this command it is optional -->
-		<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>
+		<!-- <expectedValue>https://www.w3schools.com/</expectedValue> -->
+		<expectedValue>https://www.jif.com/</expectedValue>
 		
 		<!-- crucial or non crucial -->
 		<crucial>TRUE</crucial>
 		<arguments>
 			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
-			<arg1>url=https://formy-project.herokuapp.com/form</arg1>
+			<!-- <arg1>https://www.w3schools.com/</arg1> -->
+			<arg1>url=https://www.jif.com/</arg1>
 			<!-- second argument, can be optional but required when including window dimension argument. 
 				For this example we send 1000ms as the time to wait before continuing. -->
+			<arg3>w=800 h=800</arg3>
 			<arg2>delay=1000</arg2>
 			<!-- third argument, can be optional - Window Dimensions width then height --> 		
-			<arg3>w=800 h=800</arg3>		
+						
 		</arguments>
 	</step>
 	<step>
-		<command>check contrast</command>
+		<command>Check_image_src</command>
 		<actionType>read</actionType>
+		<expectedValue>https://www.w3schools.com/images/colorpicker2000.png</expectedValue>
 		<crucial>FALSE</crucial>
+		<accessor>//*[@id="services_list"]/div[3]/div[21]/a/div/p/img</accessor>
+		<accessorType>xPath</accessorType>
 		<arguments>
-			<!-- Type of tag(s) to check contrast on -->
-			
-			<!--  [Optional] Allows Overriding Acceptible Contrast settings b for brightness default is (125)-->
-			<arg2>b=86</arg2>
-			<!-- Acceptible Contrast settings d for difference default is (500) -->
-			<arg3>d=86</arg3>
-			<arg1>element=*</arg1>
+			<arg1>url=https://www.w3schools.com/</arg1>
+			<arg2>delay=2000</arg2>
 		</arguments>
 	</step>
-	
+	<step>
+		<command>Check_image_alt</command>
+		<actionType>read</actionType>
+		<expectedValue>A circular color wheel showing the gradation of colors in the spectrum</expectedValue>
+		<crucial>FALSE</crucial>
+		<accessor>//*[@id="services_list"]/div[3]/div[21]/a/div/p/img</accessor>
+		<accessorType>xPath</accessorType>
+		<arguments>
+			<arg1>url=https://www.w3schools.com/</arg1>
+		</arguments>
+	</step>
 	
 </testSteps>

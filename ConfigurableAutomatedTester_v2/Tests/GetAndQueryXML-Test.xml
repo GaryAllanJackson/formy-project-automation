@@ -18,7 +18,7 @@
 		<arg2>1000</arg2>-->
 		
 			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
-			<arg1>http://local.forums.com/?productId=1</arg1>
+			<arg1>url=http://local.forums.com/?productId=1</arg1>
 			<!-- second argument, can be optional but required when including window dimension argument. 
 				For this example we send 1000ms as the time to wait before continuing. -->
 			
@@ -38,7 +38,7 @@
 		<actionType>read</actionType>
 		<crucial>FALSE</crucial>
 		<arguments>
-			<arg1>http://local.forums.com/?productId=1&amp;id=true&amp;wantJson=false</arg1>
+			<arg1>url=http://local.forums.com/?productId=1&amp;id=true&amp;wantJson=false</arg1>
 			<!--<arg1>http://local.forums.com/?productId=1&amp;id=true</arg1>-->
 			<!--<arg1>http://local.forums.com/?productId=2&amp;id=true</arg1>-->
 		</arguments>
@@ -49,10 +49,10 @@
 		<crucial>FALSE</crucial>
 		<arguments>
 			<!-- first parameter expected by the command - The file name; it is also required -->
-			<arg1>C:\Gary\Java Utilities\ScreenShots\JSON\forums.xml</arg1>
+			<arg1>filename=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\Retrieved Data\forums.xml</arg1>
 			<!-- second parameter is optional can be overwrite or true to overwrite existing file or 
 				 false to create a new file name using the filename and appending an integer to the end of the name before the extension -->
-			<arg2>false</arg2>
+			<arg2>savetype=false</arg2>
 		</arguments>
 	</step>
 	<step>
@@ -115,10 +115,10 @@
 		<crucial>TRUE</crucial>
 		<arguments>
 			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
-			<arg1>https://formy-project.herokuapp.com/form </arg1>
+			<arg1>url=https://formy-project.herokuapp.com/form </arg1>
 			
 			<!-- second argument, can be optional but required if we include the expectedValue. For this example we send 1000ms as the time to wait before the assertion is made -->
-			<arg2>1000</arg2> 
+			<arg2>delay=1000</arg2> 
 			<!-- third argument is the window dimensions -->
 			<arg3>w=800 h=800</arg3> 
 		</arguments>

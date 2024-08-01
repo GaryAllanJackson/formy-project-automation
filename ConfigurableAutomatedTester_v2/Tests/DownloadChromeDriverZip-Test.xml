@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testSteps>
+	<step>
+		<command>navigate</command>
+		<actionType>write</actionType>
+		<expectedValue>https://googlechromelabs.github.io/chrome-for-testing/</expectedValue>
+		<crucial>TRUE</crucial>
+		<arguments>
+			<arg1>url=https://googlechromelabs.github.io/chrome-for-testing/</arg1>
+			<arg2>delay=4000</arg2>
+		</arguments>
+	</step>
+	<step>
+		<command>check javascript value</command>
+		<actionType>read</actionType>
+		<!-- <expectedValue>5</expectedValue> -->
+		<crucial>False</crucial>
+		<arguments>
+			<arg1>
+				var elements = document.querySelectorAll("section.status-ok table tr");
+				var row;
+				var correctType = false;
+				var correctOs = false;
+				var driverFound = false;
+				var navLocation = "";
+				//console.log(elements);
+				//elements.forEach((tr) => {
+				for (var y=0;y&lt;elements.length;y++) {
+					tr = elements[y];
+				   row = 0; 
+				   var thElements = tr.querySelectorAll("th");
+					//console.log(tdElements);
+					for (var x=0;x&lt;thElements.length;x++) {
+					   if ((thElements[x].innerText == "chromedriver") &amp;&amp; (thElements[x+1].innerText == "win32")) {
+							var td = thElements[x+1].nextElementSibling;
+							console.log(td.innerText);
+							navLocation = td.innerText;
+							driverFound = true;
+							break;
+						}
+					}
+					if (driverFound) {
+						break;
+					}
+				}
+				document.location = navLocation;
+			</arg1>
+			<arg2>showScript=false</arg2>
+			<arg3>optional=persist</arg3>
+		</arguments>
+	</step>
+	<step>
+		<command>wait</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<arguments>
+			<arg1>delay=10000</arg1>
+		</arguments>
+	</step>
+	<step>
+		<command>rename file</command>
+		<actionType>write</actionType>
+		<arguments>
+			<arg1>existingFileName=</arg1>
+			<arg2>newFileName=C:\Gary\Java Utilities\BrowserDrivers\chromedriver-win32-download.zip</arg2>			
+			<arg3>existingFileFolder=C:\Users\gjackson\Downloads</arg3>
+			<!-- if set to false, existing file will be deleted and this file will be created -->
+			<arg4>renameIfExisting=false</arg4>
+			<arg3>newFileFolder=C:\Gary\Java Utilities\BrowserDrivers\</arg3>
+		</arguments>
+	</step>
+
+	
+</testSteps>

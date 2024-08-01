@@ -10,16 +10,16 @@
 		<actionType>write</actionType>
 
 		<!-- Expected value - required only when we want to validate something as part of our step. For this command it is optional -->
-		<expectedValue>https://www.nutrish.com/</expectedValue>
+		<expectedValue>https://www.digitas.com/en-us</expectedValue>
 		
 		<!-- crucial or non crucial -->
 		<crucial>TRUE</crucial>
 		<arguments>
 			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
-			<arg1>https://nutrish.com/</arg1>
+			<arg1>url=https://www.digitas.com/en-us</arg1>
 			
 			<!-- second argument, can be optional but required if we include the expectedValue. For this example we send 1000ms as the time to wait before the assertion is made -->
-			<arg2>1000</arg2> 
+			<arg2>delay=5000</arg2> 
 			<!-- third argument is the window dimensions -->
 			<arg3></arg3> 
 		</arguments>

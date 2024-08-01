@@ -14,12 +14,10 @@
 		<!-- crucial or non crucial -->
 		<crucial>TRUE</crucial>
 		<arguments>
-		<arg2>1000</arg2> 
+			<arg2>delay=1000</arg2> 
 			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
-			<arg1>https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_ref_comp_dropdown-menu&amp;stacked=h</arg1>
-			
+			<arg1>url=https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_ref_comp_dropdown-menu&amp;stacked=h</arg1>
 			<!-- second argument, can be optional but required if we include the expectedValue. For this example we send 1000ms as the time to wait before the assertion is made -->
-			
 		</arguments>
 	</step>
 	<step>
@@ -27,8 +25,8 @@
 		<actionType>write</actionType>
 		<crucial>TRUE</crucial>
 		<arguments>			
-			<arg2>30</arg2>
-			<arg1>n/a</arg1>
+			<arg2>delay=30</arg2>
+			<arg1>url=n/a</arg1>
 		</arguments>
 	</step>
 	<step>
@@ -36,10 +34,10 @@
 		<actionType>read</actionType>
 		<expectedValue>Tutorials</expectedValue>
 		<crucial>false</crucial>
-		<accessor>//button[contains(@id,'menu1')]</accessor>
+		<accessor>//*[@id="menu1"]</accessor>
 		<accessorType>xPath</accessorType>
 		<arguments>
-			<arg1>iframeResult</arg1>
+			<arg1>iframeName=iframeResult</arg1>
 		</arguments>
 	</step>
 	<!--<step>
@@ -62,8 +60,8 @@
 		<accessor>btn</accessor>
 		<accessorType>classname</accessorType>
 		<arguments>
-			<arg1>iframeResult</arg1>
-			<arg1>PersistString</arg1>
+			<arg1>iframename=iframeResult</arg1>
+			<arg1>optional=PersistString</arg1>
 		</arguments>
 	</step>
 	<step>
@@ -76,9 +74,9 @@
 		<arguments>
 			<!--<arg1>sendkeys</arg1>-->
 			<arg1>keys.arrow_down</arg1>
-			<arg1>keys.arrow_up</arg1>
-			<arg1>keys.arrow_left</arg1>
-			<arg1>iframeResult</arg1>			
+			<arg2>keys.arrow_up</arg2>
+			<arg3>keys.arrow_left</arg3>
+			<arg4>iframename=iframeResult</arg4>			
 		</arguments>
 	</step>
 	<step>
@@ -86,10 +84,10 @@
 		<actionType>read</actionType>
 		<expectedValue>Tutorials</expectedValue>
 		<crucial>false</crucial>
-		<accessor>//button[contains(@id,'menu1')]</accessor>
+		<accessor>//*[@id="menu1"]</accessor>
 		<accessorType>xPath</accessorType>
 		<arguments>
-			<arg1>iframeResult</arg1>			
+			<arg1>iframename=iframeResult</arg1>			
 		</arguments>
 	</step>
 	<step>
@@ -97,51 +95,53 @@
 		<actionType>read</actionType>
 		<expectedValue>PersistedString</expectedValue>
 		<crucial>false</crucial>
-		<accessor>//button[contains(@id,'menu1')]</accessor>
+		<accessor>//*[@id="menu1"]</accessor>
 		<accessorType>xPath</accessorType>
 		<arguments>
-			<arg1>iframeResult</arg1>
+			<arg1>iframename=iframeResult</arg1>
 		</arguments>
 	</step>
 	<step>
 		<command>Switch to iFrame</command>
 		<actionType>write</actionType>
 		<crucial>false</crucial>
-		<accessor>//button[contains(@id,'menu1')]</accessor>
+		<accessor>//*[@id="menu1"]</accessor>
 		<accessorType>xPath</accessorType>
 		<arguments>
-			<arg1>iframeResult</arg1>
-			<arg2>click</arg2>
+			<arg1>iframename=iframeResult</arg1>
+			<!-- <arg2>click</arg2> -->
+			<arg2>command=click</arg2>
 		</arguments>
 	</step>
-	<step>
-		<command>Switch to iFrame</command>
-		<actionType>write</actionType>
-		<crucial>false</crucial>
-		<accessor>/html/body/div/div/ul/li[1]/a</accessor>
-		<accessorType>xPath</accessorType>
-		<arguments>
-			<arg1>iframeResult</arg1>
-			<arg2>click</arg2>
-		</arguments>
-	</step>
+	<!-- <step> -->
+		<!-- <command>Switch to iFrame</command> -->
+		<!-- <actionType>write</actionType> -->
+		<!-- <crucial>false</crucial> -->
+		<!--  <accessor>/html/body/div/div/ul/li[1]/a</accessor> -->
+		<!-- <accessor>/html/body/a</accessor> -->
+		<!-- <accessorType>xPath</accessorType> -->
+		<!-- <arguments> -->
+			<!-- <arg1>iframename=iframeResult</arg1> -->
+			<!-- <arg2>click</arg2> -->
+		<!-- </arguments> -->
+	<!-- </step> -->
 	<step>
 		<command>Navigate</command>
 		<actionType>write</actionType>
 		<crucial>true</crucial>
 		<arguments>
-			<arg1>https://www.w3schools.com/tags/tryit.asp?filename=tryhtml_select</arg1>
+			<arg1>url=https://www.w3schools.com/tags/tryit.asp?filename=tryhtml_iframe_name</arg1>
 		</arguments>
 	</step>
 	<step>
 		<command>Switch to iFrame</command>
 		<actionType>read</actionType>
-		<expectedValue>Volvo</expectedValue>
+		<expectedValue>Note: Because the target of the link matches the name of the iframe, the link will open in the iframe.</expectedValue>
 		<crucial>true</crucial>
-		<accessor>/html/body/select</accessor>
-		<accessorType>xPath</accessorType>
+		<accessor>body p</accessor>
+		<accessorType>cssselector</accessorType>
 		<arguments>
-			<arg1>iframeResult</arg1>
+			<arg1>iframename=iframeResult</arg1>
 		</arguments>
 	</step>
 </testSteps>

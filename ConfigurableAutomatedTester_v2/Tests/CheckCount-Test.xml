@@ -15,10 +15,10 @@
 		<crucial>TRUE</crucial>
 		<arguments>
 			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
-			<arg1>https://formy-project.herokuapp.com/form</arg1>
+			<arg1>url=https://formy-project.herokuapp.com/form</arg1>
 			
 			<!-- second argument, can be optional but required if we include the expectedValue. For this example we send 1000ms as the time to wait before the assertion is made -->
-			<arg2>1000</arg2> 
+			<arg2>delay=1000</arg2> 
 		</arguments>
 	</step>
 	<step>
@@ -29,10 +29,10 @@
 		<arguments>
 			<!-- we will use arg1 as the element we are waiting on. In this command it would be the page iteself.  
 				Must be present! (set to n/a when waiting on page already navigated to.) -->
-			<arg1>https://formy-project.herokuapp.com/form</arg1>
+			<arg1>url=https://formy-project.herokuapp.com/form</arg1>
 			
 			<!-- Max time in Seconds (30 is default) -->
-			<arg2>30</arg2>
+			<arg2>delay=30</arg2>
 		</arguments>
 	</step>
 	<step>
@@ -42,8 +42,8 @@
 		<expectedValue>17</expectedValue>
 		<crucial>FALSE</crucial>
 		<arguments>
-			<arg1>a</arg1>
-			<arg2>!=</arg2>
+			<arg1>element=a</arg1>
+			<arg2>mathoperator=!=</arg2>
 		</arguments>
 	</step>
 	<step>
@@ -53,7 +53,28 @@
 		<expectedValue>18</expectedValue>
 		<crucial>FALSE</crucial>
 		<arguments>
-			<arg1>a</arg1>
+			<arg1>element=a</arg1>
+		</arguments>
+	</step>
+	<step>
+		<!-- Test - Failed Equal Count -->
+		<command>check count</command>
+		<actionType>read</actionType>
+		<expectedValue>19</expectedValue>
+		<crucial>FALSE</crucial>
+		<arguments>
+			<arg1>element=a</arg1>
+		</arguments>
+	</step>
+	<step>
+		<!-- Test - Failed NOT Equal Count -->
+		<command>check count</command>
+		<actionType>read</actionType>
+		<expectedValue>18</expectedValue>
+		<crucial>FALSE</crucial>
+		<arguments>
+			<arg1>element=a</arg1>
+			<arg2>mathoperator=!=</arg2>
 		</arguments>
 	</step>
 </testSteps>

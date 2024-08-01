@@ -16,10 +16,10 @@
 		<crucial>TRUE</crucial>
 		<arguments>
 			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
-			<arg1>https://semantic-ui.com/modules/dropdown.html</arg1>
+			<arg1>url=https://semantic-ui.com/modules/dropdown.html</arg1>
 			
 			<!-- second argument, can be optional but required if we include the expectedValue. For this example we send 1000ms as the time to wait before the assertion is made -->
-			<arg2>1000</arg2> 
+			<arg2>delay=1000</arg2> 
 			<!-- third argument is the window dimensions -->
 			<arg3></arg3> 
 		</arguments>

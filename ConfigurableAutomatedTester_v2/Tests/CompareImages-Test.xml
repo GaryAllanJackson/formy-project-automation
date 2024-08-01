@@ -7,12 +7,12 @@
 		<crucial>FALSE</crucial>
 		<arguments>
 			<!-- first argument is the comp image filename. It is Required!!! -->
-			<arg1>C:\Gary\Java Utilities\ScreenShots\Mashup\Baseline\ChromeDriver__F0_S5xPath_Element_Not_Found.png</arg1>
+			<arg1>baseLineImage=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Mashup\Baseline\ChromeDriver__F0_S5xPath_Element_Not_Found.png</arg1>
 			<!-- second argument, is the actual image filename.   It is Required!!! -->
-			<arg2>C:\Gary\Java Utilities\ScreenShots\Mashup\Actual\ChromeDriver__F0_S5xPath_Element_Not_Found.png</arg2> 
+			<arg2>actualImage=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Mashup\Actual\ChromeDriver__F0_S5xPath_Element_Not_Found.png</arg2> 
 			<!-- third argument the name of the Difference filename. It is Required!!!   -->
-			<arg3>C:\Gary\Java Utilities\ScreenShots\Mashup\Difference\ChromeDriver__F0_S5xPath_Element_Not_Found-Difference.png</arg3> 
-			<arg4>C:\Gary\Java Utilities\ScreenShots\Mashup\Backup\the-differences.png</arg4>
+			<arg3>differenceImage=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Mashup\Difference\ChromeDriver__F0_S5xPath_Element_Not_Found-Difference.png</arg3> 
+			<arg4>GlobalDifferenceImage=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Mashup\Backup\the-differences.png</arg4>
 		</arguments>
 	</step>
 	<step>
@@ -22,11 +22,11 @@
 		<crucial>FALSE</crucial>
 		<arguments>
 			<!-- first argument is the comp image filename. It is Required!!! -->
-			<arg1>C:\Gary\Java Utilities\ScreenShots\Mashup\Baseline\Test1.png</arg1>
+			<arg1>baseLineImage=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Mashup\Baseline\Test1.png</arg1>
 			<!-- second argument, is the actual image filename.   It is Required!!! -->
-			<arg2>C:\Gary\Java Utilities\ScreenShots\Mashup\Actual\Test1.png</arg2> 
+			<arg2>actualImage=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Mashup\Actual\Test1.png</arg2> 
 			<!-- third argument the name of the Difference filename. It is Required!!!   -->
-			<arg3>C:\Gary\Java Utilities\ScreenShots\Mashup\Difference\Test-Difference.png</arg3> 
+			<arg3>differenceImage=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\ScreenShots\Mashup\Difference\Test-Difference.png</arg3> 
 			<arg4></arg4>
 		</arguments>
 	</step>

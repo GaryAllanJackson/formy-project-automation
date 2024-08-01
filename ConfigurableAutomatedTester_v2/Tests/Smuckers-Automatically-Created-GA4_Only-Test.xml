@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testSteps>
+	<step>
+		<!-- Navigate to a page - The driver will go to the page in arg1 and compare that URL with the expected value if provided -->
+		<command>navigate</command>
+		<actionType>write</actionType>
+		<!-- Expected value - required only when validating successful navigation. For this command it is optional but suggested. -->
+		<expectedValue>https://www.smuckers.com/</expectedValue>
+		<crucial>TRUE</crucial>
+		<arguments>
+			<!-- first argument expected by the command - A URL is expected for this command; It is also Required!!! -->
+			<arg1>url=https://www.smuckers.com/</arg1>
+			<!-- second argument, can be optional. For this command it is the time in milliseconds to wait before the assertion is made. -->
+			<arg2>delay=1000</arg2> 
+			<!-- third argument is optional and is for the window dimensions. Add them like this if desired. (w=800 h=800) -->
+			<arg3></arg3> 
+		</arguments>
+	</step>
+	<step>
+		<command>check javascript value</command>
+		<actionType>read</actionType>
+		<expectedValue>Pass</expectedValue>
+		<crucial>False</crucial>
+		<arguments>
+			<arg1>
+			//close onetrust cookie consent form by accepting all cookies
+				if (document.querySelector("#onetrust-accept-btn-handler")) {
+					document.querySelector("#onetrust-accept-btn-handler").click();
+					return "Pass";
+				}
+				return "Fail";
+			</arg1>
+			<arg2>false</arg2>
+		</arguments>
+	</step>
+	<step>
+		<!-- Compares the href of the anchor link element using the accessor against the expectedValue -->
+		<!--<command>CHECK A HREF</command>-->
+		<command>CHECK A HREF</command>
+		<actionType>read</actionType>
+		<crucial>FALSE</crucial>
+		<!-- the accessor is the anchor whose href attribute will be checked against the expectedValue -->
+		<accessor>//div[@id="ot-pc-desc"] /a[1]</accessor>
+		<accessorType>xPath</accessorType>
+		<expectedValue>https://www.jmsmucker.com/privacy-policy</expectedValue>
+	</step>
+	<step>
+		<!-- Click command... clicks on the element based on the accessor -->
+		<command>click</command>
+		<actionType>write</actionType>
+		<crucial>FALSE</crucial>
+		<!-- the accessor is the target element where the key strokes will be sent -->
+		<accessor>//input[@id="ot-group-id-BG20"] </accessor>
+		<accessorType>xPath</accessorType>
+	</step>
+	<step>
+		<command>save har file</command>
+		<actionType>write</actionType>
+		<crucial>True</crucial>
+		<arguments>
+			<arg1>filename=MyCoolSite-Page-har-test.txt</arg1>
+		</arguments>
+	</step>
+	<step>
+       <command>wait</command>
+       <actionType>write</actionType>
+       <crucial>TRUE</crucial>
+       <arguments>
+           <arg1>delay=3000</arg1>
+       </arguments>
+	</step>
+	<step>
+		<command>show all ga tags</command>
+		<actionType>write</actionType>
+		<arguments>
+		<!-- possible values for arg1 are: ua, ga4, all (default) -->
+			<arg1>ga4</arg1>
+			<!-- <arg2>limit ga4 tags=dl,tid,ep.gtm_settings,ep.site_section,ep.page_template,en,ep.gtm_tag_name,ep.product_name,ep.product_category</arg2> -->
+		</arguments>
+	</step>
+	<step>
+		<command>check ga4 tag</command>
+		<actionType>read</actionType>
+		<arguments>
+			<arg1>v=2</arg1>
+			<arg2>tid=G-3PLPDYQM4N</arg2>
+			<arg3>tt=external</arg3>
+			<arg4>ul=en-us</arg4>
+			<!-- <arg7>uafvl=Chromium;124.0.6367.202|Google%20Chrome;124.0.6367.202|Not-A.Brand;99.0.0.0</arg7> -->			
+			<!-- <arg5>dl=https://www.smuckers.com/</arg5> -->
+			<arg6>dt=Home | Smucker's</arg6>
+			<arg7>en=page_view</arg7>			
+			<!-- <arg19>_ss=1</arg19> -->
+			<arg8>ep.hostname=www.smuckers.com</arg8>
+			<!-- <arg13>ep.gtm_settings=GTM-T6PHNM2 | 183 | </arg13> -->
+			<arg9>ep.page_template=homepage</arg9>
+			<arg10>ep.site_section=home</arg10>
+			<arg11>ep.gtm_tag_name=GA4 - All Pages - Config Tag</arg11>
+			<!-- <arg12>up.jmsa_id=2.0||uQz3DkNiml||2024-05-17T19:41:37Z</arg12> -->
+			<!-- <arg12>up.guid=non-subscriber</arg12> -->
+			<!-- <arg13>up.jmss=false</arg13> -->
+			<!-- <arg14>gtm=45je45f0v874596445z879483785za200</arg14> -->
+			<!-- <arg15>gcd=13n3n3l3l5</arg15> -->
+			<!-- <arg16>npa=0</arg16> -->
+			<!-- <arg17>dma=0</arg17> -->
+			<!-- <arg18>uamb=0</arg18> -->
+			<!-- <arg19>uam=</arg19> -->
+			<!-- <arg20>frm=0</arg20> -->
+			<!-- <arg21>pscdl=noapi</arg21> -->
+			<!-- <arg22>_fv=1</arg22>  -->
+			<!-- <arg23>_nsi=1</arg23> -->
+			<!-- <arg24>_ss=1</arg24> -->
+			<!-- remove these items -->
+			<!-- <arg14>up.jmsa_id=2.0||uQz3DkNiml||2024-05-17T19:41:37Z</arg14>			 -->			
+		</arguments>
+	</step>
+	<step>
+		<command>check ga4 tag</command>
+		<actionType>read</actionType>
+		<arguments>
+			<arg1>v=2</arg1>
+			<arg2>tid=G-3PLPDYQM4N</arg2>
+			<arg3>tt=external</arg3>
+			<arg4>ul=en-us</arg4>
+			<!-- <arg7>uafvl=Chromium;124.0.6367.202|Google%20Chrome;124.0.6367.202|Not-A.Brand;99.0.0.0</arg7> -->
+			<!-- <arg5>dl=https://www.smuckers.com/</arg5> -->
+			<arg6>dt=Home | Smucker's</arg6>
+			<arg7>en=page_view</arg7>			
+			<arg8>ep.hostname=www.smuckers.com</arg8>
+			<!-- <arg13>ep.gtm_settings=GTM-T6PHNM2 | 183 | </arg13> -->
+			<arg9>ep.page_template=homepage</arg9>
+			<arg10>ep.site_section=home</arg10>
+			<arg11>ep.gtm_tag_name=GA4 - All Pages - Config Tag</arg11>
+			<!-- <arg12>up.jmsa_id=2.0||uQz3DkNiml||2024-05-17T19:41:37Z</arg12> -->
+			<!-- <arg12>up.guid=non-subscriber</arg12> -->
+			<!-- <arg13>up.jmss=false</arg13> -->
+			<!-- <arg14>gtm=45je45f0v874596445z879483785za200</arg14> -->
+			<!-- <arg15>gcd=13n3n3l3l5</arg15> -->
+			<!-- <arg16>npa=0</arg16> -->
+			<!-- <arg17>dma=0</arg17> -->
+			<!-- <arg18>uamb=0</arg18> -->
+			<!-- <arg19>uam=</arg19> -->
+			<!-- <arg20>frm=0</arg20> -->
+			<!-- <arg21>pscdl=noapi</arg21> -->
+			<!-- <arg22>_fv=1</arg22>  -->
+			<!-- <arg23>_nsi=1</arg23> -->
+			<!-- <arg24>_ss=1</arg24> -->
+			<!-- <arg25>ep.gtm_settings=GTM-T6PHNM2 | 183 | </arg25> -->
+			<!-- <arg27>uafvl=Chromium;124.0.6367.202|Google%20Chrome;124.0.6367.202|Not-A.Brand;99.0.0.0</arg27>			 -->
+			<!-- remove these items -->
+			<!-- <arg14>up.jmsa_id=2.0||uQz3DkNiml||2024-05-17T19:41:37Z</arg14>			 -->			
+		</arguments>
+	</step>
+	<step>
+       <command>wait</command>
+       <actionType>write</actionType>
+       <crucial>TRUE</crucial>
+       <arguments>
+           <arg1>3000</arg1>
+       </arguments>
+	</step>
+</testSteps>

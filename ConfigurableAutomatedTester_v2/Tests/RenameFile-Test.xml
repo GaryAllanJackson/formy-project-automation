@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testSteps>
+	<!-- file:///C:/Gary/Utilities_VS-2019/AutomatedTester/AutomatedTester/AutomatedTester/bin/Debug/AutomatedTester_Help.html#parseandcalculatelong   -->
+	<step>
+		<!-- Command - ALWAYS REQUIRED!!! -->
+		<command>navigate</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<expectedValue>file:///C:/Gary/Utilities_VS-2019/AutomatedTester/AutomatedTester/AutomatedTester/bin/Debug/AutomatedTester_Help.html#parseandcalculatelong</expectedValue>
+		<arguments>
+			<!-- first argument expected by the command - The URL is required -->
+			<arg1>url=file:///C:/Gary/Utilities_VS-2019/AutomatedTester/AutomatedTester/AutomatedTester/bin/Debug/AutomatedTester_Help.html#parseandcalculatelong</arg1>
+			<!-- second argument optional - Time Delay - default is 4000 if not included but should be included if entering the third parameter -->
+			<arg2>delay=4000</arg2>
+			<!-- third argument, optional - Window Dimensions width then height separated by space -->
+			<arg3>w=800</arg3>
+			<arg4>h=800</arg4>
+		</arguments>
+	</step>
+	<step>
+		<command>check javascript value</command>
+		<actionType>read</actionType>
+		<!-- <expectedValue>plp</expectedValue> -->
+		<crucial>FALSE</crucial>
+		<arguments>
+			<!-- JavaScript to execute and value to return -->
+			<arg1>function CreateInputElement() {
+	
+					var element = document.querySelector("div.heading");
+					if (!element.querySelector("input")) {	
+						var input = document.createElement("input");
+						input.setAttribute("width", 1000);
+						var children = element.children.length + 1;
+						element.appendChild(input);
+						input.style = "width:1000px;";
+					}
+					return input;
+				}
+
+				function GetValues() {
+				var input = CreateInputElement();
+				var tocElements = document.querySelectorAll("div > a.tableOfContentsLink");
+				var elementText;
+				var nextElement;
+
+					input = input == null ? document.querySelector("input") : input;
+
+					for (x=0;x&lt;tocElements.length - 1;x++) {
+						nextElement = tocElements[x].nextElementSibling.innerText;
+						//elementText = tocElements[x].innerText + " - " + tocElements[x+1].innerText;
+						elementText = tocElements[x].innerText + " - " + nextElement;
+						console.log(elementText);
+						input.value = elementText;
+					}
+					return input.value;
+				}
+
+			return GetValues(); </arg1>
+			<!-- the showScript values are True to see the script every execution, or false to see the placeholder "{{JavaScript Command}}") -->
+			<arg2>showScript=false</arg2>
+			<arg3>optional=persist</arg3>
+		</arguments>
+	</step>
+	<!-- Functionality #1 - Move file with existing and new file names provided -->
+	<!-- <step> -->
+		<!-- <command>rename file</command> -->
+		<!-- <actionType>write</actionType> -->
+		<!-- <arguments> -->
+			<!-- <arg1>existingFileName=C:\Users\gjackson\Downloads\Janus-Anti-Bribery&amp;Anti-Corruption (1).pdf</arg1> -->
+			<!-- <arg2>newFileName=C:\OS\Brands\Janus\Janus-Anti-Bribery_and_Anti-Corruption.pdf</arg2>			 -->
+			<!-- <arg3>existingFileFolder=</arg3> -->
+			if set to false, existing file will be deleted and this file will be created
+			<!-- <arg4>renameIfExisting=true</arg4> -->
+		<!-- </arguments> -->
+	<!-- </step> -->
+	<!-- Functionality #2 - Move file with existing file name provided and new file name being a composite of newFileFolder and PersistedString -->
+	<!-- <step> -->
+		<!-- <command>rename file</command> -->
+		<!-- <actionType>write</actionType> -->
+		<!-- <arguments> -->
+			<!-- <arg1>existingFileName=C:\Users\gjackson\Downloads\Janus-Anti-Bribery&amp;Anti-Corruption (1).pdf</arg1> -->
+			<!-- <arg2>newFileName=PersistedString</arg2>			 -->
+			<!-- <arg3>existingFileFolder=</arg3> -->
+			if set to false, existing file will be deleted and this file will be created
+			<!-- <arg4>renameIfExisting=true</arg4> -->
+			<!-- <arg3>newFileFolder=C:\OS\Brands\Janus\</arg3> -->
+		<!-- </arguments> -->
+	<!-- </step> -->
+	<!-- Functionality #3 - Move file with existing file folder provided and new file name being provided -->
+	<step>
+		<command>rename file</command>
+		<actionType>write</actionType>
+		<arguments>
+			<arg1>existingFileName=</arg1>
+			<arg2>newFileName=C:\OS\Brands\Janus\Janus-Anti-Bribery&amp;Anti-Corruption (1).pdf</arg2>			
+			<arg3>existingFileFolder=C:\OS\Brands\Janus\</arg3>
+			<!-- if set to false, existing file will be deleted and this file will be created -->
+			<arg4>renameIfExisting=true</arg4>
+			<arg3>newFileFolder=C:\OS\Brands\Janus\</arg3>
+		</arguments>
+	</step>
+	<!-- Functionality #4 - Move file with existing file folder provided and new file name being provided -->
+	<!-- <step> -->
+		<!-- <command>rename file</command> -->
+		<!-- <actionType>write</actionType> -->
+		<!-- <arguments> -->
+			<!-- <arg1>existingFileName=</arg1> -->
+			<!-- <arg2>newFileName=PersistedString</arg2>			 -->
+			<!-- <arg3>existingFileFolder=C:\OS\Brands\Janus\</arg3> -->
+			if set to false, existing file will be deleted and this file will be created
+			<!-- <arg4>renameIfExisting=true</arg4> -->
+			<!-- <arg3>newFileFolder=C:\OS\Brands\Janus\</arg3> -->
+		<!-- </arguments> -->
+	<!-- </step> -->
+</testSteps>

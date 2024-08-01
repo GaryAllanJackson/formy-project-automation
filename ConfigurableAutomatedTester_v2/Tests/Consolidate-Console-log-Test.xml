@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testSteps>
+	<step>
+		<command>Combine console logs</command>
+		<actionType>read</actionType>
+		<arguments>
+			<!-- root console log file name, enter this only if running this after a prior run where console logs were written
+				but leave empty to use the current console log file
+			-->			
+			<!-- <arg1>root file name=TestResults_09-28-2023_16-49-3-Console-log.txt</arg1> -->
+			<arg1>root file name=TestResults_06-27-2024_09-11-57-Console-log-alt.txt</arg1>
+			<arg2>exclude level=true</arg2>
+			<!-- true exclude console-api prefix, false include console-api prefix -->
+			<arg3>exclude console-api=true</arg3>			
+			<arg4>include start="Page URL</arg4>
+			<!-- <arg4>include start="formName</arg4> -->
+			<arg5>exclude=</arg5>
+			<arg6>remove additional headers=;</arg6>
+			<arg7>length break indicator=32765</arg7>
+			<!-- <arg8>alternate file name=Smuckers EDL 2.0 BuyNowClicks-Combined.txt</arg8>	 -->
+			<!-- <arg8>alternate file name=Smuckers EDL 2.0 DataLayerReady-Combined.txt</arg8>			 -->
+			<arg8>alternate file name=Dunkin_PimX_DataLayerReady-Combined.txt</arg8>
+		</arguments>
+	</step>
+</testSteps>

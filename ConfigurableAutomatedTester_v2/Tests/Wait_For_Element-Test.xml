@@ -2,31 +2,27 @@
 <testSteps>
 	<step>
 		<!-- Tested - Good -->
-		<!-- Navigate to a page - The driver will go to the page in arg1 and compare that URL with the expected value if provided -->
-		<!-- Command - ALWAYS required -->		
-		<command>navigate</command>
-		
+		<!-- Command - ALWAYS required -->
+		<command>navigate</command>		
 		<!-- Read or write -->
 		<actionType>write</actionType>
-
 		<!-- Expected value - required only when we want to validate something as part of our step. For this command it is optional -->
-		<expectedValue>https://www.nutrish.com/</expectedValue>
-		
+		<expectedValue>https://www.dunkinathome.com/</expectedValue>		
 		<!-- crucial or non crucial -->
 		<crucial>TRUE</crucial>
-		<arguments>
+		<arguments>					
+			<arg1>url=https://www.dunkinathome.com/</arg1> 
 			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
-			<arg1>url=https://www.nutrish.com/</arg1>
-			
+			<arg2>delay=1000</arg2>		
 			<!-- second argument, can be optional but required if we include the expectedValue. For this example we send 1000ms as the time to wait before the assertion is made -->
-			<arg2>delay=1000</arg2> 
-			<!-- third argument is the window dimensions -->
-			<arg3></arg3> 
+			<!-- <arg3>h=1000 w=1000</arg3> -->
 		</arguments>
 	</step>
 	<step>
-		<command>check links</command>
-		<actionType>read</actionType>
+		<command>wait for element</command>
+		<actionType>write</actionType>
 		<crucial>FALSE</crucial>
-	</step>	
+		<accessor>//*[@id="jms-tray"]</accessor>
+		<accessorType>xPath</accessorType>
+	</step>
 </testSteps>

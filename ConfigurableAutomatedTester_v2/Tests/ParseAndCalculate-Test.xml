@@ -1,30 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <testSteps>
 	<step>
-		<!-- Navigate to a page - The driver will go to the page in arg1 and compare that URL with the expected value if provided -->
 		<command>navigate</command>
 		<actionType>write</actionType>
-		<!-- Expected value - required only when validating successful navigation. For this command it is optional but suggested. -->
 		<expectedValue>https://timesofindia.indiatimes.com/poll.cms</expectedValue>
 		<crucial>TRUE</crucial>
 		<arguments>
-			<!-- first argument expected by the command - A URL is expected for this command; It is also Required!!! -->
-			<arg1>https://timesofindia.indiatimes.com/poll.cms</arg1>
-			<!-- second argument, can be optional. For this command it is the time in milliseconds to wait before the assertion is made. -->
-			<arg2>1000</arg2> 
-			<!-- third argument is optional and is for the window dimensions. Add them like this if desired. (w=800 h=800) -->
+			<arg1>url=https://timesofindia.indiatimes.com/poll.cms</arg1>
+			<arg2>delay=1000</arg2> 
 			<arg3></arg3> 
 		</arguments>
 	</step>
-	<!--<step>
-		
-		<command>assert</command>
-		<actionType>read</actionType>
-		<expectedValue>Complete Web Form</expectedValue>
-		<crucial>TRUE</crucial>				   	
-		<accessor>/html/body/div/h1</accessor>
-		<accessorType>xPath</accessorType>
-	</step>-->
 	<step>
 		<command>parse and calculate double</command>
 		<actionType>read</actionType>
@@ -33,16 +19,12 @@
 		<crucial>FALSE</crucial>
 		<expectedValue>5.0</expectedValue>
 		<arguments>
-			<!-- Type of delimiter -->
-			<arg1> </arg1>
-			<!--  index of first number in equation -->
-			<arg2>0</arg2>
-			<!-- index of second number in equation -->
-			<arg3>2</arg3>
-			<!-- index of operator in equation -->
-			<arg3>1</arg3>
-			<!-- form field to write answer or persist to persist this -->
-			<arg4>mathuserans2</arg4>		
+			<arg1>" "</arg1>
+			<arg2>firstnumberindex=0</arg2>
+			<arg3>secondnumberindex=2</arg3>
+			<arg3>operatorindex=1</arg3>
+			<arg4>formfield=mathuserans2</arg4>	
+			<arg5>mathoperator=!=</arg5>
 		</arguments>
 	</step>
 	<step>
@@ -54,19 +36,50 @@
 		</arguments>
 	</step>
 	<step>
-		<!-- Navigate to a page - The driver will go to the page in arg1 and compare that URL with the expected value if provided -->
 		<command>navigate</command>
 		<actionType>write</actionType>
-		<!-- Expected value - required only when validating successful navigation. For this command it is optional but suggested. -->
 		<expectedValue>https://timesofindia.indiatimes.com/poll.cms</expectedValue>
 		<crucial>TRUE</crucial>
 		<arguments>
-			<!-- first argument expected by the command - A URL is expected for this command; It is also Required!!! -->
-			<arg1>https://timesofindia.indiatimes.com/poll.cms</arg1>
-			<!-- second argument, can be optional. For this command it is the time in milliseconds to wait before the assertion is made. -->
-			<arg2>1000</arg2> 
-			<!-- third argument is optional and is for the window dimensions. Add them like this if desired. (w=800 h=800) -->
+			<arg1>url=https://timesofindia.indiatimes.com/poll.cms</arg1>
+			<arg2>delay=1000</arg2> 
 			<arg3></arg3> 
+		</arguments>
+	</step>
+	<step>
+		<command>check javascript value</command>
+		<actionType>read</actionType>
+		<!-- <expectedValue>5</expectedValue> -->
+		<crucial>False</crucial>
+		<arguments>
+			<arg1>
+				var firstNumber = parseInt(document.querySelector('#mathq2').innerText.split(' ')[0]);
+				var secondNumber = parseInt(document.querySelector('#mathq2').innerText.split(' ')[2]);
+				var operator = document.querySelector('#mathq2').innerText.split(' ')[1];
+				var answer = operator == '+' ? firstNumber + secondNumber : operator == '-' ? firstNumber - secondNumber : operator == '*' ? firstNumber * secondNumber : firstNumber / secondNumber;
+			
+				return String(answer);
+			</arg1>
+			<arg2>showscript=false</arg2>
+			<arg3>optional=persist</arg3>
+		</arguments>
+	</step>
+	<step>
+		<command>check javascript value</command>
+		<actionType>read</actionType>
+		<expectedValue>PersistedString</expectedValue>
+		<crucial>False</crucial>
+		<arguments>
+			<arg1>
+				var firstNumber = parseInt(document.querySelector("#mathq2").innerText.split(" ")[0]);
+				var secondNumber = parseInt(document.querySelector("#mathq2").innerText.split(" ")[2]);
+				var operator = document.querySelector("#mathq2").innerText.split(" ")[1];
+				var answer = operator == "+" ? firstNumber + secondNumber : operator == "-" ? firstNumber - secondNumber : operator == "*" ? firstNumber * secondNumber : firstNumber / secondNumber;
+			
+				return String(answer);
+			</arg1>
+			<arg2>showscript=false</arg2>
+			<arg5>mathoperator=!=</arg5>
 		</arguments>
 	</step>
 	<step>
@@ -75,33 +88,23 @@
 		<accessor>mathq2</accessor>
 		<accessorType>id</accessorType>
 		<crucial>FALSE</crucial>
+		<expectedValue>PersistedString</expectedValue>
 		<arguments>
-			<!-- Type of delimiter -->
-			<arg1> </arg1>
-			<!--  index of first number in equation -->
-			<arg2>0</arg2>
-			<!-- index of second number in equation -->
-			<arg3>2</arg3>
-			<!-- index of operator in equation -->
-			<arg3>1</arg3>
-			<!-- form field to write answer or persist to persist this -->
-			<arg4>persist</arg4>		
+			<arg1>delimiter=" "</arg1>
+			<arg2>firstnumberindex=0</arg2>
+			<arg3>secondnumberindex=2</arg3>
+			<arg3>operatorindex=1</arg3>
+			<!-- <arg4>persist</arg4>		 -->
 		</arguments>
 	</step>
 	<step>
-		<!-- Tested - Good -->
-		<!-- multiple keystroke command... SENDKEYS! -->
 		<command>sendkeys</command>
 		<actionType>write</actionType>
 		<crucial>FALSE</crucial>
-		<!-- the accessor is the target element where the key strokes will be sent to -->
 		<accessor>mathuserans2</accessor>
 		<accessorType>ID</accessorType>
 		<arguments>
-			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
-			<!--<arg1>PersistedString**_uid_**</arg1>-->
 			<arg1>PersistedString</arg1>
-			<!--arg1>PersistedString</arg1-->
 		</arguments>
 	</step>
 	<step>

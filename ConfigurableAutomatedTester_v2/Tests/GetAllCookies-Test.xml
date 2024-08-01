@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testSteps>
+	<step>
+		<command>navigate</command>
+		<actionType>Write</actionType>
+		<accessor>n/a</accessor>
+		<accessorType>n/a</accessorType>
+		<expectedValue>https://www.folgerscoffee.com/</expectedValue>
+		<crucial>True</crucial>
+		<arguments>
+			<arg1>url=https://www.folgerscoffee.com/</arg1>
+			<arg2>delay=3000</arg2>
+		</arguments>
+	</step>
+	<step>
+		<command>set cookie</command>
+		<actionType>Write</actionType>
+		<crucial>True</crucial>
+		<arguments>
+			<arg1>OptanonConsent=isGpcEnabled=0&amp;datestamp=Mon+Apr+29+2024+08%3A47%3A37+GMT-0400+(Eastern+Daylight+Time)&amp;version=202309.1.0&amp;browserGpcFlag=0&amp;isIABGlobal=false&amp;hosts=&amp;consentId=b7cd5618-f1ff-4576-9b31-6b117424f1c7&amp;interactionCount=1&amp;landingPath=NotLandingPage&amp;groups=C0001%3A1%2CC0003%3A1%2CC0002%3A1%2CC0004%3A1%2CBG20%3A1&amp;geolocation=US%3BNY&amp;AwaitingReconsent=false;expires=8735;</arg1>
+			<arg2>OptanonAlertBoxClosed=2024-03-07T13:48:14.778Z;expires=8736;path=/;domain=.folgerscoffee.com</arg2>
+			<arg3>_tstCkie=test=1;expires=1000;path=/;domain=www.folgerscoffee.com</arg3> 
+		</arguments>
+	</step>
+	<step>
+		<command>wait</command>
+		<actionType>write</actionType>
+		<arguments>
+			<arg1>delay=10000</arg1>
+		</arguments>
+	</step>
+	<step>
+		<command>navigate</command>
+		<actionType>Write</actionType>
+		<accessor>n/a</accessor>
+		<accessorType>n/a</accessorType>
+		<expectedValue>https://www.folgerscoffee.com/coffee</expectedValue>
+		<crucial>True</crucial>
+		<arguments>
+			<arg1>url=https://www.folgerscoffee.com/coffee</arg1>
+			<arg2>delay=3000</arg2>
+		</arguments>
+	</step>
+	<step>
+		<command>navigate</command>
+		<actionType>Write</actionType>
+		<accessor>n/a</accessor>
+		<accessorType>n/a</accessorType>
+		<expectedValue>https://www.folgerscoffee.com/coffee/ground</expectedValue>
+		<crucial>True</crucial>
+		<arguments>
+			<arg1>url=https://www.folgerscoffee.com/coffee/ground</arg1>
+			<arg2>delay=3000</arg2>
+		</arguments>
+	</step>
+	<step>
+		<command>get all cookies</command>
+		<actionType>read</actionType>
+		<arguments>
+			<arg1>filename=c:\myfiles\myCookieInformation.txt</arg1>
+			<!-- overwrite, append, new -->
+			<arg2>savetype=overwrite</arg2>
+		</arguments>
+	</step>
+	<step>
+		<command>delete cookies</command>
+		<actionType>write</actionType>
+		<arguments>
+			<arg1>_tstCkie</arg1>
+		</arguments>
+	</step>
+	<step>
+		<command>get all cookies</command>
+		<actionType>read</actionType>
+		<arguments>
+			<arg1></arg1>
+			<!-- overwrite, append, new -->
+			<arg2>savetype=overwrite</arg2>
+		</arguments>
+	</step>
+	<step>
+		<command>delete cookies</command>
+		<actionType>write</actionType>
+		<arguments>
+			<arg1>all</arg1>
+		</arguments>
+	</step>
+	<step>
+		<command>get all cookies</command>
+		<actionType>read</actionType>
+		<arguments>
+			<arg1></arg1>
+			<!-- overwrite, append, new -->
+			<arg2>savetype=overwrite</arg2>
+		</arguments>
+	</step>
+</testSteps>

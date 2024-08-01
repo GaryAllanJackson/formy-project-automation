@@ -15,10 +15,10 @@
 		<crucial>TRUE</crucial>
 		<arguments>
 			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
-			<arg1>https://formy-project.herokuapp.com/form</arg1>
+			<arg1>url=https://formy-project.herokuapp.com/form</arg1>
 			
 			<!-- second argument, can be optional but required if we include the expectedValue. For this example we send 1000ms as the time to wait before the assertion is made -->
-			<arg2>1000</arg2> 
+			<arg2>delay=1000</arg2> 
 		</arguments>
 	</step>
 	<step>
@@ -29,10 +29,10 @@
 		<arguments>
 			<!-- we will use arg1 as the element we are waiting on. In this command it would be the page iteself.  
 				Must be present! (set to n/a when waiting on page already navigated to.) -->
-			<arg1>https://formy-project.herokuapp.com/form</arg1>
+			<arg1>url=https://formy-project.herokuapp.com/form</arg1>
 			
 			<!-- Max time in Seconds (30 is default) -->
-			<arg2>30</arg2>
+			<arg2>delay=30</arg2>
 		</arguments>
 	</step>
 	<step>
@@ -49,7 +49,7 @@
 		<expectedValue>200</expectedValue>
 		<crucial>FALSE</crucial>
 		<arguments>
-			<arg1>https://www.swtestacademy.com/about-software-test-academy/ </arg1>
+			<arg1>url=https://www.swtestacademy.com/</arg1>
 		</arguments>
 	</step>
 	<!--╠n/a ; check count a ╬ 18 ; n/a ; false ; false╣ -->
@@ -60,8 +60,8 @@
 		<expectedValue>17</expectedValue>
 		<crucial>FALSE</crucial>
 		<arguments>
-			<arg1>a</arg1>
-			<arg2>!=</arg2>
+			<arg1>element=a</arg1>
+			<arg2>mathoperator=!=</arg2>
 		</arguments>
 	</step>	
 	<step>
@@ -88,7 +88,7 @@
 		<expectedValue>Highest level of education</expectedValue>
 		<crucial>FALSE</crucial>
 		<arguments>
-			<arg1>div</arg1>
+			<arg1>element=div</arg1>
 		</arguments>		
 	</step>
 	<step>
@@ -98,7 +98,7 @@
 		<expectedValue>Highest level of education</expectedValue>
 		<crucial>FALSE</crucial>
 		<arguments>
-			<arg1>label</arg1>
+			<arg1>element=label</arg1>
 		</arguments>		
 	</step>
 	<step>
@@ -108,8 +108,8 @@
 		<expectedValue>Highest level</expectedValue>
 		<crucial>FALSE</crucial>
 		<arguments>
-			<arg1>label</arg1>
-			<arg1>contains</arg1>
+			<arg1>element=label</arg1>
+			<arg1>searchType=contains</arg1>
 		</arguments>		
 	</step>
 </testSteps>

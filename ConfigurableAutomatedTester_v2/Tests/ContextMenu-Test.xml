@@ -9,16 +9,16 @@
 		<actionType>write</actionType>
 
 		<!-- Expected value - required only when we want to validate something as part of our step. For this command it is optional -->
-		<expectedValue>https://www.dccomics.com/</expectedValue>
+		<expectedValue>https://www.w3schools.com/</expectedValue>
 		
 		<!-- crucial or non crucial -->
 		<crucial>TRUE</crucial>
 		<arguments>
 			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
-			<arg1>https://www.dccomics.com/</arg1>
+			<arg1>url=https://www.w3schools.com/</arg1>
 			
 			<!-- second argument, can be optional but required if we include the expectedValue. For this example we send 1000ms as the time to wait before the assertion is made -->
-			<arg2>4000</arg2> 
+			<arg2>delay=4000</arg2> 
 		</arguments>
 	</step>
 	<step>
@@ -28,66 +28,59 @@
 		<actionType>write</actionType>
 		<crucial>TRUE</crucial>
 		<arguments>
-			<arg1>5000</arg1>
+			<arg1>delay=5000</arg1>
 		</arguments>
 	</step>
 	<step>
-		<!-- Tested - Good -->
-		<!-- multiple keystroke command... SENDKEYS! -->
 		<command>right click</command>
 		<actionType>write</actionType>
 		<crucial>TRUE</crucial>
-		<!-- the accessor is the target element where the key strokes will be sent to -->
-		<accessor>//*[@id="block-menu-menu-dc-menu"]/div/div/ul/li[2]/a</accessor>
-		<accessorType>xPath</accessorType>
+		<accessor>#main > div.ws-black.w3-center.herosection > div > h4 > a</accessor>
+		<accessorType>cssselector</accessorType>
 		<arguments>
-			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
 			<arg1>Keys.Arrow_Down</arg1>
 			<arg2>Keys.Enter</arg2>
-			<!--arg3>switch to tab</arg3-->
 		</arguments>
 	</step>	
 	<step>
-		<!-- Tested - Good -->
-		<!-- Normal hardcoded wait time -->
 		<command>wait</command>
 		<actionType>write</actionType>
 		<crucial>TRUE</crucial>
 		<arguments>
-			<arg1>1000</arg1>
+			<arg1>delay=1000</arg1>
 		</arguments>
 	</step>
 	<step>
-		<!-- Tested - Good -->
 		<command>Switch to tab</command>
 		<actionType>write</actionType>
 		<crucial>TRUE</crucial>
 		<arguments>
-			<arg1>1</arg1>
+			<arg1>tabindex=1</arg1>
 		</arguments>
 	</step>
 	<step>
-		<!-- Tested - Good -->
-		<!-- Normal hardcoded wait time -->
 		<command>wait</command>
 		<actionType>write</actionType>
 		<crucial>TRUE</crucial>
 		<arguments>
-			<arg1>5000</arg1>
+			<arg1>delay=5000</arg1>
 		</arguments>
 	</step>
 	<step>
-		<!-- Tested - Good -->
 		<command>assert</command>
 		<actionType>read</actionType>
-		<expectedValue>COMICS &amp; GRAPHIC NOVELS</expectedValue>
+		<expectedValue>HTML</expectedValue>
 		<crucial>TRUE</crucial>				   	
-		<accessor>//*[@id="block-system-main"]/div/div/div[1]/div/div[1]/h2</accessor>
+		<accessor>//*[@id="main"]/div[2]/div/div[1]/div[2]/a/div/h2</accessor>
 		<accessorType>xPath</accessorType>
 	</step>
 	<step>
-		<!-- Tested - Good -->
 		<command>Switch to tab</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+	</step>
+	<step>
+		<command>Close Child tab</command>
 		<actionType>write</actionType>
 		<crucial>TRUE</crucial>
 	</step>
@@ -98,8 +91,10 @@
 		<actionType>write</actionType>
 		<crucial>TRUE</crucial>
 		<!-- the accessor is the target element where the key strokes will be sent to -->
-		<accessor>//*[@id="block-menu-menu-dc-menu"]/div/div/ul/li[3]/a</accessor>
-		<accessorType>xPath</accessorType>
+		<!-- <accessor>//*[@id="sets-3"]/div/div[3]/div/div/div[1]/ul/div[1]/div/a</accessor> -->
+		<accessor>#main > div.w3-row.w3-padding-32.ws-light-green > div > div.w3-col.l6.w3-center > a:nth-child(3)</accessor>
+		<!-- <accessorType>xPath</accessorType> -->
+		<accessorType>cssselector</accessorType>
 		<arguments>
 			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
 			<arg1>Keys.Arrow_Down</arg1>
@@ -113,7 +108,7 @@
 		<actionType>write</actionType>
 		<crucial>TRUE</crucial>
 		<arguments>
-			<arg1>2</arg1>
+			<arg1>tabindex=1</arg1>
 		</arguments>
 	</step>
 	<step>
@@ -123,16 +118,16 @@
 		<actionType>write</actionType>
 		<crucial>TRUE</crucial>
 		<arguments>
-			<arg1>5000</arg1>
+			<arg1>delay=5000</arg1>
 		</arguments>
 	</step>
 	<step>
 		<!-- Tested - Good -->
 		<command>assert</command>
 		<actionType>read</actionType>
-		<expectedValue>MORE ANIMATED ADVENTURES</expectedValue>
+		<expectedValue>HTML Tutorial</expectedValue>
 		<crucial>TRUE</crucial>				   	
-		<accessor>//*[@id="block-system-main"]/div/div/div[2]/div[1]/div/div/div/div[1]/h2</accessor>
+		<accessor>//*[@id="main"]/h1</accessor>
 		<accessorType>xPath</accessorType>
 	</step>
 	<!--<step>
@@ -163,7 +158,7 @@
 		<actionType>write</actionType>
 		<crucial>TRUE</crucial>
 		<arguments>
-			<arg1>5000</arg1>
+			<arg1>delay=5000</arg1>
 		</arguments>
 	</step>
 	<step>
@@ -173,7 +168,7 @@
 		<actionType>write</actionType>
 		<crucial>TRUE</crucial>
 		<arguments>
-			<arg1>0</arg1>
+			<arg1>tabindex=0</arg1>
 		</arguments>
 	</step>
 	<step>
@@ -183,7 +178,7 @@
 		<actionType>write</actionType>
 		<crucial>TRUE</crucial>
 		<arguments>
-			<arg1>10000</arg1>
+			<arg1>delay=10000</arg1>
 		</arguments>
 	</step>
 </testSteps>

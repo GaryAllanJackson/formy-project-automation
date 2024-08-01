@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testSteps>
+	<step>
+		<!-- Tested - Good -->
+		<!-- Command - ALWAYS required -->
+		<command>navigate</command>		
+		<!-- Read or write -->
+		<actionType>write</actionType>
+		<!-- Expected value - required only when we want to validate something as part of our step. For this command it is optional -->
+		<expectedValue>https://www.folgerscoffee.com/</expectedValue>		
+		<!-- crucial or non crucial -->
+		<crucial>TRUE</crucial>
+		<arguments>
+			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
+			<arg1>url=https://www.folgerscoffee.com/</arg1>			
+			<!-- second argument, can be optional but required if we include the expectedValue. For this example we send 1000ms as the time to wait before the assertion is made -->
+			<arg2>delay=1000</arg2> 
+		</arguments>
+	</step>
+	<step>
+		<command>check javascript value</command>
+		<actionType>read</actionType>
+		<expectedValue>Pass</expectedValue>
+		<crucial>False</crucial>
+		<arguments>
+			<arg1>//close onetrust cookie consent form by accepting all cookies
+				   if (document.querySelector("#onetrust-accept-btn-handler")) {
+						document.querySelector("#onetrust-accept-btn-handler").click();
+						return "Pass";
+				   } else {
+						return "Fail - Form Not Present or Selector has changed!";
+					}
+			</arg1>
+			<arg2>showscript=False</arg2>
+		</arguments>
+	</step>
+	<step>
+		<command>assert</command>
+		<actionType>read</actionType>
+		<expectedValue>Browse Favorites</expectedValue>
+		<crucial>TRUE</crucial>
+		<accessor>body > main > div:nth-child(2) > div > div > div > div:nth-child(1) > div > div > div > div > div > div.carousel-intro.w-50 > div > div > div > h2</accessor>
+		<accessorType>cssselector</accessorType>
+	</step>
+	<step>
+		<command>assert</command>
+		<actionType>read</actionType>
+		<expectedValue>Browse My Favorites</expectedValue>
+		<crucial>False</crucial>
+		<accessor>body > main > div:nth-child(2) > div > div > div > div:nth-child(1) > div > div > div > div > div > div.carousel-intro.w-50 > div > div > div > h2</accessor>
+		<accessorType>cssselector</accessorType>
+		<arguments>
+			<arg1>mathoperator=!=</arg1>
+		</arguments>
+	</step>
+	
+	
+	<!-- <step> -->
+		<!-- <command>check javascript value</command> -->
+		<!-- <actionType>read</actionType> -->
+		<!-- <expectedValue>Pass</expectedValue> -->
+		<!-- <crucial>False</crucial> -->
+		<!-- <arguments> -->
+			<!-- <arg1> -->
+				<!-- const resources = performance.getEntriesByType("resource"); -->
+				<!-- var returnValue = ""; -->
+				<!-- resources.forEach((entry) => { -->
+				  <!-- console.log(`${entry.name}'s startTime: ${entry.startTime}`); -->
+				  <!-- returnValue += `${entry.name}'s startTime: ${entry.startTime}` + "\r\n"; -->
+				<!-- }); -->
+				<!-- return returnValue; -->
+			<!-- </arg1> -->
+		<!-- </arguments> -->
+	<!-- </step> -->
+</testSteps>

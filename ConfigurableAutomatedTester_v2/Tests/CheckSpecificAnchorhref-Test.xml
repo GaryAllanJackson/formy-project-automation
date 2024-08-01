@@ -9,28 +9,25 @@
 		<actionType>write</actionType>
 
 		<!-- Expected value - required only when we want to validate something as part of our step. For this command it is optional -->
-		<expectedValue>https://www.swtestacademy.com/visual-testing-imagemagick-selenium/ </expectedValue>
+		<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>
 		
 		<!-- crucial or non crucial -->
 		<crucial>TRUE</crucial>
 		<arguments>
 			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
-			<arg1>https://www.swtestacademy.com/visual-testing-imagemagick-selenium/ </arg1>
+			<arg1>url=https://formy-project.herokuapp.com/form </arg1>
 			
 			<!-- second argument, can be optional but required if we include the expectedValue. For this example we send 1000ms as the time to wait before the assertion is made -->
-			<arg2>1000</arg2> 
+			<arg2>delay=1000</arg2> 
 		</arguments>
 	</step>
 	<step>
 		<command>check_a_href</command>
 		<actionType>read</actionType>
-		<expectedValue>https://www.swtestacademy.com/about-software-test-academy/ </expectedValue>
+		<expectedValue>https://formy-project.herokuapp.com/form</expectedValue>
 		<crucial>FALSE</crucial>
-		<accessor>//*[@id="menu-item-21"]/a</accessor>
+		<accessor>//*[@id="navbarNavDropdown"]/ul/li[1]/a</accessor>
 		<accessorType>xPath</accessorType>
-		<arguments>
-			<arg1>alt</arg1>
-		</arguments>
 	</step>
 	
 </testSteps>

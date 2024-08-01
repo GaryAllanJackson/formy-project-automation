@@ -6,7 +6,8 @@
 		<crucial>FALSE</crucial>
 		<arguments>
 			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
-			<arg1>https://semantic-ui.com/modules/dropdown.html</arg1>
+			<arg1>url=https://www.digitas.com/</arg1>
+			<arg2>delay=10000</arg2>
 		</arguments>
 	</step>	
 </testSteps>

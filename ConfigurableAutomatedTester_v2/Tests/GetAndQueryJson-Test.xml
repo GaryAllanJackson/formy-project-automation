@@ -10,6 +10,7 @@
 
 		<!-- Expected value - required only when we want to validate something as part of our step. For this command it is optional -->
 		<expectedValue>http://local.forums.com/?productId=1</expectedValue>
+		<!-- <expectedValue>http://localhost:53431/?productId=1</expectedValue> -->
 		
 		<!-- crucial or non crucial -->
 		<crucial>TRUE</crucial>
@@ -18,7 +19,8 @@
 		<arg2>1000</arg2>-->
 		
 			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
-			<arg1>http://local.forums.com/?productId=1</arg1>
+			<arg1>url=http://local.forums.com/?productId=1</arg1>
+			<!-- <arg1>url=http://localhost:53431/?productId=1</arg1> -->
 			<!-- second argument, can be optional but required when including window dimension argument. 
 				For this example we send 1000ms as the time to wait before continuing. -->
 			
@@ -38,9 +40,22 @@
 		<actionType>read</actionType>
 		<crucial>FALSE</crucial>
 		<arguments>
-			<arg1>http://local.forums.com/?productId=1&amp;id=true&amp;wantJson=true</arg1>
+			<!-- <arg1>http://localhost:53431/?productId=1</arg1> -->
+			<arg1>url=http://local.forums.com/?productId=1&amp;id=true&amp;wantJson=true</arg1>
 			<!--<arg1>http://local.forums.com/?productId=1&amp;id=true</arg1>-->
 			<!--<arg1>http://local.forums.com/?productId=2&amp;id=true</arg1>-->
+		</arguments>
+	</step>
+	<step>
+		<command>Save JSON</command>
+		<actionType>read</actionType>
+		<crucial>FALSE</crucial>
+		<arguments>
+			<!-- first parameter expected by the command - The file name; it is also required -->
+			<arg1>filename=C:\Gary\Utilities_VS-2019\AutomatedTester\AutomatedTester\AutomatedTester\bin\Debug\Retrieved Data\forums.json</arg1>
+			<!-- second parameter is optional can be overwrite or true to overwrite existing file or 
+				 false to create a new file name using the filename and appending an integer to the end of the name before the extension -->
+			<arg2>savetype=overwrite</arg2>
 		</arguments>
 	</step>
 	<step>
@@ -80,18 +95,7 @@
 		<accessorType>JSON</accessorType>
 		<expectedValue>"General"</expectedValue>
 	</step>
-	<step>
-		<command>Save JSON</command>
-		<actionType>read</actionType>
-		<crucial>FALSE</crucial>
-		<arguments>
-			<!-- first parameter expected by the command - The file name; it is also required -->
-			<arg1>C:\Gary\Java Utilities\ScreenShots\JSON\forums.json</arg1>
-			<!-- second parameter is optional can be overwrite or true to overwrite existing file or 
-				 false to create a new file name using the filename and appending an integer to the end of the name before the extension -->
-			<arg2>overwrite</arg2>
-		</arguments>
-	</step>
+	
 	<step>
 		<command>end conditional</command>
 	</step>
@@ -111,10 +115,10 @@
 		<crucial>TRUE</crucial>
 		<arguments>
 			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
-			<arg1>https://formy-project.herokuapp.com/form </arg1>
+			<arg1>url=https://formy-project.herokuapp.com/form </arg1>
 			
 			<!-- second argument, can be optional but required if we include the expectedValue. For this example we send 1000ms as the time to wait before the assertion is made -->
-			<arg2>1000</arg2> 
+			<arg2>delay=1000</arg2> 
 			<!-- third argument is the window dimensions -->
 			<arg3>w=800 h=800</arg3> 
 		</arguments>

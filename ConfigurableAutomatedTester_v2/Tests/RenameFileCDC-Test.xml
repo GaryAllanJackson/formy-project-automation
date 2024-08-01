@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testSteps>
+	<!-- file:///C:/Gary/Utilities_VS-2019/AutomatedTester/AutomatedTester/AutomatedTester/bin/Debug/AutomatedTester_Help.html#parseandcalculatelong   -->
+	<step>
+		<!-- Command - ALWAYS REQUIRED!!! -->
+		<command>navigate</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<expectedValue>https://www.cdc.gov/healthy-weight-growth/about/tips-for-balancing-food-activity.html</expectedValue>
+		<arguments>
+			<!-- first argument expected by the command - The URL is required -->
+			<arg1>url=https://www.cdc.gov/healthy-weight-growth/about/tips-for-balancing-food-activity.html</arg1>
+			<!-- second argument optional - Time Delay - default is 4000 if not included but should be included if entering the third parameter -->
+			<arg2>delay=4000</arg2>
+			<!-- third argument, optional - Window Dimensions width then height separated by space -->
+			<arg3>w=800</arg3>
+			<arg4>h=800</arg4>
+			<arg5>fe=3.75</arg5>
+			<arg6>be=.5</arg6>
+		</arguments>
+	</step>
+	<step>
+		<command>check javascript value</command>
+		<actionType>read</actionType>
+		<!-- <expectedValue>plp</expectedValue> -->
+		<crucial>FALSE</crucial>
+		<arguments>
+			<!-- JavaScript to execute and value to return -->
+			<arg1>function CreateInputElement() {
+	
+					var element = document.querySelector("main.container.cdc-main");
+					if (!element.querySelector("input")) {	
+						var input = document.createElement("input");
+						input.setAttribute("width", 1000);
+						var children = element.children.length + 1;
+						element.appendChild(input);
+						input.style = "width:1000px;";
+					}
+					return input;
+				}
+
+				function GetValues() {
+				var input = CreateInputElement();
+				var pdfElement = document.querySelector("#content > div.cdc-dfe-body > div.cdc-dfe-body__center > div:nth-child(2) > div > div.dfe-callout__button > a");
+				var elementText;
+				var nextElement;
+				
+					//scrollTo(pdfElement);
+					pdfElement.setAttribute("download","");
+
+					//scrollTo(input);
+					input = input == null ? document.querySelector("input") : input;
+					elementText = pdfElement.innerText + "_JavaApp.pdf";
+					input.value = elementText;
+					pdfElement.click();
+					return input.value;
+				}
+
+			return GetValues(); </arg1>
+			<!-- the showScript values are True to see the script every execution, or false to see the placeholder "{{JavaScript Command}}") -->
+			<arg2>showScript=false</arg2>
+			<arg3>optional=persist</arg3>
+		</arguments>
+	</step>
+	<step>
+		<command>wait</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<arguments>
+			<arg1>delay=5000</arg1>
+		</arguments>
+	</step>	
+	<step>
+		<command>rename file</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<arguments>
+			<arg1>existingFileName=</arg1>
+			<arg2>newFileName=PersistedString</arg2>			
+			<arg3>existingFileFolder=C:\Users\gjackson\Downloads\</arg3>
+			<!-- if set to false, existing file will be deleted and this file will be created -->
+			<arg4>renameIfExisting=true</arg4>
+			<arg3>newFileFolder=C:\OS\Brands\Janus\</arg3>
+		</arguments>
+	</step>
+</testSteps>

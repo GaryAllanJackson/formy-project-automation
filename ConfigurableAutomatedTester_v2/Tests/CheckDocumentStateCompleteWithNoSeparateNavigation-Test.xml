@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testSteps>
+	<step>
+		<command>wait for page</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<arguments>
+			<arg1>url=https://formy-project.herokuapp.com/form</arg1>
+			<arg2>delay=30</arg2>
+		</arguments>
+	</step>
+</testSteps>

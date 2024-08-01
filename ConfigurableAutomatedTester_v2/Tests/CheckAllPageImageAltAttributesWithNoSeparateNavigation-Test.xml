@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <testSteps>
 	<step>
-		<command>check links</command>
+		<command>check images alt</command>
 		<actionType>read</actionType>
 		<crucial>FALSE</crucial>
 		<arguments>
 			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
-			<arg1>url=https://www.nutrish.com/</arg1>
-			<arg2>delay=5000</arg2>
+			<arg1>url=https://www.digitas.com/en-us</arg1>
+			<arg2>delay=5000</arg2> 
 		</arguments>
 	</step>	
 </testSteps>

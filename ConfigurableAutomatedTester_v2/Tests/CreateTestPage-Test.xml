@@ -16,10 +16,10 @@
 		<crucial>TRUE</crucial>
 		<arguments>
 			<!-- first parameter expected by the command - A URL is expected for this command; it is also required -->
-			<arg1>https://formy-project.herokuapp.com/form </arg1>
+			<arg1>url=https://formy-project.herokuapp.com/form </arg1>
 			
 			<!-- second argument, can be optional but required if we include the expectedValue. For this example we send 1000ms as the time to wait before the assertion is made -->
-			<arg2>1000</arg2> 
+			<arg2>delay=1000</arg2> 
 			<!-- third argument is the window dimensions -->
 			<arg3>w=800 h=800</arg3> 
 		</arguments>
@@ -31,9 +31,9 @@
 		<actionType>write</actionType>
 		<crucial>TRUE</crucial>				   	
 		<arguments>
-			<arg2>C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester\Tests\TestPages\Formy-Test.xml</arg2>
-			<arg3>html,head,title,meta,script,body,style,nav,br,div,form</arg3>	
-			<arg1>*</arg1>
+			<arg1>includeElements=*</arg1>
+			<arg2>filename=C:\Gary\Java Utilities\Refactored_ConfigurableAutomatedTester\ConfigurableAutomatedTester_v2\Tests\NamedParameterTests\Automated-Tests\FormyAutoCreated-Test.xml</arg2>
+			<arg3>excludeElements=html,head,title,meta,script,body,style,nav,br,div,form</arg3>			
 		</arguments>
 	</step>
 </testSteps>

@@ -6,53 +6,75 @@
 		<crucial>true</crucial>
 		<arguments>
 			<!-- Type of Database (MongoDb, Sql Server)-->
-			<arg1>SQL Server</arg1>
+			<arg1>databasetype=SQL Server</arg1>
 			<!-- Connection String or Close to close the connection -->
 			<!-- when using a uri, escape all illegal xml characters (escape: ampersands with &amp;) -->
-			<arg2>jdbc:sqlserver://localhost:1433;database=PocFisForumV2;user=forum_user;password=forum_user;encrypt=false;trustServerCertificate=true;loginTimeout=30;</arg2>
+			<arg2>datasource=jdbc:sqlserver://localhost:1433;database=ProjectNotes;user=forum_user;password=YkIcnrpss666!;encrypt=false;trustServerCertificate=true;loginTimeout=30;</arg2>
 			<!-- arg2>jdbc:sqlserver://local.database.windows.net:1433;database=PocFisForumV2;user=forum_user;password=forum_user;encrypt=true;trustServerCertificate=false;loginTimeout=30;</arg2 -->
 			<!-- currently not implemented but created to distinguish between local and non-local SQL databases -->
-			<arg3>local</arg3>
+			<!-- <arg3>local</arg3> -->
 		</arguments>
 	</step>
 	<step>
 		<command>Sql Server Query</command>
 		<actionType>read</actionType>
-		<expectedValue>General</expectedValue>
+		<expectedValue>Find Clicked Element</expectedValue>
 		<crucial>false</crucial>
 		<arguments>
 			<!-- Table to query or select statement -->
-			<arg1>[POCFISForumV2].[dbo].[Forums]</arg1>
+			<arg1>table=[ProjectNotes].[dbo].[ProjectNotes]</arg1>
 			<!-- Field to query -->
-			<arg2>Forum</arg2>
+			<arg2>queryField=NoteTitle</arg2>
 			<!-- where clause - optional -->
-			<arg3>where ForumId = 1</arg3>
-			<arg4>!=</arg4>
+			<arg3>whereClause=where NoteTitle = 'Find Clicked Element'</arg3>
+			<arg4>mathOperator==</arg4>
 		</arguments>
 	</step>
 	<step>
 		<command>Sql Server Query</command>
 		<actionType>read</actionType>
-		<expectedValue>FAQ</expectedValue>
+		<expectedValue>Standup Notes</expectedValue>
 		<crucial>false</crucial>
 		<arguments>
 			<!-- Table to query or select statement -->
-			<arg1>Select Forum from [POCFISForumV2].[dbo].[Forums] where ForumId = 2</arg1>
+			<arg1>queryStatement=Select Type from [ProjectNotes].[dbo].[NoteTypes] where Id = 1</arg1>
 		</arguments>
 	</step>
 	<step>
 		<command>Sql Server Query</command>
 		<actionType>read</actionType>
-		<expectedValue>FAQ</expectedValue>
+		<expectedValue>1</expectedValue>
 		<crucial>false</crucial>
 		<arguments>
 			<!-- Table to query or select statement -->
-			<arg1>[POCFISForumV2].[dbo].[Forums]</arg1>
+			<arg1>table=[ProjectNotes].[dbo].[ProjectNotes]</arg1>
 			<!-- Field to query -->
-			<arg2>Forum</arg2>
+			<arg2>queryField=NoteTypeID</arg2>
 			<!-- where clause - optional -->
-			<arg3>where ForumId = 1</arg3>
-			<arg4>!=</arg4>
+			<arg3>whereClause=where NoteTypeID = 1</arg3>
+			<arg4>=</arg4>
 		</arguments>
 	</step>
+	<step>
+		<command>Sql Server Query</command>
+		<actionType>read</actionType>
+		<expectedValue>Standup Notes</expectedValue>
+		<crucial>false</crucial>
+		<arguments>
+			<!-- Table to query or select statement -->
+			<!-- <arg1>Select top(1) Type from [ProjectNotes].[dbo].[NoteTypes] nt inner join [ProjectNotes].[dbo].[ProjectNotes] n on nt.ID = n.NoteTypeID  where n.NoteTypeID = 1</arg1> -->
+			<arg1>queryStatement=Select Type from [ProjectNotes].[dbo].[NoteTypes] nt inner join [ProjectNotes].[dbo].[ProjectNotes] n on nt.ID = n.NoteTypeID  where n.NoteTypeID = 1</arg1>
+		</arguments>
+	</step>
+	<step>
+		<!-- Tested - Good -->
+		<!-- multiple keystroke command... SENDKEYS! -->
+		<command>Close Database Connection</command>
+		<actionType>write</actionType>
+		<crucial>TRUE</crucial>
+		<arguments>
+			<!-- We can have as many key strokes as we want. We will use the arg tags for storing each character/command. The order or writing would be sequetial: arg1 > arg2 > arg3 > etc. If you want to send a string, just enter the whole string in one arg tag-->
+			<arg1>databaseType=SQL Server</arg1>
+		</arguments>
+	</step>	
 </testSteps>
